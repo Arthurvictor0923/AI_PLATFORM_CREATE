@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案例中心 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.6;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+a { color: #2f54eb; text-decoration: none; transition: color 0.3s; }
+a:hover { color: #597ef7; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER (standard pattern, matching portal.html)
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+  background-color: rgba(255,255,255,0.88);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+.dropdown-wrap { position: relative; display: inline-flex; }
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645,0.045,0.355,1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #fff; color: rgba(0,0,0,0.88); border: 1px solid #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+
+/* ============================================================
+   PAGE LAYOUT
+   ============================================================ */
+.page-wrap { padding-top: 60px; }
+
+/* ============================================================
+   BANNER
+   ============================================================ */
+.case-banner {
+  position: relative;
+  background-color: #1a2e1a;
+  background-image:
+    linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.55) 100%),
+    url('assets/cases/case-banner-v3.webp');
+  background-position: center, center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  padding: 56px 50px 80px;
+  border-bottom: 1px solid rgba(5,5,5,0.05);
+}
+.case-banner-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
+.case-banner-label {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 20px; border-radius: 99px;
+  background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 500;
+  margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.2);
+}
+.case-banner h1 { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.case-banner h1 span { color: #a8c6ff; -webkit-text-fill-color: #a8c6ff; background: none; }
+.case-banner-desc { font-size: 16px; color: rgba(255,255,255,0.82); max-width: 720px; margin: 0 auto 28px; line-height: 1.8; text-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+.case-banner-stats { display: flex; align-items: center; justify-content: center; gap: 36px; }
+.case-banner-stat { text-align: center; }
+.case-banner-stat .bs-val { font-size: 32px; font-weight: 700; color: #fff; line-height: 1.2; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+.case-banner-stat .bs-val.accent { color: #7ee8cf; }
+.case-banner-stat .bs-lbl { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.case-banner-stat-divider { width: 1px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 1px; }
+
+/* ============================================================
+   CONTENT AREA — vertical industry menu + card grid
+   ============================================================ */
+.case-content { max-width: 1200px; margin: 0 auto; padding: 32px 50px 60px; display: flex; gap: 32px; }
+
+/* --- Left Industry Menu --- */
+.case-sidebar { width: 200px; flex-shrink: 0; }
+.case-sidebar-inner {
+  position: sticky; top: 92px;
+  background: #fff; border-radius: 10px; border: 1px solid rgba(5,5,5,0.06);
+  padding: 8px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.case-industry-title {
+  font-size: 12px; font-weight: 600; color: rgba(0,0,0,0.4); text-transform: uppercase;
+  letter-spacing: 1px; padding: 8px 20px 4px; margin-bottom: 4px;
+}
+.case-industry-item {
+  display: flex; align-items: center; gap: 8px; padding: 10px 20px; margin: 0 8px 2px;
+  border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer;
+  transition: all 0.2s; width: calc(100% - 16px);
+}
+.case-industry-item:hover { background: rgba(47,84,235,0.04); color: #2f54eb; }
+.case-industry-item.active { background: rgba(47,84,235,0.08); color: #2f54eb; font-weight: 600; }
+.case-industry-item .ind-icon { font-size: 16px; width: 20px; text-align: center; }
+.case-industry-item .ind-count { margin-left: auto; font-size: 12px; color: rgba(0,0,0,0.35); font-weight: 400; }
+
+/* --- Right Main Area --- */
+.case-main { flex: 1; min-width: 0; }
+
+/* Filter Tags */
+.case-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+.case-filter-label { font-size: 13px; color: rgba(0,0,0,0.45); margin-right: 4px; }
+.case-filter-tag {
+  padding: 4px 16px; border-radius: 99px; font-size: 13px; cursor: pointer;
+  border: 1px solid rgba(5,5,5,0.08); background: #fff; color: rgba(0,0,0,0.65);
+  transition: all 0.2s; white-space: nowrap;
+}
+.case-filter-tag:hover { border-color: #2f54eb; color: #2f54eb; background: rgba(47,84,235,0.04); }
+.case-filter-tag.active { background: #2f54eb; color: #fff; border-color: #2f54eb; font-weight: 500; }
+
+/* Case Card Grid */
+.case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.case-card {
+  background: #fff; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  display: flex; flex-direction: column;
+}
+.case-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(47,84,235,0.15); }
+.case-card .cc-visual {
+  height: 110px; position: relative; display: flex;
+  align-items: center; justify-content: center;
+}
+.cc-visual.vis-a { background: linear-gradient(135deg, #eef2ff 0%, #d6e4ff 100%); }
+.cc-visual.vis-b { background: linear-gradient(135deg, #e6fffb 0%, #b5f5ec 100%); }
+.cc-visual.vis-c { background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%); }
+.cc-visual.vis-d { background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); }
+.cc-visual.vis-e { background: linear-gradient(135deg, #f0f5ff 0%, #adc6ff 100%); }
+.cc-visual .cc-icon { font-size: 40px; position: relative; z-index: 1; }
+.cc-visual .cc-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 40%;
+  transition: transform 0.5s ease;
+}
+.case-card:hover .cc-visual .cc-img { transform: scale(1.05); }
+.cc-visual .cc-status {
+  position: absolute; top: 10px; right: 12px; z-index: 1;
+  padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;
+}
+.cc-status.delivered { background: rgba(255,255,255,0.9); color: #52c41a; }
+.cc-status.ongoing { background: rgba(255,255,255,0.9); color: #2f54eb; }
+.case-card .cc-body { padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.case-card .cc-body h3 { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
+.case-card:hover .cc-body h3 { color: #2f54eb; }
+.case-card .cc-body .cc-desc { font-size: 13px; color: rgba(0,0,0,0.45); line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+.case-card .cc-body .cc-org { font-size: 12px; color: rgba(0,0,0,0.45); display: flex; align-items: center; gap: 4px; }
+.case-card .cc-body .cc-location { font-size: 11px; color: rgba(0,0,0,0.35); display: flex; align-items: center; gap: 4px; }
+.case-card .cc-body .cc-tags { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid rgba(5,5,5,0.04); }
+.case-card .cc-body .cc-tags .cc-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.5); }
+
+/* Pagination */
+.case-pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 40px; }
+.case-pagination .pg-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px;
+  font-size: 14px; border: 1px solid #d9d9d9; background: #fff;
+  color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.2s;
+}
+.case-pagination .pg-btn:hover { color: #2f54eb; border-color: #2f54eb; }
+.case-pagination .pg-btn.active { background: #2f54eb; color: #fff; border-color: #2f54eb; font-weight: 600; }
+.case-pagination .pg-btn.disabled { color: rgba(0,0,0,0.25); cursor: not-allowed; pointer-events: none; border-color: #d9d9d9; }
+
+/* Empty state */
+.case-empty { text-align: center; padding: 80px 20px; }
+.case-empty .ce-icon { font-size: 56px; margin-bottom: 16px; }
+.case-empty .ce-text { font-size: 15px; color: rgba(0,0,0,0.45); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer { background: #001529; color: rgba(255,255,255,0.65); padding: 48px 50px 24px; font-size: 13px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+.footer-col h4 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 16px; }
+.footer-col p, .footer-col a { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 2.2; display: block; text-decoration: none; }
+.footer-col a:hover { color: #597ef7; }
+.footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-logo span { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.footer-bot { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.8; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; z-index: 2000; padding: 10px 16px; border-radius: 6px; font-size: 14px; display: none; align-items: center; gap: 8px; animation: toastIn 0.3s cubic-bezier(0.78,0.14,0.15,0.86); box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); }
+.toast.visible { display: flex; }
+.toast-info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .case-grid { grid-template-columns: repeat(2, 1fr); }
+  .case-content { flex-direction: column; }
+  .case-sidebar { width: 100%; }
+  .case-sidebar-inner { position: static; display: flex; flex-wrap: wrap; gap: 4px; padding: 12px; }
+  .case-industry-title { display: none; }
+  .case-industry-item { width: auto; padding: 6px 14px; margin: 0; font-size: 13px; }
+}
+@media (max-width: 768px) {
+  .case-grid { grid-template-columns: 1fr; }
+  .case-banner { padding: 40px 24px 32px; }
+  .case-banner h1 { font-size: 26px; }
+  .case-banner-stats { gap: 20px; }
+  .case-banner-stat .bs-val { font-size: 26px; }
+  .case-content { padding: 24px 20px 40px; }
+  .top-nav-menu-wrap { display: none; }
+  .header-right { padding-right: 16px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" data-nav="home">首页</span>
+        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
+        <span class="top-nav-item active" data-nav="cases">案例中心</span>
+        <span class="top-nav-item" data-nav="data">数据管理</span>
+        <span class="top-nav-item" data-nav="demand">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+      </div></div>
+
+      <div class="header-right">
+        <button class="header-btn" onclick="window.location.href='login.html'" title="搜索"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="javascript:void(0)" onclick="toast('平台采用受邀注册制，请联系管理员申请入驻','info')">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="window.location.href='workbench.html'">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== PAGE CONTENT ==================== -->
+<div class="page-wrap">
+
+  <!-- ===== BANNER ===== -->
+  <section class="case-banner">
+    <div class="case-banner-inner">
+      <div class="case-banner-label">🏆 案例中心</div>
+      <h1>AI 落地田间 — <span>真实场景解决方案</span></h1>
+      <p class="case-banner-desc">平台一端汇聚顶尖科研力量与独有数据资源，一端对接农场与企业的真实业务难题。这里展示的是模型与数据结合后，在田间地头创造的真实价值——每一个案例都代表一个被解决的实际问题。</p>
+      <div class="case-banner-stats">
+        <div class="case-banner-stat">
+          <div class="bs-val">12<span style="font-size:16px;font-weight:400;color:rgba(0,0,0,0.35)">+</span></div>
+          <div class="bs-lbl">落地案例</div>
+        </div>
+        <div class="case-banner-stat-divider"></div>
+        <div class="case-banner-stat">
+          <div class="bs-val accent">6</div>
+          <div class="bs-lbl">行业场景</div>
+        </div>
+        <div class="case-banner-stat-divider"></div>
+        <div class="case-banner-stat">
+          <div class="bs-val">8<span style="font-size:16px;font-weight:400;color:rgba(0,0,0,0.35)">+</span></div>
+          <div class="bs-lbl">合作单位</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTENT: Industry Menu + Cards ===== -->
+  <div class="case-content">
+    <!-- Left: Industry Menu -->
+    <aside class="case-sidebar">
+      <nav class="case-sidebar-inner" id="industryMenu">
+        <div class="case-industry-title">行业场景</div>
+      </nav>
+    </aside>
+
+    <!-- Right: Filter + Cards -->
+    <div class="case-main">
+      <!-- Filter Tags -->
+      <div class="case-filters" id="caseFilters">
+        <span class="case-filter-label">筛选：</span>
+      </div>
+
+      <!-- Case Card Grid -->
+      <div class="case-grid" id="caseGrid"></div>
+
+      <!-- Pagination -->
+      <div class="case-pagination" id="casePagination"></div>
+
+      <!-- Empty State -->
+      <div class="case-empty" id="caseEmpty" style="display:none">
+        <div class="ce-icon">📭</div>
+        <div class="ce-text">该分类下暂无案例</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg)"/></svg>
+        <span>北大荒信息有限公司</span>
+      </div>
+      <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
+    </div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据中心</a><a href="workbench.html">开发空间</a></div>
+    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="javascript:void(0)" onclick="toast('平台采用受邀注册制','info')">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div>
+    <div class="footer-col"><h4>帮助支持</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">使用文档</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">API 参考</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">常见问题</a></div>
+  </div>
+  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+</footer>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA: All Cases =====
+var ALL_CASES = [
+  {id:1, icon:'🌽', industry:'遥感识别', title:'黑龙江建三江：玉米倒伏面积遥感智能提取', desc:'2023年台风"杜苏芮"过境后，建三江分公司紧急调用 Sentinel-2 多光谱影像与深度学习语义分割模型，48小时内完成全域倒伏地块自动识别，精度达 93.7%，为保险公司定损与灾后复产评估提供量化依据，覆盖玉米种植面积 87 万亩。', org:'北大荒集团建三江分公司', location:'黑龙江省·建三江', tags:['遥感识别','语义分割','卫星遥感','灾害评估'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-01.webp'},
+  {id:2, icon:'📊', industry:'产量预测', title:'黑龙江宝泉岭：水稻产量关键期预估模型', desc:'宝泉岭农场联合哈工大AI实验室，融合田间气象站实时数据、土壤墒情监测与 Sentinel-2 遥感植被指数，构建端到端水稻产量预估模型，在抽穗扬花后提前 3–4 周输出产量分布图与风险评级，为收储调度与市场决策提供数据支撑，覆盖水稻面积 42 万亩。', org:'北大荒集团宝泉岭农场', location:'黑龙江省·鹤岗市', tags:['产量预测','时序分析','气象数据','水稻'], status:'delivered', statusText:'已交付', vis:'b', img:'assets/cases/case-02.webp'},
+  {id:3, icon:'🐛', industry:'病虫害检测', title:'黑龙江九三：大豆病虫害早期预警系统', desc:'九三管局在尖山农场部署无人机多光谱巡检+AI自动识别系统，搭载 YOLOv8 目标检测模型识别蚜虫、灰斑病等6类大豆主要病虫害，结合气象预报提前7天发布预警，指导精准施药，2024年试点减少农药用量32%，亩均节本18元，正在进行全域推广。', org:'北大荒集团九三分公司', location:'黑龙江省·嫩江市', tags:['目标检测','预警模型','无人机','大豆'], status:'ongoing', statusText:'进行中', vis:'c', img:'assets/cases/case-03.webp'},
+  {id:4, icon:'🛰️', industry:'变化检测', title:'黑龙江红兴隆：高标准农田建设遥感监测', desc:'红兴隆分公司联合航天宏图，利用高分二号、高分七号卫星影像进行多期自动比对，AI变化检测算法持续追踪高标准农田建设进度与工程质量，覆盖12个农场共156万亩耕地，实现"天上看、网上管"的数字化监管模式，入选农业农村部智慧农业典型案例。', org:'北大荒集团红兴隆分公司', location:'黑龙江省·双鸭山市', tags:['变化检测','卫星遥感','高分影像','高标准农田'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-04.webp'},
+  {id:5, icon:'🗺️', industry:'遥感识别', title:'黑龙江友谊农场：黑土地土壤有机质遥感反演', desc:'智慧农场全国重点实验室在友谊农场开展黑土地保护专项，基于高光谱遥感与1200个地面采样点数据，构建土壤有机质含量空间反演模型，精度R²=0.87，替代传统网格化采样，单次检测成本降低76%，已形成覆盖48万亩耕地的逐年土壤健康图谱。', org:'智慧农场全国重点实验室', location:'黑龙江省·友谊县', tags:['遥感识别','高光谱','土壤建模','黑土地'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-05.webp'},
+  {id:6, icon:'🦗', industry:'病虫害检测', title:'河南新乡：小麦赤霉病无人机巡检系统', desc:'中国农科院作物科学研究所在河南新乡小麦主产区部署无人机赤霉病巡检系统，搭载多光谱相机+深度学习目标检测算法，在扬花期实现赤霉病早期自动识别，检测准确率达91.5%，响应时间从传统人工踏查的5天缩短至2小时，2024年服务面积超30万亩。', org:'中国农业科学院', location:'河南省·新乡市', tags:['目标检测','无人机','病害识别','小麦'], status:'delivered', statusText:'已交付', vis:'e', img:'assets/cases/case-06.webp'},
+  {id:7, icon:'🌲', industry:'变化检测', title:'吉林西部：林草湿地变化图斑自动检测', desc:'中科院东北地理所在吉林西部（白城、松原）部署林草湿地变化监测系统，利用2018–2025年多期Sentinel-2影像自动比对，AI自动提取变化图斑并分类（林地→耕地、湿地→建设用地等），服务退耕还林核查与向海、莫莫格湿地生态监测，年更新全域报告。', org:'中科院东北地理与农业生态研究所', location:'吉林省·白城市/松原市', tags:['变化检测','卫星遥感','时序分析','湿地保护'], status:'delivered', statusText:'已交付', vis:'c', img:'assets/cases/case-07.webp'},
+  {id:8, icon:'🤖', industry:'智能应用', title:'河北曲周：智慧农场综合决策支持系统', desc:'中国农业大学在河北曲周实验站打造智慧农场"大脑"，集成长势监测、产量预测、病虫害识别、气象预警等12种AI模型，覆盖冬小麦-夏玉米轮作从种到收全流程，为周边6个合作社、3.2万亩耕地提供一站式AI决策支持，2024年示范田亩均增产11.6%。', org:'中国农业大学', location:'河北省·邯郸市曲周县', tags:['智能应用','多模型协同','全流程','小麦玉米'], status:'ongoing', statusText:'进行中', vis:'b', img:'assets/cases/case-08.webp'},
+  {id:9, icon:'🏗️', industry:'变化检测', title:'北大荒全域：耕地"非农化"遥感监测平台', desc:'北大荒信息公司利用高分卫星影像与AI变化检测算法，对集团旗下113个农（牧）场4800万亩耕地进行月度全域扫描，自动识别"非农化""非粮化"地块并生成预警工单，2024年累计发现并处置疑似问题图斑1270处，为耕地保护执法提供常态化技术支撑。', org:'北大荒信息有限公司', location:'黑龙江省·覆盖全垦区', tags:['变化检测','卫星遥感','执法辅助','4800万亩'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-09.webp'},
+  {id:10, icon:'📋', industry:'智能应用', title:'黑龙江全省：作物补贴申报智能核查系统', desc:'黑龙江省农科院联合省农业农村厅，基于多源遥感数据（高分卫星+无人机抽查）与申报地块交叉验证，AI自动识别虚报、重报等问题地块，2024年核查大豆、玉米生产者补贴申报面积超1.2亿亩，核查效率较人工提升80%，补贴发放准确率提升至99.2%。', org:'黑龙江省农业科学院', location:'黑龙江省·全省覆盖', tags:['数据分析','交叉验证','补贴核查','1.2亿亩'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-10.webp'},
+  {id:11, icon:'🐄', industry:'智能应用', title:'黑龙江安达：奶牛体况自动化评分模型', desc:'东北农业大学在安达市现代牧场部署计算机视觉奶牛体况评分（BCS）模型，通过挤奶通道上方监控摄像头自动采集奶牛背部图像，AI实时评估膘情并标记异常个体，替代传统人工评分，2024年试点覆盖2800头荷斯坦奶牛，每月节省220+工时，评分一致性提升至94%。', org:'东北农业大学', location:'黑龙江省·安达市', tags:['智能应用','计算机视觉','畜牧业','奶牛'], status:'ongoing', statusText:'进行中', vis:'e', img:'assets/cases/case-11.webp'},
+  {id:12, icon:'🏠', industry:'遥感识别', title:'山东寿光：农业大棚违规建设遥感识别', desc:'航天宏图联合寿光市自然资源局，利用高分遥感影像+深度学习目标检测算法（Faster R-CNN），每季度自动识别全域新增农业大棚并判定合规性，2024年覆盖寿光市2180平方公里，发现疑似违规大棚430处，为耕地保护执法与设施农业规范化管理提供数据支撑。', org:'航天宏图信息技术股份有限公司', location:'山东省·寿光市', tags:['遥感识别','目标检测','执法辅助','设施农业'], status:'delivered', statusText:'已交付', vis:'c', img:'assets/cases/case-12.webp'},
+  {id:13, icon:'🚁', industry:'精准农业', title:'新疆尉犁：极飞"超级棉田"AI+无人机管理3000亩', desc:'极飞科技在新疆尉犁县落地"超级棉田"项目，遥感无人机高频巡田+AI病虫草害识别+智能水肥管理，仅2人管理3000亩棉田，亩产达529公斤（全国一流水平），农药成本降17%，人工成本降64%，已推广至2500+农场，入选农业农村部智慧农业典型案例。', org:'极飞科技', location:'新疆·尉犁县', tags:['无人机','AI视觉','精准灌溉','棉花','已规模化'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-13.webp'},
+  {id:14, icon:'🌾', industry:'AI大模型', title:'黑龙江建三江：北大荒×哈工大"天工开悟"水稻大模型', desc:'北大荒信息公司与哈工大联合发布"天工开悟（Kwoo）"农业大模型——国内首个完成中央网信办备案的农业大模型，在建三江推广水稻三维变量施肥2万亩，AI处方图驱动插秧机精准作业，亩节肥10%、增产5%–10%，入选《黑龙江省2024年智慧农业建设优秀典型案例》。', org:'北大荒信息有限公司×哈工大', location:'黑龙江省·建三江', tags:['种植大模型','变量施肥','寒地水稻','2万亩推广'], status:'delivered', statusText:'已交付', vis:'b', img:'assets/cases/case-14.webp'},
+  {id:15, icon:'🧠', industry:'AI大模型', title:'内蒙古/东北：先正达iMAP大模型覆盖百万亩粮田', desc:'先正达集团中国发布iMAP农业种植综合大模型，首创"作物机理×大模型×智能体"三体融合AI技术，在内蒙古、东北玉米主产区试点100万亩，农事决策时间缩短75%，节水节肥10%–20%，增产8%–10%，亩均增收150–200元，入选国务院国资委首批央企AI战略性高价值场景。', org:'先正达集团中国', location:'内蒙古/东北·玉米主产区', tags:['种植大模型','遥感决策','央企AI','100万亩'], status:'ongoing', statusText:'进行中', vis:'c', img:'assets/cases/case-15.webp'},
+  {id:16, icon:'🤖', industry:'精准农业', title:'浙江江山：托普云农AI植保驱动双季稻创纪录', desc:'托普云农在浙江江山打造"天空地一体化"未来农场，AI病虫害识别覆盖2063种害虫与76种病害症状，防治效率提升30%，双季稻最高亩产达1585.54公斤，连创4项"浙江农业之最"，实现节水10%、减肥10%，管理效率提升50%以上，已在多地复制推广。', org:'托普云农', location:'浙江省·江山市', tags:['病虫害AI','高产攻关','天空地一体','上市公司'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-16.webp'},
+];
+
+// Industry categories (derived from data)
+var INDUSTRIES = ['全部','遥感识别','产量预测','病虫害检测','变化检测','智能应用','精准农业','AI大模型'];
+
+// Filter tags
+var FILTER_TAGS = ['全部','已交付','进行中','玉米','水稻','大豆','小麦','棉花','卫星遥感','无人机','深度学习','大模型','灾害评估','黑土地','高标准农田','设施农业'];
+
+// ===== STATE =====
+var activeIndustry = '全部';
+var activeFilter = '全部';
+var currentPage = 1;
+var PAGE_SIZE = 6;
+
+// ===== RENDER: Industry Menu =====
+function renderIndustryMenu() {
+  var counts = {};
+  INDUSTRIES.forEach(function(ind) {
+    counts[ind] = ind === '全部' ? ALL_CASES.length : ALL_CASES.filter(function(c){ return c.industry === ind; }).length;
+  });
+  document.getElementById('industryMenu').innerHTML =
+    '<div class="case-industry-title">行业场景</div>' +
+    INDUSTRIES.map(function(ind) {
+      var active = ind === activeIndustry ? ' active' : '';
+      return '<div class="case-industry-item' + active + '" data-industry="' + ind + '" onclick="selectIndustry(\'' + ind + '\')">' +
+        '<span class="ind-icon">' + getIndustryIcon(ind) + '</span>' +
+        '<span>' + ind + '</span>' +
+        '<span class="ind-count">' + counts[ind] + '</span>' +
+        '</div>';
+    }).join('');
+}
+
+function getIndustryIcon(ind) {
+  var map = {'全部':'🏠','遥感识别':'🛰️','产量预测':'📊','病虫害检测':'🐛','变化检测':'🌲','智能应用':'🤖','精准农业':'🎯','AI大模型':'🧠'};
+  return map[ind] || '📌';
+}
+
+// ===== RENDER: Filter Tags =====
+function renderFilters() {
+  document.getElementById('caseFilters').innerHTML =
+    '<span class="case-filter-label">筛选：</span>' +
+    FILTER_TAGS.map(function(t) {
+      var active = t === activeFilter ? ' active' : '';
+      return '<span class="case-filter-tag' + active + '" onclick="selectFilter(\'' + t.replace(/'/g, "\\'") + '\')">' + t + '</span>';
+    }).join('');
+}
+
+// ===== GET FILTERED CASES =====
+function getFilteredCases() {
+  var cases = ALL_CASES;
+  if (activeIndustry !== '全部') {
+    cases = cases.filter(function(c){ return c.industry === activeIndustry; });
+  }
+  if (activeFilter !== '全部') {
+    cases = cases.filter(function(c){
+      return c.tags.indexOf(activeFilter) !== -1 || c.statusText === activeFilter;
+    });
+  }
+  return cases;
+}
+
+// ===== RENDER: Case Cards =====
+function renderCases() {
+  var filtered = getFilteredCases();
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+
+  var start = (currentPage - 1) * PAGE_SIZE;
+  var pageCases = filtered.slice(start, start + PAGE_SIZE);
+
+  var grid = document.getElementById('caseGrid');
+  var empty = document.getElementById('caseEmpty');
+
+  if (pageCases.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = pageCases.map(function(c){
+      return '<div class="case-card" onclick="openCaseDetail(' + c.id + ')">' +
+        '<div class="cc-visual vis-' + c.vis + '">' +
+          (c.img ? '<img class="cc-img" src="' + c.img + '" alt="' + c.title + '" loading="lazy">' : '<span class="cc-icon">' + c.icon + '</span>') +
+          '<span class="cc-status ' + c.status + '">' + c.statusText + '</span>' +
+        '</div>' +
+        '<div class="cc-body">' +
+          '<h3>' + c.title + '</h3>' +
+          '<p class="cc-desc">' + c.desc + '</p>' +
+          '<div class="cc-org">🏢 ' + c.org + '</div>' +
+          (c.location ? '<div class="cc-location">📍 ' + c.location + '</div>' : '') +
+          '<div class="cc-tags">' + c.tags.map(function(t){ return '<span class="cc-tag">' + t + '</span>'; }).join('') + '</div>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+  }
+  renderPagination(totalPages);
+}
+
+// ===== RENDER: Pagination =====
+function renderPagination(totalPages) {
+  if (totalPages <= 1) {
+    document.getElementById('casePagination').innerHTML = '';
+    return;
+  }
+  var html = '';
+  html += '<button class="pg-btn' + (currentPage === 1 ? ' disabled' : '') + '" onclick="goPage(' + (currentPage - 1) + ')">‹</button>';
+  for (var i = 1; i <= totalPages; i++) {
+    html += '<button class="pg-btn' + (i === currentPage ? ' active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+  html += '<button class="pg-btn' + (currentPage === totalPages ? ' disabled' : '') + '" onclick="goPage(' + (currentPage + 1) + ')">›</button>';
+  document.getElementById('casePagination').innerHTML = html;
+}
+
+// ===== ACTIONS =====
+function selectIndustry(ind) {
+  activeIndustry = ind;
+  activeFilter = '全部';
+  currentPage = 1;
+  renderIndustryMenu();
+  renderFilters();
+  renderCases();
+}
+
+function selectFilter(tag) {
+  activeFilter = tag;
+  currentPage = 1;
+  renderFilters();
+  renderCases();
+}
+
+function goPage(page) {
+  var filtered = getFilteredCases();
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderCases();
+  document.getElementById('caseGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function openCaseDetail(id) {
+  window.location.href = 'case-detail.html?id=' + id;
+}
+
+// ===== INIT =====
+renderIndustryMenu();
+renderFilters();
+renderCases();
+
+// ===== TOP NAV =====
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (nav === 'home') { window.location.href = 'portal.html'; return; }
+    if (nav === 'cases') return; // already here
+    if (nav === 'marketplace') { window.location.href = 'model-marketplace.html'; return; }
+    if (nav === 'data') { window.location.href = 'dataset-management.html'; return; }
+    if (nav === 'demand') { window.location.href = 'demand-hall.html'; return; }
+    if (nav === 'docs') { window.location.href = 'doc-center.html'; return; }
+    toast('模块「'+e.target.textContent+'」页面尚未开发', 'info');
+  }
+});
+
+// ===== AUTH STATE =====
+function isLoggedIn() {
+  try { return sessionStorage.getItem('luoshu_logged_in') === '1'; } catch(e) { return false; }
+}
+function switchAuthState(loggedIn) {
+  document.getElementById('headerAuthOut').style.display = loggedIn ? 'none' : '';
+  document.getElementById('headerAuthIn').style.display = loggedIn ? '' : 'none';
+}
+(function(){ switchAuthState(isLoggedIn()); })();
+
+// ===== NOTIFICATIONS =====
+var NOTIFS=[
+  {icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},
+  {icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},
+  {icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},
+  {icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},
+  {icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}
+];
+function renderNotifs(){
+  document.getElementById('notifList').innerHTML = NOTIFS.map(function(n){
+    return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';
+  }).join('');
+}
+renderNotifs();
+function toggleNotifPopover(){ document.getElementById('notifPopover').classList.toggle('visible'); closeUserMenu(); }
+function markAllRead(){ NOTIFS.forEach(function(n){ n.unread=false; }); renderNotifs(); document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none'; }
+document.addEventListener('click',function(e){ var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn'); if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){ popover.classList.remove('visible'); }});
+
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); if(confirm('确定退出登录？')){ try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录','info'); } }
+
+// ===== TOAST =====
+function toast(msg, type){
+  var el = document.getElementById('toast');
+  el.textContent = (type==='error'?'⚠ ':'') + msg;
+  el.className = 'toast visible toast-' + (type || 'info');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('visible'); }, 4000);
+}
+</script>
+
+</body>
+</html>

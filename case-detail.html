@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案例详情 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.6;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+a { color: #2f54eb; text-decoration: none; transition: color 0.3s; }
+a:hover { color: #597ef7; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+  background-color: rgba(255,255,255,0.88);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+.dropdown-wrap { position: relative; display: inline-flex; }
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+
+/* ============================================================
+   PAGE WRAP
+   ============================================================ */
+.page-wrap { padding-top: 60px; }
+
+/* ============================================================
+   BREADCRUMB
+   ============================================================ */
+.breadcrumb-bar {
+  max-width: 1200px; margin: 0 auto; padding: 16px 50px 0;
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(0,0,0,0.45);
+}
+.breadcrumb-bar a { color: rgba(0,0,0,0.45); }
+.breadcrumb-bar a:hover { color: #2f54eb; }
+.breadcrumb-bar .bc-sep { color: rgba(0,0,0,0.25); }
+.breadcrumb-bar .bc-current { color: rgba(0,0,0,0.88); font-weight: 500; }
+
+/* ============================================================
+   HERO BANNER
+   ============================================================ */
+.detail-hero {
+  max-width: 1200px; margin: 16px auto 0; padding: 0 50px;
+}
+.detail-hero-inner {
+  background: #fff; border-radius: 12px; border: 1px solid rgba(5,5,5,0.06);
+  overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.dh-visual {
+  height: 180px; position: relative; display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.dh-visual.vis-a { background: linear-gradient(135deg, #eef2ff 0%, #d6e4ff 100%); }
+.dh-visual.vis-b { background: linear-gradient(135deg, #e6fffb 0%, #b5f5ec 100%); }
+.dh-visual.vis-c { background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%); }
+.dh-visual.vis-d { background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); }
+.dh-visual.vis-e { background: linear-gradient(135deg, #f0f5ff 0%, #adc6ff 100%); }
+.dh-visual .dh-icon { font-size: 64px; position: relative; z-index: 1; opacity: 0.6; }
+.dh-visual .dh-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 35%;
+}
+.dh-info { padding: 28px 32px 24px; }
+.dh-info .dh-status {
+  display: inline-flex; padding: 2px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 500; margin-bottom: 12px;
+}
+.dh-status.delivered { background: #d9f7be; color: #52c41a; }
+.dh-status.ongoing { background: #d6e4ff; color: #2f54eb; }
+.dh-info h1 { font-size: 26px; font-weight: 700; color: rgba(0,0,0,0.88); line-height: 1.35; margin-bottom: 14px; }
+.dh-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(0,0,0,0.45); }
+.dh-meta-item { display: flex; align-items: center; gap: 4px; }
+.dh-meta-divider { width: 1px; height: 14px; background: rgba(0,0,0,0.1); border-radius: 1px; }
+.dh-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(5,5,5,0.05); }
+.dh-tag { padding: 2px 10px; border-radius: 4px; font-size: 12px; background: rgba(47,84,235,0.06); color: #2f54eb; }
+
+/* ============================================================
+   MAIN CONTENT — two columns
+   ============================================================ */
+.detail-content {
+  max-width: 1200px; margin: 24px auto 0; padding: 0 50px 60px;
+  display: flex; gap: 24px; align-items: flex-start;
+}
+
+/* --- Left column --- */
+.detail-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+
+/* Section card */
+.detail-section {
+  background: #fff; border-radius: 10px; border: 1px solid rgba(5,5,5,0.06);
+  padding: 28px 32px; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.ds-heading {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 17px; font-weight: 600; color: rgba(0,0,0,0.88);
+}
+.ds-heading::before {
+  content: ''; display: inline-block; width: 2px; height: 14px;
+  background: #2f54eb; border-radius: 1px; flex-shrink: 0;
+}
+.ds-body { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.85; }
+.ds-body p { margin-bottom: 12px; }
+.ds-body p:last-child { margin-bottom: 0; }
+
+/* Results stat cards */
+.results-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px; margin-top: 8px;
+}
+.result-stat {
+  background: #fafbfc; border: 1px solid rgba(5,5,5,0.05);
+  border-radius: 8px; padding: 16px 18px; text-align: center;
+  transition: all 0.2s;
+}
+.result-stat:hover { border-color: rgba(47,84,235,0.12); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.result-stat .rs-val { font-size: 24px; font-weight: 700; color: #2f54eb; line-height: 1.3; }
+.result-stat .rs-val.accent { color: #23ada4; }
+.result-stat .rs-lbl { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 4px; line-height: 1.5; }
+
+/* Solution subsections */
+.sol-sub { margin-bottom: 20px; }
+.sol-sub:last-child { margin-bottom: 0; }
+.sol-sub-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+/* --- Right column (sidebar) --- */
+.detail-sidebar { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 84px; }
+
+/* Info card */
+.info-card {
+  background: #fff; border-radius: 10px; border: 1px solid rgba(5,5,5,0.06);
+  padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.info-card h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+.info-card h4::before { content: ''; display: inline-block; width: 2px; height: 12px; background: #2f54eb; border-radius: 1px; flex-shrink: 0; }
+.info-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(5,5,5,0.04); font-size: 13px; }
+.info-row:last-child { border-bottom: none; }
+.info-row .ir-lbl { color: rgba(0,0,0,0.45); flex-shrink: 0; margin-right: 12px; }
+.info-row .ir-val { color: rgba(0,0,0,0.88); text-align: right; font-weight: 500; }
+
+/* Related cases card */
+.related-card {
+  background: #fff; border-radius: 10px; border: 1px solid rgba(5,5,5,0.06);
+  padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.related-card h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.related-card h4::before { content: ''; display: inline-block; width: 2px; height: 12px; background: #2f54eb; border-radius: 1px; flex-shrink: 0; }
+.rel-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 6px; border: 1px solid transparent;
+}
+.rel-item:hover { background: rgba(47,84,235,0.04); border-color: rgba(47,84,235,0.08); }
+.rel-item:last-child { margin-bottom: 0; }
+.rel-visual {
+  width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.rel-visual.rv-a { background: linear-gradient(135deg, #eef2ff, #d6e4ff); }
+.rel-visual.rv-b { background: linear-gradient(135deg, #e6fffb, #b5f5ec); }
+.rel-visual.rv-c { background: linear-gradient(135deg, #f6ffed, #d9f7be); }
+.rel-visual.rv-d { background: linear-gradient(135deg, #fff7e6, #ffe7ba); }
+.rel-visual.rv-e { background: linear-gradient(135deg, #f0f5ff, #adc6ff); }
+.rel-info { flex: 1; min-width: 0; }
+.rel-info .rel-title { font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.88); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.2s; }
+.rel-item:hover .rel-title { color: #2f54eb; }
+.rel-info .rel-org { font-size: 11px; color: rgba(0,0,0,0.35); margin-top: 2px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer { background: #001529; color: rgba(255,255,255,0.65); padding: 48px 50px 24px; font-size: 13px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+.footer-col h4 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 16px; }
+.footer-col p, .footer-col a { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 2.2; display: block; text-decoration: none; }
+.footer-col a:hover { color: #597ef7; }
+.footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-logo span { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.footer-bot { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.8; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; z-index: 2000; padding: 10px 16px; border-radius: 6px; font-size: 14px; display: none; align-items: center; gap: 8px; animation: toastIn 0.3s cubic-bezier(0.78,0.14,0.15,0.86); box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); }
+.toast.visible { display: flex; }
+.toast-info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+/* ============================================================
+   NOT FOUND STATE
+   ============================================================ */
+.not-found { text-align: center; padding: 80px 20px; }
+.not-found .nf-icon { font-size: 64px; margin-bottom: 16px; }
+.not-found .nf-text { font-size: 16px; color: rgba(0,0,0,0.45); margin-bottom: 16px; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .detail-content { flex-direction: column; padding: 24px 20px 40px; }
+  .detail-sidebar { width: 100%; position: static; }
+  .detail-hero { padding: 0 20px; }
+  .dh-visual { height: 130px; }
+  .dh-info { padding: 20px; }
+  .dh-info h1 { font-size: 20px; }
+  .breadcrumb-bar { padding: 12px 20px 0; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .results-grid { grid-template-columns: 1fr; }
+  .dh-meta { gap: 10px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .top-nav-menu-wrap { display: none; }
+  .header-right { padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" data-nav="home">首页</span>
+        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
+        <span class="top-nav-item active" data-nav="cases">案例中心</span>
+        <span class="top-nav-item" data-nav="data">数据管理</span>
+        <span class="top-nav-item" data-nav="demand">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+      </div></div>
+
+      <div class="header-right">
+        <button class="header-btn" title="搜索"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="login.html">登录</a>
+          <a class="header-btn-register" href="javascript:void(0)" onclick="toast('平台采用受邀注册制，请联系管理员申请入驻','info')">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span><span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="window.location.href='workbench.html'">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== PAGE CONTENT ==================== -->
+<div class="page-wrap" id="pageContent">
+  <!-- Rendered by JS -->
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg)"/></svg>
+        <span>北大荒信息有限公司</span>
+      </div>
+      <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
+    </div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据中心</a><a href="workbench.html">开发空间</a></div>
+    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="javascript:void(0)" onclick="toast('平台采用受邀注册制','info')">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div>
+    <div class="footer-col"><h4>帮助支持</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">使用文档</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">API 参考</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">常见问题</a></div>
+  </div>
+  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+</footer>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================================================================
+// CASE DATA — 16 cases with card data + detailed content
+// ===================================================================
+var ALL_CASES = [
+  {id:1, icon:'🌽', industry:'遥感识别', title:'黑龙江建三江：玉米倒伏面积遥感智能提取', desc:'2023年台风"杜苏芮"过境后，建三江分公司紧急调用 Sentinel-2 多光谱影像与深度学习语义分割模型，48小时内完成全域倒伏地块自动识别，精度达 93.7%，为保险公司定损与灾后复产评估提供量化依据，覆盖玉米种植面积 87 万亩。', org:'北大荒集团建三江分公司', location:'黑龙江省·建三江', tags:['遥感识别','语义分割','卫星遥感','灾害评估'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-01.webp'},
+  {id:2, icon:'📊', industry:'产量预测', title:'黑龙江宝泉岭：水稻产量关键期预估模型', desc:'宝泉岭农场联合哈工大AI实验室，融合田间气象站实时数据、土壤墒情监测与 Sentinel-2 遥感植被指数，构建端到端水稻产量预估模型，在抽穗扬花后提前 3–4 周输出产量分布图与风险评级，为收储调度与市场决策提供数据支撑，覆盖水稻面积 42 万亩。', org:'北大荒集团宝泉岭农场', location:'黑龙江省·鹤岗市', tags:['产量预测','时序分析','气象数据','水稻'], status:'delivered', statusText:'已交付', vis:'b', img:'assets/cases/case-02.webp'},
+  {id:3, icon:'🐛', industry:'病虫害检测', title:'黑龙江九三：大豆病虫害早期预警系统', desc:'九三管局在尖山农场部署无人机多光谱巡检+AI自动识别系统，搭载 YOLOv8 目标检测模型识别蚜虫、灰斑病等6类大豆主要病虫害，结合气象预报提前7天发布预警，指导精准施药，2024年试点减少农药用量32%，亩均节本18元，正在进行全域推广。', org:'北大荒集团九三分公司', location:'黑龙江省·嫩江市', tags:['目标检测','预警模型','无人机','大豆'], status:'ongoing', statusText:'进行中', vis:'c', img:'assets/cases/case-03.webp'},
+  {id:4, icon:'🛰️', industry:'变化检测', title:'黑龙江红兴隆：高标准农田建设遥感监测', desc:'红兴隆分公司联合航天宏图，利用高分二号、高分七号卫星影像进行多期自动比对，AI变化检测算法持续追踪高标准农田建设进度与工程质量，覆盖12个农场共156万亩耕地，实现"天上看、网上管"的数字化监管模式，入选农业农村部智慧农业典型案例。', org:'北大荒集团红兴隆分公司', location:'黑龙江省·双鸭山市', tags:['变化检测','卫星遥感','高分影像','高标准农田'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-04.webp'},
+  {id:5, icon:'🗺️', industry:'遥感识别', title:'黑龙江友谊农场：黑土地土壤有机质遥感反演', desc:'智慧农场全国重点实验室在友谊农场开展黑土地保护专项，基于高光谱遥感与1200个地面采样点数据，构建土壤有机质含量空间反演模型，精度R²=0.87，替代传统网格化采样，单次检测成本降低76%，已形成覆盖48万亩耕地的逐年土壤健康图谱。', org:'智慧农场全国重点实验室', location:'黑龙江省·友谊县', tags:['遥感识别','高光谱','土壤建模','黑土地'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-05.webp'},
+  {id:6, icon:'🦗', industry:'病虫害检测', title:'河南新乡：小麦赤霉病无人机巡检系统', desc:'中国农科院作物科学研究所在河南新乡小麦主产区部署无人机赤霉病巡检系统，搭载多光谱相机+深度学习目标检测算法，在扬花期实现赤霉病早期自动识别，检测准确率达91.5%，响应时间从传统人工踏查的5天缩短至2小时，2024年服务面积超30万亩。', org:'中国农业科学院', location:'河南省·新乡市', tags:['目标检测','无人机','病害识别','小麦'], status:'delivered', statusText:'已交付', vis:'e', img:'assets/cases/case-06.webp'},
+  {id:7, icon:'🌲', industry:'变化检测', title:'吉林西部：林草湿地变化图斑自动检测', desc:'中科院东北地理所在吉林西部（白城、松原）部署林草湿地变化监测系统，利用2018–2025年多期Sentinel-2影像自动比对，AI自动提取变化图斑并分类（林地→耕地、湿地→建设用地等），服务退耕还林核查与向海、莫莫格湿地生态监测，年更新全域报告。', org:'中科院东北地理与农业生态研究所', location:'吉林省·白城市/松原市', tags:['变化检测','卫星遥感','时序分析','湿地保护'], status:'delivered', statusText:'已交付', vis:'c', img:'assets/cases/case-07.webp'},
+  {id:8, icon:'🤖', industry:'智能应用', title:'河北曲周：智慧农场综合决策支持系统', desc:'中国农业大学在河北曲周实验站打造智慧农场"大脑"，集成长势监测、产量预测、病虫害识别、气象预警等12种AI模型，覆盖冬小麦-夏玉米轮作从种到收全流程，为周边6个合作社、3.2万亩耕地提供一站式AI决策支持，2024年示范田亩均增产11.6%。', org:'中国农业大学', location:'河北省·邯郸市曲周县', tags:['智能应用','多模型协同','全流程','小麦玉米'], status:'ongoing', statusText:'进行中', vis:'b', img:'assets/cases/case-08.webp'},
+  {id:9, icon:'🏗️', industry:'变化检测', title:'北大荒全域：耕地"非农化"遥感监测平台', desc:'北大荒信息公司利用高分卫星影像与AI变化检测算法，对集团旗下113个农（牧）场4800万亩耕地进行月度全域扫描，自动识别"非农化""非粮化"地块并生成预警工单，2024年累计发现并处置疑似问题图斑1270处，为耕地保护执法提供常态化技术支撑。', org:'北大荒信息有限公司', location:'黑龙江省·覆盖全垦区', tags:['变化检测','卫星遥感','执法辅助','4800万亩'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-09.webp'},
+  {id:10, icon:'📋', industry:'智能应用', title:'黑龙江全省：作物补贴申报智能核查系统', desc:'黑龙江省农科院联合省农业农村厅，基于多源遥感数据（高分卫星+无人机抽查）与申报地块交叉验证，AI自动识别虚报、重报等问题地块，2024年核查大豆、玉米生产者补贴申报面积超1.2亿亩，核查效率较人工提升80%，补贴发放准确率提升至99.2%。', org:'黑龙江省农业科学院', location:'黑龙江省·全省覆盖', tags:['数据分析','交叉验证','补贴核查','1.2亿亩'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-10.webp'},
+  {id:11, icon:'🐄', industry:'智能应用', title:'黑龙江安达：奶牛体况自动化评分模型', desc:'东北农业大学在安达市现代牧场部署计算机视觉奶牛体况评分（BCS）模型，通过挤奶通道上方监控摄像头自动采集奶牛背部图像，AI实时评估膘情并标记异常个体，替代传统人工评分，2024年试点覆盖2800头荷斯坦奶牛，每月节省220+工时，评分一致性提升至94%。', org:'东北农业大学', location:'黑龙江省·安达市', tags:['智能应用','计算机视觉','畜牧业','奶牛'], status:'ongoing', statusText:'进行中', vis:'e', img:'assets/cases/case-11.webp'},
+  {id:12, icon:'🏠', industry:'遥感识别', title:'山东寿光：农业大棚违规建设遥感识别', desc:'航天宏图联合寿光市自然资源局，利用高分遥感影像+深度学习目标检测算法（Faster R-CNN），每季度自动识别全域新增农业大棚并判定合规性，2024年覆盖寿光市2180平方公里，发现疑似违规大棚430处，为耕地保护执法与设施农业规范化管理提供数据支撑。', org:'航天宏图信息技术股份有限公司', location:'山东省·寿光市', tags:['遥感识别','目标检测','执法辅助','设施农业'], status:'delivered', statusText:'已交付', vis:'c', img:'assets/cases/case-12.webp'},
+  {id:13, icon:'🚁', industry:'精准农业', title:'新疆尉犁：极飞"超级棉田"AI+无人机管理3000亩', desc:'极飞科技在新疆尉犁县落地"超级棉田"项目，遥感无人机高频巡田+AI病虫草害识别+智能水肥管理，仅2人管理3000亩棉田，亩产达529公斤（全国一流水平），农药成本降17%，人工成本降64%，已推广至2500+农场，入选农业农村部智慧农业典型案例。', org:'极飞科技', location:'新疆·尉犁县', tags:['无人机','AI视觉','精准灌溉','棉花','已规模化'], status:'delivered', statusText:'已交付', vis:'a', img:'assets/cases/case-13.webp'},
+  {id:14, icon:'🌾', industry:'AI大模型', title:'黑龙江建三江：北大荒×哈工大"天工开悟"水稻大模型', desc:'北大荒信息公司与哈工大联合发布"天工开悟（Kwoo）"农业大模型——国内首个完成中央网信办备案的农业大模型，在建三江推广水稻三维变量施肥2万亩，AI处方图驱动插秧机精准作业，亩节肥10%、增产5%–10%，入选《黑龙江省2024年智慧农业建设优秀典型案例》。', org:'北大荒信息有限公司×哈工大', location:'黑龙江省·建三江', tags:['种植大模型','变量施肥','寒地水稻','2万亩推广'], status:'delivered', statusText:'已交付', vis:'b', img:'assets/cases/case-14.webp'},
+  {id:15, icon:'🧠', industry:'AI大模型', title:'内蒙古/东北：先正达iMAP大模型覆盖百万亩粮田', desc:'先正达集团中国发布iMAP农业种植综合大模型，首创"作物机理×大模型×智能体"三体融合AI技术，在内蒙古、东北玉米主产区试点100万亩，农事决策时间缩短75%，节水节肥10%–20%，增产8%–10%，亩均增收150–200元，入选国务院国资委首批央企AI战略性高价值场景。', org:'先正达集团中国', location:'内蒙古/东北·玉米主产区', tags:['种植大模型','遥感决策','央企AI','100万亩'], status:'ongoing', statusText:'进行中', vis:'c', img:'assets/cases/case-15.webp'},
+  {id:16, icon:'🤖', industry:'精准农业', title:'浙江江山：托普云农AI植保驱动双季稻创纪录', desc:'托普云农在浙江江山打造"天空地一体化"未来农场，AI病虫害识别覆盖2063种害虫与76种病害症状，防治效率提升30%，双季稻最高亩产达1585.54公斤，连创4项"浙江农业之最"，实现节水10%、减肥10%，管理效率提升50%以上，已在多地复制推广。', org:'托普云农', location:'浙江省·江山市', tags:['病虫害AI','高产攻关','天空地一体','上市公司'], status:'delivered', statusText:'已交付', vis:'d', img:'assets/cases/case-16.webp'},
+];
+
+// ===================================================================
+// DETAILED CASE CONTENT
+// ===================================================================
+var CASE_DETAILS = {};
+
+// ----- Case 1: 玉米倒伏遥感提取 -----
+CASE_DETAILS[1] = {
+  background: '<p>2023年8月初，台风"杜苏芮"北上过境黑龙江省，建三江垦区遭遇大范围强风暴雨，导致大面积玉米出现不同程度的倒伏灾害。传统的倒伏评估依赖农业技术人员逐地块踏查，耗时长、成本高，且受主观经验影响大，无法在灾后黄金窗口期内完成全域评估。作为北大荒集团玉米核心产区，建三江87万亩玉米的灾情数据直接关系到保险定损、灾后复产方案制定和国家粮食安全统计的准确性。因此，急需一套快速、客观、高精度的倒伏面积遥感智能提取方案。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">📡 数据源与预处理</div><p>紧急调用欧空局Sentinel-2多光谱卫星影像（空间分辨率10m），选取灾后3日内的无云影像，经大气校正、几何精校正后，提取红、绿、蓝、近红外、红边等10个波段构建多光谱特征集。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 模型选型与训练</div><p>采用DeepLabV3+语义分割架构，以ResNet-50为骨干网络，在历史倒伏样本集（含2019年"利奇马"、2020年"巴威"两次台风倒伏标注数据）上进行迁移学习微调。针对倒伏区域与非倒伏区域在近红外与红边波段反射率的显著差异，引入注意力机制增强倒伏特征提取能力。</p></div><div class="sol-sub"><div class="sol-sub-title">📊 后处理与出图</div><p>分割结果经形态学后处理（膨胀+腐蚀）消除碎斑，按农场管理区边界裁剪，自动统计各地块倒伏面积与倒伏率，生成分级受灾专题图（轻度/中度/重度），以GeoJSON格式对接保险定损系统。</p></div>',
+  results: [{val:'93.7%',lbl:'倒伏识别总体精度'},{val:'48h',lbl:'从影像获取到成果出图',clazz:'accent'},{val:'87万亩',lbl:'覆盖玉米种植面积'},{val:'12个',lbl:'覆盖农场数量',clazz:'accent'},{val:'3日内',lbl:'灾后影像获取窗口'}],
+  company: '<p>北大荒集团建三江分公司（原黑龙江省农垦建三江管理局）是我国最大的水稻、玉米商品粮生产基地之一，下辖15个大中型国有农场，耕地面积超1100万亩。公司长期致力于精准农业和数字农业建设，率先在垦区引入卫星遥感、无人机巡检和AI决策等智慧农业技术，是国家首批数字农业应用推广基地。</p>'
+};
+
+// ----- Case 2: 水稻产量预估 -----
+CASE_DETAILS[2] = {
+  background: '<p>水稻产量预估是粮食收储调度、市场定价和国际贸易决策的关键依据。传统产量预估依赖农技人员田间抽样测产，样本量有限且时效性差——通常要到收获前2周才能获得可靠数据。宝泉岭农场是北大荒水稻核心产区之一，年产水稻超30万吨，管理者需要在抽穗扬花期（收获前5–6周）即掌握产量空间分布，以便提前安排收割机械、烘干仓储和销售计划。为此，宝泉岭联合哈工大AI实验室启动了基于多源数据融合的水稻产量关键期预估模型研发。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🔗 多源数据融合</div><p>融合三类数据：①田间物联网气象站实时数据（温度、降水、日照时数）；②土壤墒情监测网数据（土壤含水量、温度、电导率）；③Sentinel-2遥感植被指数时序数据（NDVI、EVI、LAI），构建覆盖水稻全生育期的多维特征矩阵。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 时序预测模型</div><p>采用ConvLSTM（卷积长短期记忆网络）架构，将每个田块的多维时序特征输入模型，输出产量空间分布图（30m分辨率）。模型在2019–2022年历史产量数据上训练验证，R²=0.89，RMSE=42kg/亩。</p></div><div class="sol-sub"><div class="sol-sub-title">📊 风险评级</div><p>基于产量预测值，自动将田块划分为高产稳产区、产量波动区和低产风险区三级，叠加土壤肥力、灌溉条件等辅助图层，生成田间管理处方建议。</p></div>',
+  results: [{val:'R²=0.89',lbl:'产量预测决定系数'},{val:'提前3-4周',lbl:'可获取可靠产量预估',clazz:'accent'},{val:'42万亩',lbl:'覆盖水稻种植面积'},{val:'30m',lbl:'产量分布图空间分辨率',clazz:'accent'}],
+  company: '<p>北大荒集团宝泉岭分公司地处黑龙江省鹤岗市，下辖13个农场，耕地面积540万亩，是北大荒集团重要的商品粮生产基地。公司与哈尔滨工业大学等高校建立了长期产学研合作关系，在智慧农业、精准施肥、智能灌溉等领域取得了多项标志性成果。</p>'
+};
+
+// ----- Case 3: 大豆病虫害预警 -----
+CASE_DETAILS[3] = {
+  background: '<p>大豆蚜虫、灰斑病、霜霉病等病虫害是威胁黑龙江大豆产量和品质的主要生物灾害。九三垦区是我国最大的非转基因大豆生产基地之一，年种植面积超200万亩。传统的病虫害监测依赖人工田间调查，存在发现滞后、覆盖不全、防治不及时等问题，往往等到肉眼可见症状时，已错过最佳防治窗口。2024年，九三分公司在尖山农场启动"无人机+AI"大豆病虫害早期预警试点，探索从"被动治"到"主动防"的转变。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛸 无人机多光谱巡检</div><p>部署DJI Mavic 3 Multispectral无人机，每周2次对试点田块进行自动化航线巡检，采集绿、红、红边、近红外4个波段影像，空间分辨率达3cm/像素，可识别早期病斑和虫害胁迫。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 YOLOv8目标检测</div><p>基于YOLOv8架构训练6类病虫害检测模型（蚜虫、灰斑病、霜霉病、菌核病、食心虫、胞囊线虫），在5000+标注样本上训练，mAP@0.5=0.91。模型量化后部署在边缘计算终端上，田间即可实时推理。</p></div><div class="sol-sub"><div class="sol-sub-title">🌦️ 气象耦合预警</div><p>将AI检测结果与田间气象站数据耦合，建立7天滚动预警模型——当气象条件（温度、湿度、降雨）有利于某种病虫害暴发，且AI已检测到早期症状时，自动触发预警并生成精准施药处方图。</p></div>',
+  results: [{val:'32%',lbl:'农药用量减少'},{val:'18元/亩',lbl:'亩均节本',clazz:'accent'},{val:'6类',lbl:'可识别病虫害种类'},{val:'提前7天',lbl:'预警提前量',clazz:'accent'},{val:'mAP 0.91',lbl:'目标检测精度'}],
+  company: '<p>北大荒集团九三分公司（原九三管理局）地处黑龙江省嫩江市，是中国最大的非转基因大豆生产基地，素有"中国绿色大豆之都"的美誉。公司下辖11个农场，耕地面积400万亩，年产大豆超50万吨，是国家大豆产业技术体系的核心示范区。</p>'
+};
+
+// ----- Case 4: 高标准农田遥感监测 -----
+CASE_DETAILS[4] = {
+  background: '<p>高标准农田建设是"藏粮于地"战略的核心抓手。红兴隆垦区承担着大规模高标准农田建设任务——涉及土地平整、灌排设施、田间道路、农田防护林等多项工程，12个农场156万亩耕地的建设进度和质量监管面临巨大挑战。传统的人工巡查模式难以做到全域、高频、客观的监测，工程质量问题往往在竣工验收时才暴露。红兴隆分公司联合航天宏图，探索利用国产高分卫星影像实现"天上看、网上管"的数字化监管。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 多期高分影像比对</div><p>利用高分二号（0.8m全色）、高分七号（0.65m立体测绘）卫星影像，按季度获取全域影像，经正射校正、影像配准后，构建2019–2025年时序影像堆栈。变化检测算法（基于Siamese U-Net架构）自动比对相邻两期影像，识别新增田块平整区、新建灌排渠道和田间道路。</p></div><div class="sol-sub"><div class="sol-sub-title">📏 工程质量AI评估</div><p>针对田块规整度（分形维数）、渠道连通度、道路通达性等指标建立AI评估模型，自动检测偏离设计标准的工程区域，生成工程进度热力图与质量预警报告。</p></div><div class="sol-sub"><div class="sol-sub-title">📋 数字化监管平台</div><p>将AI分析结果汇入高标准农田数字化监管平台，支持按农场、按项目、按月份多维查询，实现"一图知全局、一网管全程"。</p></div>',
+  results: [{val:'156万亩',lbl:'监测覆盖耕地面积'},{val:'12个',lbl:'覆盖农场数量',clazz:'accent'},{val:'季度',lbl:'监测更新频率'},{val:'0.8m',lbl:'卫星影像空间分辨率',clazz:'accent'},{val:'入选',lbl:'农业农村部智慧农业典型案例'}],
+  company: '<p>北大荒集团红兴隆分公司地处黑龙江省双鸭山市，下辖12个大中型国有农场，耕地面积超700万亩，是北大荒集团重要的商品粮和优质米生产基地。公司在高标准农田建设、黑土地保护和数字农业领域持续走在垦区前列。</p>'
+};
+
+// ----- Case 5: 黑土地土壤有机质遥感 -----
+CASE_DETAILS[5] = {
+  background: '<p>黑土地是"耕地中的大熊猫"，土壤有机质含量是衡量黑土地质量的核心指标。友谊农场所在的松嫩平原典型黑土区，由于长期高强度利用，土壤有机质含量以年均0.1–0.3g/kg的速率下降。传统网格化采样检测（每100亩1个采样点）成本高、周期长，48万亩耕地完成一轮检测需耗资数百万元、历时数月，难以实现逐年高频监测。智慧农场全国重点实验室在友谊农场开展了基于高光谱遥感的黑土地有机质快速反演专项研究。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🔬 高光谱数据采集</div><p>利用机载高光谱成像仪（400–2500nm，360波段）获取裸土期（春季翻耕后、播种前）的高光谱影像，同时采集1200个地面土壤样本（0–20cm耕层），实验室测定有机质含量作为建模真值。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 空间反演模型</div><p>采用基于随机森林+克里金空间插值的混合建模方法——先利用随机森林建立高光谱反射率→有机质含量的预测模型，再利用克里金插值对残差进行空间校正。模型在独立验证集上R²=0.87，RMSE=2.1g/kg。相比传统单一算法，混合模型将预测精度提升了约12%。</p></div><div class="sol-sub"><div class="sol-sub-title">🗺️ 逐年土壤健康图谱</div><p>基于2019–2025年连续7期高光谱数据，生成48万亩耕地的逐年有机质含量空间分布图（10m分辨率），支持逐地块查询有机质变化趋势，识别退化热点区域。</p></div>',
+  results: [{val:'R²=0.87',lbl:'土壤有机质反演精度'},{val:'76%',lbl:'单次检测成本降低',clazz:'accent'},{val:'48万亩',lbl:'覆盖耕地面积'},{val:'1200个',lbl:'地面采样点数量',clazz:'accent'},{val:'10m',lbl:'输出图空间分辨率'}],
+  company: '<p>智慧农场全国重点实验室（原"智慧农场技术与系统全国重点实验室"）依托北大荒集团和哈尔滨工业大学建设，是我国智慧农业领域唯一的全国重点实验室。实验室聚焦农业感知、智能决策、精准作业三大方向，在黑土地保护、作物模型、智能农机等领域取得了系列原创性成果。</p>'
+};
+
+// ----- Case 6: 小麦赤霉病无人机巡检 -----
+CASE_DETAILS[6] = {
+  background: '<p>小麦赤霉病是我国小麦主产区危害最严重的病害之一，一旦暴发可导致减产20%–50%，且病粒含呕吐毒素（DON），严重影响食品安全。传统赤霉病监测依赖农技人员在扬花期逐田踏查，河南新乡30万亩小麦产区的全面调查需5天以上，往往发现病斑时已错过最佳防治期（扬花初期至盛期仅5–7天）。中国农科院作物科学研究所于2023–2024年在新乡部署了基于无人机多光谱的赤霉病早期巡检系统。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛸 无人机多光谱采集</div><p>采用DJI P4 Multispectral无人机，在小麦扬花期每日上午10:00–14:00（赤霉病症状最明显时段）进行自动化航线巡检，采集蓝、绿、红、红边、近红外5波段影像，飞行高度30m，空间分辨率2cm。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 深度学习检测模型</div><p>基于改进YOLOv8s架构，引入多光谱通道注意力模块（Spectral Attention Module），相比RGB-only检测将赤霉病识别准确率从86%提升至91.5%。模型在2019–2023年5年跨区域赤霉病样本上训练，具备良好的泛化能力。</p></div><div class="sol-sub"><div class="sol-sub-title">🗺️ 病害热力图与处方图</div><p>检测结果自动拼接为全域病害热力图，标注发病中心位置与严重度分级（轻/中/重），同步生成变量喷药处方图，支持无人机精准施药。</p></div>',
+  results: [{val:'91.5%',lbl:'赤霉病检测准确率'},{val:'2小时',lbl:'全域巡检→出图时间',clazz:'accent'},{val:'30万亩',lbl:'2024年服务面积'},{val:'5天→2h',lbl:'响应时间缩短',clazz:'accent'},{val:'20%-50%',lbl:'挽回潜在产量损失'}],
+  company: '<p>中国农业科学院作物科学研究所是我国作物科学领域的国家级研究机构，拥有作物基因资源与遗传改良国家重点实验室等高水平科研平台。在智慧农业方向，研究所聚焦作物表型高通量获取、病虫害智能识别、产量遥感预估等关键技术，与全国多个粮食主产区建立了紧密的成果转化合作关系。</p>'
+};
+
+// ----- Case 7: 林草湿地变化检测 -----
+CASE_DETAILS[7] = {
+  background: '<p>吉林西部（白城、松原）地处科尔沁沙地东缘和松嫩平原过渡带，是我国北方重要的生态屏障。该区域分布着向海、莫莫格等多个国家级湿地自然保护区以及大面积草原和林地，生态区位极其重要。然而近20年来，受气候变化和人类活动双重影响，林草湿地与耕地之间的转换频繁，传统的人工巡查和年度卫片执法难以实现及时、准确的生态变化监测。中科院东北地理所于2022年启动了基于AI的吉林西部林草湿地变化自动检测项目。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 长时序影像构建</div><p>利用Google Earth Engine平台，获取2018–2025年Sentinel-2时间序列影像（5天重访周期），通过去云、物候归一化等预处理，构建每年生长季（6–9月）的NDVI最大值合成影像，消除物候差异对变化检测的干扰。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 变化检测+分类双模型</div><p>采用两阶段AI流程：第一阶段，基于Siamese DeepLabV3+的双时相变化检测模型，自动提取所有发生地类变化的图斑（召回率>95%）；第二阶段，基于Transformer的多时相地物分类模型，对变化图斑进行精细分类（林地→耕地、草地→耕地、湿地→建设用地等8种变化类型）。</p></div><div class="sol-sub"><div class="sol-sub-title">📋 年度生态报告</div><p>每年自动生成全域生态变化分析报告，包含变化图斑空间分布、面积统计、变化趋势分析和重点区域预警。</p></div>',
+  results: [{val:'>95%',lbl:'变化图斑召回率'},{val:'8种',lbl:'变化类型自动分类',clazz:'accent'},{val:'7年',lbl:'时序监测跨度'},{val:'年更新',lbl:'监测报告更新频率',clazz:'accent'}],
+  company: '<p>中国科学院东北地理与农业生态研究所是我国东北地区唯一的综合性地理与农业生态研究机构。研究所设有湿地生态与环境、遥感与地理信息、黑土地保护与利用等重点实验室，在东北地区土地利用/覆盖变化监测、湿地生态保护、黑土资源可持续利用等领域具有深厚的科研积累和丰富的区域数据沉淀。</p>'
+};
+
+// ----- Case 8: 智慧农场决策系统 -----
+CASE_DETAILS[8] = {
+  background: '<p>曲周县位于河北省邯郸市，是黄淮海平原典型的冬小麦-夏玉米轮作区。中国农业大学在曲周建有长期实验站（始建于1973年），积累了近50年的农业试验数据。然而，周边的6个合作社、3.2万亩耕地仍然面临"经验种田"的困境——农户缺乏实时、定量、综合的农事决策支持。种什么品种？何时浇水施肥？病虫害要不要打药？这些问题依赖老农经验，导致产量潜力未能充分释放。中国农业大学基于实验站长期数据沉淀，打造了覆盖全流程的智慧农场综合决策支持系统。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🧠 12种AI模型协同</div><p>系统集成了长势监测（ResNet+无人机RGB影像）、产量预测（LSTM+气象+遥感）、病虫害识别（YOLOv8）、气象预警（Transformer时序预测）、灌溉推荐（土壤水分平衡模型）、施肥推荐（养分平衡+目标产量法）等12种AI模型，覆盖从整地播种到收获的全流程。</p></div><div class="sol-sub"><div class="sol-sub-title">📱 一站式决策推送</div><p>通过微信小程序向合作社负责人和农户推送每日决策建议——"明天适合追肥，推荐尿素15kg/亩""请注意，未来3天西南部地块赤霉病风险升高"，降低AI使用门槛。</p></div><div class="sol-sub"><div class="sol-sub-title">📊 数字孪生可视化</div><p>构建示范区3.2万亩耕地的数字孪生模型，实时展示作物生长状态、土壤养分分布、病虫害风险等级和产量预测，支持"点击地块、查看详情"的交互操作。</p></div>',
+  results: [{val:'11.6%',lbl:'示范田亩均增产'},{val:'12种',lbl:'集成AI模型数量',clazz:'accent'},{val:'3.2万亩',lbl:'覆盖耕地面积'},{val:'6个',lbl:'服务合作社数量',clazz:'accent'},{val:'50年',lbl:'实验站数据积累'}],
+  company: '<p>中国农业大学是我国现代农业高等教育的起源地，在农业工程、作物学、植物保护等学科领域位居全国前列。曲周实验站是该校历史最悠久的野外科学观测研究站之一（1973年建站），长期开展黄淮海平原中低产田改造和粮食丰产科技攻关，先后走出了多位院士和农业科技领军人才，被誉为"把论文写在大地上"的典范。</p>'
+};
+
+// ----- Case 9: 非农化遥感监测 -----
+CASE_DETAILS[9] = {
+  background: '<p>耕地"非农化""非粮化"监测是国家耕地保护红线的核心监管需求。北大荒集团下辖113个农（牧）场，耕地面积达4800万亩（占全国农垦耕地总面积的近1/3），如此大范围的耕地用途管控，仅靠人工巡查和年度卫片执法完全无法满足"早发现、早制止、严查处"的要求。北大荒信息公司于2023年建成了全国农垦系统首个全域月度耕地用途遥感监测平台。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 月度全域扫描</div><p>以国产高分一号/六号（16m多光谱，2天重访）为主数据源，辅以Sentinel-2（10m）和PlanetScope（3m）商业数据，实现集团113个农场4800万亩耕地的月度全覆盖影像获取与自动预处理。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 双阶段变化检测</div><p>第一阶段：基于CVA（Change Vector Analysis）的快速初筛，从月度NDVI/NDBI变化向量中自动标记疑似变化图斑。第二阶段：基于EfficientNet-B4深度学习的精细分类，将疑似图斑分为"非农化"（耕地→建设用地/设施农用地）、"非粮化"（粮食作物→经济作物/林地/坑塘）和"伪变化"（季节性轮作/休耕）三类。</p></div><div class="sol-sub"><div class="sol-sub-title">📋 预警工单闭环</div><p>确认的变化图斑自动生成预警工单，推送至相关农场自然资源管理部门，要求在15个工作日内完成现场核查与处置反馈，形成"发现→预警→核查→处置→销号"的闭环管理流程。</p></div>',
+  results: [{val:'4800万亩',lbl:'月度监测覆盖面积'},{val:'1270处',lbl:'2024年发现问题图斑',clazz:'accent'},{val:'113个',lbl:'覆盖农牧场数量'},{val:'月度',lbl:'监测扫描频率',clazz:'accent'},{val:'15天',lbl:'工单响应时限'}],
+  company: '<p>北大荒信息有限公司（北大荒数字科技股份有限公司）是北大荒集团旗下专注于智慧农业和数字农服的高新技术企业，承担集团全域数字化转型的核心使命。公司在农业遥感、AI决策、物联网平台、数字农服等领域持续深耕，已建成国内规模最大的农垦体系数字化管理平台。</p>'
+};
+
+// ----- Case 10: 补贴核查系统 -----
+CASE_DETAILS[10] = {
+  background: '<p>黑龙江省是我国大豆和玉米生产者补贴政策的核心实施区域，2024年补贴申报面积超1.2亿亩，涉及数百万农户。传统的补贴核查依赖"村级公示+乡镇抽查+县级复查"的人工流程，存在虚报面积、重复申报、边界争议等突出问题，每年因数据不实造成的财政资金损失数以亿计。黑龙江省农科院联合省农业农村厅，于2024年建成了基于多源遥感的作物补贴申报智能核查系统。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 多源遥感交叉验证</div><p>以国产高分卫星影像（高分一号16m+高分六号16m）为主数据源，结合无人机抽查影像（对疑似问题地块进行0.1m级精度复核），提取NDVI时序曲线，自动识别各地块的实际种植作物类型（大豆/玉米/水稻/其他）。将遥感识别结果与申报系统中的地块边界、面积、作物类型进行空间叠置分析。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 AI异常检测</div><p>训练XGBoost异常检测模型，输入特征包括：申报面积与遥感识别面积的偏差率、作物类型一致性、地块NDVI时序异常度、历史申报诚信记录等，自动标记高风险申报记录。经2023年历史数据回测，模型Top-10%高风险标记可覆盖约85%的实质性问题申报。</p></div><div class="sol-sub"><div class="sol-sub-title">📋 核查工单管理</div><p>标记为高风险的申报记录自动生成核查工单，推送到县级农业农村部门，要求限期实地核查并上传核查结果，形成全流程数字化闭环。</p></div>',
+  results: [{val:'1.2亿亩',lbl:'年核查申报面积'},{val:'80%',lbl:'核查效率提升',clazz:'accent'},{val:'99.2%',lbl:'补贴发放准确率'},{val:'85%',lbl:'高风险标记覆盖率',clazz:'accent'}],
+  company: '<p>黑龙江省农业科学院是黑龙江省最大的综合性农业科研机构，下设30余个研究所（中心），在作物育种、植物保护、农业遥感、农产品质量安全等领域具有较强的科研实力。农科院长期承担黑龙江省农业农村厅的作物面积遥感监测和补贴核查技术支撑工作。</p>'
+};
+
+// ----- Case 11: 奶牛体况评分 -----
+CASE_DETAILS[11] = {
+  background: '<p>奶牛体况评分（Body Condition Score, BCS）是评估奶牛健康、营养和繁殖性能的关键指标，通常每头牛每1–2个月需进行一次评分（1–5分制）。安达市现代牧场存栏2800头荷斯坦奶牛，传统BCS依赖3名技术人员目视评分，每头约需2分钟，全场一轮需耗时约90工时，且评分一致性仅约70%（不同技术员之间存在主观偏差）。东北农业大学于2024年在安达牧场部署了基于计算机视觉的自动化BCS评估系统。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">📷 自动图像采集</div><p>在挤奶通道返回通道上方安装2台工业相机（Basler ace2，1200万像素），奶牛挤奶后返回牛舍时自动触发拍摄，获取背部俯视和侧后方45°两张标准视角图像，平均每头牛10秒即可完成采集。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 双视角BCS评估模型</div><p>基于EfficientNetV2-S架构训练BCS评分模型：背部俯视图用于提取脊柱、肋骨和髋骨的可视轮廓特征，侧后视图用于评估尾根凹陷和荐骨突出程度。双视角融合后输出连续的BCS分值（1.00–5.00，精确到0.25），经2600头牛的人工BCS标注训练，评分与人工评分Pearson相关系数r=0.91。</p></div><div class="sol-sub"><div class="sol-sub-title">⚠️ 异常个体自动标记</div><p>系统自动标记BCS<2.5（过瘦）或BCS>4.0（过肥）的异常个体，以及月度BCS下降>0.5的快速消瘦个体，推送到兽医端进行进一步检查。</p></div>',
+  results: [{val:'94%',lbl:'评分一致性'},{val:'220+工时/月',lbl:'人工节省',clazz:'accent'},{val:'2800头',lbl:'试点覆盖存栏'},{val:'r=0.91',lbl:'与人评相关系数',clazz:'accent'},{val:'10秒/头',lbl:'单头采集耗时'}],
+  company: '<p>东北农业大学是国家"双一流"建设高校，畜牧学为国家重点学科，在奶牛精准养殖、智能畜牧装备、动物福利评估等领域具有鲜明的科研特色和深厚的行业影响力。学校建有国家奶牛产业技术体系岗位科学家团队和农业农村部东北动物营养与饲料科学观测实验站。</p>'
+};
+
+// ----- Case 12: 大棚违规识别 -----
+CASE_DETAILS[12] = {
+  background: '<p>寿光市是中国最大的蔬菜生产和集散中心，全市设施农业（蔬菜大棚）面积超60万亩。在巨大的经济利益驱动下，违规占用耕地新建大棚、"大棚房"等问题时有发生。传统人工巡查面对寿光2180平方公里的全域面积力不从心——从发现违规到现场核实往往滞后数月，部分违规建设甚至在执法到达时已投入使用。航天宏图联合寿光市自然资源局，于2024年建成了基于高分辨率遥感影像和深度学习的季度性大棚变化自动识别系统。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 高分遥感影像</div><p>以北京二号（0.8m全色+3.2m多光谱）和吉林一号（0.72m）商业遥感卫星为主要数据源，每季度获取全域覆盖影像。在重点区域辅以无人机倾斜摄影（0.05m），用于疑似违规大棚的精细核查。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 Faster R-CNN检测</div><p>基于Faster R-CNN（ResNet-101-FPN骨干）训练农业大棚目标检测模型，在12000+标注样本上训练，mAP@0.5=0.94——可检测日光温室、塑料大棚、连栋温室等不同类型。季度影像的变化检测模块自动比对相邻两期，识别大棚的新增、扩建和拆除。</p></div><div class="sol-sub"><div class="sol-sub-title">📋 合规性自动判定</div><p>将检测到的新增大棚与用地审批数据库进行空间叠置分析——有审批记录且位置/面积一致→合规；无审批记录或位置面积偏差超20%→可疑违规，自动生成核查工单并推送至属地自然资源执法部门。</p></div>',
+  results: [{val:'2180km²',lbl:'全域覆盖面积'},{val:'430处',lbl:'发现疑似违规大棚',clazz:'accent'},{val:'mAP 0.94',lbl:'大棚检测精度'},{val:'季度',lbl:'监测更新频率',clazz:'accent'},{val:'0.72m',lbl:'卫星影像分辨率'}],
+  company: '<p>航天宏图信息技术股份有限公司（PIE-Engine）是国内领先的遥感与地理信息解决方案提供商，科创板上市企业。公司自主研发的PIE系列遥感软件平台在自然资源、生态环境、应急管理、农业农村等领域广泛应用。在农业遥感方向，航天宏图深耕作物种植结构遥感监测、耕地保护遥感执法、高标准农田监管等细分赛道。</p>'
+};
+
+// ----- Case 13: 极飞超级棉田 -----
+CASE_DETAILS[13] = {
+  background: '<p>新疆是我国最大的棉花产区，年产量占全国近90%。然而棉花种植长期面临劳动力短缺、管理粗放、水肥浪费等突出问题——传统模式下3000亩棉田需30–40名工人，每亩水肥成本超600元。极飞科技于2021年起在新疆尉犁县启动"超级棉田"项目，以"2人+AI+无人机+机器人"的全新生产模式管理3000亩棉田，目标是验证无人化、智能化棉花种植的可行性和经济性。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛸 遥感无人机高频巡田</div><p>极飞遥感无人机（XAG XMISSION）每3天对3000亩棉田进行一次全自主航线巡检，搭载多光谱相机采集棉花冠层NDVI/NDRE植被指数，实现对棉苗长势、营养状况和病虫草害胁迫的高频空间监测。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 AI病虫草害识别</div><p>基于深度学习（MobileNetV3+SSD轻量化架构）的棉田病虫草害AI识别模型，可实时识别棉铃虫、蚜虫、枯萎病、黄萎病和10余种常见杂草，识别准确率超95%。AI模型部署在边缘计算终端上，巡检结束后30分钟内即可生成全田病虫草害热力图。</p></div><div class="sol-sub"><div class="sol-sub-title">💧 智能水肥管理</div><p>结合遥感植被指数、土壤传感器数据和气象预报，AI模型自动生成每日灌溉和施肥处方图，通过智能灌溉控制系统和变量施肥无人机实现"按需供给、按株施策"，每亩用水量较传统漫灌减少35%。</p></div><div class="sol-sub"><div class="sol-sub-title">🤖 全流程自动化</div><p>从播种（自动驾驶拖拉机）、田间巡检（遥感无人机）、植保（植保无人机）、施肥（变量施肥无人机）、灌溉（智能滴灌系统）到采收（采棉机），实现了棉花种植全流程96%的自动化率。</p></div>',
+  results: [{val:'529kg/亩',lbl:'棉花亩产（全国一流）'},{val:'2人',lbl:'管理3000亩所需人力',clazz:'accent'},{val:'64%',lbl:'人工成本降幅'},{val:'17%',lbl:'农药成本降幅',clazz:'accent'},{val:'2500+',lbl:'推广农场数量'}],
+  company: '<p>极飞科技（XAG）是全球领先的智慧农业科技公司，成立于2007年，总部位于广州。公司致力于用无人机、机器人和AI技术赋能农业生产，自主研发了农业无人机、遥感无人机、无人车、农机自驾仪、物联网设备等智慧农业全系列硬件，以及AI决策支持云平台。截至2025年，极飞产品和服务已覆盖全球60多个国家和地区，入选农业农村部智慧农业典型案例和世界经济论坛"技术先锋"。</p>'
+};
+
+// ----- Case 14: 天工开悟大模型 -----
+CASE_DETAILS[14] = {
+  background: '<p>2023年大模型技术在通用领域取得突破性进展，但在农业垂直领域的应用仍处于空白。寒地水稻是黑龙江省的核心粮食作物，年种植面积超6000万亩，其生产管理涉及品种选择、育秧、插秧、施肥、灌溉、植保、收获等数十个关键决策节点——每个节点的决策质量都直接影响最终产量和品质。北大荒信息公司联合哈工大，于2024年发布"天工开悟（Kwoo）"农业种植大模型——国内首个完成中央网信办生成式AI服务备案的农业领域大模型。在建三江的试点推广率先聚焦水稻"三维变量施肥"这一核心场景。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🧠 大模型架构</div><p>"天工开悟"基于开源大语言模型底座，注入北大荒集团近70年的农事记录、土壤普查数据、田间试验报告、农业专家知识库等专业语料（总token量超500亿），通过继续预训练（Continue Pre-training）和监督微调（SFT）构建农业领域大模型。同时，模型融合了多模态能力——可接收遥感影像、土壤采样数据和气象预报进行综合推理。</p></div><div class="sol-sub"><div class="sol-sub-title">🗺️ AI处方图驱动的变量施肥</div><p>将土壤养分分布图（N/P/K/有机质/pH，5m分辨率）和上季产量图输入大模型，模型综合推理后输出三维变量施肥处方图——施肥量在空间（X-Y平面）和深度（Z轴，0–15cm/15–30cm分层）两个维度上变化，以最经济的肥量获取最大的增产效益。AI处方图通过API直接驱动变量施肥插秧机进行精准作业。</p></div><div class="sol-sub"><div class="sol-sub-title">📱 农业专家问答</div><p>"天工开悟"同时提供面向农技人员和种植户的智能问答功能——"水稻叶尖发黄是什么原因？""当前温度条件下适合追施分蘖肥吗？"——大模型结合实时气象和田间数据给出诊断和建议。</p></div>',
+  results: [{val:'10%',lbl:'亩均节肥率'},{val:'5%-10%',lbl:'增产幅度',clazz:'accent'},{val:'2万亩',lbl:'建三江推广面积（一期）'},{val:'国内首个',lbl:'完成网信办备案',clazz:'accent'},{val:'500亿+',lbl:'专业语料token量'}],
+  company: '<p>北大荒信息有限公司与哈尔滨工业大学的联合团队。"天工开悟（Kwoo）"大模型是双方在智慧农业领域的旗舰合作成果。哈工大计算机科学与技术学科是国家"双一流"建设学科，在自然语言处理、计算机视觉和AI大模型研究领域居国内领先水平。该项目入选《黑龙江省2024年智慧农业建设优秀典型案例》。</p>'
+};
+
+// ----- Case 15: 先正达iMAP大模型 -----
+CASE_DETAILS[15] = {
+  background: '<p>玉米是我国种植面积最大、总产量最高的粮食作物，年种植面积超6.5亿亩。然而，玉米主产区（内蒙古东部、东北三省）的单产水平与美国、巴西等农业强国相比仍有30%–40%的差距——背后的核心瓶颈不是种子或肥料不够好，而是"种田决策"不够精准。什么时候播种？施什么肥、施多少？灌溉时机如何把握？这些决策传统上依赖经验，缺乏数据驱动的系统化方案。先正达集团中国于2024年发布iMAP农业种植综合大模型，首次提出"作物机理×大模型×智能体"三体融合AI技术路线，在内蒙古和东北玉米主产区启动百万亩试点。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🔗 三体融合AI技术</div><p>iMAP的核心创新是"作物机理×大模型×智能体"三体融合：①作物机理模型（DSSAT/APSIM）模拟作物生长发育的生物物理过程，提供基于科学原理的底限约束；②大模型学习海量农事记录、遥感影像和产量数据中的隐性规律，提供数据驱动的决策建议；③智能体在机理模型和大模型的约束与指导下，通过强化学习在真实环境中试错优化，不断提升决策质量。三者协同，实现了"科学原理不违反、数据规律充分利用、实战中持续进化"。</p></div><div class="sol-sub"><div class="sol-sub-title">🛰️ 遥感+物联网感知层</div><p>基于Sentinel-2/PlanetScope卫星影像和田间物联网设备，构建百万亩试点区的高频（5–7天）作物监测能力，实时获取NDVI、LAI、土壤含水量、冠层温度等关键参数，输入iMAP模型进行决策推理。</p></div><div class="sol-sub"><div class="sol-sub-title">📱 农事决策助手</div><p>iMAP通过移动端App向种植户和管理者输出每日农事决策建议——从播种时段优化、变量施肥处方、灌溉时机推荐到最佳收获窗口预测。决策内容以自然语言+可视化地图呈现，无需AI背景即可理解和使用。</p></div>',
+  results: [{val:'75%',lbl:'农事决策时间缩短'},{val:'10%-20%',lbl:'节水节肥幅度',clazz:'accent'},{val:'8%-10%',lbl:'增产幅度'},{val:'150-200元',lbl:'亩均增收',clazz:'accent'},{val:'100万亩',lbl:'试点覆盖面积'}],
+  company: '<p>先正达集团中国（Syngenta Group China）是全球领先的农业科技企业中化集团旗下核心业务板块，业务覆盖种子、植保、作物营养、数字农业全产业链。iMAP（Intelligent Modern Agriculture Platform）是先正达集团中国数字农业战略的核心平台，致力于以AI技术推动中国农业从"经验种田"到"数据种田"的范式变革。该项目入选国务院国资委首批央企AI战略性高价值场景。</p>'
+};
+
+// ----- Case 16: 托普云农AI植保 -----
+CASE_DETAILS[16] = {
+  background: '<p>浙江省江山市是南方双季稻主产区，素有"浙西粮仓"之称。然而水稻种植面临病虫害种类多（浙江省水稻害虫2000+种、病害70+种）、劳动力短缺、水肥利用率低等突出挑战。托普云农于2022年在江山启动"天空地一体化"未来农场建设，目标是以AI技术为核心引擎，实现双季稻从种到收的全程智能化管理，探索可复制、可推广的南方水稻产区智慧农业模式。</p>',
+  solution: '<div class="sol-sub"><div class="sol-sub-title">🛰️ 天空地一体化感知体系</div><p>"天"——卫星遥感（高分+Sentinel-2）提供大范围长势与灾害监测；"空"——无人机多光谱巡检实现田块级精细化监测；"地"——田间物联网传感器（气象站、虫情测报灯、孢子捕捉器、土壤传感器）提供实时地面数据。三级感知互补，形成从宏观到微观的全尺度作物监测能力。</p></div><div class="sol-sub"><div class="sol-sub-title">🧠 AI病虫害识别引擎</div><p>托普云农自主研发的AI病虫害识别引擎，基于约200万张病虫害图像的大规模训练，覆盖2063种害虫（卵、幼虫、蛹、成虫各阶段）和76种病害症状，Top-1识别准确率达93%，Top-3达97%。农户只需手机拍照上传，3秒内返回识别结果和防治建议。</p></div><div class="sol-sub"><div class="sol-sub-title">💧 精准水肥管理</div><p>基于土壤传感器实时数据和天气预报，AI模型自动生成每日灌溉和施肥方案——"今天下午16:00灌水3cm，明天上午追施穗肥10kg/亩"，通过手机App推送到田间管理人员，并通过智能闸门实现远程自动化灌溉。</p></div><div class="sol-sub"><div class="sol-sub-title">📊 高产攻关数据驱动</div><p>在2023–2024年双季稻高产攻关中，AI系统全程记录并分析气象、土壤、品种和管理措施与产量的关系，不断优化管理方案，最终实现双季稻最高亩产1585.54公斤的历史性突破。</p></div>',
+  results: [{val:'1585.54kg',lbl:'双季稻最高亩产'},{val:'2063种',lbl:'可识别害虫种类',clazz:'accent'},{val:'30%',lbl:'防治效率提升'},{val:'10%',lbl:'节水/减肥幅度',clazz:'accent'},{val:'4项',lbl:'浙江农业之最纪录'}],
+  company: '<p>托普云农（Top Cloud Agriculture）是国内领先的智慧农业整体解决方案提供商，深交所创业板上市企业。公司以"AI+IoT+大数据"技术为核心，自主研发了涵盖种植业、畜牧业、水产养殖的智慧农业全系列产品和平台，累计服务全国超过2000个农业项目。公司拥有农业农村部认定的智慧农业重点实验室，在AI病虫害识别、智能水肥管理、数字孪生农场等领域具有深厚的技术积累。</p>'
+};
+
+// ===================================================================
+// RENDER PAGE
+// ===================================================================
+function renderPage() {
+  // Parse case ID from URL
+  var params = new URLSearchParams(window.location.search);
+  var id = parseInt(params.get('id')) || 0;
+  var c = ALL_CASES.find(function(x){ return x.id === id; });
+
+  if (!c) {
+    document.getElementById('pageContent').innerHTML =
+      '<div class="not-found"><div class="nf-icon">🔍</div><div class="nf-text">案例不存在，请返回案例中心浏览</div><a class="btn btn-primary" href="case-center.html">返回案例中心</a></div>';
+    document.title = '案例不存在 — 北大荒智慧农业协同创新平台';
+    return;
+  }
+
+  document.title = c.title + ' — 案例详情 — 北大荒智慧农业协同创新平台';
+
+  var detail = CASE_DETAILS[id];
+  if (!detail) { detail = {background:'<p>该案例详情正在整理中，请稍后查看。</p>',solution:'',results:[],company:''}; }
+
+  // Build results HTML
+  var resultsHtml = '';
+  if (detail.results && detail.results.length > 0) {
+    resultsHtml = '<div class="results-grid">' + detail.results.map(function(r){
+      return '<div class="result-stat"><div class="rs-val' + (r.clazz ? ' ' + r.clazz : '') + '">' + r.val + '</div><div class="rs-lbl">' + r.lbl + '</div></div>';
+    }).join('') + '</div>';
+  }
+
+  // Build solution HTML
+  var solutionHtml = detail.solution || '';
+
+  // Build related cases (same industry, exclude current)
+  var related = ALL_CASES.filter(function(x){ return x.id !== id && x.industry === c.industry; });
+  if (related.length < 3) {
+    // Add cases from other industries if needed
+    var others = ALL_CASES.filter(function(x){ return x.id !== id && x.industry !== c.industry; });
+    related = related.concat(others.slice(0, 3 - related.length));
+  }
+  related = related.slice(0, 4);
+
+  var relatedHtml = related.map(function(r){
+    return '<div class="rel-item" onclick="window.location.href=\'case-detail.html?id=' + r.id + '\'">' +
+      '<div class="rel-visual rv-' + r.vis + '">' + r.icon + '</div>' +
+      '<div class="rel-info"><div class="rel-title">' + r.title + '</div><div class="rel-org">' + r.org + '</div></div>' +
+      '</div>';
+  }).join('');
+
+  var html = '';
+
+  // Breadcrumb
+  html += '<div class="breadcrumb-bar">';
+  html += '<a href="portal.html">首页</a><span class="bc-sep">/</span>';
+  html += '<a href="case-center.html">案例中心</a><span class="bc-sep">/</span>';
+  html += '<span class="bc-current">案例详情</span>';
+  html += '</div>';
+
+  // Hero
+  html += '<div class="detail-hero">';
+  html += '<div class="detail-hero-inner">';
+  html += '<div class="dh-visual vis-' + c.vis + '">';
+  if (c.img) {
+    html += '<img class="dh-img" src="' + c.img + '" alt="' + c.title + '">';
+  } else {
+    html += '<span class="dh-icon">' + c.icon + '</span>';
+  }
+  html += '</div>';
+  html += '<div class="dh-info">';
+  html += '<span class="dh-status ' + c.status + '">' + c.statusText + '</span>';
+  html += '<h1>' + c.title + '</h1>';
+  html += '<div class="dh-meta">';
+  html += '<span class="dh-meta-item">🏢 ' + c.org + '</span>';
+  html += '<span class="dh-meta-divider"></span>';
+  html += '<span class="dh-meta-item">📍 ' + c.location + '</span>';
+  html += '<span class="dh-meta-divider"></span>';
+  html += '<span class="dh-meta-item">📂 ' + c.industry + '</span>';
+  html += '</div>';
+  html += '<div class="dh-tags">' + c.tags.map(function(t){ return '<span class="dh-tag">' + t + '</span>'; }).join('') + '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Main content
+  html += '<div class="detail-content">';
+
+  // Left column
+  html += '<div class="detail-main">';
+
+  // Business background
+  html += '<section class="detail-section">';
+  html += '<div class="ds-heading">业务背景</div>';
+  html += '<div class="ds-body">' + detail.background + '</div>';
+  html += '</section>';
+
+  // Technical solution
+  if (solutionHtml) {
+    html += '<section class="detail-section">';
+    html += '<div class="ds-heading">技术方案</div>';
+    html += '<div class="ds-body">' + solutionHtml + '</div>';
+    html += '</section>';
+  }
+
+  // Results
+  html += '<section class="detail-section">';
+  html += '<div class="ds-heading">落地效果</div>';
+  html += '<div class="ds-body">' + resultsHtml + '</div>';
+  html += '</section>';
+
+  // Company intro
+  if (detail.company) {
+    html += '<section class="detail-section">';
+    html += '<div class="ds-heading">机构简介</div>';
+    html += '<div class="ds-body">' + detail.company + '</div>';
+    html += '</section>';
+  }
+
+  html += '</div>'; // end detail-main
+
+  // Right column
+  html += '<div class="detail-sidebar">';
+
+  // Info card
+  html += '<div class="info-card">';
+  html += '<h4>案例信息</h4>';
+  html += '<div class="info-row"><span class="ir-lbl">所属行业</span><span class="ir-val">' + c.industry + '</span></div>';
+  html += '<div class="info-row"><span class="ir-lbl">实施机构</span><span class="ir-val">' + c.org + '</span></div>';
+  html += '<div class="info-row"><span class="ir-lbl">实施地点</span><span class="ir-val">' + c.location + '</span></div>';
+  html += '<div class="info-row"><span class="ir-lbl">项目状态</span><span class="ir-val" style="color:' + (c.status==='delivered'?'#52c41a':'#2f54eb') + '">' + c.statusText + '</span></div>';
+  html += '</div>';
+
+  // Related cases
+  if (relatedHtml) {
+    html += '<div class="related-card">';
+    html += '<h4>相关案例</h4>';
+    html += relatedHtml;
+    html += '</div>';
+  }
+
+  // Back button
+  html += '<a class="btn btn-default" href="case-center.html" style="width:100%">← 返回案例中心</a>';
+
+  html += '</div>'; // end detail-sidebar
+
+  html += '</div>'; // end detail-content
+
+  document.getElementById('pageContent').innerHTML = html;
+}
+
+// ===================================================================
+// INIT
+// ===================================================================
+renderPage();
+
+// ===================================================================
+// TOP NAV
+// ===================================================================
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (nav === 'home') { window.location.href = 'portal.html'; return; }
+    if (nav === 'cases') { window.location.href = 'case-center.html'; return; }
+    if (nav === 'marketplace') { window.location.href = 'model-marketplace.html'; return; }
+    if (nav === 'data') { window.location.href = 'dataset-management.html'; return; }
+    if (nav === 'demand') { window.location.href = 'demand-hall.html'; return; }
+    if (nav === 'docs') { window.location.href = 'doc-center.html'; return; }
+    toast('模块「'+e.target.textContent+'」页面尚未开发', 'info');
+  }
+});
+
+// ===================================================================
+// AUTH STATE
+// ===================================================================
+function isLoggedIn() {
+  try { return sessionStorage.getItem('luoshu_logged_in') === '1'; } catch(e) { return false; }
+}
+function switchAuthState(loggedIn) {
+  document.getElementById('headerAuthOut').style.display = loggedIn ? 'none' : '';
+  document.getElementById('headerAuthIn').style.display = loggedIn ? '' : 'none';
+}
+(function(){ switchAuthState(isLoggedIn()); })();
+
+// ===================================================================
+// NOTIFICATIONS
+// ===================================================================
+var NOTIFS=[
+  {icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},
+  {icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},
+  {icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},
+  {icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},
+  {icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}
+];
+function renderNotifs(){
+  document.getElementById('notifList').innerHTML = NOTIFS.map(function(n){
+    return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';
+  }).join('');
+}
+renderNotifs();
+function toggleNotifPopover(){ document.getElementById('notifPopover').classList.toggle('visible'); closeUserMenu(); }
+function markAllRead(){ NOTIFS.forEach(function(n){ n.unread=false; }); renderNotifs(); document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none'; }
+document.addEventListener('click',function(e){ var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn'); if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){ popover.classList.remove('visible'); }});
+
+// ===================================================================
+// USER DROPDOWN
+// ===================================================================
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); if(confirm('确定退出登录？')){ try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录','info'); } }
+
+// ===================================================================
+// TOAST
+// ===================================================================
+function toast(msg, type){
+  var el = document.getElementById('toast');
+  el.textContent = (type==='error'?'⚠ ':'') + msg;
+  el.className = 'toast visible toast-' + (type || 'info');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('visible'); }, 4000);
+}
+</script>
+
+</body>
+</html>
