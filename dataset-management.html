@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据集管理 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none; }
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+.dropdown-wrap { position: relative; display: inline-flex; }
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   PAGE CONTAINER
+   ============================================================ */
+.page-wrap { padding-top: 60px; }
+.page-inner { max-width: 1280px; margin: 0 auto; padding: 24px 0 48px; }
+
+/* ============================================================
+   SEARCH BAR
+   ============================================================ */
+.search-section { padding: 0 0 20px; }
+.search-wrap { position: relative; max-width: 720px; }
+.search-wrap .search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: #8284A4; font-size: 16px; pointer-events: none;
+}
+.search-input {
+  width: 100%; height: 40px; padding: 0 16px 0 40px; font-size: 15px;
+  color: #27254C; background: #ffffff; border: 1px solid #d9d9d9;
+  border-radius: 8px; outline: none; transition: all 0.2s;
+}
+.search-input:hover { background: #F0F3FA; }
+.search-input:focus { background: #ffffff; border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.08); }
+.search-input::placeholder { color: #C4C3D9; }
+[data-prefers-color="dark"] .search-input { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.08); }
+[data-prefers-color="dark"] .search-input::placeholder { color: rgba(255,255,255,0.25); }
+
+/* ============================================================
+   PAGE LAYOUT — left filter + right content
+   ============================================================ */
+.marketplace-layout { display: flex; gap: 28px; align-items: flex-start; }
+.filter-sidebar { width: 238px; flex-shrink: 0; position: sticky; top: 76px; }
+.filter-sidebar-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.filter-sidebar-icon { width: 24px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, rgba(47,84,235,0.1), rgba(47,84,235,0.04)); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.filter-sidebar-title { font-size: 15px; font-weight: 600; color: #27254C; flex: 1; }
+.filter-sidebar-clear { font-size: 12px; color: #8284A4; cursor: pointer; border: none; background: none; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; flex-shrink: 0; }
+.filter-sidebar-clear:hover { color: #2f54eb; background: rgba(47,84,235,0.04); }
+[data-prefers-color="dark"] .filter-sidebar-title { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .filter-sidebar-clear { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .filter-sidebar-clear:hover { color: #597ef7; }
+
+.filter-group { margin-bottom: 20px; }
+.filter-group:last-child { margin-bottom: 0; }
+.filter-group-title { font-size: 13px; font-weight: 600; color: #27254C; line-height: 20px; margin-bottom: 6px; }
+[data-prefers-color="dark"] .filter-group-title { color: rgba(255,255,255,0.85); }
+.filter-group-items { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.filter-card-tag {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 28px; padding: 0 6px; border-radius: 6px;
+  font-size: 12px; color: #464D5B; background: #F4F6FA;
+  border: 1px solid transparent; cursor: pointer;
+  transition: all 0.15s; user-select: none; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.filter-card-tag:hover { background: #EBEBFF; color: #27254C; }
+.filter-card-tag.checked { background: #2f54eb; color: #FFFFFF; border-color: #2f54eb; }
+.filter-card-tag .fc-label { line-height: 1; overflow: hidden; text-overflow: ellipsis; }
+.filter-card-tag .fc-count { font-size: 10px; opacity: 0.5; flex-shrink: 0; }
+.filter-card-tag.checked .fc-count { opacity: 0.7; }
+[data-prefers-color="dark"] .filter-card-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .filter-card-tag:hover { background: rgba(47,84,235,0.12); color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .filter-card-tag.checked { background: #2f54eb; color: #fff; }
+
+.content-main { flex: 1; min-width: 0; }
+
+/* ============================================================
+   TOOLBAR — sort + count + actions
+   ============================================================ */
+.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.toolbar-left { display: flex; align-items: center; gap: 8px; }
+.sort-select {
+  height: 32px; padding: 0 28px 0 11px; font-size: 14px;
+  color: rgba(0,0,0,0.65); background: #fff; border: 1px solid #d9d9d9;
+  border-radius: 6px; cursor: pointer; outline: none; appearance: none;
+  -webkit-appearance: none; transition: all 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.sort-select:hover { border-color: #597ef7; }
+.result-count { font-size: 13px; color: #8284A4; }
+.result-count strong { color: #27254C; font-weight: 600; }
+[data-prefers-color="dark"] .sort-select { background-color: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .result-count { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .result-count strong { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+
+/* ============================================================
+   DATASET CARD GRID (2-column, matching demand-hall pattern)
+   ============================================================ */
+.dataset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dataset-card {
+  background: linear-gradient(90deg, #F7F9FD 14%, #FFFFFF 99%);
+  border: 2px solid #F7F9FD; border-radius: 12px;
+  padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex; gap: 16px; align-items: flex-start;
+  overflow: hidden; min-width: 0;
+}
+.dataset-card:hover { border-color: #2f54eb; box-shadow: 0 2px 16px rgba(47,84,235,0.06); }
+[data-prefers-color="dark"] .dataset-card { background: linear-gradient(90deg, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0.06) 99%); border-color: rgba(255,255,255,0.04); }
+[data-prefers-color="dark"] .dataset-card:hover { border-color: #597ef7; }
+
+.dataset-card-thumb {
+  width: 80px; height: 80px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 36px;
+  background: linear-gradient(135deg, rgba(47,84,235,0.06), rgba(117,102,255,0.04));
+}
+.dataset-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.dataset-card-title-row { display: flex; align-items: center; gap: 8px; }
+.dataset-card-name { font-size: 16px; font-weight: 400; color: #27254C; line-height: 24px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+[data-prefers-color="dark"] .dataset-card-name { color: rgba(255,255,255,0.85); }
+.dataset-card-chips { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.dataset-card-desc { font-size: 13px; color: #8284A4; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+[data-prefers-color="dark"] .dataset-card-desc { color: rgba(255,255,255,0.45); }
+.dataset-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.dataset-tag { display: inline-block; padding: 0 5px; border-radius: 4px; font-size: 12px; line-height: 20px; height: 20px; background: #FFFFFF; color: #464D5B; white-space: nowrap; border: none; transition: box-shadow 0.2s; }
+.dataset-tag:hover { box-shadow: 0px 2px 12px 0px rgba(150,150,176,0.3); }
+[data-prefers-color="dark"] .dataset-tag { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.65); }
+.dataset-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 8px; border-top: 1px solid #ECEDF1; margin-top: auto; flex-wrap: wrap; row-gap: 4px; }
+[data-prefers-color="dark"] .dataset-card-meta { border-color: rgba(255,255,255,0.06); }
+.dataset-card-submitter { display: flex; align-items: center; gap: 6px; flex-shrink: 0; font-size: 12px; color: #8284A4; }
+.submitter-avatar { width: 18px; height: 18px; border-radius: 50%; background: rgba(47,84,235,0.1); color: #2f54eb; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.dataset-card-info { display: flex; align-items: center; gap: 0; font-size: 12px; color: #8284A4; flex-shrink: 0; }
+.dataset-card-info .info-item { padding: 0 10px; border-right: 1px solid #ECEDF1; white-space: nowrap; }
+.dataset-card-info .info-item:last-child { border-right: none; padding-right: 0; }
+.dataset-card-info .info-item:first-child { padding-left: 0; }
+.dataset-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.dataset-card-actions .btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+[data-prefers-color="dark"] .dataset-card-submitter { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .dataset-card-info { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .dataset-card-info .info-item { border-color: rgba(255,255,255,0.06); }
+
+/* Visibility chips */
+.visibility-chip { display: inline-flex; align-items: center; height: 20px; padding: 0 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; font-weight: 500; }
+.visibility-chip.public { color: #23ada4; background: #e6fffb; }
+.visibility-chip.private { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.visibility-chip.apply { color: #2f54eb; background: #d6e4ff; }
+[data-prefers-color="dark"] .visibility-chip.private { color: rgba(255,255,255,0.65); background: #303030; }
+
+.applied-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #2f54eb; font-weight: 500; }
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 32px 0 8px; }
+.page-info { font-size: 13px; color: #8284A4; margin-right: auto; }
+[data-prefers-color="dark"] .page-info { color: rgba(255,255,255,0.45); }
+.pagination { display: flex; align-items: center; gap: 8px; }
+.page-btn {
+  min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px;
+  font-size: 14px; color: rgba(0,0,0,0.65);
+  background: #FFFFFF; border: 1px solid #d9d9d9; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover { color: #2f54eb; border-color: #597ef7; }
+.page-btn.active { background: #2f54eb; border-color: #2f54eb; color: #FFFFFF; font-weight: 500; }
+.page-btn:disabled { color: #C4C3D9; cursor: not-allowed; border-color: #d9d9d9; background: #fff; }
+[data-prefers-color="dark"] .page-btn { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .page-btn:hover { color: #597ef7; border-color: #597ef7; }
+[data-prefers-color="dark"] .page-btn.active { background: #2f54eb; color: #fff; }
+[data-prefers-color="dark"] .page-btn:disabled { opacity: 0.4; }
+.page-size-select {
+  height: 32px; padding: 0 28px 0 10px; font-size: 13px; color: rgba(0,0,0,0.65);
+  background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px;
+  cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+[data-prefers-color="dark"] .page-size-select { background-color: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.65); }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state { display: none; text-align: center; padding: 80px 20px; }
+.empty-state.visible { display: block; }
+.empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.3; }
+.empty-state h3 { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: rgba(0,0,0,0.45); }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   POPCONFIRM
+   ============================================================ */
+.popconfirm-shield { display: none; position: fixed; inset: 0; z-index: 1059; }
+.popconfirm-shield.visible { display: block; }
+.popconfirm-wrap { display: none; position: fixed; z-index: 1060; }
+.popconfirm-wrap.visible { display: block; }
+.popconfirm-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); padding: 12px; min-width: 240px; max-width: 300px; }
+[data-prefers-color="dark"] .popconfirm-box { background: #1f1f1f; }
+.popconfirm-body { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 2px; }
+.popconfirm-icon { font-size: 16px; color: #faad14; flex-shrink: 0; margin-top: 2px; }
+.popconfirm-text { flex: 1; min-width: 0; }
+.popconfirm-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.57; }
+[data-prefers-color="dark"] .popconfirm-title { color: rgba(255,255,255,0.85); }
+.popconfirm-desc { font-size: 11px; color: rgba(0,0,0,0.35); line-height: 1.4; margin-top: 2px; }
+[data-prefers-color="dark"] .popconfirm-desc { color: rgba(255,255,255,0.35); }
+.popconfirm-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.popconfirm-btn { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 7px; font-size: 14px; border-radius: 6px; cursor: pointer; user-select: none; transition: all 0.2s; border: 1px solid #d9d9d9; background: #ffffff; color: rgba(0,0,0,0.88); }
+.popconfirm-btn:hover { color: #597ef7; border-color: #597ef7; }
+.popconfirm-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+.popconfirm-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+[data-prefers-color="dark"] .popconfirm-btn { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+.popconfirm-arrow { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #ffffff; }
+[data-prefers-color="dark"] .popconfirm-arrow { border-top-color: #1f1f1f; }
+
+/* ============================================================
+   DRAWER (right slide, 600px — keep for create form only)
+   ============================================================ */
+.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
+.drawer-overlay.visible { display: block; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 600px; max-width: 90vw; background: #ffffff; z-index: 1000; box-shadow: -6px 0 16px 0 rgba(0,0,0,0.08), -3px 0 6px -4px rgba(0,0,0,0.12), -9px 0 28px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+.drawer.open { transform: translateX(0); }
+[data-prefers-color="dark"] .drawer { background: #1f1f1f; }
+.drawer-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .drawer-header { border-bottom-color: #303030; }
+.drawer-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .drawer-title { color: rgba(255,255,255,0.85); }
+.drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; }
+.drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.drawer-footer { display: flex; align-items: center; padding: 12px 24px; border-top: 1px solid #f0f0f0; flex-shrink: 0; gap: 8px; }
+[data-prefers-color="dark"] .drawer-footer { border-top-color: #303030; }
+.drawer-footer .spacer { flex: 1; }
+
+/* Form fields */
+.form-item { display: flex; flex-direction: column; gap: 4px; }
+.form-label { font-size: 14px; color: rgba(0,0,0,0.88); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.form-label .required { color: #ff4d4f; margin-right: 2px; }
+[data-prefers-color="dark"] .form-label { color: rgba(255,255,255,0.85); }
+.form-input, .form-textarea, .form-select-drawer { width: 100%; padding: 4px 11px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; transition: all 0.2s; font-family: inherit; }
+.form-input { height: 32px; }
+.form-textarea { height: 100px; resize: vertical; padding: 8px 11px; line-height: 1.5; }
+.form-select-drawer { height: 32px; padding: 4px 28px 4px 11px; appearance: none; -webkit-appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+.form-input:hover, .form-textarea:hover, .form-select-drawer:hover { border-color: #597ef7; }
+.form-input:focus, .form-textarea:focus, .form-select-drawer:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.form-input.has-error, .form-textarea.has-error, .form-select-drawer.has-error { border-color: #ff4d4f !important; }
+.form-input.has-error:focus, .form-textarea.has-error:focus { box-shadow: 0 0 0 2px rgba(255,77,79,0.1) !important; }
+.form-error-msg { display: none; align-items: center; gap: 4px; font-size: 12px; color: #ff4d4f; }
+.form-error-msg.visible { display: flex; }
+.form-hint { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .form-hint { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .form-input, [data-prefers-color="dark"] .form-textarea, [data-prefers-color="dark"] .form-select-drawer { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* Radio group */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-option { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid #d9d9d9; border-radius: 6px; cursor: pointer; font-size: 13px; color: rgba(0,0,0,0.65); transition: all 0.2s; user-select: none; }
+.radio-option:hover { border-color: #597ef7; color: #2f54eb; }
+.radio-option.active { border-color: #2f54eb; color: #2f54eb; background: rgba(47,84,235,0.04); font-weight: 500; }
+.radio-option .radio-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #d9d9d9; background: #fff; transition: all 0.2s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.radio-option.active .radio-dot { border-color: #2f54eb; }
+.radio-option.active .radio-dot::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #2f54eb; }
+[data-prefers-color="dark"] .radio-option { border-color: #434343; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .radio-option.active { border-color: #597ef7; color: #597ef7; background: rgba(47,84,235,0.1); }
+[data-prefers-color="dark"] .radio-option .radio-dot { background: transparent; border-color: #434343; }
+
+/* ============================================================
+   DETAIL PAGE — full-page view (matching model-marketplace pattern)
+   ============================================================ */
+#datasetDetailView { display: none; }
+#datasetDetailView.visible { display: block; }
+
+/* Breadcrumb */
+.ds-breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; font-size: 14px; }
+.ds-back-link { color: #2f54eb; cursor: pointer; transition: color 0.3s; }
+.ds-back-link:hover { color: #597ef7; }
+.ds-breadcrumb-sep { color: rgba(0,0,0,0.25); }
+
+/* Header card */
+.ds-header-card { background: #ffffff; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px 32px; margin-bottom: 16px; }
+[data-prefers-color="dark"] .ds-header-card { background: #1f1f1f; border-color: #303030; }
+.ds-header-top { display: flex; gap: 20px; align-items: flex-start; }
+.ds-header-icon { width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 44px; flex-shrink: 0; background: linear-gradient(135deg, rgba(47,84,235,0.06), rgba(117,102,255,0.04)); }
+.ds-header-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ds-header-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ds-header-name { font-size: 22px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.3; }
+[data-prefers-color="dark"] .ds-header-name { color: rgba(255,255,255,0.85); }
+.ds-header-name-en { font-size: 13px; color: rgba(0,0,0,0.45); font-family: "SF Mono", monospace; }
+[data-prefers-color="dark"] .ds-header-name-en { color: rgba(255,255,255,0.35); }
+.ds-header-desc { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.7; margin-bottom: 12px; }
+[data-prefers-color="dark"] .ds-header-desc { color: rgba(255,255,255,0.45); }
+.ds-header-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.ds-header-meta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(0,0,0,0.65); padding-top: 14px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .ds-header-meta-row { color: rgba(255,255,255,0.65); border-top-color: #303030; }
+.ds-meta-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.ds-meta-item .ds-meta-label { color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .ds-meta-item .ds-meta-label { color: rgba(255,255,255,0.35); }
+
+/* Two-column layout */
+.ds-detail-layout { display: flex; gap: 24px; align-items: flex-start; }
+.ds-detail-left { flex: 1; min-width: 0; }
+.ds-detail-right { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 76px; }
+
+/* Section titles — accent bar, matching model-marketplace */
+.ds-section-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 16px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+.ds-section-title:first-child { margin-top: 0; }
+.ds-section-title::before { content: ''; display: inline-block; width: 3px; height: 16px; background: #2f54eb; border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .ds-section-title { color: rgba(255,255,255,0.85); }
+
+/* Content card — white wrapper around detail layout, matching md-tab-content-wrap */
+.ds-content-card { background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px 32px; margin-bottom: 16px; }
+[data-prefers-color="dark"] .ds-content-card { background: #1f1f1f; border-color: #303030; }
+
+/* Info table */
+.ds-info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ds-info-table tr { border-bottom: 1px solid #fafafa; }
+.ds-info-table tr:last-child { border-bottom: none; }
+[data-prefers-color="dark"] .ds-info-table tr { border-bottom-color: #2a2a2a; }
+.ds-info-table td { padding: 10px 0; vertical-align: top; }
+.ds-info-label { width: 100px; color: rgba(0,0,0,0.45); font-size: 13px; padding-right: 16px; white-space: nowrap; }
+[data-prefers-color="dark"] .ds-info-label { color: rgba(255,255,255,0.45); }
+.ds-info-value { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .ds-info-value { color: rgba(255,255,255,0.85); }
+
+/* README */
+.ds-readme { font-size: 14px; line-height: 1.8; color: rgba(0,0,0,0.65); }
+[data-prefers-color="dark"] .ds-readme { color: rgba(255,255,255,0.65); }
+.ds-readme h2 { font-size: 16px; font-weight: 600; margin: 16px 0 8px; }
+.ds-readme h3 { font-size: 14px; font-weight: 600; margin: 12px 0 6px; }
+.ds-readme p { margin: 6px 0; }
+.ds-readme ul { padding-left: 20px; list-style: disc; }
+.ds-readme li { margin: 2px 0; }
+.ds-readme code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", monospace; font-size: 12px; }
+.ds-readme pre { background: rgba(0,0,0,0.04); padding: 10px; border-radius: 6px; overflow-x: auto; margin: 8px 0; font-size: 12px; }
+.ds-readme strong { font-weight: 600; }
+[data-prefers-color="dark"] .ds-readme code { background: rgba(255,255,255,0.08); }
+[data-prefers-color="dark"] .ds-readme pre { background: rgba(255,255,255,0.06); }
+
+/* Sidebar cards */
+.ds-sidebar-card { background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px 18px; }
+[data-prefers-color="dark"] .ds-sidebar-card { background: #1f1f1f; border-color: #303030; }
+.ds-sidebar-card-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .ds-sidebar-card-title { color: rgba(255,255,255,0.85); }
+.ds-sidebar-list { display: flex; flex-direction: column; gap: 6px; }
+.ds-sidebar-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; font-size: 13px; color: rgba(0,0,0,0.65); }
+[data-prefers-color="dark"] .ds-sidebar-item { color: rgba(255,255,255,0.65); }
+/* Visibility banner in sidebar */
+.ds-vis-banner { padding: 12px 14px; border-radius: 6px; font-size: 13px; line-height: 1.6; }
+.ds-vis-banner.public { background: #e6fffb; color: #08979c; border: 1px solid #b5f5ec; }
+.ds-vis-banner.private { background: #f0f0f0; color: rgba(0,0,0,0.65); border: 1px solid #d9d9d9; }
+.ds-vis-banner.apply { background: #d6e4ff; color: #1d39c4; border: 1px solid #adc6ff; }
+[data-prefers-color="dark"] .ds-vis-banner.public { background: rgba(35,173,164,0.1); border-color: rgba(35,173,164,0.3); }
+[data-prefers-color="dark"] .ds-vis-banner.private { background: rgba(255,255,255,0.04); border-color: #434343; }
+[data-prefers-color="dark"] .ds-vis-banner.apply { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+
+@media (max-width: 1080px) {
+  .ds-detail-layout { flex-direction: column; }
+  .ds-detail-right { width: 100%; position: static; }
+}
+
+/* Header actions (matching md-header-actions) */
+.ds-header-actions { display: flex; gap: 8px; flex-shrink: 0; align-self: flex-start; }
+
+/* ============================================================
+   SAMPLE DATA MODAL
+   ============================================================ */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.modal-overlay.visible { display: flex; }
+.modal-dialog { background: #fff; border-radius: 12px; width: 720px; max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .modal-dialog { background: #1f1f1f; }
+.modal-header { display: flex; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .modal-header { border-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; flex: 1; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(0,0,0,0.45); font-size: 16px; transition: all 0.2s; background: none; border: none; }
+.modal-close:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .modal-footer { border-color: #303030; }
+.sample-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sample-table th { background: #fafafa; padding: 10px 12px; text-align: left; font-weight: 600; color: rgba(0,0,0,0.65); border-bottom: 2px solid #f0f0f0; white-space: nowrap; }
+[data-prefers-color="dark"] .sample-table th { background: #2a2a2a; border-color: #303030; color: rgba(255,255,255,0.65); }
+.sample-table td { padding: 8px 12px; border-bottom: 1px solid #fafafa; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .sample-table td { border-color: #2a2a2a; color: rgba(255,255,255,0.85); }
+.sample-table tr:last-child td { border-bottom: none; }
+.sample-note { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .sample-note { color: rgba(255,255,255,0.35); }
+
+/* Popconfirm textarea */
+.popconfirm-textarea-wrap { margin-top: 8px; }
+.popconfirm-textarea { width: 100%; min-height: 56px; padding: 6px 8px; font-size: 12px; color: rgba(0,0,0,0.88); background: #fafafa; border: 1px solid #f0f0f0; border-radius: 4px; outline: none; resize: vertical; font-family: inherit; }
+.popconfirm-textarea:focus { border-color: #2f54eb; background: #fff; }
+[data-prefers-color="dark"] .popconfirm-textarea { background: #2a2a2a; border-color: #303030; color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .popconfirm-textarea:focus { border-color: #597ef7; background: #1f1f1f; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 2000; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ============================================================
+   GUIDE
+   ============================================================ */
+.guide-trigger { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; background: #2f54eb; color: #fff; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; box-shadow: 0 4px 12px rgba(47,84,235,0.35); transition: all 0.2s; }
+.guide-trigger:hover { background: #597ef7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,84,235,0.4); }
+.guide-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
+.guide-overlay.visible { display: flex; }
+.guide-drawer { background: #ffffff; border-radius: 12px; width: 680px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .guide-drawer { background: #1f1f1f; }
+.guide-drawer-header { display: flex; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: #ffffff; z-index: 1; border-radius: 12px 12px 0 0; }
+[data-prefers-color="dark"] .guide-drawer-header { background: #1f1f1f; border-bottom-color: #303030; }
+.guide-drawer-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .guide-drawer-title { color: rgba(255,255,255,0.85); }
+.guide-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.guide-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.guide-drawer-body { padding: 24px; }
+.guide-section { margin-bottom: 24px; }
+.guide-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .guide-section-title { color: rgba(255,255,255,0.85); }
+.guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.guide-table th, .guide-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+.guide-table th { background: rgba(0,0,0,0.02); font-weight: 600; color: rgba(0,0,0,0.65); white-space: nowrap; }
+.guide-table td { color: rgba(0,0,0,0.65); line-height: 1.5; }
+.guide-table td:first-child { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .guide-table th { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td:first-child { color: rgba(255,255,255,0.85); }
+.guide-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.guide-tag.do { background: #d9f7be; color: #52c41a; }
+.guide-tag.error { background: #fff2f0; color: #ff4d4f; }
+.guide-tag.modal { background: #d6e4ff; color: #2f54eb; }
+
+/* Responsive */
+@media (max-width: 1400px) { html, body { min-width: 0; } .page-inner { padding: 24px 20px 48px; } }
+@media (max-width: 1080px) {
+  .marketplace-layout { flex-direction: column; }
+  .filter-sidebar { width: 100%; position: static; display: flex; gap: 20px; overflow-x: auto; }
+  .filter-group { min-width: 140px; flex-shrink: 0; }
+  .dataset-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .page-inner { padding: 16px; }
+  .dataset-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/><path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/><path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/><path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/><path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/><path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/><defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs></svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item active">数据管理</span>
+        <!-- <span class="top-nav-item" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
+        <!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+        <span class="top-nav-item" onclick="location.href='doc-center.html'">文档中心</span>
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+          <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+          <span class="badge-dot"></span>
+        </button>
+        <div class="notif-popover" id="notifPopover">
+  <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+    <span>通知</span>
+    <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+  </div>
+  <div id="notifList"></div>
+  <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+    <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('info','功能开发中')">查看全部通知 →</a>
+  </div>
+</div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <!-- User dropdown -->
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== PAGE CONTENT ===== -->
+<div class="page-wrap">
+  <div class="page-inner">
+
+    <!-- Marketplace Layout -->
+    <div class="marketplace-layout">
+
+      <!-- Left Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="filter-sidebar-header">
+          <div class="filter-sidebar-icon">📊</div>
+          <span class="filter-sidebar-title">数据集</span>
+          <button class="filter-sidebar-clear" onclick="resetFilters()">清空</button>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">📂 数据类目</div>
+          <div class="filter-group-items" id="categoryFilters">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">👁 可见性</div>
+          <div class="filter-group-items" id="visibilityFilters">
+            <div class="filter-card-tag" data-filter="visibility" data-value="public" onclick="toggleFilterTag(this,'visibility')">
+              <span class="fc-label">🟢 公开</span><span class="fc-count">10</span>
+            </div>
+            <div class="filter-card-tag" data-filter="visibility" data-value="apply" onclick="toggleFilterTag(this,'visibility')">
+              <span class="fc-label">🔵 申请制</span><span class="fc-count">3</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Content -->
+      <div class="content-main">
+
+        <!-- Search bar -->
+        <div class="search-section">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" id="searchInput" placeholder="搜索数据集名称、描述或标签…" oninput="onSearchInput()">
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select class="sort-select" id="sortBy" onchange="onSortChange()">
+              <option value="default">默认排序</option>
+              <option value="updated">最近更新</option>
+              <option value="downloads">最多下载</option>
+            </select>
+            <span class="filter-reset-link" onclick="resetFilters()">重置筛选</span>
+          </div>
+          <span class="result-count" id="toolbarCount">共 <strong>0</strong> 个数据集</span>
+          <button class="btn btn-primary" onclick="requireAuth()&&openCreateDrawer()">＋ 新增数据集</button>
+        </div>
+
+        <!-- Card Grid -->
+        <div class="dataset-grid" id="datasetCardGrid"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📊</div>
+          <h3>暂无数据集</h3>
+          <p>尚未创建数据集，点击上方按钮创建您的第一个数据集</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrap" id="pagination" style="display:none">
+          <span class="page-info" id="pageInfo"></span>
+          <div class="pagination" id="pageControls"></div>
+        </div>
+
+      </div>
+    </div>
+
+<!-- ===== CREATE DRAWER ===== -->
+<div class="drawer-overlay" id="createDrawerOverlay" onclick="closeCreateDrawer()"></div>
+<div class="drawer" id="createDrawer">
+  <div class="drawer-header">
+    <span class="drawer-title">新增数据集</span>
+    <button class="drawer-close" onclick="closeCreateDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> 数据集英文名称</span>
+      <input class="form-input" id="cfNameEn" placeholder="如：wheat-disease-2024" onblur="validateField('cfNameEn')">
+      <span class="form-error-msg" id="err-cfNameEn">请输入数据集英文名称（仅限小写字母、数字、连字符）</span>
+      <span class="form-hint">小写字母、数字、连字符组成，如 wheat-disease-2024</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> 数据集中文名称</span>
+      <input class="form-input" id="cfNameCn" placeholder="如：小麦病害识别数据集2024" onblur="validateField('cfNameCn')">
+      <span class="form-error-msg" id="err-cfNameCn">请输入数据集中文名称</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> 所有者</span>
+      <input class="form-input" id="cfOwner" value="张建伟" onblur="validateField('cfOwner')">
+      <span class="form-error-msg" id="err-cfOwner">请输入所有者</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> License</span>
+      <select class="form-select-drawer" id="cfLicense">
+        <option value="">-- 请选择 License --</option>
+        <option>CC BY 4.0</option>
+        <option>CC BY-NC 4.0</option>
+        <option>CC BY-SA 4.0</option>
+        <option>CC BY-NC-SA 4.0</option>
+        <option>Apache 2.0</option>
+        <option>MIT</option>
+      </select>
+      <span class="form-error-msg" id="err-cfLicense">请选择 License</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> 是否公开</span>
+      <div class="radio-group" id="cfVisibility">
+        <div class="radio-option active" data-value="public" onclick="selectVisibility(this)">
+          <span class="radio-dot"></span>公开数据集
+        </div>
+        <div class="radio-option" data-value="private" onclick="selectVisibility(this)">
+          <span class="radio-dot"></span>非公开数据集
+        </div>
+        <div class="radio-option" data-value="apply" onclick="selectVisibility(this)">
+          <span class="radio-dot"></span>申请制下载
+        </div>
+      </div>
+      <span class="form-hint" id="visibilityHint">公开数据集对所有用户可见，可通过所有者获取数据访问方式</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label">所属类目</span>
+      <select class="form-select-drawer" id="cfCategory"><option value="">-- 请选择类目 --</option></select>
+    </div>
+    <div class="form-item">
+      <span class="form-label">🪙 使用消耗积分</span>
+      <input class="form-input" type="number" id="cfPointsCost" placeholder="其他用户申请使用此数据集需消耗的积分" min="0" max="100" value="0" style="width:200px">
+      <span class="form-hint">设为 0 表示免费公开使用；建议范围 10-50，按数据价值定价</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label"><span class="required">*</span> 数据集描述</span>
+      <textarea class="form-textarea" id="cfDesc" placeholder="请描述数据集的内容、格式、用途等..." onblur="validateField('cfDesc')"></textarea>
+      <span class="form-error-msg" id="err-cfDesc">请输入数据集描述</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label">标签</span>
+      <input class="form-input" id="cfTags" placeholder="多个标签用英文逗号分隔，如：图像,分类,小麦">
+      <span class="form-hint">用于检索和分类，建议添加 2-5 个标签</span>
+    </div>
+    <div class="form-item">
+      <span class="form-label">数据集介绍 (README)</span>
+      <textarea class="form-textarea" id="cfReadme" placeholder="支持 Markdown 格式&#10;## 数据集说明&#10;请输入数据集的详细介绍..." style="height:120px"></textarea>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <div class="spacer"></div>
+    <button class="btn btn-default" onclick="closeCreateDrawer()">取消</button>
+    <button class="btn btn-primary" onclick="submitCreateDataset()">提交</button>
+  </div>
+</div>
+
+<!-- ===== DATASET DETAIL VIEW ===== -->
+<div id="datasetDetailView">
+  <div class="ds-breadcrumb">
+    <a class="ds-back-link" id="dsBackLink" onclick="backToList()">← 返回数据集管理</a>
+    <span class="ds-breadcrumb-sep">/</span>
+    <span id="dsBreadcrumbName" style="color:rgba(0,0,0,0.45)">数据集名称</span>
+  </div>
+  <div class="ds-header-card">
+    <div class="ds-header-top">
+      <div class="ds-header-icon" id="dsIcon">📊</div>
+      <div class="ds-header-info">
+        <div class="ds-header-title-row">
+          <h1 class="ds-header-name" id="dsName">数据集名称</h1>
+          <span class="visibility-chip" id="dsVisChip">公开</span>
+        </div>
+        <div class="ds-header-name-en" id="dsNameEn">dataset-en-name</div>
+        <div class="ds-header-desc" id="dsDesc">数据集描述</div>
+        <div class="ds-header-tags" id="dsTags"></div>
+        <div class="ds-header-meta-row" id="dsMetaRow"></div>
+      </div>
+      <div class="ds-header-actions">
+        <button class="btn btn-default" onclick="viewSampleData()">📋 查看示例数据</button>
+        <button class="btn btn-primary" id="dsApplyBtn" onclick="applyForDataset()">📝 申请使用</button>
+      </div>
+    </div>
+  </div>
+  <div class="ds-content-card">
+    <div class="ds-detail-layout">
+      <div class="ds-detail-left">
+        <div class="ds-section-title">数据集介绍</div>
+        <div class="ds-readme" id="dsReadme"></div>
+        <div class="ds-section-title">基本信息</div>
+        <table class="ds-info-table" id="dsInfoTable"></table>
+      </div>
+      <div class="ds-detail-right">
+        <div class="ds-sidebar-card">
+          <div class="ds-sidebar-card-title" id="dsActionCardTitle">访问权限</div>
+          <div id="dsActionCardContent"></div>
+        </div>
+        <div class="ds-sidebar-card">
+          <div class="ds-sidebar-card-title">数据统计</div>
+          <div class="ds-sidebar-list" id="dsStatsList"></div>
+        </div>
+        <div class="ds-sidebar-card">
+          <div class="ds-sidebar-card-title">标签</div>
+          <div class="ds-sidebar-list" id="dsTagList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /.page-inner -->
+</div><!-- /.page-wrap -->
+
+<!-- ===== SAMPLE DATA MODAL ===== -->
+<div class="modal-overlay" id="sampleModalOverlay" onclick="closeSampleModal()">
+  <div class="modal-dialog" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title">📋 样本数据预览 — <span id="sampleModalDsName"></span></span>
+      <button class="modal-close" onclick="closeSampleModal()">✕</button>
+    </div>
+    <div class="modal-body" id="sampleModalBody"></div>
+    <div class="modal-footer">
+      <span class="sample-note">📌 以上为样本数据（前5条），仅供预览</span>
+      <button class="btn btn-primary" onclick="closeSampleModal();applyForDataset()">📝 申请使用完整数据集</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPCONFIRM ===== -->
+<div class="popconfirm-shield" id="popconfirmShield" onclick="closePopconfirm()"></div>
+<div class="popconfirm-wrap" id="popconfirmWrap">
+  <div class="popconfirm-box">
+    <div class="popconfirm-body">
+      <span class="popconfirm-icon">⚠️</span>
+      <div class="popconfirm-text">
+        <div class="popconfirm-title" id="popconfirmTitle"></div>
+        <div class="popconfirm-desc" id="popconfirmDesc"></div>
+      </div>
+    </div>
+    <div class="popconfirm-textarea-wrap" id="popconfirmTextareaWrap" style="display:none">
+      <textarea class="popconfirm-textarea" id="popconfirmTextarea" placeholder="请简要说明使用用途（选填）"></textarea>
+    </div>
+    <div class="popconfirm-buttons">
+      <button class="popconfirm-btn" onclick="closePopconfirm()">取消</button>
+      <button class="popconfirm-btn primary" id="popconfirmOk">确认申请</button>
+    </div>
+    <div class="popconfirm-arrow"></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== LOGOUT ===== -->
+<div class="logout-overlay" id="logoutOverlay">
+  <div class="logout-dialog">
+    <h3 style="margin-bottom:12px;font-size:16px;font-weight:600">退出登录</h3>
+    <p style="color:rgba(0,0,0,0.65);font-size:14px;margin-bottom:20px">确定要退出当前账号吗？</p>
+    <div style="text-align:right;gap:8px;display:flex;justify-content:flex-end">
+      <button class="btn btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-primary" style="background:#ff4d4f;border-color:#ff4d4f" onclick="doLogout()">确认退出</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GUIDE ===== -->
+<button class="guide-trigger" onclick="toggleGuide()">🧪 交互演示指引</button>
+<div class="guide-overlay" id="guideOverlay" onclick="if(event.target===this)toggleGuide()">
+  <div class="guide-drawer">
+    <div class="guide-drawer-header">
+      <span class="guide-drawer-title">🧪 数据集管理 — 交互演示指引</span>
+      <button class="guide-drawer-close" onclick="toggleGuide()">✕</button>
+    </div>
+    <div class="guide-drawer-body">
+      <div class="guide-section">
+        <div class="guide-section-title">📋 页面交互</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>🔍 搜索</td><td>在搜索框输入关键词</td><td>实时过滤匹配的数据集卡片</td></tr>
+            <tr><td>📂 类目筛选</td><td>点击左侧筛选面板的类目标签</td><td>仅显示该类目的数据集，标签高亮</td></tr>
+            <tr><td>👁 可见性筛选</td><td>点击「公开」或「申请制」标签</td><td>按可见性过滤数据集</td></tr>
+            <tr><td>📊 排序</td><td>选择排序方式下拉框</td><td>按下载量或更新时间重排</td></tr>
+            <tr><td>➕ 新增数据集</td><td>点击「新增数据集」按钮</td><td><span class="guide-tag modal">抽屉</span> 打开600px右侧表单</td></tr>
+            <tr><td>📝 表单验证</td><td>提交空表单 / 字段失焦</td><td><span class="guide-tag error">错误</span> 红色边框+错误提示</td></tr>
+            <tr><td>👁 查看详情</td><td>点击数据集卡片</td><td><span class="guide-tag modal">页面</span> 全页详情视图：头部+README+元数据表+右侧栏</td></tr>
+            <tr><td>📥 申请使用</td><td>点击申请制卡片的「申请使用」</td><td><span class="guide-tag do">气泡</span> Popconfirm确认→已申请状态</td></tr>
+            <tr><td>⬅ 返回列表</td><td>点击详情页左上角←返回链接</td><td>返回数据集卡片列表，支持浏览器前进/后退</td></tr>
+            <tr><td>📄 分页</td><td>点击分页按钮或切换每页条数</td><td>切换数据显示页面</td></tr>
+            <tr><td>🌙 深色模式</td><td>html[data-prefers-color="dark"]</td><td>所有组件切换深色主题配色</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">🎨 可见性说明</div>
+        <table class="guide-table">
+          <thead><tr><th>类型</th><th>标识</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>公开数据集</td><td><span class="guide-tag do">公开</span></td><td>所有用户可见，可通过所有者获取数据访问方式</td></tr>
+            <tr><td>非公开数据集</td><td><span class="guide-tag error">非公开</span></td><td>仅创建者及组织成员可见</td></tr>
+            <tr><td>申请制下载</td><td><span class="guide-tag modal">申请制</span></td><td>需提交申请，审核通过后由所有者提供数据访问方式</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+// ============================================================
+// AUTH
+// ============================================================
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+function goToWorkbench(){location.href='workbench.html';}
+if(isLoggedIn()){switchAuthState(true);}
+
+// ============================================================
+// MOCK DATA
+// ============================================================
+var categories = [
+  { value:'agriculture', label:'农业种植', icon:'🌾' },
+  { value:'livestock', label:'畜牧养殖', icon:'🐄' },
+  { value:'remote-sensing', label:'遥感影像', icon:'🛰️' },
+  { value:'weather', label:'气象数据', icon:'🌤️' },
+  { value:'soil', label:'土壤数据', icon:'🧪' },
+  { value:'equipment', label:'农机设备', icon:'🚜' },
+  { value:'other', label:'其他', icon:'📦' }
+];
+
+var datasets = [
+  { id:'DS-20260701-001', nameEn:'wheat-disease-2024', nameCn:'小麦条锈病高光谱图像数据集', owner:'XXXX植保中心', license:'CC BY-NC 4.0', visibility:'public', category:'agriculture', tags:['图像','分类','小麦','病害','高光谱'], fileCount:12500, fileSize:'8.6 GB', downloads:342, updatedAt:'2026-07-20', applicantStatus:null, pointsCost:0, description:'包含小麦条锈病的高光谱图像，覆盖5个品种和3个生育期。', sampleData:{columns:['品种','生育期','病害等级','图像尺寸','标注框数'],rows:[['济麦22','拔节期','轻度(1级)','2048×2048','3'],['济麦44','抽穗期','中度(2级)','2048×2048','7'],['鲁原502','灌浆期','重度(3级)','2048×2048','12'],['烟农19','拔节期','健康(0级)','2048×2048','0'],['济麦22','成熟期','轻度(1级)','2048×2048','5']]}, readme:'## 数据集说明\n\n### 概述\n本数据集包含小麦条锈病的高光谱图像，覆盖了**5个品种**和**3个生育期**。\n\n### 数据格式\n- 图像：PNG格式，2048×2048像素\n- 标注：JSON格式，包含病害区域和严重度\n\n### 采集条件\n- 设备：无人机搭载高光谱相机\n- 地点：XXXX农场试验田\n- 时间：2024年3月-6月' },
+  { id:'DS-20260701-002', nameEn:'corn-nutrient-deficiency', nameCn:'玉米营养元素缺乏症数据集', owner:'XXXX农科院', license:'CC BY 4.0', visibility:'public', category:'agriculture', tags:['图像','分类','玉米','营养诊断'], fileCount:8900, fileSize:'5.2 GB', downloads:567, updatedAt:'2026-07-18', applicantStatus:null, pointsCost:0, description:'涵盖玉米常见的氮、磷、钾、锌四种元素缺乏症的表型图像数据。', sampleData:{columns:['品种','生育期','缺乏元素','严重程度','图像尺寸'],rows:[['郑单958','拔节期','氮(N)','中度','1024×1024'],['先玉335','抽穗期','磷(P)','轻度','1024×1024'],['京科968','灌浆期','钾(K)','重度','1024×1024'],['郑单958','苗期','锌(Zn)','中度','1024×1024'],['先玉335','成熟期','氮(N)','轻度','1024×1024']]}, readme:'## 数据集说明\n\n涵盖玉米常见的**氮、磷、钾、锌**四种元素缺乏症的表型图像数据。\n\n- 图像数量：8,900张\n- 类别：5类（正常 + 4种缺乏症）\n- 分辨率：1024×1024' },
+  { id:'DS-20260701-003', nameEn:'soil-organic-matter', nameCn:'XXXX垦区土壤有机质数据集', owner:'XXXX信息中心', license:'CC BY-NC-SA 4.0', visibility:'apply', category:'soil', tags:['土壤','有机质','GIS','光谱分析'], fileCount:3200, fileSize:'12.4 GB', downloads:89, updatedAt:'2026-07-15', applicantStatus:null, pointsCost:40, description:'XXXX垦区10年土壤有机质监测数据，采样点3,200个。', sampleData:{columns:['采样点编号','pH值','有机质(g/kg)','全氮(g/kg)','采样深度(cm)'],rows:[['S-2015-001','6.8','32.5','1.85','0-20'],['S-2016-042','7.1','28.3','1.62','20-40'],['S-2018-107','6.2','35.1','2.01','0-20'],['S-2020-215','5.9','22.7','1.38','0-20'],['S-2024-308','6.5','30.9','1.74','20-40']]}, readme:'## 数据集说明\n\nXXXX垦区**10年**土壤有机质监测数据。\n\n### 数据内容\n- 采样点：3,200个\n- 指标：有机质、pH值、氮磷钾含量\n- 时间跨度：2015-2025年\n\n### 使用说明\n本数据集为申请制下载，请提交使用申请并说明用途。' },
+  { id:'DS-20260701-004', nameEn:'rice-pest-monitoring', nameCn:'水稻害虫识别数据集', owner:'XXXX植保中心', license:'Apache 2.0', visibility:'public', category:'agriculture', tags:['图像','检测','水稻','害虫','目标检测'], fileCount:15600, fileSize:'18.2 GB', downloads:1234, updatedAt:'2026-07-22', applicantStatus:null, pointsCost:0, description:'包含水稻常见害虫的标注图像，支持目标检测任务，覆盖12种害虫类别。', sampleData:{columns:['害虫类别','生育期','虫口密度','危害等级','标注框坐标'],rows:[['稻纵卷叶螟','分蘖期','12头/百株','中度','(320,180,580,420)'],['二化螟','拔节期','5头/百株','轻度','(150,90,410,340)'],['稻飞虱','抽穗期','38头/百株','重度','(200,60,460,310)'],['稻纵卷叶螟','灌浆期','8头/百株','轻度','(280,150,530,400)'],['稻螟蛉','分蘖期','3头/百株','轻度','(400,220,620,450)']]}, readme:'## 数据集说明\n\n包含水稻常见害虫的标注图像，支持目标检测任务。\n\n- 害虫类别：12种\n- 标注框：YOLO格式\n- 图像分辨率：1920×1080' },
+  { id:'DS-20260701-005', nameEn:'satellite-field-boundary', nameCn:'农田地块卫星遥感数据集', owner:'XXXX遥感中心', license:'CC BY 4.0', visibility:'public', category:'remote-sensing', tags:['遥感','分割','农田','卫星影像'], fileCount:5800, fileSize:'32.6 GB', downloads:456, updatedAt:'2026-07-14', applicantStatus:null, pointsCost:0, description:'高分辨率卫星影像的农田地块分割数据集，覆盖面积50,000平方公里。', sampleData:{columns:['地块ID','面积(亩)','NDVI均值','作物类型','影像日期'],rows:[['PLT-0452','128.5','0.72','玉米','2026-06-15'],['PLT-0781','86.3','0.58','大豆','2026-06-15'],['PLT-0234','215.7','0.81','水稻','2026-06-15'],['PLT-0912','54.9','0.45','小麦','2026-06-15'],['PLT-0567','172.1','0.68','玉米','2026-06-15']]}, readme:'## 数据集说明\n\n高分辨率卫星影像的农田地块分割数据集。\n\n- 卫星源：高分系列\n- 分辨率：0.5m\n- 覆盖面积：50,000平方公里' },
+  { id:'DS-20260701-006', nameEn:'livestock-behavior', nameCn:'奶牛行为监测数据集', owner:'XXXX畜牧中心', license:'MIT', visibility:'private', category:'livestock', tags:['视频','行为识别','奶牛','养殖'], fileCount:4200, fileSize:'45.8 GB', downloads:23, updatedAt:'2026-07-10', applicantStatus:null, pointsCost:0, description:'奶牛行为视频监测数据，仅供内部使用。', sampleData:{columns:['个体ID','行为类别','时间戳','置信度','视频片段(秒)'],rows:[['COW-0042','进食','2026-07-10T06:15:32','0.94','15s-28s'],['COW-0107','反刍','2026-07-10T07:42:11','0.89','42s-55s'],['COW-0042','卧息','2026-07-10T11:08:45','0.96','3s-18s'],['COW-0231','行走','2026-07-10T13:22:07','0.87','8s-21s'],['COW-0107','饮水','2026-07-10T15:30:19','0.92','55s-68s']]}, readme:'## 数据集说明\n\n奶牛行为视频监测数据，仅供内部使用。' },
+  { id:'DS-20260701-007', nameEn:'greenhouse-climate', nameCn:'温室大棚环境监测数据集', owner:'XXXX农技中心', license:'CC BY-NC 4.0', visibility:'public', category:'equipment', tags:['传感器','温度','湿度','光照','温室'], fileCount:500000, fileSize:'1.8 GB', downloads:234, updatedAt:'2026-07-19', applicantStatus:null, pointsCost:0, description:'包含100个大棚的全年环境监测数据，采集频率5分钟/次。', sampleData:{columns:['大棚编号','温度(℃)','湿度(%)','光照(lux)','CO₂(ppm)','土壤湿度(%)'],rows:[['GH-01','26.5','72.3','38500','420','35.2'],['GH-01','27.1','71.8','39200','418','34.8'],['GH-23','24.8','68.5','41200','405','38.1'],['GH-58','28.3','75.1','36800','435','32.5'],['GH-82','25.6','70.2','40100','415','36.7']]}, readme:'## 数据集说明\n\n包含**100个大棚**的全年环境监测数据。\n\n- 采集频率：每5分钟\n- 指标：温度、湿度、光照强度、CO2浓度、土壤湿度\n- 格式：CSV' },
+  { id:'DS-20260701-008', nameEn:'weather-forecast-agriculture', nameCn:'农业气象预报数据集', owner:'XXXX气象站', license:'CC BY 4.0', visibility:'public', category:'weather', tags:['气象','预报','降雨','温度'], fileCount:12000, fileSize:'3.4 GB', downloads:891, updatedAt:'2026-07-21', applicantStatus:null, pointsCost:0, description:'XXXX地区10年气象数据，包含日值降水量、温度、湿度等指标。', sampleData:{columns:['日期','最高温(℃)','最低温(℃)','降水量(mm)','日照时数(h)','平均湿度(%)'],rows:[['2026-07-20','32.5','22.1','0.0','12.3','58'],['2026-07-19','34.2','23.5','5.8','8.7','72'],['2026-07-18','28.6','21.3','23.4','2.1','89'],['2026-07-17','30.1','20.8','1.2','10.5','63'],['2026-07-16','33.8','24.2','0.0','13.1','51']]}, readme:'## 数据集说明\n\nXXXX地区**10年**气象数据。\n\n- 时间范围：2016-2026年\n- 频率：日值\n- 指标：降水量、温度、湿度、风速、日照时数' },
+  { id:'DS-20260701-009', nameEn:'drone-field-inspection', nameCn:'无人机农田巡检数据集', owner:'XXXX飞防中心', license:'CC BY-NC-SA 4.0', visibility:'apply', category:'equipment', tags:['无人机','巡检','正射影像','多光谱'], fileCount:2800, fileSize:'58.6 GB', downloads:67, updatedAt:'2026-07-12', applicantStatus:null, pointsCost:50, description:'无人机航拍农田正射影像与多光谱数据，申请制下载。', sampleData:{columns:['飞行架次','飞行高度(m)','覆盖面积(亩)','影像类型','分辨率(cm/px)'],rows:[['DJI-20260712-01','120','85.3','正射影像','2.5'],['DJI-20260712-02','100','92.1','多光谱','3.2'],['DJI-20260712-03','150','78.6','正射影像','3.0'],['DJI-20260712-04','120','88.9','多光谱','2.8'],['DJI-20260712-05','80','95.4','正射影像','2.0']]}, readme:'## 数据集说明\n\n无人机航拍农田正射影像与多光谱数据。申请制下载。' },
+  { id:'DS-20260701-010', nameEn:'soybean-disease-leaves', nameCn:'大豆叶部病害数据集', owner:'XXXX农科院', license:'Apache 2.0', visibility:'public', category:'agriculture', tags:['图像','分类','大豆','病害'], fileCount:7200, fileSize:'4.8 GB', downloads:345, updatedAt:'2026-07-17', applicantStatus:null, pointsCost:0, description:'大豆常见叶部病害图像，包含锈病、灰斑病、霜霉病等6类。', sampleData:{columns:['品种','生育期','病害类型','严重度','图像尺寸'],rows:[['黑农48','开花期','锈病','中度','1280×960'],['合丰55','结荚期','灰斑病','轻度','1280×960'],['绥农14','鼓粒期','霜霉病','重度','1280×960'],['黑农48','成熟期','锈病','轻度','1280×960'],['合丰55','开花期','菌核病','中度','1280×960']]}, readme:'## 数据集说明\n\n大豆常见叶部病害图像。包含锈病、灰斑病、霜霉病等6类。' },
+  { id:'DS-20260701-011', nameEn:'livestock-weight-estimation', nameCn:'生猪体重估测数据集', owner:'XXXX畜牧中心', license:'MIT', visibility:'private', category:'livestock', tags:['图像','回归','生猪','体重'], fileCount:5600, fileSize:'7.2 GB', downloads:12, updatedAt:'2026-07-08', applicantStatus:null, pointsCost:0, description:'生猪深度图像与实测体重数据，用于体重估测模型训练。内部使用。', sampleData:{columns:['个体ID','品种','日龄','实测体重(kg)','深度图像分辨率'],rows:[['PIG-0032','大白猪','145','82.3','640×480'],['PIG-0078','长白猪','132','75.6','640×480'],['PIG-0121','杜洛克','158','91.2','640×480'],['PIG-0032','大白猪','152','85.7','640×480'],['PIG-0205','皮特兰','140','78.9','640×480']]}, readme:'## 数据集说明\n\n生猪深度图像与实测体重数据，用于体重估测模型训练。内部使用。' },
+  { id:'DS-20260701-012', nameEn:'paddy-field-water', nameCn:'稻田水分管理数据集', owner:'XXXX灌溉中心', license:'CC BY 4.0', visibility:'public', category:'soil', tags:['水分','灌溉','水稻','传感器'], fileCount:85000, fileSize:'2.1 GB', downloads:178, updatedAt:'2026-07-16', applicantStatus:null, pointsCost:0, description:'水稻田土壤水分实时监测数据，85,000条传感器记录。', sampleData:{columns:['传感器ID','时间戳','土壤水分(%)','土壤温度(℃)','电导率(mS/cm)'],rows:[['SW-045','2026-07-20T08:00','28.5','24.2','0.35'],['SW-045','2026-07-20T08:05','28.3','24.3','0.34'],['SW-078','2026-07-20T08:00','32.1','23.8','0.41'],['SW-112','2026-07-20T08:00','25.7','25.1','0.29'],['SW-045','2026-07-20T08:10','28.1','24.4','0.33']]}, readme:'## 数据集说明\n\n水稻田土壤水分实时监测数据。' },
+  { id:'DS-20260701-013', nameEn:'farmland-soil-nutrients', nameCn:'耕地土壤养分数据集', owner:'XXXX土肥站', license:'CC BY-NC 4.0', visibility:'apply', category:'soil', tags:['土壤','养分','GIS','采样'], fileCount:18000, fileSize:'22.8 GB', downloads:156, updatedAt:'2026-07-13', applicantStatus:null, pointsCost:30, description:'XXXX垦区耕地土壤养分空间分布数据，申请制下载。', sampleData:{columns:['采样点GPS','有机质(g/kg)','碱解氮(mg/kg)','有效磷(mg/kg)','速效钾(mg/kg)'],rows:[['(47.3521,133.1284)','31.2','145.8','22.5','185.3'],['(47.4215,132.9872)','26.7','128.3','18.9','162.7'],['(47.3891,133.0523)','34.5','158.1','25.3','201.5'],['(47.4103,132.8956)','22.1','112.7','15.2','148.9'],['(47.3678,133.1841)','29.8','138.5','20.8','178.2']]}, readme:'## 数据集说明\n\nXXXX垦区耕地土壤养分空间分布数据。申请制下载。' },
+  { id:'DS-20260701-014', nameEn:'ndvi-time-series', nameCn:'NDVI时序数据集', owner:'XXXX遥感中心', license:'CC BY 4.0', visibility:'public', category:'remote-sensing', tags:['NDVI','时序','植被指数','遥感'], fileCount:3600, fileSize:'28.4 GB', downloads:678, updatedAt:'2026-07-20', applicantStatus:null, pointsCost:0, description:'XXXX垦区NDVI月值时序数据集，涵盖2015-2025年。', sampleData:{columns:['日期','地块ID','NDVI均值','NDVI最大值','NDVI最小值','植被覆盖度(%)'],rows:[['2025-07','PLT-0452','0.78','0.92','0.52','85.3'],['2025-06','PLT-0781','0.65','0.81','0.38','72.1'],['2025-08','PLT-0234','0.82','0.95','0.58','91.2'],['2024-07','PLT-0452','0.74','0.88','0.48','81.5'],['2024-06','PLT-0781','0.61','0.77','0.35','68.7']]}, readme:'## 数据集说明\n\nXXXX垦区NDVI月值时序数据集，2015-2025年。' },
+  { id:'DS-20260701-015', nameEn:'tractor-operation-logs', nameCn:'拖拉机作业日志数据集', owner:'XXXX农机中心', license:'MIT', visibility:'private', category:'equipment', tags:['农机','GPS','油耗','作业'], fileCount:32000, fileSize:'800 MB', downloads:5, updatedAt:'2026-07-05', applicantStatus:null, pointsCost:0, description:'拖拉机GPS轨迹与作业参数数据，内部使用。', sampleData:{columns:['设备ID','作业类型','GPS纬度','GPS经度','速度(km/h)','油耗(L/h)'],rows:[['TR-0012','犁耕','47.3521','133.1284','6.5','18.2'],['TR-0012','犁耕','47.3535','133.1301','6.3','18.5'],['TR-0045','播种','47.2891','132.9872','8.2','14.7'],['TR-0078','施肥','47.4103','132.8956','7.8','15.3'],['TR-0012','运输','47.3678','133.1841','12.5','20.1']]}, readme:'## 数据集说明\n\n拖拉机GPS轨迹与作业参数数据。内部使用。' },
+  // Workbench-linked datasets
+  { id:'WB-DS-001', nameEn:'hlj-crop-growth-samples', nameCn:'黑龙江垦区作物长势样本集', owner:'张研究员', license:'CC BY-NC 4.0', visibility:'public', category:'agriculture', tags:['无人机','多光谱','作物长势','地面调查'], fileCount:3200, fileSize:'1.2 GB', downloads:128, updatedAt:'2026-07-22', applicantStatus:null, pointsCost:0, description:'覆盖 2024–2025 生长季的无人机多光谱 + 地面调查数据', sampleData:{columns:['地块编号','作物类型','NDVI值','叶面积指数','采样日期'],rows:[['PLT-001','玉米','0.72','3.8','2025-07-15'],['PLT-002','大豆','0.65','2.9','2025-07-15'],['PLT-003','水稻','0.81','4.5','2025-07-15'],['PLT-004','玉米','0.68','3.2','2025-08-01'],['PLT-005','小麦','0.58','2.1','2025-06-20']]}, readme:'## 数据集说明\n\n覆盖 2024–2025 生长季的无人机多光谱 + 地面调查数据。\n\n### 数据内容\n- 采集面积：8,500亩\n- 光谱波段：5个（蓝、绿、红、红边、近红外）\n- 采样频率：生长季每两周一次' },
+  { id:'WB-DS-002', nameEn:'soil-nutrient-hires-grid', nameCn:'土壤养分高分辨率栅格数据', owner:'张研究员', license:'CC BY-NC 4.0', visibility:'public', category:'soil', tags:['土壤','有机质','氮磷钾','栅格'], fileCount:1500, fileSize:'860 MB', downloads:256, updatedAt:'2026-07-20', applicantStatus:null, pointsCost:0, description:'覆盖主要农场的土壤有机质、氮磷钾分布', sampleData:{columns:['采样点GPS','有机质(g/kg)','碱解氮(mg/kg)','有效磷(mg/kg)','速效钾(mg/kg)'],rows:[['(47.3521,133.1284)','31.2','145.8','22.5','185.3'],['(47.4215,132.9872)','26.7','128.3','18.9','162.7'],['(47.3891,133.0523)','34.5','158.1','25.3','201.5'],['(47.4103,132.8956)','22.1','112.7','15.2','148.9'],['(47.3678,133.1841)','29.8','138.5','20.8','178.2']]}, readme:'## 数据集说明\n\n覆盖主要农场的土壤有机质、氮磷钾分布。\n\n### 数据内容\n- 分辨率：30m × 30m 栅格\n- 覆盖范围：12个农场\n- 指标：有机质、全氮、有效磷、速效钾、pH值' },
+  { id:'WB-DS-003', nameEn:'crop-yield-evaluation', nameCn:'作物产量预估评测数据集', owner:'张研究员', license:'CC BY 4.0', visibility:'public', category:'remote-sensing', tags:['产量预估','无人机','卫星遥感','评测'], fileCount:8600, fileSize:'3.1 GB', downloads:432, updatedAt:'2026-07-18', applicantStatus:null, pointsCost:0, description:'地面测产样本 + 无人机与卫星遥感估产数据', sampleData:{columns:['地块ID','作物类型','预测产量(kg/亩)','实测产量(kg/亩)','误差率(%)'],rows:[['FLD-001','玉米','625.3','638.1','-2.0'],['FLD-002','大豆','218.7','205.4','+6.5'],['FLD-003','水稻','542.1','531.2','+2.1'],['FLD-004','玉米','598.6','612.3','-2.2'],['FLD-005','小麦','385.2','378.9','+1.7']]}, readme:'## 数据集说明\n\n地面测产样本 + 无人机与卫星遥感估产数据。\n\n### 数据内容\n- 作物类型：玉米、大豆、水稻、小麦\n- 数据来源：地面实测 + 无人机多光谱 + Sentinel-2\n- 评测指标：产量、生物量、LAI' }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+var _currentPage = 1;
+var _pageSize = 12;
+var _searchKeyword = '';
+var _categoryFilter = '';
+var _visibilityFilter = '';
+var _sortBy = 'default';
+var _pendingApplyId = null;
+var _detailId = null;
+
+// ============================================================
+// ===== NOTIFICATIONS (data must be defined before init IIFE) =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+
+// INIT
+// ============================================================
+var _cameFromWorkbench = false;
+(function() {
+  try {
+  populateFilters();
+  var params = new URLSearchParams(window.location.search);
+  var directId = params.get('id');
+  if (directId) {
+    _cameFromWorkbench = true;
+    document.getElementById('dsBackLink').textContent = '← 返回工作台';
+    showDetail(directId);
+  } else {
+    renderAll();
+  }
+  renderNotifs();
+  } catch(e) {
+    document.getElementById('datasetCardGrid').innerHTML = '<div style="padding:40px;text-align:center;color:#ff4d4f;"><h3>⚠️ 渲染错误</h3><pre style="text-align:left;font-size:12px;overflow:auto;">'+e.message+'\n'+e.stack+'</pre><p style="margin-top:12px;">datasets count: '+datasets.length+'</p></div>';
+    document.getElementById('emptyState').style.display = 'none';
+  }
+})();
+
+function populateFilters() {
+  var catContainer = document.getElementById('categoryFilters');
+  categories.forEach(function(c) {
+    var count = datasets.filter(function(d){return d.category===c.value;}).length;
+    var el = document.createElement('div');
+    el.className = 'filter-card-tag';
+    el.setAttribute('data-filter','category');
+    el.setAttribute('data-value',c.value);
+    el.onclick = function(){ toggleFilterTag(this,'category'); };
+    el.innerHTML = '<span class="fc-label">'+c.icon+' '+c.label+'</span><span class="fc-count">'+count+'</span>';
+    catContainer.appendChild(el);
+  });
+  // Update visibility counts
+  var pubCount = datasets.filter(function(d){return d.visibility==='public';}).length;
+  var applyCount = datasets.filter(function(d){return d.visibility==='apply';}).length;
+  document.querySelector('#visibilityFilters [data-value="public"] .fc-count').textContent = pubCount;
+  document.querySelector('#visibilityFilters [data-value="apply"] .fc-count').textContent = applyCount;
+  // Populate create drawer category select
+  var cfCat = document.getElementById('cfCategory');
+  categories.forEach(function(c) { var opt = document.createElement('option'); opt.value = c.value; opt.textContent = c.icon + ' ' + c.label; cfCat.appendChild(opt); });
+}
+
+function toggleFilterTag(el, filterType) {
+  if (el.classList.contains('checked')) {
+    el.classList.remove('checked');
+    if (filterType === 'category') _categoryFilter = '';
+    else _visibilityFilter = '';
+  } else {
+    // Deselect siblings
+    var siblings = el.parentElement.querySelectorAll('.filter-card-tag.checked');
+    siblings.forEach(function(s){ s.classList.remove('checked'); });
+    el.classList.add('checked');
+    if (filterType === 'category') _categoryFilter = el.getAttribute('data-value');
+    else _visibilityFilter = el.getAttribute('data-value');
+  }
+  _currentPage = 1;
+  renderAll();
+}
+
+function resetFilters() {
+  _categoryFilter = '';
+  _visibilityFilter = '';
+  _searchKeyword = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.filter-card-tag.checked').forEach(function(el){ el.classList.remove('checked'); });
+  _currentPage = 1;
+  renderAll();
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll() {
+  var filtered = getFilteredDatasets();
+  renderCards(filtered);
+  renderPagination(filtered.length);
+}
+
+function getFilteredDatasets() {
+  var result = datasets.slice();
+  var kw = _searchKeyword.toLowerCase();
+  if (kw) {
+    result = result.filter(function(d) { return d.nameCn.toLowerCase().indexOf(kw) > -1 || d.nameEn.toLowerCase().indexOf(kw) > -1 || (d.description||'').toLowerCase().indexOf(kw) > -1 || d.owner.toLowerCase().indexOf(kw) > -1 || d.tags.some(function(t) { return t.toLowerCase().indexOf(kw) > -1; }); });
+  }
+  if (_categoryFilter) { result = result.filter(function(d) { return d.category === _categoryFilter; }); }
+  if (_visibilityFilter) { result = result.filter(function(d) { return d.visibility === _visibilityFilter; }); }
+  if (_sortBy === 'downloads') { result.sort(function(a,b) { return b.downloads - a.downloads; }); }
+  else if (_sortBy === 'updated') { result.sort(function(a,b) { return b.updatedAt.localeCompare(a.updatedAt); }); }
+  return result;
+}
+
+function renderCards(filtered) {
+  var grid = document.getElementById('datasetCardGrid');
+  var empty = document.getElementById('emptyState');
+  var pag = document.getElementById('pagination');
+  var count = document.getElementById('toolbarCount');
+  var total = filtered.length;
+  count.innerHTML = '共 <strong>' + total + '</strong> 个数据集';
+  if (total === 0) { grid.innerHTML = ''; empty.classList.add('visible'); pag.style.display = 'none'; return; }
+  empty.classList.remove('visible');
+  var start = (_currentPage - 1) * _pageSize;
+  var page = filtered.slice(start, start + _pageSize);
+  grid.innerHTML = page.map(function(d) {
+    var cat = categories.find(function(c) { return c.value === d.category; }) || {icon:'📦'};
+    var visLabel = d.visibility === 'public' ? '公开' : d.visibility === 'private' ? '非公开' : '申请制';
+    var visClass = d.visibility;
+    var actionBtn = '';
+    if (d.visibility === 'apply') {
+      actionBtn = d.applicantStatus === 'pending' ? '<span class="applied-badge">⏳ 已申请</span>' : '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();requireAuth()&&applyDataset(\''+d.id+'\',this)" style="font-size:11px">📝 申请使用 🪙'+(d.pointsCost||POINTS.COST_DATASET)+'</button>';
+    }
+    return '<div class="dataset-card" onclick="showDetail(\''+d.id+'\')">' +
+      '<div class="dataset-card-thumb">'+cat.icon+'</div>' +
+      '<div class="dataset-card-body">' +
+        '<div class="dataset-card-title-row">' +
+          '<span class="dataset-card-name">'+escapeHTML(d.nameCn)+'</span>' +
+          '<div class="dataset-card-chips">' +
+            '<span class="visibility-chip '+visClass+'">'+visLabel+'</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="dataset-card-desc">'+escapeHTML(d.description||'')+'</div>' +
+        '<div class="dataset-card-tags">'+(d.tags||[]).slice(0,4).map(function(t){return '<span class="dataset-tag">'+escapeHTML(t)+'</span>';}).join('')+'</div>' +
+        '<div class="dataset-card-meta">' +
+          '<div class="dataset-card-submitter"><div class="submitter-avatar">'+d.owner.charAt(0)+'</div><span>'+escapeHTML(d.owner)+'</span></div>' +
+          '<div class="dataset-card-info">' +
+            '<span class="info-item">⬇ '+d.downloads+'</span>' +
+            '<span class="info-item">💾 '+d.fileSize+'</span>' +
+            '<span class="info-item">📅 '+d.updatedAt+'</span>' +
+          '</div>' +
+          '<div class="dataset-card-actions">' +
+            '<button class="btn btn-sm btn-default" onclick="event.stopPropagation();showDetail(\''+d.id+'\')" style="font-size:11px">👁 查看</button>' +
+            actionBtn +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  pag.style.display = total > _pageSize ? 'flex' : 'none';
+}
+
+function renderPagination(total) {
+  var pag = document.getElementById('pagination');
+  var info = document.getElementById('pageInfo');
+  var controls = document.getElementById('pageControls');
+  var totalPages = Math.ceil(total / _pageSize);
+  if (totalPages <= 1) { pag.style.display = 'none'; return; }
+  pag.style.display = 'flex';
+  var start = (_currentPage - 1) * _pageSize + 1;
+  var end = Math.min(start + _pageSize - 1, total);
+  info.textContent = '第 ' + start + '-' + end + ' 条，共 ' + total + ' 条';
+  var html = '<select class="page-size-select" onchange="onPageSizeChange(this.value)">' +
+    '<option value="12"' + (_pageSize===12?' selected':'') + '>12条/页</option>' +
+    '<option value="24"' + (_pageSize===24?' selected':'') + '>24条/页</option>' +
+    '</select>';
+  html += '<button class="page-btn" onclick="goPage(1)"' + (_currentPage===1?' disabled':'') + '>«</button>';
+  html += '<button class="page-btn" onclick="goPage('+(_currentPage-1)+')"' + (_currentPage===1?' disabled':'') + '>‹</button>';
+  var maxShow = 7, startP = Math.max(1, _currentPage - Math.floor(maxShow/2));
+  var endP = Math.min(totalPages, startP + maxShow - 1);
+  if (endP - startP < maxShow - 1) startP = Math.max(1, endP - maxShow + 1);
+  for (var i = startP; i <= endP; i++) { html += '<button class="page-btn' + (i===_currentPage?' active':'') + '" onclick="goPage('+i+')">' + i + '</button>'; }
+  html += '<button class="page-btn" onclick="goPage('+(_currentPage+1)+')"' + (_currentPage===totalPages?' disabled':'') + '>›</button>';
+  html += '<button class="page-btn" onclick="goPage('+totalPages+')"' + (_currentPage===totalPages?' disabled':'') + '>»</button>';
+  controls.innerHTML = html;
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function onSearchInput() { _searchKeyword = document.getElementById('searchInput').value.trim(); _currentPage = 1; renderAll(); }
+function onSortChange() { _sortBy = document.getElementById('sortBy').value; _currentPage = 1; renderAll(); }
+function goPage(p) { _currentPage = p; renderAll(); }
+function onPageSizeChange(s) { _pageSize = parseInt(s); _currentPage = 1; renderAll(); }
+
+// ============================================================
+// CREATE DRAWER
+// ============================================================
+function openCreateDrawer() {
+  document.getElementById('createDrawer').classList.add('open');
+  document.getElementById('createDrawerOverlay').classList.add('visible');
+  ['cfNameEn','cfNameCn','cfLicense','cfDesc','cfTags','cfReadme'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('cfOwner').value = '张建伟';
+  document.getElementById('cfCategory').value = '';
+  document.getElementById('cfLicense').value = '';
+  selectVisibility(document.querySelector('#cfVisibility .radio-option[data-value="public"]'));
+  document.querySelectorAll('.form-error-msg').forEach(function(e){ e.classList.remove('visible'); });
+  document.querySelectorAll('.form-input,.form-textarea,.form-select-drawer').forEach(function(e){ e.classList.remove('has-error'); });
+}
+function closeCreateDrawer() {
+  document.getElementById('createDrawer').classList.remove('open');
+  document.getElementById('createDrawerOverlay').classList.remove('visible');
+}
+function selectVisibility(el) {
+  var all = document.querySelectorAll('#cfVisibility .radio-option');
+  all.forEach(function(o){ o.classList.remove('active'); });
+  el.classList.add('active');
+  var hints = { public:'公开数据集对所有用户可见，可通过所有者获取数据访问方式', private:'仅您本人及组织成员可见', apply:'用户需提交申请，审核通过后由所有者提供数据访问方式' };
+  document.getElementById('visibilityHint').textContent = hints[el.dataset.value] || '';
+}
+function validateField(id) {
+  var el = document.getElementById(id); var err = document.getElementById('err-' + id); if (!err) return;
+  var val = el.value.trim(); var ok = true;
+  if (['cfNameEn','cfNameCn','cfOwner','cfDesc'].indexOf(id) >= 0) ok = val.length > 0;
+  if (id === 'cfNameEn' && val) ok = /^[a-z0-9][a-z0-9\-]*$/.test(val);
+  if (!ok) { el.classList.add('has-error'); err.classList.add('visible'); }
+  else { el.classList.remove('has-error'); err.classList.remove('visible'); }
+}
+function submitCreateDataset() {
+  var fields = ['cfNameEn','cfNameCn','cfOwner','cfLicense','cfDesc']; var allOk = true;
+  fields.forEach(function(id) {
+    var el = document.getElementById(id); var val = (el.tagName === 'SELECT') ? el.value : el.value.trim();
+    if (!val) { validateField(id); allOk = false; } else validateField(id);
+  });
+  if (!allOk) { showToast('error','请填写所有必填字段'); return; }
+  // Charge upload fee
+  var uploadCost = 20;
+  if (!spendPoints(uploadCost, '上传数据集')) return;
+  var visEl = document.querySelector('#cfVisibility .radio-option.active');
+  var pointsCostVal = parseInt(document.getElementById('cfPointsCost').value) || 0;
+  var newDs = {
+    id: 'DS-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(datasets.length+1).padStart(3,'0'),
+    nameEn: document.getElementById('cfNameEn').value.trim(),
+    nameCn: document.getElementById('cfNameCn').value.trim(),
+    owner: document.getElementById('cfOwner').value.trim(),
+    license: document.getElementById('cfLicense').value,
+    visibility: visEl ? visEl.dataset.value : 'public',
+    category: document.getElementById('cfCategory').value || 'other',
+    tags: document.getElementById('cfTags').value.trim() ? document.getElementById('cfTags').value.split(',').map(function(t){return t.trim();}).filter(Boolean) : [],
+    fileCount: 0, fileSize: '0 B', downloads: 0,
+    updatedAt: new Date().toISOString().slice(0,10),
+    applicantStatus: null,
+    pointsCost: pointsCostVal,
+    description: document.getElementById('cfDesc').value.trim(),
+    readme: document.getElementById('cfReadme').value.trim() || '## ' + document.getElementById('cfNameCn').value.trim()
+  };
+  datasets.unshift(newDs);
+  closeCreateDrawer();
+  _currentPage = 1; _searchKeyword = ''; _categoryFilter = ''; _visibilityFilter = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.filter-card-tag.checked').forEach(function(el){ el.classList.remove('checked'); });
+  populateFilters();
+  renderAll();
+  showToast('success','数据集「'+newDs.nameCn+'」创建成功！消耗 🪙'+uploadCost+'，使用消耗设为 🪙'+pointsCostVal);
+}
+
+// ============================================================
+// DETAIL PAGE
+// ============================================================
+function showDetail(id) {
+  var d = datasets.find(function(item){ return item.id === id; });
+  // If not found in local datasets (e.g. from workbench WB-DS-*), build from URL params
+  if (!d) {
+    var params = new URLSearchParams(window.location.search);
+    var name = params.get('name') || '数据集';
+    var desc = params.get('desc') || '';
+    var size = params.get('size') || '--';
+    var samples = params.get('samples') || '--';
+    var status = params.get('status') || 'published';
+    var time = params.get('time') || '';
+    d = {
+      id: id, nameEn: id, nameCn: name, owner: '当前用户', license: 'CC BY 4.0',
+      visibility: status==='published'?'public':'private',
+      category: 'other', description: desc, tags: [], fileCount: 1, fileSize: size,
+      status: status, updatedAt: time, downloads: '--', stars: '--',
+      fields: [{name:'id',type:'integer',desc:'编号'},{name:'value',type:'float',desc:'数据值'}],
+      readme: '## 数据集说明\n\n' + desc + '\n\n> 此数据集来自「我的数据集」快速查看。',
+      sampleData: [{id:1,value:42.5,label:'样本A'},{id:2,value:37.8,label:'样本B'},{id:3,value:51.2,label:'样本C'}],
+      _applied: false, applicantStatus: null, pointsCost: 0
+    };
+  }
+  _detailId = id;
+  history.pushState({view:'detail', datasetId:id}, '', '#'+encodeURIComponent(d.nameEn));
+    document.querySelector('.marketplace-layout').style.display = 'none';
+  document.getElementById('emptyState').classList.remove('visible');
+  document.getElementById('pagination').style.display = 'none';
+  document.getElementById('datasetDetailView').classList.add('visible');
+  renderDetail(d);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function backToList() {
+  if (_cameFromWorkbench) { window.location.href = 'workbench.html'; return; }
+  _detailId = null;
+  history.pushState({view:'list'}, '', window.location.pathname);
+  document.querySelector('.search-section').style.display = '';
+    document.getElementById('datasetDetailView').classList.remove('visible');
+  document.querySelector('.marketplace-layout').style.display = '';
+  renderAll();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderDetail(d) {
+  var cat = categories.find(function(c){ return c.value === d.category; }) || {icon:'📦', label:'其他'};
+  var visLabel = d.visibility === 'public' ? '公开' : d.visibility === 'private' ? '非公开' : '申请制';
+  // Breadcrumb
+  document.getElementById('dsBreadcrumbName').textContent = d.nameCn;
+  // Header
+  document.getElementById('dsIcon').textContent = cat.icon;
+  document.getElementById('dsName').textContent = d.nameCn;
+  document.getElementById('dsNameEn').textContent = d.nameEn;
+  document.getElementById('dsDesc').textContent = d.description || '';
+  var visChip = document.getElementById('dsVisChip');
+  visChip.textContent = visLabel;
+  visChip.className = 'visibility-chip ' + d.visibility;
+  // Tags
+  document.getElementById('dsTags').innerHTML = (d.tags||[]).map(function(t){
+    return '<span class="dataset-tag">'+escapeHTML(t)+'</span>';
+  }).join('');
+  // Meta row
+  document.getElementById('dsMetaRow').innerHTML =
+    '<div class="ds-meta-item"><span class="ds-meta-label">👤 所有者</span> '+escapeHTML(d.owner)+'</div>' +
+    '<div class="ds-meta-item"><span class="ds-meta-label">📜 License</span> '+escapeHTML(d.license)+'</div>' +
+    '<div class="ds-meta-item"><span class="ds-meta-label">📂 类目</span> '+cat.icon+' '+cat.label+'</div>' +
+    '<div class="ds-meta-item"><span class="ds-meta-label">📅 更新</span> '+d.updatedAt+'</div>' +
+    '<div class="ds-meta-item"><span class="ds-meta-label">📊 文件</span> '+d.fileCount+' 个</div>' +
+    '<div class="ds-meta-item"><span class="ds-meta-label">💾 大小</span> '+d.fileSize+'</div>';
+  // Apply button state (header actions)
+  var applyBtn = document.getElementById('dsApplyBtn');
+  if (d.visibility === 'private') {
+    applyBtn.style.display = 'none';
+  } else if (d._applied || d.applicantStatus === 'pending') {
+    applyBtn.textContent = '✓ 已申请';
+    applyBtn.className = 'btn btn-default';
+    applyBtn.disabled = true;
+    applyBtn.style.opacity = '0.65';
+    applyBtn.onclick = function(){ showToast('已提交过使用申请，请等待审核','info'); };
+    applyBtn.style.display = '';
+  } else {
+    applyBtn.textContent = '📝 申请使用 🪙'+(d.pointsCost||POINTS.COST_DATASET);
+    applyBtn.className = 'btn btn-primary';
+    applyBtn.disabled = false;
+    applyBtn.style.opacity = '';
+    applyBtn.onclick = applyForDataset;
+    applyBtn.style.display = '';
+  }
+  // README
+  document.getElementById('dsReadme').innerHTML = renderReadme(d.readme||'');
+  // Info table
+  var infoRows = [
+    ['数据集ID', d.id],
+    ['英文名称', escapeHTML(d.nameEn)],
+    ['中文名称', escapeHTML(d.nameCn)],
+    ['所有者', escapeHTML(d.owner)],
+    ['License', escapeHTML(d.license)],
+    ['可见性', visLabel],
+    ['所属类目', cat.icon+' '+cat.label],
+    ['文件数量', d.fileCount+' 个'],
+    ['文件大小', d.fileSize],
+    ['下载次数', d.downloads+' 次'],
+    ['更新时间', d.updatedAt]
+  ];
+  if (d.visibility === 'apply' && d.applicantStatus === 'pending') {
+    infoRows.push(['申请情况', '已有 1 个待审核申请']);
+  }
+  document.getElementById('dsInfoTable').innerHTML = infoRows.map(function(r){
+    return '<tr><td class="ds-info-label">'+r[0]+'</td><td class="ds-info-value">'+r[1]+'</td></tr>';
+  }).join('');
+  // Action card
+  var actionTitle, actionContent;
+  if (d.visibility === 'public') {
+    actionTitle = '📋 公开数据集';
+    actionContent = '<div class="ds-vis-banner public">🟢 此数据集为公开数据，所有用户可见。平台不提供直接下载，请通过数据集所有者获取数据访问方式。</div>';
+  } else if (d.visibility === 'apply') {
+    actionTitle = '📝 申请使用';
+    if (d._applied || d.applicantStatus === 'pending') {
+      actionContent = '<div class="ds-vis-banner apply">⏳ 已提交使用申请，请等待数据集所有者审核。</div>';
+    } else {
+      actionContent = '<div class="ds-vis-banner apply">🔵 此数据集为申请制，需获得所有者授权后使用。请点击上方「📝 申请使用」按钮提交申请。</div>';
+    }
+  } else {
+    actionTitle = '🔒 非公开数据集';
+    actionContent = '<div class="ds-vis-banner private">此数据集为非公开数据，仅创建者及组织成员可见。</div>';
+  }
+  document.getElementById('dsActionCardTitle').textContent = actionTitle;
+  document.getElementById('dsActionCardContent').innerHTML = actionContent;
+  // Stats sidebar
+  document.getElementById('dsStatsList').innerHTML =
+    '<div class="ds-sidebar-item"><span style="flex:1">📂 文件数量</span><strong>'+d.fileCount+' 个</strong></div>' +
+    '<div class="ds-sidebar-item"><span style="flex:1">💾 文件大小</span><strong>'+d.fileSize+'</strong></div>' +
+    '<div class="ds-sidebar-item"><span style="flex:1">⬇ 下载次数</span><strong>'+d.downloads+'</strong></div>' +
+    '<div class="ds-sidebar-item"><span style="flex:1">📅 更新时间</span><strong>'+d.updatedAt+'</strong></div>';
+  // Tags sidebar
+  document.getElementById('dsTagList').innerHTML = (d.tags||[]).map(function(t){
+    return '<div class="ds-sidebar-item"><span style="font-size:16px">🏷</span> '+escapeHTML(t)+'</div>';
+  }).join('') || '<div style="font-size:12px;color:rgba(0,0,0,0.35);text-align:center;padding:12px 0">暂无标签</div>';
+}
+
+function renderReadme(md) {
+  if (!md) return '<p style="color:rgba(0,0,0,0.45)">暂无详细介绍</p>';
+  var html = md.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h2>$1</h2>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>').replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(\n<li>.*<\/li>)+/g,function(m){ return '\n<ul>' + m + '\n</ul>'; })
+    .replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  return '<p>' + html + '</p>';
+}
+
+// Browser back/forward
+window.addEventListener('popstate', function(e){
+  if (e.state && e.state.view === 'detail' && e.state.datasetId) {
+    var d = datasets.find(function(item){ return item.id === e.state.datasetId; });
+    if (d) {
+      _detailId = e.state.datasetId;
+                document.querySelector('.marketplace-layout').style.display = 'none';
+      document.getElementById('datasetDetailView').classList.add('visible');
+      renderDetail(d);
+      return;
+    }
+  }
+  // Default: go to list
+  _detailId = null;
+  document.querySelector('.search-section').style.display = '';
+    document.getElementById('datasetDetailView').classList.remove('visible');
+  document.querySelector('.marketplace-layout').style.display = '';
+  renderAll();
+});
+
+// ============================================================
+// APPLY DATASET
+// ============================================================
+// ============================================================
+// SAMPLE DATA MODAL
+// ============================================================
+function viewSampleData() {
+  var d = datasets.find(function(item){ return item.id === _detailId; });
+  if (!d || !d.sampleData) { showToast('info','该数据集暂无样本数据'); return; }
+  document.getElementById('sampleModalDsName').textContent = d.nameCn;
+  var cols = d.sampleData.columns;
+  var rows = d.sampleData.rows;
+  var html = '<table class="sample-table"><thead><tr>' +
+    cols.map(function(c){ return '<th>'+escapeHTML(c)+'</th>'; }).join('') +
+    '</tr></thead><tbody>' +
+    rows.map(function(row){
+      return '<tr>'+row.map(function(cell){ return '<td>'+escapeHTML(String(cell))+'</td>'; }).join('')+'</tr>';
+    }).join('') +
+    '</tbody></table>';
+  document.getElementById('sampleModalBody').innerHTML = html;
+  document.getElementById('sampleModalOverlay').classList.add('visible');
+}
+function closeSampleModal() {
+  document.getElementById('sampleModalOverlay').classList.remove('visible');
+}
+
+// ============================================================
+// APPLY FOR DATASET (header action — with textarea popconfirm)
+// ============================================================
+function applyForDataset() {
+  if (!requireAuth()) return;
+  var d = datasets.find(function(item){ return item.id === _detailId; });
+  if (!d) return;
+  if (d.visibility === 'private') { showToast('info','非公开数据集暂不支持申请'); return; }
+  if (d._applied || d.applicantStatus === 'pending') { showToast('info','已提交过使用申请，请等待审核'); return; }
+  _pendingApplyId = d.id;
+  document.getElementById('popconfirmTitle').textContent = '申请使用数据集';
+  document.getElementById('popconfirmDesc').textContent = '确认申请使用「'+d.nameCn+'」？消耗 🪙'+(d.pointsCost||POINTS.COST_DATASET)+' 积分。';
+  document.getElementById('popconfirmTextareaWrap').style.display = '';
+  document.getElementById('popconfirmTextarea').value = '';
+  document.getElementById('popconfirmOk').textContent = '提交申请';
+  document.getElementById('popconfirmOk').onclick = confirmApplyDataset;
+  openPopconfirmUI(document.getElementById('dsApplyBtn'));
+}
+function saveApplicationToLocal(type, targetId, targetTitle, pointsCost, reason) {
+  var apps = []; try { apps = JSON.parse(localStorage.getItem('luoshu_applications') || '[]'); } catch(e) {}
+  var appId = 'APP-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(apps.length + 1).padStart(3,'0');
+  var now = new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,8);
+  apps.unshift({id:appId, type:type, targetId:targetId, targetTitle:targetTitle, applicantName:'当前用户', applicantUnit:'', reason:reason||'',
+    pointsCost:pointsCost, status:'pending', appliedAt:now, reviewedAt:null, reviewComment:''});
+  try { localStorage.setItem('luoshu_applications', JSON.stringify(apps)); } catch(e) {}
+}
+
+function confirmApplyDataset() {
+  var dd = datasets.find(function(item){ return item.id === _pendingApplyId; });
+  if (!spendPoints(dd?dd.pointsCost||POINTS.COST_DATASET:POINTS.COST_DATASET, '数据集申请使用')) return;
+  if (dd) { dd._applied = true; dd.applicantStatus = 'pending'; }
+  var reason = document.getElementById('popconfirmTextarea') ? document.getElementById('popconfirmTextarea').value.trim() : '';
+  saveApplicationToLocal('dataset', dd?dd.id:'', dd?dd.nameCn:'', (dd ? (dd.pointsCost || 40) : 40), reason);
+  closePopconfirm();
+  showToast('success','使用申请已提交，请等待数据集所有者审核');
+  var btn = document.getElementById('dsApplyBtn');
+  if (btn) { btn.textContent = '✓ 已申请'; btn.className = 'btn btn-default'; btn.disabled = true; btn.style.opacity = '0.65'; btn.onclick = function(){ showToast('info','已提交过使用申请，请等待审核'); }; }
+}
+function openPopconfirmUI(triggerEl) {
+  document.getElementById('popconfirmShield').classList.add('visible');
+  document.getElementById('popconfirmWrap').classList.add('visible');
+  if (triggerEl) { var rect = triggerEl.getBoundingClientRect(); var w = document.getElementById('popconfirmWrap'); w.style.top = (rect.bottom + 8) + 'px'; w.style.left = Math.max(10, rect.left - 60) + 'px'; }
+}
+function closePopconfirm() {
+  document.getElementById('popconfirmShield').classList.remove('visible');
+  document.getElementById('popconfirmWrap').classList.remove('visible');
+  document.getElementById('popconfirmTextareaWrap').style.display = 'none';
+  _pendingApplyId = null;
+}
+
+function applyDataset(id, triggerEl) {
+  _pendingApplyId = id;
+  var d = datasets.find(function(item){ return item.id === id; });
+  var cost = d ? (d.pointsCost || POINTS.COST_DATASET) : POINTS.COST_DATASET;
+  document.getElementById('popconfirmTitle').textContent = '申请使用数据集？';
+  document.getElementById('popconfirmDesc').textContent = '将向数据集所有者发送使用申请，审核通过后即可获取数据访问方式。消耗 🪙'+cost+' 积分。';
+  document.getElementById('popconfirmTextareaWrap').style.display = 'none';
+  document.getElementById('popconfirmOk').textContent = '确认申请';
+  document.getElementById('popconfirmOk').onclick = function(){
+    if (!spendPoints(cost, '数据集申请使用')) return;
+    var dd = datasets.find(function(item){ return item.id === _pendingApplyId; });
+    if (dd) { dd._applied = true; dd.applicantStatus = 'pending'; }
+    saveApplicationToLocal('dataset', dd?dd.id:_pendingApplyId, dd?dd.nameCn:'', cost, '');
+    closePopconfirm(); renderAll();
+    showToast('success','使用申请已提交，请等待审核。');
+  };
+  openPopconfirmUI(triggerEl);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' visible';
+  t.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('visible'); }, 3000);
+}
+
+// ============================================================
+// GUIDE
+// ============================================================
+function toggleGuide() { document.getElementById('guideOverlay').classList.toggle('visible'); }
+
+// ============================================================
+// USER DROPDOWN
+// ============================================================
+function toggleUserMenu() { var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu() { document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ if(!e.target.closest('#userDropdownWrap')) document.getElementById('userDropdown').classList.remove('visible'); });
+
+// ============================================================
+// LOGOUT
+// ============================================================
+function confirmLogout(e) { e.stopPropagation(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm() { document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout() { closeLogoutConfirm(); sessionStorage.removeItem('luoshu_logged_in'); switchAuthState(false); showToast('info','已退出登录'); }
+
+// ============================================================
+// ESC KEY
+// ============================================================
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeCreateDrawer(); closePopconfirm(); closeLogoutConfirm(); }
+});
+
+// ============================================================
+// HELPERS
+// ============================================================
+function escapeHTML(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ===== NOTIFICATIONS =====
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'info\',\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+</script>
+</body>
+</html>

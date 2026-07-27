@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>应用详情 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bdh-micro-main-base-header-height: 64px;
+  --sf-img-0: url("data:image/png;base64,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");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88);
+  background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+[data-prefers-color="dark"] body {
+  background-color: #1c1e21;
+  color: rgba(255,255,255,0.85);
+}
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* BG-LIST */
+.bg-list {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--sf-img-0) center / cover no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px; line-height: 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19;
+  display: flex; flex-direction: column; padding: 0;
+}
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.logo-link img, .logo-link svg { height: 32px; width: auto; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s, border-color 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.app-body { display: flex; padding-top: 60px; min-height: 100vh; position: relative; z-index: 1; }
+.sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: 200px; background: transparent; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+.sidebar-inner { padding: 16px 8px; }
+.sidebar-menu { display: flex; flex-direction: column; }
+.sidebar-menu-group { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 24px 4px; text-transform: uppercase; }
+.sidebar-menu-item { display: flex; align-items: center; gap: 8px; height: 40px; line-height: 40px; padding-inline: 16px; margin: 0 16px 4px; width: calc(100% - 32px); border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; white-space: nowrap; overflow: hidden; }
+.sidebar-menu-item:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.88); }
+.sidebar-menu-item.active { color: rgb(47,84,235); background: rgba(47,84,235,0.2); font-weight: 600; border-radius: 4px !important; }
+.sidebar-menu-icon { font-size: 16px; width: 16px; text-align: center; flex-shrink: 0; }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content-area { flex: 1; margin-left: 200px; padding: 24px 40px; min-height: calc(100vh - 60px); position: relative; z-index: 1; min-width: 0; overflow-x: hidden; }
+
+.page-procard { background: transparent; }
+.page-card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02); border: 1px solid rgba(5,5,5,0.06); }
+[data-prefers-color="dark"] .page-card { background: #1f1f1f; border-color: #303030; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 6px -1px rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.09); }
+
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 24px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; height: 32px; padding: 4px 15px;
+  font-size: 14px; font-weight: 400; border-radius: 6px;
+  border: 1px solid transparent; cursor: pointer; user-select: none;
+  white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-text { background: transparent; color: rgba(0,0,0,0.88); border-color: transparent; }
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+.btn-accent { background: #23ada4; color: #fff; border-color: #23ada4; }
+.btn-accent:hover { background: #36cfc9; border-color: #36cfc9; }
+.btn-accent:active { background: #08979c; border-color: #08979c; }
+
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .btn-text:hover { background: rgba(255,255,255,0.08); }
+
+.btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+.btn-lg { height: 40px; padding: 6px 24px; font-size: 15px; }
+
+/* ============================================================
+   TYPE CHIPS (matching app-center.html handoff spec §七)
+   ============================================================ */
+.type-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 20px; padding: 0 6px; font-size: 11px;
+  border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+  font-weight: 500;
+}
+.type-chip.report { color: #2f54eb; background: #d6e4ff; }
+.type-chip.dataset { color: #52c41a; background: #d9f7be; }
+.type-chip.workflow { color: #23ada4; background: #e6fffb; }
+.type-chip.service { color: #ff9113; background: #ffeabc; }
+
+/* ============================================================
+   MODAL / DIALOG
+   ============================================================ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+
+.modal-box {
+  background: #ffffff; border-radius: 8px;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+  width: 420px; max-width: 90vw; overflow: hidden;
+}
+[data-prefers-color="dark"] .modal-box { background: #1f1f1f; }
+
+.modal-header {
+  display: flex; align-items: center; padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .modal-header { border-bottom-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close {
+  font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer;
+  padding: 4px; border-radius: 4px; transition: all 0.2s;
+}
+.modal-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+
+.modal-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .modal-body { color: rgba(255,255,255,0.65); }
+
+.modal-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 12px 24px; border-top: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .modal-footer { border-top-color: #303030; }
+
+/* ============================================================
+   TOAST / NOTIFICATION
+   ============================================================ */
+.toast {
+  position: fixed; top: 76px; right: 24px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 6px;
+  font-size: 14px; z-index: 2000;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12);
+  animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   POPCONFIRM
+   ============================================================ */
+.popconfirm-shield {
+  display: none; position: fixed; inset: 0; z-index: 1059;
+}
+.popconfirm-shield.visible { display: block; }
+
+.popconfirm-wrap {
+  display: none; position: fixed; z-index: 1060;
+}
+.popconfirm-wrap.visible { display: block; }
+
+.popconfirm-box {
+  background: #ffffff; border-radius: 8px; padding: 12px;
+  min-width: 240px; max-width: 300px;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+}
+[data-prefers-color="dark"] .popconfirm-box { background: #1f1f1f; }
+
+.popconfirm-arrow {
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  border-left: 6px solid transparent; border-right: 6px solid transparent;
+  border-top: 6px solid #ffffff;
+}
+[data-prefers-color="dark"] .popconfirm-arrow { border-top-color: #1f1f1f; }
+
+.popconfirm-body { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+.popconfirm-icon { font-size: 16px; color: #faad14; flex-shrink: 0; line-height: 1.4; }
+.popconfirm-text { flex: 1; }
+.popconfirm-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .popconfirm-title { color: rgba(255,255,255,0.85); }
+.popconfirm-desc { font-size: 11px; color: rgba(0,0,0,0.35); line-height: 1.4; margin-top: 2px; }
+.popconfirm-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.popconfirm-btn {
+  height: 24px; padding: 0 7px; font-size: 14px; border-radius: 6px;
+  border: 1px solid #d9d9d9; background: #ffffff; color: rgba(0,0,0,0.88);
+  cursor: pointer; transition: all 0.2s;
+}
+.popconfirm-btn:hover { border-color: #597ef7; color: #597ef7; }
+.popconfirm-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+.popconfirm-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+[data-prefers-color="dark"] .popconfirm-btn { background: transparent; border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  text-align: center; padding: 80px 20px;
+}
+.empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.3; }
+.empty-title { font-size: 14px; color: rgba(0,0,0,0.65); margin-bottom: 8px; }
+.empty-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 24px; line-height: 1.6; }
+[data-prefers-color="dark"] .empty-title { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .empty-desc { color: rgba(255,255,255,0.45); }
+
+/* ============================================================
+   DETAIL PAGE — Split Layout
+   ============================================================ */
+.detail-layout { display: flex; gap: 0; min-height: 400px; }
+
+/* Left: 70% */
+.detail-left {
+  flex: 7; min-width: 0; padding-right: 32px;
+}
+
+/* Right: 30% sticky */
+.detail-right {
+  flex: 3; min-width: 280px; position: relative;
+}
+.detail-right-inner {
+  position: sticky; top: 84px;
+}
+
+/* App Header Card */
+.app-header-card {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding-bottom: 20px; margin-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .app-header-card { border-bottom-color: #303030; }
+
+.app-icon {
+  width: 64px; height: 64px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(47,84,235,0.1), rgba(117,102,255,0.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; flex-shrink: 0;
+}
+.app-header-info { flex: 1; min-width: 0; }
+.app-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.app-name { font-size: 20px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .app-name { color: rgba(255,255,255,0.85); }
+.app-meta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.app-meta-item { font-size: 13px; color: rgba(0,0,0,0.45); display: flex; align-items: center; gap: 4px; }
+[data-prefers-color="dark"] .app-meta-item { color: rgba(255,255,255,0.45); }
+.app-meta-item .meta-label { color: rgba(0,0,0,0.45); }
+.app-meta-item .meta-value { color: rgba(0,0,0,0.65); font-weight: 500; }
+[data-prefers-color="dark"] .app-meta-item .meta-value { color: rgba(255,255,255,0.65); }
+
+/* Description */
+.app-desc {
+  font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.8;
+  padding-bottom: 20px; margin-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .app-desc { color: rgba(255,255,255,0.65); border-bottom-color: #303030; }
+
+/* Section */
+.detail-section { margin-bottom: 24px; }
+.detail-section-title {
+  font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+[data-prefers-color="dark"] .detail-section-title { color: rgba(255,255,255,0.85); }
+.detail-section-title::before {
+  content: ''; width: 2px; height: 14px;
+  background-color: rgb(47,84,235); border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Deliverables List */
+.deliverable-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border: 1px solid #f0f0f0; border-radius: 6px;
+  margin-bottom: 8px; transition: all 0.2s;
+  background: #ffffff;
+}
+.deliverable-item:hover { border-color: #d9d9d9; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+[data-prefers-color="dark"] .deliverable-item { background: transparent; border-color: #303030; }
+[data-prefers-color="dark"] .deliverable-item:hover { border-color: #434343; }
+
+.deliverable-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  background: linear-gradient(135deg, rgba(47,84,235,0.08), rgba(117,102,255,0.08));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.deliverable-info { flex: 1; min-width: 0; }
+.deliverable-name { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); margin-bottom: 2px; }
+[data-prefers-color="dark"] .deliverable-name { color: rgba(255,255,255,0.85); }
+.deliverable-meta { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .deliverable-meta { color: rgba(255,255,255,0.45); }
+
+/* Report Preview */
+.report-preview {
+  border: 1px solid #f0f0f0; border-radius: 6px; overflow: hidden;
+  background: #fafbff;
+}
+[data-prefers-color="dark"] .report-preview { border-color: #303030; background: rgba(47,84,235,0.04); }
+.report-preview-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: #f0f5ff; border-bottom: 1px solid #d6e4ff;
+}
+[data-prefers-color="dark"] .report-preview-header { background: rgba(47,84,235,0.1); border-bottom-color: rgba(47,84,235,0.2); }
+.report-preview-title { font-size: 13px; font-weight: 600; color: #2f54eb; }
+.report-preview-body {
+  padding: 24px; font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.8;
+  max-height: 300px; overflow-y: auto;
+}
+[data-prefers-color="dark"] .report-preview-body { color: rgba(255,255,255,0.65); }
+
+/* Source Demand Link */
+.source-demand {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; font-size: 13px;
+  color: #2f54eb; background: #f0f5ff; border-radius: 6px;
+  cursor: pointer; transition: all 0.2s;
+}
+.source-demand:hover { background: #d6e4ff; }
+[data-prefers-color="dark"] .source-demand { background: rgba(47,84,235,0.1); }
+
+/* Right Panel — Stat Card */
+.stat-card {
+  background: #fafbff; border: 1px solid #f0f0f0; border-radius: 8px;
+  padding: 20px; margin-bottom: 16px;
+}
+[data-prefers-color="dark"] .stat-card { background: rgba(47,84,235,0.04); border-color: #303030; }
+
+.stat-value {
+  font-size: 32px; font-weight: 700; color: #2f54eb; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 13px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .stat-label { color: rgba(255,255,255,0.45); }
+
+/* Tags */
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag-item {
+  display: inline-flex; align-items: center;
+  height: 24px; padding: 0 8px;
+  font-size: 12px; color: rgba(0,0,0,0.65);
+  background: #f0f0f0; border-radius: 4px;
+}
+[data-prefers-color="dark"] .tag-item { background: #303030; color: rgba(255,255,255,0.65); }
+
+/* Publisher Card */
+.publisher-card {
+  border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px;
+}
+[data-prefers-color="dark"] .publisher-card { border-color: #303030; }
+.publisher-card-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; }
+[data-prefers-color="dark"] .publisher-card-title { color: rgba(255,255,255,0.85); }
+.publisher-row { display: flex; align-items: center; gap: 10px; }
+.publisher-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #2f54eb, #7566ff);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 600; flex-shrink: 0;
+}
+.publisher-info { flex: 1; }
+.publisher-name { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .publisher-name { color: rgba(255,255,255,0.85); }
+.publisher-unit { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+[data-prefers-color="dark"] .publisher-unit { color: rgba(255,255,255,0.45); }
+
+/* Apply Button */
+.apply-section { margin-bottom: 16px; }
+.apply-btn {
+  width: 100%; height: 40px; font-size: 15px; font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .detail-layout { flex-direction: column; }
+  .detail-left { padding-right: 0; margin-bottom: 24px; }
+  .detail-right { min-width: 0; }
+  .detail-right-inner { position: static; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 16px; }
+  .sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative BG Image -->
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs>
+              <linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
+        <!-- <span class="top-nav-item active" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+        <span class="top-nav-item" onclick="location.href='doc-center.html'">文档中心</span>
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+        <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+        <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+        <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+        <div class="notif-popover" id="notifPopover">
+          <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+            <span>通知</span>
+            <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+          </div>
+          <div id="notifList"></div>
+          <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+            <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('功能开发中')">查看全部通知 →</a>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="dropdown-wrap" id="userDropdownWrap">
+          <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+          <div class="dropdown-menu" id="userDropdown">
+            <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+              <div style="font-weight:600;font-size:14px">张研究员</div>
+              <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+            </div>
+            <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+          </div>
+        </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+
+  <!-- Sidebar — 应用中心 -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-menu">
+        <div class="sidebar-menu-group">应用中心</div>
+        <a class="sidebar-menu-item active" href="app-center.html">
+          <span class="sidebar-menu-icon">🧩</span>全部应用
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content-area">
+    <div class="page-procard">
+      <div class="page-card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title" id="cardTitle">应用详情</span>
+          <button class="btn btn-default btn-sm" onclick="location.href='app-center.html'" style="margin-left:auto;">← 返回列表</button>
+        </div>
+
+        <div class="card-body" id="cardBody">
+          <!-- Rendered by JS -->
+        </div>
+
+      </div><!-- /page-card -->
+    </div><!-- /page-procard -->
+  </main>
+</div>
+
+<!-- ===== POPCONFIRM ===== -->
+<div class="popconfirm-shield" id="popconfirmShield" onclick="closePopconfirm()"></div>
+<div class="popconfirm-wrap" id="popconfirmWrap">
+  <div class="popconfirm-box">
+    <div class="popconfirm-body">
+      <span class="popconfirm-icon">⚠️</span>
+      <div class="popconfirm-text">
+        <div class="popconfirm-title" id="popconfirmTitle">是否确定申请使用？</div>
+        <div class="popconfirm-desc" id="popconfirmDesc">申请通过后可在「我的应用」中查看</div>
+      </div>
+    </div>
+    <div class="popconfirm-actions">
+      <button class="popconfirm-btn" onclick="closePopconfirm()">取消</button>
+      <button class="popconfirm-btn primary" id="popconfirmOkBtn" onclick="confirmApply()">确定</button>
+    </div>
+    <div class="popconfirm-arrow"></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+/* ============================================================
+   MOCK DATA — EXACT MATCH with app-center.html
+   Core fields (id/name/type/category/description/icon/publisher/
+   publisherUnit/publishedAt/usageCount/tags/deliverables/sourceDemandId)
+   are IDENTICAL to app-center.html.
+   deliverables enriched with url/size/desc for detail page rendering.
+   ============================================================ */
+var MOCK_APPS = [
+  {
+    id: "APP-001",
+    name: "作物识别API",
+    type: "工作流",
+    category: "遥感分析",
+    description: "基于高分卫星影像的农作物种类识别工作流，支持水稻、玉米、大豆等多类作物自动分类。",
+    icon: "🛰️",
+    publisher: "张研究",
+    publisherUnit: "全重实验室",
+    publishedAt: "2026-07-20",
+    usageCount: 128,
+    tags: ["作物识别", "遥感", "API"],
+    deliverables: [
+      { type: "工作流", name: "作物识别工作流v2", format: "API端点", url: "#", size: null, desc: "包含数据预处理→模型推理→后处理→结果输出的完整 DAG" }
+    ],
+    sourceDemandId: "DM-20260601-005"
+  },
+  {
+    id: "APP-002",
+    name: "产量预估分析报告模板",
+    type: "报告",
+    category: "产量预估",
+    description: "基于多源遥感数据与气象数据的农作物产量预估分析报告，含空间分布图与统计分析。",
+    icon: "📊",
+    publisher: "李博士",
+    publisherUnit: "东北农业大学",
+    publishedAt: "2026-07-18",
+    usageCount: 86,
+    tags: ["产量预估", "报告", "遥感"],
+    deliverables: [
+      { type: "报告", name: "产量预估报告模板", format: "PDF", url: "#", size: "8.7 MB", desc: "完整分析报告，含图表与附录" }
+    ],
+    sourceDemandId: "DM-20260520-003"
+  },
+  {
+    id: "APP-003",
+    name: "病虫害监测数据集",
+    type: "数据集",
+    category: "病虫害监测",
+    description: "黑龙江垦区2024-2026年水稻病虫害高光谱影像标注数据集，含稻瘟病、纹枯病等5种病害。",
+    icon: "📁",
+    publisher: "王工",
+    publisherUnit: "全重实验室",
+    publishedAt: "2026-07-15",
+    usageCount: 215,
+    tags: ["病虫害", "数据集", "高光谱", "水稻"],
+    deliverables: [
+      { type: "数据集", name: "病虫害监测数据集v3", format: "GeoTIFF + CSV标注", url: "#", size: "4.8 GB", desc: "高光谱影像标注数据集，含5种病害分类标签" }
+    ],
+    sourceDemandId: "DM-20260410-001"
+  },
+  {
+    id: "APP-004",
+    name: "耕地变化检测工作流",
+    type: "工作流",
+    category: "变化监测",
+    description: "对比多时相卫星影像，自动检测耕地面积变化与土地利用类型变更，输出变化图斑和统计报表。",
+    icon: "🔍",
+    publisher: "赵研究员",
+    publisherUnit: "哈尔滨工业大学",
+    publishedAt: "2026-07-12",
+    usageCount: 67,
+    tags: ["变化检测", "耕地", "时序分析"],
+    deliverables: [
+      { type: "工作流", name: "耕地变化检测流程", format: "工作流编排", url: "#", size: null, desc: "多时相影像输入→变化检测→图斑提取→统计报表输出" }
+    ],
+    sourceDemandId: "DM-20260315-007"
+  },
+  {
+    id: "APP-005",
+    name: "补贴核查遥感系统",
+    type: "部署服务",
+    category: "补贴核查",
+    description: "基于遥感影像的农业补贴面积核查服务，自动计算实际种植面积与申报面积偏差，生成核查报告。",
+    icon: "🚀",
+    publisher: "陈工",
+    publisherUnit: "北大荒信息有限公司",
+    publishedAt: "2026-07-08",
+    usageCount: 341,
+    tags: ["补贴核查", "遥感", "面积核算"],
+    deliverables: [
+      { type: "部署服务", name: "补贴核查服务", format: "API服务地址", url: "#", size: null, desc: "RESTful API，支持单景/批量核查推理" }
+    ],
+    sourceDemandId: "DM-20260228-002"
+  },
+  {
+    id: "APP-006",
+    name: "农业遥感数据分析报告",
+    type: "报告",
+    category: "遥感分析",
+    description: "2026年黑龙江垦区春播季遥感分析综合报告，涵盖作物长势、土壤墒情、气象灾害评估。",
+    icon: "📋",
+    publisher: "刘分析",
+    publisherUnit: "东北农业大学",
+    publishedAt: "2026-07-05",
+    usageCount: 92,
+    tags: ["遥感", "春播", "综合报告"],
+    deliverables: [
+      { type: "报告", name: "2026春播遥感分析报告", format: "PDF + 在线预览", url: "#", size: "12.5 MB", desc: "春播季综合遥感分析，含长势、墒情、灾害评估" }
+    ],
+    sourceDemandId: "DM-20260610-004"
+  },
+  {
+    id: "APP-007",
+    name: "综合决策支持工作流",
+    type: "工作流",
+    category: "综合决策",
+    description: "整合产量预估、病虫害监测、气象数据等多源信息的综合农业决策支持工作流，输出管理建议。",
+    icon: "🧠",
+    publisher: "周博士",
+    publisherUnit: "全重实验室",
+    publishedAt: "2026-06-30",
+    usageCount: 53,
+    tags: ["综合决策", "多源融合", "管理建议"],
+    deliverables: [
+      { type: "工作流", name: "综合决策工作流v1", format: "工作流编排", url: "#", size: null, desc: "多源数据融合→决策分析→管理建议生成的完整工作流" }
+    ],
+    sourceDemandId: "DM-20260501-006"
+  },
+  {
+    id: "APP-008",
+    name: "东安农场产量预测模型",
+    type: "部署服务",
+    category: "产量预估",
+    description: "面向东安农场的定制化水稻产量预测模型服务，输入当年气象与遥感数据，输出分地块产量预测。",
+    icon: "🌾",
+    publisher: "孙工程师",
+    publisherUnit: "全重实验室",
+    publishedAt: "2026-06-25",
+    usageCount: 178,
+    tags: ["产量预测", "水稻", "定制模型"],
+    deliverables: [
+      { type: "部署服务", name: "东安产量预测API", format: "REST API", url: "#", size: null, desc: "定制化水稻产量预测模型推理服务端点" }
+    ],
+    sourceDemandId: "DM-20260420-001"
+  }
+];
+
+/* ============================================================
+   TYPE HELPERS — matching app-center.html + handoff spec §七
+   ============================================================ */
+function typeIcon(t) {
+  switch(t) {
+    case '报告': return '📊';
+    case '数据集': return '📁';
+    case '工作流': return '⚙️';
+    case '部署服务': return '🚀';
+    default: return '📦';
+  }
+}
+
+function typeChipClass(t) {
+  switch(t) {
+    case '报告': return 'report';
+    case '数据集': return 'dataset';
+    case '工作流': return 'workflow';
+    case '部署服务': return 'service';
+    default: return 'report';
+  }
+}
+
+function catLabel(c) {
+  var map = {
+    '遥感分析': '遥感分析', '产量预估': '产量预估',
+    '病虫害监测': '病虫害监测', '变化监测': '变化监测',
+    '补贴核查': '补贴核查', '综合决策': '综合决策'
+  };
+  return map[c] || c;
+}
+
+/* ============================================================
+   INIT — Read ?id=xxx from URL
+   ============================================================ */
+function init() {
+  var params = new URLSearchParams(window.location.search);
+  var appId = params.get('id');
+
+  if (!appId) {
+    renderNotFound('未指定应用ID，请从应用中心列表进入。');
+    return;
+  }
+
+  var app = null;
+  for (var i = 0; i < MOCK_APPS.length; i++) {
+    if (MOCK_APPS[i].id === appId) { app = MOCK_APPS[i]; break; }
+  }
+
+  if (!app) {
+    renderNotFound('未找到应用「' + escapeHTML(appId) + '」，请检查链接是否正确。');
+    return;
+  }
+
+  document.title = app.name + ' — 北大荒智慧农业协同创新平台';
+  document.getElementById('cardTitle').textContent = app.name;
+  renderApp(app);
+}
+
+function renderNotFound(msg) {
+  document.getElementById('cardTitle').textContent = '应用详情';
+  document.getElementById('cardBody').innerHTML =
+    '<div class="empty-state">' +
+    '<div class="empty-icon">🔍</div>' +
+    '<div class="empty-title">找不到该应用</div>' +
+    '<div class="empty-desc">' + escapeHTML(msg) + '</div>' +
+    '<button class="btn btn-primary" onclick="location.href=\'app-center.html\'">← 返回应用中心</button>' +
+    '</div>';
+}
+
+/* ============================================================
+   RENDER APP DETAIL
+   ============================================================ */
+function renderApp(app) {
+  var html = '';
+
+  // Detail layout
+  html += '<div class="detail-layout">';
+
+  // ===== LEFT COLUMN (70%) =====
+  html += '<div class="detail-left">';
+
+  // Header Card: icon + name + type + publisher + time
+  html += '<div class="app-header-card">';
+  html += '<div class="app-icon">' + escapeHTML(app.icon) + '</div>';
+  html += '<div class="app-header-info">';
+  html += '<div class="app-name-row">';
+  html += '<span class="app-name">' + escapeHTML(app.name) + '</span>';
+  html += '<span class="type-chip ' + typeChipClass(app.type) + '">' + typeIcon(app.type) + ' ' + escapeHTML(app.type) + '</span>';
+  html += '</div>';
+  html += '<div class="app-meta-row">';
+  html += '<span class="app-meta-item"><span class="meta-label">发布方：</span><span class="meta-value">' + escapeHTML(app.publisher) + '</span></span>';
+  html += '<span class="app-meta-item"><span class="meta-label">机构：</span><span class="meta-value">' + escapeHTML(app.publisherUnit) + '</span></span>';
+  html += '<span class="app-meta-item"><span class="meta-label">分类：</span><span class="meta-value">' + escapeHTML(catLabel(app.category)) + '</span></span>';
+  html += '<span class="app-meta-item"><span class="meta-label">发布：</span><span class="meta-value">' + escapeHTML(app.publishedAt) + '</span></span>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Description
+  html += '<div class="app-desc">' + escapeHTML(app.description) + '</div>';
+
+  // Deliverables Section
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">📦 交付物（' + app.deliverables.length + '）</div>';
+
+  for (var d = 0; d < app.deliverables.length; d++) {
+    var dlv = app.deliverables[d];
+    html += renderDeliverable(dlv, app);
+  }
+
+  html += '</div>';
+
+  // Source Demand Link
+  html += '<div class="detail-section">';
+  html += '<div class="detail-section-title">📋 来源需求</div>';
+  if (app.sourceDemandId) {
+    html += '<a class="source-demand" onclick="navigateToDemand(\'' + escapeHTML(app.sourceDemandId) + '\')">';
+    html += '📌 来自需求：<b>' + escapeHTML(app.sourceDemandId) + '</b> →';
+    html += '</a>';
+  } else {
+    html += '<span style="font-size:13px;color:rgba(0,0,0,0.45);">该应用为自发发布，无关联需求</span>';
+  }
+  html += '</div>';
+
+  html += '</div>'; // /detail-left
+
+  // ===== RIGHT COLUMN (30% sticky) =====
+  html += '<div class="detail-right"><div class="detail-right-inner">';
+
+  // Usage Stats
+  html += '<div class="stat-card">';
+  html += '<div class="stat-value">' + app.usageCount + '</div>';
+  html += '<div class="stat-label">累计使用次数</div>';
+  html += '</div>';
+
+  // Apply Button (uses Popconfirm)
+  html += '<div class="apply-section">';
+  html += '<button class="btn btn-accent btn-lg apply-btn" onclick="applyForApp(event, \'' + escapeHTML(app.id) + '\', \'' + escapeHTML(app.name) + '\')">';
+  html += '📥 申请使用';
+  html += '</button>';
+  html += '</div>';
+
+  // Tags
+  if (app.tags && app.tags.length) {
+    html += '<div class="tag-list">';
+    for (var t = 0; t < app.tags.length; t++) {
+      html += '<span class="tag-item">' + escapeHTML(app.tags[t]) + '</span>';
+    }
+    html += '</div>';
+  }
+
+  // Publisher Card
+  html += '<div class="publisher-card">';
+  html += '<div class="publisher-card-title">发布方信息</div>';
+  html += '<div class="publisher-row">';
+  html += '<div class="publisher-avatar">' + (app.publisher || '?')[0] + '</div>';
+  html += '<div class="publisher-info">';
+  html += '<div class="publisher-name">' + escapeHTML(app.publisher) + '</div>';
+  html += '<div class="publisher-unit">' + escapeHTML(app.publisherUnit) + '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '</div></div>'; // /detail-right-inner / detail-right
+
+  html += '</div>'; // /detail-layout
+
+  document.getElementById('cardBody').innerHTML = html;
+}
+
+/* ============================================================
+   RENDER DELIVERABLE — grouped by type
+   ============================================================ */
+function renderDeliverable(dlv, app) {
+  var html = '';
+
+  switch(dlv.type) {
+    case '报告':
+      // Report: inline preview viewer + download
+      html += '<div style="margin-bottom:16px;">';
+      html += '<div class="deliverable-item" style="margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0;">';
+      html += '<div class="deliverable-icon">📊</div>';
+      html += '<div class="deliverable-info">';
+      html += '<div class="deliverable-name">' + escapeHTML(dlv.name) + '</div>';
+      html += '<div class="deliverable-meta">格式：' + escapeHTML(dlv.format || 'PDF') + (dlv.size ? ' · ' + escapeHTML(dlv.size) : '') + (dlv.desc ? ' · ' + escapeHTML(dlv.desc) : '') + '</div>';
+      html += '</div>';
+      html += '<a class="btn btn-text btn-sm" href="' + (dlv.url || '#') + '" onclick="event.stopPropagation();downloadDeliverable(\'' + escapeHTML(dlv.name) + '\')" title="下载">📥 下载</a>';
+      html += '</div>';
+      html += '<div class="report-preview" style="border-top:none;border-top-left-radius:0;border-top-right-radius:0;">';
+      html += '<div class="report-preview-header">';
+      html += '<span class="report-preview-title">📄 在线预览</span>';
+      html += '</div>';
+      html += '<div class="report-preview-body">';
+      html += generateReportPreview(dlv, app);
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+      break;
+
+    case '数据集':
+      // Dataset: file list with download
+      html += '<div class="deliverable-item">';
+      html += '<div class="deliverable-icon">📁</div>';
+      html += '<div class="deliverable-info">';
+      html += '<div class="deliverable-name">' + escapeHTML(dlv.name) + '</div>';
+      html += '<div class="deliverable-meta">格式：' + escapeHTML(dlv.format || '数据包') + (dlv.size ? ' · ' + escapeHTML(dlv.size) : '') + (dlv.desc ? ' · ' + escapeHTML(dlv.desc) : '') + '</div>';
+      html += '</div>';
+      html += '<a class="btn btn-text btn-sm" href="' + (dlv.url || '#') + '" onclick="event.stopPropagation();downloadDeliverable(\'' + escapeHTML(dlv.name) + '\')" title="下载">📥 下载</a>';
+      html += '</div>';
+      break;
+
+    case '工作流':
+      // Workflow: link to workflow detail
+      html += '<div class="deliverable-item">';
+      html += '<div class="deliverable-icon">⚙️</div>';
+      html += '<div class="deliverable-info">';
+      html += '<div class="deliverable-name">' + escapeHTML(dlv.name) + '</div>';
+      html += '<div class="deliverable-meta">格式：' + escapeHTML(dlv.format || '工作流编排') + (dlv.desc ? ' · ' + escapeHTML(dlv.desc) : '') + '</div>';
+      html += '</div>';
+      html += '<button class="btn btn-text btn-sm" onclick="event.stopPropagation();showToast(\'info\',\'工作流详情页面尚未开发\')">🔗 查看工作流</button>';
+      html += '</div>';
+      break;
+
+    case '部署服务':
+      // Deployment Service: address + API docs
+      html += '<div class="deliverable-item" style="flex-wrap:wrap;">';
+      html += '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">';
+      html += '<div class="deliverable-icon">🚀</div>';
+      html += '<div class="deliverable-info">';
+      html += '<div class="deliverable-name">' + escapeHTML(dlv.name) + '</div>';
+      html += '<div class="deliverable-meta">格式：' + escapeHTML(dlv.format || '在线服务') + (dlv.desc ? ' · ' + escapeHTML(dlv.desc) : '') + '</div>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:6px;margin-top:8px;width:100%;padding-left:52px;">';
+      html += '<code style="font-size:11px;font-family:monospace;background:#f0f5ff;color:#2f54eb;padding:4px 8px;border-radius:4px;">https://api.inference.example.com/v1/' + escapeHTML(app.id.toLowerCase()) + '</code>';
+      html += '<button class="btn btn-default btn-sm" onclick="event.stopPropagation();showToast(\'info\',\'API 文档页面尚未开发\')">📋 API文档</button>';
+      html += '<button class="btn btn-default btn-sm" onclick="event.stopPropagation();copyToClipboard(\'https://api.inference.example.com/v1/' + escapeHTML(app.id.toLowerCase()) + '\')">📋 复制</button>';
+      html += '</div>';
+      html += '</div>';
+      break;
+
+    default:
+      html += '<div class="deliverable-item">';
+      html += '<div class="deliverable-icon">📦</div>';
+      html += '<div class="deliverable-info">';
+      html += '<div class="deliverable-name">' + escapeHTML(dlv.name) + '</div>';
+      html += '</div>';
+      html += '</div>';
+  }
+
+  return html;
+}
+
+/* ============================================================
+   REPORT PREVIEW GENERATOR
+   ============================================================ */
+function generateReportPreview(dlv, app) {
+  var lines = [
+    '<h3 style="font-size:16px;color:rgba(0,0,0,0.88);margin-bottom:12px;">' + escapeHTML(dlv.name) + '</h3>',
+    '<p style="margin-bottom:10px;"><b>发布时间：</b>' + escapeHTML(app.publishedAt) + '　<b>发布方：</b>' + escapeHTML(app.publisherUnit) + '</p>',
+    '<hr style="border:none;border-top:1px solid #f0f0f0;margin:12px 0;">',
+    '<p style="margin-bottom:8px;"><b>摘要</b></p>',
+    '<p style="margin-bottom:16px;">' + escapeHTML(app.description).substring(0, 200) + '…</p>',
+    '<div style="background:#f0f5ff;border-radius:6px;padding:12px;margin-bottom:12px;">',
+    '<p style="font-size:12px;color:#2f54eb;margin-bottom:6px;">📊 <b>报告结构</b></p>',
+    '<ol style="font-size:12px;color:rgba(0,0,0,0.65);padding-left:20px;line-height:2;">',
+    '<li>研究背景与数据源说明</li>',
+    '<li>技术方法与模型架构</li>',
+    '<li>结果分析与精度评估</li>',
+    '<li>结论与建议</li>',
+    '<li>附录：详细数据表</li>',
+    '</ol>',
+    '</div>',
+    '<p style="font-size:12px;color:rgba(0,0,0,0.45);">💡 提示：以上为在线预览摘要，完整报告请点击上方「📥 下载」按钮获取。</p>'
+  ];
+  return lines.join('\n');
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+var _applyTarget = null;
+
+function applyForApp(event, id, name) {
+  if(!requireAuth())return;
+  _applyTarget = { id: id, name: name };
+  document.getElementById('popconfirmTitle').textContent = '是否确定申请使用该应用？';
+  document.getElementById('popconfirmDesc').textContent = '申请通过后可在「我的应用」中查看，发布方将收到通知';
+  openPopconfirm(event.target || event.srcElement);
+}
+
+function confirmApply() {
+  if (!_applyTarget) return;
+  var name = _applyTarget.name;
+  closePopconfirm();
+  showToast('success', '已提交「' + name + '」的使用申请，请等待发布方审核。');
+  _applyTarget = null;
+}
+
+function navigateToDemand(demandId) {
+  showToast('info', '需求详情页面尚未开发（需求ID: ' + demandId + '），请从需求大厅查看');
+}
+
+function downloadDeliverable(name) {
+  showToast('success', '模拟下载「' + name + '」— 原型阶段无实际文件');
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('success', '已复制到剪贴板');
+    });
+  } else {
+    showToast('info', '已复制：' + text);
+  }
+}
+
+/* ============================================================
+   POPCONFIRM
+   ============================================================ */
+function openPopconfirm(triggerEl) {
+  var rect = triggerEl.getBoundingClientRect();
+  var wrap = document.getElementById('popconfirmWrap');
+  var box = wrap.querySelector('.popconfirm-box');
+
+  // Position above the trigger button
+  var top = rect.top - 8;
+  var left = rect.left + rect.width / 2;
+
+  wrap.style.top = top + 'px';
+  wrap.style.left = left + 'px';
+  wrap.style.transform = 'translate(-50%, -100%)';
+
+  // Clamp to viewport
+  var wRect = wrap.getBoundingClientRect();
+  if (wRect.top < 8) { wrap.style.top = (parseFloat(wrap.style.top) + (8 - wRect.top)) + 'px'; }
+  if (wRect.left < 8) { wrap.style.left = '8px'; wrap.style.transform = 'none'; }
+  if (wRect.right > window.innerWidth - 8) {
+    wrap.style.left = (window.innerWidth - 8 - wRect.width) + 'px';
+    wrap.style.transform = 'none';
+  }
+
+  document.getElementById('popconfirmShield').classList.add('visible');
+  wrap.classList.add('visible');
+}
+
+function closePopconfirm() {
+  document.getElementById('popconfirmShield').classList.remove('visible');
+  document.getElementById('popconfirmWrap').classList.remove('visible');
+  _applyTarget = null;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+var _toastTimer = null;
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' visible';
+  t.textContent = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : 'ℹ️ ') + msg;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 3000);
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function escapeHTML(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ===== AUTH STATE (must run first) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+// ===== NOTIFICATIONS DATA =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+// Init
+init();
+renderNotifs();
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); switchAuthState(false); } catch(e) {} showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+// ===== NOTIFICATIONS =====
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+// ===== TOAST =====
+function showToast(msg){ var t = document.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2000;padding:10px 20px;border-radius:6px;font-size:14px;background:#2f54eb;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity 0.3s;'; document.body.appendChild(t); setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2000); }
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

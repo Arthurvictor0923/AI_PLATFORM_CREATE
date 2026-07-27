@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型部署 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sf-img-0: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAASwCAMAAAAt7qfEAAAA5FBMVEXy8fv58PT18fnw8fzw8/zz8vn08vv28Pfw8vnr9Pn38vj27/Xt9v357vHz8Pf47vPz9fzu8/n58Pbr8vfs9/7z7/X27PH68fX48fjy8vz06O719vv09/z06u/s9Prx8fft8vf57fD18vns8fX26O746/Dx7vT26u/v9v378PL29fr07vPu8Pbw8PXu8/v27vP68vf26/Dy+P3w7fL28vru8Pvx7vfu7/T07fLx6vD2+f306/Hu7fPx7/nu7fjq6/rw7PH77vHs7fnw+P7u7vn58/jl6vvq7fvs7vzn6/vj6fzw9P02E8Y3AARwBElEQVR42tSdT48iNxDFs+dRK4doLrmhgUVoFY2iSCSrtIYwByTy/T9Q6tWffhSFcbOw2kmVXbbLbpg9/fRsN/vTv4+zgxjCjXY8HI8SO7Z7hL1nk0SZa9vbvbZ9hD2bSeezGUbawhDR7dkXi63ZZE9PT1+erIdSDLMIJ/aKwBEsjRv287l9khKGPhLZBuR1lUaUGTYM8ly1AfXMNL9BT6Y3A9xs0zLOVNvv9who9xhqBrGY5++w4YIh2bWFGpp5hmeac3uxPL/fL3qGFXfZ6uEPr1YL8RWaD23r9foBH+Jh7fb77+t5tkT9dlu3LWZr0p5cRnu//aqGRq1OM3f/VxHAD4Lw1GZv0xeO0LHDGYmP4hhJOcCvYVdWK2wt0IPDWphv4BcETk3fRvfP6lK2Y3LMaDz17Z/0FoEFvwjbz88BYOJ3K6M5DBa7lCZ/ZV4c+JWqrfM2uxoZXPj76csnZK4j+JM40FgJ/CpUlSoOvpYFA6IB+Cp+h3MAg6EnDvwacbNjyulrz6DqI3wW3Q55CeBo0Q3EtgAs/i2Gp4J82c5SWJZtgafEFz3nEgVwmSeA8aHDMBfAj4Hz6rQL7z9BZ5euWRhii8H1Ifj3McPsEiU5AExfXnG1lInGP4lG/nYMPMTDawlSxd2ArAYp+wTGx7QLHF8Hj44USWpjdTYRS6/C9scD+MCiNUPXC4JH2o5FzeGLIimvl12M6LWCqo7pXNx+Ob4fXw7v6LwIfUdjLSyIK/bmXCZsd29RM4FHieNufA+/SwK/bQW221FaUHdE1Nox17/aCn/RUgprCly+ywy+FMDgLBFcjOglgoW6CPCnV+khpT1MzhTArmo/vaICw5YhhdmnQJ5lTtRgLHobASy6CDSmFMVdBUzDSmd0UcA+6BL2LgGsJN0MDSOBN4vJBxkAvhKBSZY8viSBG5wcAOCBSx5iq33xS4gdElznIpi97Gpd/Wtr1/R4fj5Yy7iWqEtoVClcrKa9hdK5bZwOkFvHwY6hsrxpl6nuc4rCy5zF5No62RH0M4jW/G1N9kabaxnS+hgOBUz+NmTwx1LAYHLRv9607HhEAJLpUaofd7RIEbk0J/ThRYJH0FbV7rizEhxGDpETbxJQyWA8Jn0M1d80jn0NrPVU424pgyF/3/5++4osqqRgSQFXCwBvgV9w97MZWk1t/7qTwKF/qYATbKtjjU6Fzv30DAd+CeHXLH+rAr4ogQfDLwrsZIrMvtlA1EAv3AWumOQbCngDSicb6Da03n6Y5nOHGPa4f7hROfufd90WLolBYXoSstGgAOlTb8hqtypgVDAeIEwi+HH4pS8qY/0LEWcq4OCvFQscaemgVIj7u1RZJxGNU/g7mTNqErRgG5qFONqrTvSioezlxzbx+7vSHyC1hgGFQIXTegqYHyN/vpREexIXZi0C26jT2pT27+uL4V9R1B3FHxDAB9ZDwa8Bl/qXgySBUY8o7pZlUWdPITseJrgSxgerFL+k8XgYZc3LEXEnweD7TuAiwNCSxECuBJl37YsAkkL9SjAl/GYpC+0S9lkKKAuV6ySVPjKQwECv0nms0K0EhoO33HZW26r4/QL+SupOAEugAiZrq3Hz+Rn8jQ1nIS756yyWHHyeAvYzXcPvIEXaU/ULaJ8tv4nAKnolakfHAV+aZWIVHDagKTAmXpkY3JNRAxOZDyfwIN8x0BvmG87woG/sLlP3Er5izNE4rAqYyrfPX66/ncGazt9PAK/g8wlM4CYYI/YMCw27wV5tW6ubuOXihvmKQKhqVM6hTwJ32K0URTT8hoKNzBrtZf7KmTBm8D3eRKCgZSmGrAUmUO1jnL9JAiel64OUS2kPXOLolSqha05gQLYNYHY/kAImkCfli2JNtp3G4+Rkc/LDiKJ5EFf6Lm1hGB0QzM2CxoCvbk+PGl/Qi8Ne7YxSdfSGERwTyFP6pjNgpD2+A7+IM20L/o5KWfTdv0r/qxQkPdtTwKGBNbrmPTVVvyqN71LAz6cKGN4WwGmXWloK4CdhLmq4wrdq4C9fJgVcEYw02ItWmsRfGBeKzWcxmOrUVQGM4lLYbKDDkNngGZiMzxTw6cgHnrhq++9mRl8/DG6boDTEL/GLSmd3gGfNW0YlR9T3bZ5Qztg9ieXwNwngVZ++WMU+yas+bwOa+89erN8Hd4/QAtS1RU/jm5TBpLERWAcy1RXABDGLK2B+b1MDr1yqSgNiIiiNNdXmL2WxBA6j75+FBIiZ5S/xykERwlYZvSSB3IXiMlxDWyn/KADz8BexzBh4WTN/d1YtksDHsvvMsVEYYJVlYZY5jocjutTC6aR4lCPgowQVwqpziVqjL3I2NDxjTtiLzFiuYQG/iHr+CwTP3IOGbaXjh71bqSh2AKxE/gNTGJ8p4OaJsOnedNyr64Fg8ef7DPBNZ8B9BYz6HGr3CQE1uaxIBH4igNUqNYW4Jn1hCulYc7ZprQtmy1/sbAd1XzcG2qkRTyoYUEZKSoC3yFoOBx+Qyh0EPxTDPPuVsFGPlu6m57OgMFwxzKNgcrTwl2BuK2DmBjMMZtmw7y8kfMMdnaj89vRAn8CkMGqU3O2T1PQvi4U2XdXSiro4b2Ebjacj24Avscp0U/qyAawlSDxVwIhW26aPqltYo64MwdmzMVEk8Hr6LG30+0lgIpYkrSOvZZiR3OVi8rb9eAVM/Bp6o8C1IOQdaNouKWDQNgKdUDYNPMFXu5Z1p/nAgP0uJ8DH44sKYIVqoDa2oNGgxbRVELjYqPjdaXyH+x2s0cuf1SU7cgPa4PumxbejpftVhPAfGNgWNOy3/h60KFw0VMDGYwGwSeA+YmOvuXsGnI+Aq/xFUEQ/P0l18mqbGfxKBSztxVvQr0X/DsgHe8WAZOrfWwFMG7jzbBwOIrvsTQoYWZsLcZsUcMFwVwFH/lsuXQ2zD4EHKT0Dp7P+VSo38Dvlh74CVrNHMexuRM+Zd95Wtzkl5O3vJVXNe7HbE8BBy8Lf9mOL0LQw9gvSYyWq5U7wewnExGt1yyceO4FRqXBRK4E5D0SKe7PQAM3aEcAonEvRxbNBmIfAScYSxA09zA4XcMxnW+R9PH8fD2BK4DqR4EsFXCQwr0GbZ/hOZaQWxgC6Ng6BETQdRI41hzgAfsfN5xcMX46WQnUBnEXwyAnkxkJgvngkEI5T4LkSeHQCG3RHcWuVwCgx4jZ0RwJPp7/QvMFfrFYJHMk+hpv5E+Iqgd3bd6AR5fhXLdH3N0QpfBvJm3oeXE6AgV43RbEEmzMi8wGH81wbXPFurLxOO9LSiGcFzIVDAW8Zg3zoeegAeNMDcJ0fbj0Erp7MwUoEQzxnmCKtbxAnvs5UwHzkMdZg8AJuPbV9m7XX96DpS08vb5TAJDAx3FxO+LYhzWvUsgxr0SAEeIOgxDEqB4xaKbYTx/EJ4sFQzK/bpgtNrzIae7VpErgR8YTvYweD4/vJzzZnM4unkIhd8N2E8McG8IFN5TLhXBUwEZzhm/SvlXAdjpEz+mr0s13MUQATwip+4x40VgLFztt3Y20UzYhhgKFNqwiWks6ApYijBx4jwNoMJqO3aHyX2TgM7H7FQbA2FMXpELi9BW0ANtISwFL5RtI3E5g3sGbdgkZwARzgDQlMf0VR4LoERuy+CCxJBS93obMCJn9vk8BOVUTtsHiGPiH4dY4CZhqhgeBvu4Q1fzXgCwHcUsA5rdyl2650FcBDZqmEvgJGWvorju+3Ql6v+wCpIfh2/kaMwnRM9EVwun9FBdx4iKe7QGsRwDzsrQI5s3XJg99lDDmVInuFvcp0vk6EfBu/qAbYxXTuC7NucwMaU4W+a2/0+FfhizWGX7u2TOq2dpormUlnbzjoQLF4237wFvTBStHF7TPgHVt0j14wrIEUdtCOxlZjsSXhKE7iMFv4C25AK7YxdAQbfV3r7izYKGSwkhewRVtPgAFeBDSzLBSwOOQuhK5rXb2H9beMXBRr6W5BB3L157BOASzudvcZMA30bSpgrlEP8qKeuzcgcIKvPB7di0fATl6ncFbAN/KXxrvN0uHrwBGIKCeykhTpjgJ240QbwYWajGVKsxsu7NNanf8OeYq9bBgnAl/cgoYlvPYVMBwf5Qz+fgoYzCV5Le5bAG4SOBxl6do3SWMDcA/CeERvX7FIsjxTOdueWhexTMjGRSw7iyV4ud1cUQ3DA1x6Sl/HqKav/BAHFq4Q0eqjoZipf1sE9myecz29QN66+scYMcnZIn4tVjIz5U1ei/LjN6Hv2IJupeFUvyy0HTtWjtFHYAPpmyAMVXuAnBUQT0e8Fb7al0XcstYr0MAvrjiLUwOr6g0FjAyvSFukifidLkEDvxLnsdeWhf4VEpO/");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88);
+  background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* BG-LIST */
+.bg-list { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sf-img-0) center / cover no-repeat; z-index: 0; pointer-events: none; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px; background-color: transparent; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid rgba(5,5,5,0.06); z-index: 19; display: flex; flex-direction: column; padding: 0; }
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.app-body { display: flex; padding-top: 60px; min-height: 100vh; position: relative; z-index: 1; }
+.sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: 200px; background: transparent; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+.sidebar-inner { padding: 16px 8px; }
+.sidebar-menu { display: flex; flex-direction: column; }
+.sidebar-menu-group { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 24px 4px; text-transform: uppercase; }
+.sidebar-menu-item { display: flex; align-items: center; gap: 8px; height: 40px; line-height: 40px; padding-inline: 16px; margin: 0 16px 4px; width: calc(100% - 32px); border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; white-space: nowrap; overflow: hidden; }
+.sidebar-menu-item:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.88); }
+.sidebar-menu-item.active { color: rgb(47,84,235); background: rgba(47,84,235,0.2); font-weight: 600; border-radius: 4px !important; }
+.sidebar-menu-icon { font-size: 16px; width: 16px; text-align: center; flex-shrink: 0; }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content-area { flex: 1; margin-left: 200px; padding: 24px 40px; min-height: calc(100vh - 60px); position: relative; z-index: 1; min-width: 0; }
+.page-procard { background: transparent; }
+.page-card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02); border: 1px solid rgba(5,5,5,0.06); }
+[data-prefers-color="dark"] .page-card { background: #1f1f1f; border-color: #303030; }
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 20px 24px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-danger-outline { background: #ffffff; color: #ff4d4f; border-color: #ff4d4f; }
+.btn-danger-outline:hover { color: #ff7875; border-color: #ffa39e; }
+.btn-link { background: transparent; color: #2f54eb; border: none; padding: 4px 8px; height: auto; }
+.btn-link:hover { color: #597ef7; }
+.btn-link.danger { color: #ff4d4f; }
+.btn-link.danger:hover { color: #ff7875; }
+.btn-link:disabled, .btn-link.disabled { color: rgba(0,0,0,0.25) !important; cursor: not-allowed; pointer-events: none; }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+.btn-lg { height: 40px; padding: 6px 23px; font-size: 15px; }
+.btn .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: btnSpin 0.6s linear infinite; }
+.btn.loading .btn-spinner { display: inline-block; }
+.btn.loading { pointer-events: none; opacity: 0.65; }
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   STATUS CHIPS
+   ============================================================ */
+.status-chip { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 22px; padding: 0 8px; font-size: 12px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.status-chip.success { color: #52c41a; background: #d9f7be; }
+.status-chip.pending { color: #2f54eb; background: #d6e4ff; }
+.status-chip.error { color: #ff4d4f; background: #fff2f0; }
+.status-chip.default { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.status-chip-spinner { display: inline-block; width: 10px; height: 10px; border: 1.5px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: chipSpin 0.8s linear infinite; }
+@keyframes chipSpin { to { transform: rotate(360deg); } }
+[data-prefers-color="dark"] .status-chip.default { color: rgba(255,255,255,0.65); background: #303030; }
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+.toolbar { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px; flex-wrap: wrap; }
+[data-prefers-color="dark"] .toolbar { border-bottom-color: #303030; }
+.toolbar-title-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 12px; }
+.page-header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.search-wrap { position: relative; width: 240px; flex-shrink: 0; }
+.search-wrap::before { content: '🔍'; position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 14px; z-index: 1; pointer-events: none; }
+.search-input { width: 100%; height: 32px; padding: 4px 11px 4px 34px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; transition: all 0.2s; }
+.search-input::placeholder { color: rgba(0,0,0,0.25); }
+.search-input:hover { border-color: #597ef7; }
+.search-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+[data-prefers-color="dark"] .search-input { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+.filter-select-wrap { position: relative; flex-shrink: 0; }
+.filter-select { height: 32px; padding: 4px 28px 4px 11px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; transition: all 0.2s; min-width: 120px; }
+.filter-select:hover { border-color: #597ef7; }
+.filter-select:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.filter-select-wrap::after { content: ''; position: absolute; right: 11px; top: 50%; transform: translateY(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid rgba(0,0,0,0.45); pointer-events: none; }
+[data-prefers-color="dark"] .filter-select { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+.toolbar-spacer { flex: 1; }
+.toolbar-count { font-size: 13px; color: rgba(0,0,0,0.45); white-space: nowrap; }
+
+/* Detail hint bar */
+.detail-hint-bar { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: #fafafa; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: rgba(0,0,0,0.45); }
+.detail-hint-bar .detail-hint-icon { font-size: 14px; flex-shrink: 0; }
+[data-prefers-color="dark"] .detail-hint-bar { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.45); }
+/* ============================================================
+   TABLE
+   ============================================================ */
+.data-table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table thead th { padding: 12px 8px; text-align: left; font-weight: 400; color: rgba(0,0,0,0.65); background: rgba(0,0,0,0.02); border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+.data-table thead th:first-child { padding-left: 16px; }
+.data-table thead th:last-child { text-align: right; padding-right: 16px; }
+.data-table tbody td { padding: 12px 8px; border-bottom: 1px solid #fafafa; color: rgba(0,0,0,0.88); vertical-align: middle; }
+.data-table tbody td:first-child { padding-left: 16px; font-weight: 500; }
+.data-table tbody td:last-child { text-align: right; padding-right: 16px; }
+.data-table tbody tr { transition: background 0.2s; }
+.data-table tbody tr:hover { background: rgba(0,0,0,0.02); }
+.data-table tbody tr.row-deploying { background: rgba(47,84,235,0.02); }
+.data-table tbody tr.row-deploying:hover { background: rgba(47,84,235,0.04); }
+[data-prefers-color="dark"] .data-table thead th { color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03); border-bottom-color: #303030; }
+[data-prefers-color="dark"] .data-table tbody td { color: rgba(255,255,255,0.85); border-bottom-color: #2a2a2a; }
+[data-prefers-color="dark"] .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+.model-name { color: #2f54eb; cursor: pointer; }
+.model-name:hover { color: #597ef7; text-decoration: underline; }
+.td-code { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; color: rgba(0,0,0,0.65); }
+[data-prefers-color="dark"] .td-code { color: rgba(255,255,255,0.65); }
+.actions-cell { display: flex; align-items: center; gap: 2px; justify-content: flex-end; position: relative; }
+/* Dropdown */
+.more-dropdown { position: relative; display: inline-block; }
+.more-dropdown-menu { display: none; position: absolute; right: 0; top: 100%; z-index: 100; min-width: 120px; background: #fff; border-radius: 6px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); padding: 4px; border: 1px solid #f0f0f0; }
+.more-dropdown-menu.visible { display: block; }
+.more-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 14px; color: rgba(0,0,0,0.88); border-radius: 4px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+.more-dropdown-item:hover { background: rgba(0,0,0,0.04); }
+.more-dropdown-item.danger { color: #ff4d4f; }
+.more-dropdown-item.danger:hover { background: #fff2f0; }
+[data-prefers-color="dark"] .more-dropdown-menu { background: #1f1f1f; border-color: #303030; }
+[data-prefers-color="dark"] .more-dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .more-dropdown-item:hover { background: rgba(255,255,255,0.08); }
+[data-prefers-color="dark"] .more-dropdown-item.danger { color: #ff7875; }
+[data-prefers-color="dark"] .more-dropdown-item.danger:hover { background: rgba(255,77,79,0.15); }
+/* Status chip clickable */
+.status-chip.clickable { cursor: pointer; }
+.status-chip.clickable:hover { opacity: 0.8; }
+/* Sync badge */
+.sync-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.sync-dot.warning { background: #ff9113; }
+.sync-dot.success { background: #52c41a; }
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination-wrap { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; margin-top: 8px; }
+.page-size-select { height: 32px; padding: 4px 28px 4px 11px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; }
+.pagination-controls { display: flex; gap: 4px; }
+.page-btn { min-width: 32px; height: 32px; padding: 0 6px; border-radius: 6px; border: 1px solid #d9d9d9; background: #ffffff; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.page-btn:hover { color: #2f54eb; border-color: #2f54eb; }
+.page-btn.active { color: #fff; background: #2f54eb; border-color: #2f54eb; font-weight: 600; }
+.page-btn:disabled { color: rgba(0,0,0,0.25); cursor: not-allowed; }
+.page-info { font-size: 13px; color: rgba(0,0,0,0.45); }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   POPCONFIRM (bubble style, no overlay, arrow pointing to trigger)
+   ============================================================ */
+.popconfirm-wrap { display: none; position: fixed; z-index: 1060; }
+.popconfirm-wrap.visible { display: block; }
+.popconfirm-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); padding: 12px; min-width: 240px; max-width: 300px; }
+[data-prefers-color="dark"] .popconfirm-box { background: #1f1f1f; }
+.popconfirm-body { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 2px; }
+.popconfirm-icon { font-size: 16px; color: #faad14; flex-shrink: 0; margin-top: 2px; }
+.popconfirm-text { flex: 1; min-width: 0; }
+.popconfirm-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.5714285714285714; }
+[data-prefers-color="dark"] .popconfirm-title { color: rgba(255,255,255,0.85); }
+.popconfirm-desc { font-size: 11px; color: rgba(0,0,0,0.35); line-height: 1.4; margin-top: 2px; }
+[data-prefers-color="dark"] .popconfirm-desc { color: rgba(255,255,255,0.35); }
+.popconfirm-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.popconfirm-btn { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 7px; font-size: 14px; border-radius: 6px; cursor: pointer; user-select: none; transition: all 0.2s; border: 1px solid #d9d9d9; background: #ffffff; color: rgba(0,0,0,0.88); }
+.popconfirm-btn:hover { color: #597ef7; border-color: #597ef7; }
+.popconfirm-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+.popconfirm-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+[data-prefers-color="dark"] .popconfirm-btn { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+/* Arrow below the popconfirm (pointing down to the trigger button) */
+.popconfirm-arrow { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #ffffff; }
+[data-prefers-color="dark"] .popconfirm-arrow { border-top-color: #1f1f1f; }
+/* Click shield: transparent layer to catch outside clicks */
+.popconfirm-shield { display: none; position: fixed; inset: 0; z-index: 1059; }
+.popconfirm-shield.visible { display: block; }
+
+/* ============================================================
+   CENTERED DIALOG (for new service modal)
+   ============================================================ */
+.dialog-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+.dialog-overlay.visible { display: flex; }
+.dialog-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); max-width: 90vw; overflow: hidden; }
+[data-prefers-color="dark"] .dialog-box { background: #1f1f1f; }
+.dialog-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .dialog-header { border-bottom-color: #303030; color: rgba(255,255,255,0.85); }
+.dialog-close { font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px; border-radius: 4px; margin-left: auto; }
+.dialog-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.dialog-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .dialog-body { color: rgba(255,255,255,0.65); }
+.dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .dialog-footer { border-top-color: #303030; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 2000; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ============================================================
+   DEPLOY DRAWER
+   ============================================================ */
+.deploy-drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 999; }
+.deploy-drawer-overlay.visible { display: block; }
+.deploy-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 640px; max-width: 90vw; background: #ffffff; z-index: 1000; box-shadow: -6px 0 16px 0 rgba(0,0,0,0.08), -3px 0 6px -4px rgba(0,0,0,0.12), -9px 0 28px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+.deploy-drawer.open { transform: translateX(0); }
+[data-prefers-color="dark"] .deploy-drawer { background: #1f1f1f; }
+.deploy-drawer-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .deploy-drawer-header { border-bottom-color: #303030; }
+.deploy-drawer-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .deploy-drawer-title { color: rgba(255,255,255,0.85); }
+.deploy-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; }
+.deploy-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.deploy-drawer-body { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+.deploy-drawer-footer { display: flex; align-items: center; padding: 12px 24px; border-top: 1px solid #f0f0f0; flex-shrink: 0; gap: 8px; }
+[data-prefers-color="dark"] .deploy-drawer-footer { border-top-color: #303030; }
+.deploy-drawer-footer .spacer { flex: 1; }
+
+/* ============================================================
+   DRAWER: Status Banner
+   ============================================================ */
+.deploy-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 6px; font-size: 14px; }
+.deploy-banner.deploying { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+.deploy-banner.verifying { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+.deploy-banner.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.deploy-banner.failed { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.deploy-banner-icon { font-size: 24px; flex-shrink: 0; }
+.deploy-banner-text { flex: 1; line-height: 1.5; }
+.deploy-banner-text .banner-title { font-weight: 600; font-size: 14px; }
+.deploy-banner-text .banner-desc { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+.building-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(47,84,235,0.25); border-top-color: #2f54eb; border-radius: 50%; animation: btnSpin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+.building-spinner.failed { border-color: rgba(255,77,79,0.25); border-top-color: #ff4d4f; }
+
+/* ============================================================
+   DRAWER: Section Titles
+   ============================================================ */
+.drawer-section-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.drawer-section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: rgb(47,84,235); border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .drawer-section-title { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   DRAWER: Timeline
+   ============================================================ */
+.timeline { display: flex; flex-direction: column; }
+.timeline-item { display: flex; gap: 12px; padding: 0 0 16px 0; position: relative; }
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-dot-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 24px; }
+.timeline-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; z-index: 1; }
+.timeline-dot.done { background: #52c41a; border: 2px solid #52c41a; }
+.timeline-dot.active { background: #2f54eb; border: 2px solid #2f54eb; box-shadow: 0 0 0 3px rgba(47,84,235,0.2); animation: pulse 1.5s infinite; }
+.timeline-dot.waiting { background: #fff; border: 2px solid #d9d9d9; }
+.timeline-dot.failed { background: #ff4d4f; border: 2px solid #ff4d4f; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(47,84,235,0.2); } 50% { box-shadow: 0 0 0 8px rgba(47,84,235,0); } }
+.timeline-line { flex: 1; width: 2px; background: #f0f0f0; min-height: 20px; margin-top: 2px; }
+.timeline-line.done { background: #52c41a; }
+.timeline-line.failed { background: #ff4d4f; }
+.timeline-content { flex: 1; padding-bottom: 4px; }
+.timeline-time { font-size: 12px; color: rgba(0,0,0,0.45); margin-bottom: 2px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; }
+.timeline-label { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); }
+.timeline-status { font-size: 12px; margin-top: 2px; }
+.timeline-status.done { color: #52c41a; }
+.timeline-status.active { color: #2f54eb; }
+.timeline-status.waiting { color: rgba(0,0,0,0.25); }
+.timeline-status.failed { color: #ff4d4f; }
+.timeline-error { font-size: 12px; color: #ff4d4f; margin-top: 4px; padding: 6px 10px; background: #fff2f0; border-radius: 4px; line-height: 1.5; }
+[data-prefers-color="dark"] .timeline-time { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .timeline-label { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .timeline-status.waiting { color: rgba(255,255,255,0.25); }
+[data-prefers-color="dark"] .timeline-dot.waiting { background: #1f1f1f; border-color: #434343; }
+[data-prefers-color="dark"] .timeline-line { background: #303030; }
+[data-prefers-color="dark"] .timeline-error { background: rgba(255,77,79,0.1); }
+
+/* ============================================================
+   DRAWER: Health Check Panel
+   ============================================================ */
+.health-check-section { margin-bottom: 4px; }
+.health-check-label { font-size: 12px; font-weight: 600; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.health-check-label .count { font-weight: 400; }
+.health-check-label .count.ok { color: #52c41a; }
+.health-check-label .count.warn { color: #ff9113; }
+.health-check-list { display: flex; flex-direction: column; gap: 0; }
+.hc-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 4px; transition: background 0.2s; font-size: 13px; }
+.hc-item:hover { background: rgba(0,0,0,0.02); }
+.hc-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+.hc-icon.ok { color: #52c41a; }
+.hc-icon.checking { color: #2f54eb; }
+.hc-icon.fail { color: #ff4d4f; }
+.hc-icon.waiting { color: rgba(0,0,0,0.25); }
+.hc-path { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; color: rgba(0,0,0,0.88); width: 140px; flex-shrink: 0; }
+.hc-desc { font-size: 13px; color: rgba(0,0,0,0.65); width: 70px; flex-shrink: 0; }
+.hc-result { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; margin-left: auto; }
+.hc-result.ok { color: #52c41a; }
+.hc-result.fail { color: #ff4d4f; }
+.hc-result.checking { color: #2f54eb; }
+.hc-badge { font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 600; flex-shrink: 0; }
+.hc-badge.required { background: #fff2f0; color: #ff4d4f; }
+.hc-badge.optional { background: #f0f0f0; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .hc-path { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .hc-desc { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .hc-badge.optional { background: #303030; color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .hc-item:hover { background: rgba(255,255,255,0.03); }
+.health-check-note { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 12px; background: #fafafa; border-radius: 4px; line-height: 1.5; margin-top: 8px; }
+[data-prefers-color="dark"] .health-check-note { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.45); }
+
+/* ============================================================
+   DRAWER: Log Viewer
+   ============================================================ */
+.drawer-log-wrap { border: 1px solid #d9d9d9; border-radius: 6px; overflow: hidden; background: #1e1e2e; }
+[data-prefers-color="dark"] .drawer-log-wrap { border-color: #434343; }
+.drawer-log-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; background: #252535; border-bottom: 1px solid #333345; }
+.drawer-log-title { font-size: 12px; color: #636380; font-weight: 500; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; }
+.drawer-log-content { padding: 10px 14px; max-height: 240px; overflow-y: auto; }
+.drawer-log-line { font-size: 12px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; line-height: 1.8; color: #a0a0b0; white-space: pre-wrap; word-break: break-all; }
+.drawer-log-line.success { color: #52c41a; }
+.drawer-log-line.warn { color: #ff9113; }
+.drawer-log-line.error { color: #ff4d4f; }
+.drawer-log-line.info { color: #a0a0b0; }
+.drawer-log-empty { text-align: center; padding: 30px; color: #636380; font-size: 13px; }
+
+/* ============================================================
+   PRD TOGGLE & PANELS
+   ============================================================ */
+.prd-toggle-btn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; font-size: 13px; color: rgba(0,0,0,0.45); border-radius: 4px; cursor: pointer; user-select: none; transition: all 0.2s; font-weight: 400; }
+.prd-toggle-btn:hover { color: #2f54eb; background: rgba(47,84,235,0.06); }
+.prd-toggle-btn.active { color: #2f54eb; background: rgba(47,84,235,0.1); }
+.prd-toggle-icon { font-size: 14px; transition: transform 0.2s; }
+.prd-toggle-btn.active .prd-toggle-icon { transform: rotate(180deg); }
+[data-prefers-color="dark"] .prd-toggle-btn { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .prd-toggle-btn:hover,
+[data-prefers-color="dark"] .prd-toggle-btn.active { color: #597ef7; background: rgba(47,84,235,0.15); }
+
+.prd-panel { display: none; margin: 0 24px 16px; padding: 10px 14px; background: #fafbff; border-left: 3px solid #2f54eb; border-radius: 0 6px 6px 0; font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.7; }
+.prd-panel.visible { display: block; }
+.prd-panel .prd-label { font-size: 11px; font-weight: 600; color: #2f54eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.prd-panel code { background: rgba(47,84,235,0.08); padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; color: #2f54eb; }
+.prd-panel b { color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .prd-panel { background: rgba(47,84,235,0.06); border-left-color: #597ef7; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .prd-panel .prd-label { color: #597ef7; }
+[data-prefers-color="dark"] .prd-panel code { background: rgba(47,84,235,0.15); color: #91a9ff; }
+[data-prefers-color="dark"] .prd-panel b { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   GUIDE TRIGGER & DRAWER
+   ============================================================ */
+.guide-trigger { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; background: #2f54eb; color: #fff; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; box-shadow: 0 4px 12px rgba(47,84,235,0.35); transition: all 0.2s; }
+.guide-trigger:hover { background: #597ef7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,84,235,0.4); }
+
+.guide-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
+.guide-overlay.visible { display: flex; }
+.guide-drawer { background: #ffffff; border-radius: 12px; width: 720px; max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .guide-drawer { background: #1f1f1f; }
+.guide-drawer-header { display: flex; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .guide-drawer-header { border-bottom-color: #303030; }
+.guide-drawer-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .guide-drawer-title { color: rgba(255,255,255,0.85); }
+.guide-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.guide-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.guide-drawer-body { padding: 24px; overflow-y: auto; flex: 1; }
+.guide-tabs { display: flex; gap: 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+[data-prefers-color="dark"] .guide-tabs { border-bottom-color: #303030; }
+.guide-tab { padding: 8px 16px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; margin-bottom: -1px; }
+.guide-tab:hover { color: #2f54eb; }
+.guide-tab.active { color: #2f54eb; border-bottom-color: #2f54eb; font-weight: 600; }
+[data-prefers-color="dark"] .guide-tab { color: rgba(255,255,255,0.65); }
+.guide-section { margin-bottom: 24px; }
+.guide-section:last-child { margin-bottom: 0; }
+.guide-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .guide-section-title { color: rgba(255,255,255,0.85); }
+.guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.guide-table th, .guide-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+.guide-table th { background: rgba(0,0,0,0.02); font-weight: 600; color: rgba(0,0,0,0.65); white-space: nowrap; }
+.guide-table td { color: rgba(0,0,0,0.65); line-height: 1.5; }
+.guide-table td:first-child { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .guide-table th { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td:first-child { color: rgba(255,255,255,0.85); }
+.guide-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.guide-tag.do { background: #d9f7be; color: #52c41a; }
+.guide-tag.error { background: #fff2f0; color: #ff4d4f; }
+.guide-tag.modal { background: #d6e4ff; color: #2f54eb; }
+.guide-tag.info { background: #e6fffb; color: #23ada4; }
+
+/* ============================================================
+   STATE DEMO BAR (inside drawer)
+   ============================================================ */
+.state-demo-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #fafafa; border-radius: 6px; font-size: 12px; color: rgba(0,0,0,0.65); margin-bottom: 4px; }
+.state-demo-bar .state-demo-label { color: rgba(0,0,0,0.45); flex-shrink: 0; }
+.state-demo-bar select { height: 28px; padding: 2px 24px 2px 8px; font-size: 12px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; }
+[data-prefers-color="dark"] .state-demo-bar { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .state-demo-bar select { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   TOOLTIP
+   ============================================================ */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 4px 10px; font-size: 12px; color: #fff; background: rgba(0,0,0,0.85); border-radius: 4px; white-space: nowrap; z-index: 1060; pointer-events: none; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .content-area { padding: 16px 20px; }
+  .deploy-drawer { width: 100vw; max-width: 100vw; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 12px; }
+  .sidebar { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span><span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span><span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span><!-- <span class="top-nav-item" onclick="location.href='image-custom-list.html'">开发中心</span> --><span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span><span class="top-nav-item" data-nav="docs" onclick="location.href='doc-center.html'">文档中心</span><!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> --><!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+        <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+        <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+        <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+          <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+          <span class="badge-dot"></span>
+        </button>
+        <div class="notif-popover" id="notifPopover">
+          <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+            <span>通知</span>
+            <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+          </div>
+          <div id="notifList"></div>
+          <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+            <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('info','功能开发中')">查看全部通知 →</a>
+          </div>
+        </div>
+        <!-- User dropdown -->
+        <div class="dropdown-wrap" id="userDropdownWrap">
+          <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+          <div class="dropdown-menu" id="userDropdown">
+            <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+              <div style="font-weight:600;font-size:14px">张研究员</div>
+              <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+            </div>
+            <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+          </div>
+        </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-menu">
+        <a class="sidebar-menu-item" href="resource-overview.html"><span class="sidebar-menu-icon"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/><path d="M464 688a48 48 0 1096 0 48 48 0 10-96 0zm24-112h48c4.4 0 8-3.6 8-8V296c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8z"/></svg></span>资源总览</a>
+        <a class="sidebar-menu-item active" href="model-deployment.html"><span class="sidebar-menu-icon"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM600 228H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h272c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h272c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h272c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"/></svg></span>模型部署</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content-area">
+    <div class="page-procard">
+      <div class="page-card">
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title">模型部署</span>
+          <span class="prd-toggle-btn" id="prdToggle" onclick="togglePRD()" title="查看字段说明">
+            <span class="prd-toggle-icon">📋</span> 字段说明
+          </span>
+        </div>
+
+        <!-- PRD Field Descriptions -->
+        <div class="prd-panel" data-prd="table">
+          <div class="prd-label">📖 模型部署字段说明</div>
+          <b>模型名称：</b>模型的自定义名称，<b>允许重复</b>，非唯一标识。由创建者在模型广场或数据管理中定义，仅用于展示和搜索。<br>
+          <b>模型编码：</b>模型的<b>全局唯一标识</b>，创建时指定后不可修改。格式：<b>小写字母开头</b>，仅允许小写字母、数字和连字符（<code>-</code>），如 <code>model-005</code>。用于 API 调用和镜像寻址。<br>
+          <b>项目组：</b>模型所属的业务团队，用于权限隔离和资源配额管理。<br>
+          <b>模型类型：</b>模型的算法框架类型，如 <code>AI</code>（通用 AI 模型）、<code>ML</code>（传统机器学习）等。<br>
+          <b>模型版本：</b>当前部署的模型版本号，格式与模型编码一致：小写字母开头，小写字母+数字+连字符，如 <code>v1-1</code>、<code>v2025-11-28-1</code>。<br>
+          <b>状态：</b>模型部署生命周期 — <b>未发布</b>→<b>待部署</b>→<b>部署中</b>→<b>接口校验中</b>→<b>部署成功</b>/<b>部署失败</b>。状态决定可执行的操作。<br>
+          <b>同步模型广场：</b>标识该模型是否已同步到模型广场供其他用户发现和调用。<br>
+          <b>调用次数：</b>该模型部署后通过推理接口被调用的累计次数。<br>
+          <b>演示体验：</b>部署成功后可在线快速测试模型推理效果。
+        </div>
+        <div class="prd-panel" data-prd="deploy">
+          <div class="prd-label">🚀 部署与推理服务说明</div>
+          <b>新增推理服务（顶部按钮）：</b>打开模型选择器，选取一个模型后为其创建推理服务（即发布+部署的快捷通道）。适用于从已有模型快速搭建在线推理能力。<br>
+          <b>行级「发布」按钮：</b>对当前行的模型直接执行发布操作，将其状态从未发布变为待部署，然后可继续部署。<br>
+          <b>部署触发：</b>点击「部署」按钮后，系统立即将状态置为"部署中"，并异步执行容器部署（Pod 调度 → 容器启动）和接口健康校验。<br>
+          <b>接口健康校验：</b>部署完成后自动校验 6 个接口。<b>3 个必选接口</b>（<code>/reasoning</code> 单次推理、<code>/health</code> 健康检查、<code>/info</code> 服务信息）必须全部通过。<br>
+          <b>可选接口：</b><code>/batch-reasoning</code>（批量推理）、<code>/models</code>（子模型列表）、<code>/warmup</code>（模型预热）失败不影响部署成功。<br>
+          <b>服务资源监控（顶部按钮）：</b>查看当前已部署服务的集群资源状态，包括 GPU 使用率、内存占用、请求 QPS、P99 延迟等指标。<br>
+          <b>记录查看：</b>部署中/成功/失败后可点击「记录」查看部署流程、接口校验结果和部署日志。每次点击发起一次请求获取当前状态。
+        </div>
+        <div class="card-body">
+
+          <!-- Page Header Actions -->
+          <div class="toolbar-title-row">
+            <span class="toolbar-count">共 <strong id="totalCount">10</strong> 条记录</span>
+            <div class="page-header-actions">
+              <button class="btn btn-default" onclick="showToast('info','跳转至模型创建页面')">+ 新增模型</button>
+              <button class="btn btn-default" onclick="openNewServiceModal()">+ 新增推理服务</button>
+              <button class="btn btn-danger-outline" onclick="openMonitorDrawer()">📊 服务资源监控</button>
+            </div>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="toolbar">
+            <div class="search-wrap">
+              <input class="search-input" type="text" placeholder="搜索模型名称" oninput="filterTable()" id="searchInput">
+            </div>
+            <div class="filter-select-wrap">
+              <select class="filter-select" onchange="filterTable()" id="filterGroup">
+                <option value="">全部项目组</option>
+                <option value="AI组">AI组</option>
+                <option value="遥感组">遥感组</option>
+              </select>
+            </div>
+            <div class="filter-select-wrap">
+              <select class="filter-select" onchange="filterTable()" id="filterType">
+                <option value="">全部模型类型</option>
+                <option value="AI">AI</option>
+              </select>
+            </div>
+            <div class="filter-select-wrap">
+              <select class="filter-select" onchange="filterTable()" id="filterStatus">
+                <option value="">全部状态</option>
+                <option value="unpublished">未发布</option>
+                <option value="pending">待部署</option>
+                <option value="deploying">部署中</option>
+                <option value="deployed">部署成功</option>
+                <option value="failed">部署失败</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Detail Hint -->
+          <div class="detail-hint-bar">
+            <span class="detail-hint-icon">💡</span> 提示：部署过程中可点击「记录」查看当前状态（手动刷新），部署完成后可查看完整流程与校验结果。预计耗时 3–15 分钟。
+          </div>
+
+          <!-- Data Table -->
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>模型名称</th>
+                  <th>模型编码</th>
+                  <th>项目组</th>
+                  <th>模型类型</th>
+                  <th>模型版本</th>
+                  <th>状态</th>
+                  <th>同步模型广场</th>
+                  <th>调用次数</th>
+                  <th>演示体验</th>
+                  <th style="text-align:right">操作</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-wrap">
+            <div>
+              <select class="page-size-select" onchange="changePageSize(this.value)">
+                <option value="10">10 条/页</option>
+                <option value="20">20 条/页</option>
+                <option value="50">50 条/页</option>
+              </select>
+            </div>
+            <div class="pagination-controls" id="paginationControls"></div>
+            <div class="page-info" id="pageInfo">第 1-10 条，共 10 条</div>
+          </div>
+
+        </div><!-- /card-body -->
+      </div><!-- /page-card -->
+    </div><!-- /page-procard -->
+  </main>
+</div><!-- /app-body -->
+
+<!-- ===== POPCONFIRM (bubble, no overlay) ===== -->
+<div class="popconfirm-shield" id="popconfirmShield" onclick="closePopconfirm()"></div>
+<div class="popconfirm-wrap" id="popconfirmWrap">
+  <div class="popconfirm-box">
+    <div class="popconfirm-body">
+      <span class="popconfirm-icon"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 010-96 48.01 48.01 0 010 96z"/></svg></span>
+      <div class="popconfirm-text">
+        <div class="popconfirm-title" id="popconfirmTitle">是否确定部署该服务？</div>
+        <div class="popconfirm-desc" id="popconfirmDesc" style="display:none"></div>
+      </div>
+    </div>
+    <div class="popconfirm-buttons">
+      <button class="popconfirm-btn" onclick="closePopconfirm()">取 消</button>
+      <button class="popconfirm-btn primary" id="popconfirmOkBtn">确 定</button>
+    </div>
+  </div>
+  <div class="popconfirm-arrow"></div>
+</div>
+
+<!-- ===== NEW INFERENCE SERVICE DIALOG (centered overlay) ===== -->
+<div class="dialog-overlay" id="newServiceDialog">
+  <div class="dialog-box" style="width:560px">
+    <div class="dialog-header">新增推理服务<span class="dialog-close" onclick="closeNewServiceModal()">✕</span></div>
+    <div class="dialog-body">
+      <p style="margin-bottom:12px">选择一个模型，为其创建推理服务（发布 + 部署快捷通道）：</p>
+      <div class="data-table-wrap" style="max-height:260px;overflow-y:auto;border:1px solid #f0f0f0;border-radius:6px">
+        <table class="data-table">
+          <thead><tr><th>模型名称</th><th>模型编码</th><th>版本</th><th>状态</th><th></th></tr></thead>
+          <tbody id="serviceModelList"></tbody>
+        </table>
+      </div>
+      <div id="serviceModelEmpty" style="display:none;text-align:center;padding:20px;color:rgba(0,0,0,0.45)">暂无可发布模型</div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-default" onclick="closeNewServiceModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SERVICE RESOURCE MONITORING DRAWER ===== -->
+<div class="deploy-drawer-overlay" id="monitorOverlay" onclick="closeMonitorDrawer()"></div>
+<div class="deploy-drawer" id="monitorDrawer">
+  <div class="deploy-drawer-header">
+    <span class="deploy-drawer-title">📊 服务资源监控</span>
+    <button class="deploy-drawer-close" onclick="closeMonitorDrawer()">✕</button>
+  </div>
+  <div class="deploy-drawer-body">
+    <div class="deploy-banner success">
+      <span class="deploy-banner-icon">🟢</span>
+      <div class="deploy-banner-text">
+        <div class="banner-title">集群运行正常</div>
+        <div class="banner-desc">3 个已部署服务在线，GPU 资源充足</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="drawer-section-title">GPU 资源概览</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px;padding:14px;background:#f6ffed;border:1px solid #b7eb8f;border-radius:6px;text-align:center">
+          <div style="font-size:24px;font-weight:700;color:#52c41a">75%</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px">GPU 可用率</div>
+        </div>
+        <div style="flex:1;min-width:120px;padding:14px;background:#f0f5ff;border:1px solid #d6e4ff;border-radius:6px;text-align:center">
+          <div style="font-size:24px;font-weight:700;color:#2f54eb">2.1 GB</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px">平均显存占用</div>
+        </div>
+        <div style="flex:1;min-width:120px;padding:14px;background:#fffbe6;border:1px solid #ffe58f;border-radius:6px;text-align:center">
+          <div style="font-size:24px;font-weight:700;color:#d48806">124 QPS</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px">总请求量</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="drawer-section-title">已部署服务状态</div>
+      <div id="monitorServiceList"></div>
+    </div>
+  </div>
+  <div class="deploy-drawer-footer">
+    <span class="spacer"></span>
+    <button class="btn btn-default" onclick="closeMonitorDrawer()">关闭</button>
+  </div>
+</div>
+
+<!-- ===== DEPLOY DETAIL DRAWER ===== -->
+<div class="deploy-drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="deploy-drawer" id="deployDrawer">
+  <div class="deploy-drawer-header">
+    <span class="deploy-drawer-title" id="drawerTitle">部署详情</span>
+    <button class="deploy-drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="deploy-drawer-body" id="drawerBody">
+    <!-- State Demo Switcher (for previewing all states) -->
+    <div class="state-demo-bar" id="stateDemoBar">
+      <span class="state-demo-label">🔍 状态预览：</span>
+      <select id="stateDemoSelect" onchange="switchDrawerState(this.value)">
+        <option value="">跟随实际状态</option>
+        <option value="pending">待部署</option>
+        <option value="deploying">部署中</option>
+        <option value="deployed">部署成功</option>
+        <option value="failed">部署失败</option>
+      </select>
+      <span style="font-size:11px;color:rgba(0,0,0,0.35)">选择状态预览抽屉在各状态下的展示效果</span>
+    </div>
+
+    <!-- Deployment Detail Content -->
+    <!-- Status Banner -->
+    <div class="deploy-banner" id="drawerBanner">
+      <span class="deploy-banner-icon" id="bannerIcon">📋</span>
+      <div class="deploy-banner-text">
+        <div class="banner-title" id="bannerTitle">待部署</div>
+        <div class="banner-desc" id="bannerDesc"></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div>
+      <div class="drawer-section-title">部署进度</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- Health Checks -->
+    <div>
+      <div class="drawer-section-title">接口健康校验</div>
+      <div id="healthChecks">
+        <div class="health-check-section">
+          <div class="health-check-label">必选接口 <span class="count" id="requiredCount">(0/3)</span></div>
+          <div class="health-check-list" id="requiredChecks"></div>
+        </div>
+        <div class="health-check-section" style="margin-top:12px">
+          <div class="health-check-label">可选接口 <span class="count" id="optionalCount">(0/3)</span></div>
+          <div class="health-check-list" id="optionalChecks"></div>
+        </div>
+        <div class="health-check-note">⚠️ 可选接口校验未通过不影响部署成功判定。仅必选接口全部通过后，部署状态才会变更为「部署成功」。</div>
+      </div>
+    </div>
+
+    <!-- Log Viewer -->
+    <div>
+      <div class="drawer-section-title">部署日志</div>
+      <div class="drawer-log-wrap">
+        <div class="drawer-log-header">
+          <span class="drawer-log-title">DEPLOY LOG</span>
+          <span class="drawer-log-title" id="logTimestamp">--</span>
+        </div>
+        <div class="drawer-log-content" id="drawerLogContent">
+          <div class="drawer-log-empty">暂无日志</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="deploy-drawer-footer">
+    <button class="btn btn-default" onclick="closeDrawer()">← 关闭</button>
+    <button class="btn btn-default" id="btnRefresh" style="display:none" onclick="refreshDrawer()">🔄 刷新</button>
+    <span class="spacer"></span>
+    <button class="btn btn-default" id="btnDownloadLog" style="display:none" onclick="showToast('info','完整日志下载功能开发中')">📥 下载完整日志</button>
+    <button class="btn btn-primary" id="btnRedeploy" style="display:none" onclick="triggerRedeploy()">🔄 重新部署</button>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast" style="display:none"></div>
+
+<!-- ===== INTERACTION GUIDE SYSTEM ===== -->
+<button class="guide-trigger" onclick="toggleGuide()">🧪 交互演示指引</button>
+<div class="guide-overlay" id="guideOverlay" onclick="if(event.target===this)toggleGuide()">
+  <div class="guide-drawer">
+    <div class="guide-drawer-header">
+      <span class="guide-drawer-title">🧪 交互演示指引 — 模型部署</span>
+      <button class="guide-drawer-close" onclick="toggleGuide()">✕</button>
+    </div>
+    <div class="guide-drawer-body" id="guideDrawerBody">
+      <!-- Guide Tabs -->
+      <div class="guide-tabs">
+        <div class="guide-tab active" onclick="switchGuideTab('fields',this)">📋 字段说明</div>
+        <div class="guide-tab" onclick="switchGuideTab('states',this)">🔄 状态流转</div>
+        <div class="guide-tab" onclick="switchGuideTab('actions',this)">🎯 操作权限</div>
+        <div class="guide-tab" onclick="switchGuideTab('drawer',this)">📊 部署详情</div>
+      </div>
+
+      <!-- Tab: Fields -->
+      <div class="guide-tab-content" id="guideTab-fields">
+        <div class="guide-section">
+          <div class="guide-section-title">📋 一、表格字段说明</div>
+          <table class="guide-table">
+            <thead><tr><th>字段</th><th>类型</th><th>说明</th><th>示例</th></tr></thead>
+            <tbody>
+              <tr><td>模型名称</td><td>文本</td><td>模型唯一标识名称，由创建者定义</td><td>模型-05</td></tr>
+              <tr><td>模型编码</td><td>文本</td><td>系统生成或用户指定的 API 编码，唯一</td><td><code>model-005</code></td></tr>
+              <tr><td>项目组</td><td>枚举</td><td>模型所属业务团队，用于权限隔离</td><td>AI组 / 遥感组</td></tr>
+              <tr><td>模型类型</td><td>枚举</td><td>算法框架类型</td><td>AI / ML</td></tr>
+              <tr><td>模型版本</td><td>文本</td><td>当前部署版本号，遵循语义化版本</td><td><code>v1-1</code> / <code>v2025-11-28-1</code></td></tr>
+              <tr><td>状态</td><td>芯片</td><td>部署生命周期状态，决定可执行操作</td><td><span class="guide-tag do">待部署</span> <span class="guide-tag modal">部署中</span></td></tr>
+              <tr><td>同步模型广场</td><td>徽标</td><td>是否已同步至模型广场供其他用户调用</td><td>已同步 / 未同步 / --</td></tr>
+              <tr><td>调用次数</td><td>数字</td><td>部署后通过推理接口被累计调用的次数</td><td>16</td></tr>
+              <tr><td>演示体验</td><td>按钮</td><td>部署成功后可在页面内快速测试推理效果</td><td>点击弹出推理测试面板</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">⚙️ 二、筛选与操作栏</div>
+          <table class="guide-table">
+            <thead><tr><th>控件</th><th>类型</th><th>行为</th></tr></thead>
+            <tbody>
+              <tr><td>搜索模型名称</td><td>文本输入</td><td>按模型名称或编码模糊搜索，实时过滤</td></tr>
+              <tr><td>项目组</td><td>下拉框</td><td>筛选指定项目组的模型</td></tr>
+              <tr><td>模型类型</td><td>下拉框</td><td>筛选指定类型的模型</td></tr>
+              <tr><td>状态</td><td>下拉框</td><td>按部署状态筛选：待部署 / 部署中 / 接口校验中 / 部署成功 / 部署失败</td></tr>
+              <tr><td>新增模型</td><td>按钮</td><td>跳转至模型创建页面（本原型中为 Placeholder）</td></tr>
+              <tr><td>新增推理服务</td><td>按钮</td><td>创建新的推理服务接入点</td></tr>
+              <tr><td>服务资源监控</td><td>按钮(危险)</td><td>查看集群 GPU 资源使用情况</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">🔌 三、接口健康校验说明</div>
+          <table class="guide-table">
+            <thead><tr><th>接口路径</th><th>类别</th><th>功能</th><th>方法</th><th>失败影响</th></tr></thead>
+            <tbody>
+              <tr><td><code>/reasoning</code></td><td><span class="guide-tag error">必选</span></td><td>单次推理接口，验证模型核心推理能力</td><td>POST</td><td>🔴 部署判定失败</td></tr>
+              <tr><td><code>/health</code></td><td><span class="guide-tag error">必选</span></td><td>健康检查接口，验证服务存活状态</td><td>GET</td><td>🔴 部署判定失败</td></tr>
+              <tr><td><code>/info</code></td><td><span class="guide-tag error">必选</span></td><td>服务信息接口，验证服务元数据可获取</td><td>GET</td><td>🔴 部署判定失败</td></tr>
+              <tr><td><code>/batch-reasoning</code></td><td><span class="guide-tag info">可选</span></td><td>批量推理接口，支持多条数据并发推理</td><td>POST</td><td>🟢 不影响部署判定</td></tr>
+              <tr><td><code>/models</code></td><td><span class="guide-tag info">可选</span></td><td>子模型列表接口，查询模型子版本</td><td>GET</td><td>🟢 不影响部署判定</td></tr>
+              <tr><td><code>/warmup</code></td><td><span class="guide-tag info">可选</span></td><td>模型预热接口，提前加载模型到显存</td><td>POST</td><td>🟢 不影响部署判定</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: States -->
+      <div class="guide-tab-content" id="guideTab-states" style="display:none">
+        <div class="guide-section">
+          <div class="guide-section-title">🔄 一、部署状态生命周期</div>
+          <table class="guide-table">
+            <thead><tr><th>状态</th><th>芯片样式</th><th>含义</th><th>触发条件</th></tr></thead>
+            <tbody>
+              <tr><td>待部署</td><td><span class="guide-tag" style="background:#f0f0f0;color:rgba(0,0,0,0.65)">待部署</span></td><td>模型已创建，尚未触发部署</td><td>模型创建完成 / 部署失败后重置</td></tr>
+              <tr><td>部署中</td><td><span class="guide-tag modal">部署中 ⟳</span></td><td>异步部署任务进行中（容器部署 + 接口校验）</td><td>用户点击「部署」并确认</td></tr>
+              <tr><td>部署成功</td><td><span class="guide-tag do">部署成功</span></td><td>所有必选接口（3个）校验通过</td><td>必选接口全部返回 200 OK</td></tr>
+              <tr><td>部署失败</td><td><span class="guide-tag error">部署失败</span></td><td>部署过程异常或必选接口校验失败</td><td>容器部署失败 / 必选接口不可达</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">🔀 二、状态流转图</div>
+          <div style="background:#fafafa;padding:16px;border-radius:6px;font-family:'SF Mono',monospace;font-size:13px;line-height:2.2;color:rgba(0,0,0,0.75)">
+            待部署 ──[点击部署]──▶ <span style="color:#2f54eb">部署中</span> ──[MQ:部署完成]──▶ <span style="color:#2f54eb">接口校验中</span> ──[全部必选通过]──▶ <span style="color:#52c41a">部署成功</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4d4f">部署失败</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4d4f">部署失败</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(容器部署异常)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(必选接口不通)
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">⏱️ 三、部署各阶段预计耗时</div>
+          <table class="guide-table">
+            <thead><tr><th>阶段</th><th>预计耗时</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>触发部署</td><td>即时</td><td>API 请求发起，状态立即变更</td></tr>
+              <tr><td>容器部署</td><td>2–8 分钟</td><td>Pod 调度、GPU 资源分配、容器启动</td></tr>
+              <tr><td>接口健康校验</td><td>0.5–2 分钟</td><td>6 个接口逐个校验，每个接口约 10–30 秒</td></tr>
+              <tr><td><b>总计</b></td><td><b>3–15 分钟</b></td><td>超时阈值：15 分钟</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Actions -->
+      <div class="guide-tab-content" id="guideTab-actions" style="display:none">
+        <div class="guide-section">
+          <div class="guide-section-title">🎯 一、操作按钮权限矩阵</div>
+          <table class="guide-table">
+            <thead><tr><th>状态</th><th>部署</th><th>发布</th><th>同步</th><th>下线</th><th>记录</th></tr></thead>
+            <tbody>
+              <tr><td><span class="guide-tag" style="background:#f0f0f0">待部署</span></td><td><span class="guide-tag do">可用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td>—</td></tr>
+              <tr><td><span class="guide-tag modal">部署中</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag do">可用</span></td></tr>
+              <tr><td><span class="guide-tag modal">接口校验中</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag do">可用</span></td></tr>
+              <tr><td><span class="guide-tag do">部署成功</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag do">可用</span></td><td><span class="guide-tag do">可用</span></td><td><span class="guide-tag do">可用</span></td><td><span class="guide-tag do">可用</span></td></tr>
+              <tr><td><span class="guide-tag error">部署失败</span></td><td><span class="guide-tag do">重新部署</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag error">禁用</span></td><td><span class="guide-tag do">可用</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">🔘 二、按钮行为说明</div>
+          <table class="guide-table">
+            <thead><tr><th>按钮</th><th>可用条件</th><th>行为</th></tr></thead>
+            <tbody>
+              <tr><td>部署</td><td>待部署 / 部署失败</td><td>弹出确认弹窗 → 状态变为"部署中" → 异步部署</td></tr>
+              <tr><td>记录</td><td>部署中 / 部署成功 / 部署失败</td><td>打开部署详情抽屉，每次点击发起一次请求获取当前状态。抽屉内可手动刷新</td></tr>
+              <tr><td>重新部署</td><td>部署失败（抽屉内）</td><td>二次确认后终止当前部署，清空记录，状态回到"待部署"</td></tr>
+              <tr><td>发布</td><td>部署成功</td><td>将模型发布到模型广场（本原型为 Placeholder）</td></tr>
+              <tr><td>同步 / 撤回</td><td>部署成功</td><td>同步到模型广场 / 从广场撤回</td></tr>
+              <tr><td>下线</td><td>部署成功</td><td>下线当前部署服务</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">💬 三、Tooltip 提示文案</div>
+          <table class="guide-table">
+            <thead><tr><th>场景</th><th>触发</th><th>文案</th></tr></thead>
+            <tbody>
+              <tr><td>部署按钮禁用</td><td>部署中 / 校验中 时 hover</td><td>部署进行中，请点击「记录」查看</td></tr>
+              <tr><td>发布按钮禁用</td><td>非部署成功时 hover</td><td>部署成功后可发布</td></tr>
+              <tr><td>同步按钮禁用</td><td>非部署成功时 hover</td><td>部署成功后可同步</td></tr>
+              <tr><td>下线按钮禁用</td><td>非部署成功时 hover</td><td>部署成功后可下线</td></tr>
+              <tr><td>状态芯片可点击</td><td>部署失败时 hover</td><td>点击查看失败原因</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Drawer -->
+      <div class="guide-tab-content" id="guideTab-drawer" style="display:none">
+        <div class="guide-section">
+          <div class="guide-section-title">📊 一、部署详情抽屉 — 各状态展示</div>
+          <table class="guide-table">
+            <thead><tr><th>状态</th><th>横幅</th><th>时间线</th><th>接口校验</th><th>日志</th><th>底部按钮</th></tr></thead>
+            <tbody>
+              <tr><td>待部署</td><td>灰色「待部署」</td><td>全部等待中</td><td>全部等待中</td><td>暂无日志</td><td>关闭</td></tr>
+              <tr><td>部署中</td><td>蓝色 + spinner「部署进行中...」</td><td>前几步完成，当前步进行中</td><td>全部等待中</td><td>暂无日志</td><td>关闭 + 刷新</td></tr>
+              <tr><td>接口校验中</td><td>蓝色 + spinner「接口校验中...」</td><td>前几步完成，校验步进行中</td><td>逐个显示 ✅/⏳/❌</td><td>暂无日志</td><td>关闭 + 刷新</td></tr>
+              <tr><td>部署成功</td><td>绿色 + ✅「部署成功」</td><td>全部 ✓ 完成</td><td>必选全部 ✅，可选部分可能 ❌</td><td>完整日志</td><td>关闭 + 下载日志</td></tr>
+              <tr><td>部署失败</td><td>红色 + ❌「部署失败」</td><td>失败步骤标红 + 错误原因</td><td>失败接口标红 + HTTP 状态码</td><td>完整日志含 error 行</td><td>关闭 + 重新部署 + 下载日志</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">📐 二、抽屉布局结构</div>
+          <table class="guide-table">
+            <thead><tr><th>区域</th><th>说明</th><th>规格</th></tr></thead>
+            <tbody>
+              <tr><td>状态横幅</td><td>顶部彩色横幅，含 icon + 标题 + 描述</td><td>padding: 12px 16px; border-radius: 6px</td></tr>
+              <tr><td>部署进度（时间线）</td><td>4 步垂直时间线，含步骤名 + 时间戳 + 状态</td><td>dot: 12px, line: 2px, gap: 16px</td></tr>
+              <tr><td>接口健康校验</td><td>分为必选/可选两组，每行 icon + 路径 + 说明 + 结果</td><td>行 padding: 8px 12px</td></tr>
+              <tr><td>部署日志</td><td>Terminal 风格日志查看器，一次性加载</td><td>bg: #1e1e2e, max-height: 240px</td></tr>
+              <tr><td>底部操作栏</td><td>关闭 + 刷新（部署中可见）+ 条件按钮（下载日志 / 重新部署）</td><td>flex, gap: 8px, border-top</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">🧪 三、如何体验各状态</div>
+          <table class="guide-table">
+            <thead><tr><th>操作</th><th>预期效果</th></tr></thead>
+            <tbody>
+              <tr><td>找到"待部署"行 → 点击「部署」→ 确认</td><td>状态变为"部署中"（不自动弹窗），部署完成后 80% 概率成功</td></tr>
+              <tr><td>部署中 → 点击「记录」→ 抽屉内点「刷新」</td><td>每次点击发起一次请求获取当前状态，不自动轮询</td></tr>
+              <tr><td>在部署详情抽屉中使用"状态预览"下拉框</td><td>可快速预览抽屉在各状态下的展示效果，无需等待实际部署</td></tr>
+              <tr><td>找到"部署失败"行 → 点击状态芯片或「记录」</td><td>查看失败原因、时间线错误节点、接口失败详情</td></tr>
+              <tr><td>部署失败详情中 → 点击「重新部署」</td><td>二次确认弹窗 → 状态回到"待部署" → 自动弹出部署弹窗</td></tr>
+              <tr><td>找到"部署成功"行 → 点击「记录」</td><td>查看完整时间线、接口校验结果、下载日志按钮</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+// ============================================================
+// DATA MODEL
+// ============================================================
+const DEPLOY_STEPS = [
+  { key: 'trigger',    label: '触发部署',       icon: '🚀' },
+  { key: 'container',  label: '容器部署',       icon: '📦' },
+  { key: 'health',     label: '接口健康校验',   icon: '🔍' },
+  { key: 'complete',   label: '部署完成',       icon: '✅' }
+];
+
+const HEALTH_CHECKS = {
+  required: [
+    { path: '/reasoning',       desc: '单次推理',   method: 'POST' },
+    { path: '/health',          desc: '健康检查',   method: 'GET'  },
+    { path: '/info',            desc: '服务信息',   method: 'GET'  }
+  ],
+  optional: [
+    { path: '/batch-reasoning', desc: '批量推理',   method: 'POST' },
+    { path: '/models',          desc: '子模型列表', method: 'GET'  },
+    { path: '/warmup',          desc: '模型预热',   method: 'POST' }
+  ]
+};
+
+const OK_RESPONSES = [
+  { code: 200, status: '200 OK',        time: () => Math.floor(Math.random() * 180 + 20) },
+  { code: 200, status: '200 OK',        time: () => Math.floor(Math.random() * 120 + 15) },
+  { code: 200, status: '200 OK',        time: () => Math.floor(Math.random() * 100 + 10) }
+];
+const FAIL_RESPONSES = [
+  { code: 503, status: '503 Service Unavailable', time: () => Math.floor(Math.random() * 9000 + 1000) },
+  { code: 502, status: '502 Bad Gateway',         time: () => Math.floor(Math.random() * 5000 + 500) },
+  { code: 504, status: '504 Gateway Timeout',     time: () => Math.floor(Math.random() * 10000 + 500) },
+  { code: 404, status: '404 Not Found',           time: () => Math.floor(Math.random() * 200 + 50) }
+];
+
+let tableData = [
+  { id: 10026, name: '模型-05',     code: 'model-005',        group: 'AI组',  type: 'AI', version: 'v1-1',            status: 'deployed',  sync: 'unsynced', calls: 2,  demoEnabled: true,  withdrawn: false },
+  { id: 10025, name: '模型-06',             code: 'model-006',                 group: 'AI组',  type: 'AI', version: 'asfasfasf-v1',  status: 'unpublished',sync: 'none', calls: 0,  demoEnabled: false, withdrawn: false },
+  { id: 10024, name: '模型-01',      code: 'model-001',  group: 'AI组',  type: 'AI', version: 'v2025-11-28-1',status: 'deployed',  sync: 'synced', calls: 16, demoEnabled: true,  withdrawn: false },
+  { id: 10023, name: '模型-07',       code: 'model-007',                group: '遥感组',type: 'AI', version: 'a-11261036',   status: 'failed',    sync: 'none', calls: 0,  demoEnabled: false, withdrawn: false },
+  { id: 10022, name: '模型-08',       code: 'model-008',             group: '遥感组',type: 'AI', version: 'a-1126',       status: 'unpublished',sync:'none', calls: 0,  demoEnabled: false, withdrawn: false },
+  { id: 10021, name: '模型-09',        code: 'model-009',                       group: 'AI组',  type: 'AI', version: 'v2025-04-23-2',status: 'unpublished',sync:'none', calls: 0,  demoEnabled: false, withdrawn: false },
+  { id: 10020, name: '模型-02',    code: 'model-002',          group: 'AI组',  type: 'AI', version: 'v-2025-10-22', status: 'unpublished',sync:'none', calls: 0,  demoEnabled: false, withdrawn: false },
+  { id: 10019, name: '模型-03',code: 'model-003',                 group: 'AI组',  type: 'AI', version: 'v2025-9-24',   status: 'deployed',  sync: 'synced', calls: 2,  demoEnabled: true,  withdrawn: false },
+  { id: 10018, name: '模型-04',code:'model-004',              group: 'AI组',  type: 'AI', version: 'v2025-9-23',   status: 'deploying', sync: 'none', calls: 1,  demoEnabled: false, withdrawn: false },
+  { id: 10027, name: '模型-10',                 code: 'model-010',             group: 'AI组',  type: 'AI', version: 'aerc-1231-123', status: 'failed',    sync: 'none', calls: 0,  demoEnabled: false, withdrawn: false },
+];
+
+let deployStates = {};
+{
+  const _now = new Date();
+  deployStates[10018] = {
+    status: 'deploying', currentStep: 1,
+    startTime: new Date(_now - 90000),
+    logs: [
+      { time: new Date(_now - 90000).toTimeString().split(' ')[0], level: 'info', text: 'Deploy triggered by user: admin' },
+      { time: new Date(_now - 87000).toTimeString().split(' ')[0], level: 'info', text: 'Model: 模型-04 (model-004)' },
+      { time: new Date(_now - 85000).toTimeString().split(' ')[0], level: 'info', text: 'Deploying container from image model-004:v2025-9-23...' },
+    ],
+    healthResults: { required: {}, optional: {} },
+    timers: []
+  };
+}
+
+let openDrawerId = null;
+
+// ============================================================
+// STATUS HELPERS
+// ============================================================
+function statusLabel(s) {
+  const map = {
+    'unpublished': { text: '未发布',   cls: 'default' },
+    'pending':     { text: '待部署',   cls: 'default' },
+    'deploying':   { text: '部署中',   cls: 'pending', spinner: true },
+    'verifying':   { text: '部署中',   cls: 'pending', spinner: true },
+    'deployed':    { text: '部署成功', cls: 'success' },
+    'failed':      { text: '部署失败', cls: 'error' }
+  };
+  return map[s] || map['unpublished'];
+}
+
+function syncBadge(s) {
+  if (s === 'synced')   return '<span class="sync-badge"><span class="sync-dot success"></span>已同步</span>';
+  if (s === 'unsynced') return '<span class="sync-badge"><span class="sync-dot warning"></span>未同步</span>';
+  return '--';
+}
+
+// ============================================================
+// DROPDOWN TOGGLE
+// ============================================================
+function toggleDropdown(e) {
+  e.stopPropagation();
+  const menu = e.target.closest('.more-dropdown').querySelector('.more-dropdown-menu');
+  const isOpen = menu.classList.contains('visible');
+  document.querySelectorAll('.more-dropdown-menu.visible').forEach(m => m.classList.remove('visible'));
+  if (!isOpen) menu.classList.add('visible');
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('.more-dropdown-menu.visible').forEach(m => m.classList.remove('visible'));
+});
+
+// ============================================================
+// ACTION FUNCTIONS
+// ============================================================
+function publishModel(id) {
+  if(!requireAuth())return;
+  const row = tableData.find(r => r.id === id);
+  if (!row || row.status !== 'unpublished') return;
+  row.status = 'pending';
+  renderTable();
+  showToast('success', `模型「${row.name}」已发布，可执行部署操作`);
+}
+
+function syncModel(id, btn) {
+  const row = tableData.find(r => r.id === id);
+  if (!row || row.status !== 'deployed') return;
+  openPopconfirm('是否确定同步该服务至模型广场？', '同步后将在模型广场公开展示', function() {
+    row.sync = 'synced';
+    renderTable();
+    showToast('success', `模型「${row.name}」已同步至模型广场`);
+  }, btn);
+}
+
+function withdrawModel(id) {
+  const row = tableData.find(r => r.id === id);
+  if (!row || row.status !== 'deployed') return;
+  row.sync = 'unsynced';
+  row.withdrawn = true;
+  renderTable();
+  showToast('info', `模型「${row.name}」已从模型广场撤回，现在可以编辑或删除`);
+}
+
+function offlineModel(id, btn) {
+  const row = tableData.find(r => r.id === id);
+  if (!row || row.status !== 'deployed') return;
+  openPopconfirm('是否确定下线该服务？', '服务将停止，状态恢复为待部署', function() {
+    row.status = 'pending';
+    row.sync = 'none';
+    row.demoEnabled = false;
+    row.withdrawn = false;
+    renderTable();
+    showToast('success', `模型「${row.name}」已下线`);
+  }, btn);
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const searchQ = (document.getElementById('searchInput').value || '').toLowerCase();
+  const filterGroup = document.getElementById('filterGroup').value;
+  const filterType = document.getElementById('filterType').value;
+  const filterStatus = document.getElementById('filterStatus').value;
+
+  let filtered = tableData.filter(row => {
+    if (searchQ && !row.name.toLowerCase().includes(searchQ) && !row.code.toLowerCase().includes(searchQ)) return false;
+    if (filterGroup && row.group !== filterGroup) return false;
+    if (filterType && row.type !== filterType) return false;
+    if (filterStatus && row.status !== filterStatus) return false;
+    return true;
+  });
+
+  document.getElementById('totalCount').textContent = filtered.length;
+
+  tbody.innerHTML = filtered.map(row => {
+    const st = statusLabel(row.status);
+    const s = row.status;
+    const isDeploying = s === 'deploying';
+    const isDeployed = s === 'deployed';
+    const isFailed = s === 'failed';
+    const isPending = s === 'pending';
+    const isUnpublished = s === 'unpublished';
+
+    // Status chip: only failed is clickable (result mode)
+    let statusHTML = '';
+    if (isFailed) {
+      statusHTML = `<span class="status-chip ${st.cls} clickable" onclick="openDrawer(${row.id})" data-tooltip="点击查看失败原因"><span style="font-size:10px">❌</span> ${st.text}</span>`;
+    } else if (st.spinner) {
+      statusHTML = `<span class="status-chip ${st.cls}"><span class="status-chip-spinner"></span>${st.text}</span>`;
+    } else {
+      statusHTML = `<span class="status-chip ${st.cls}">${st.text}</span>`;
+    }
+
+    // Publish button
+    const publishBtn = isUnpublished
+      ? `<button class="btn-link" onclick="publishModel(${row.id})">发布</button>`
+      : `<button class="btn-link disabled" data-tooltip="${isDeployed ? '已发布' : '请先发布模型'}">发布</button>`;
+
+    // Deploy button
+    const canDeploy = isPending || isFailed;
+    const deployTip = isUnpublished ? '请先发布模型后再部署' : isDeploying ? '部署进行中' : isDeployed ? '已部署成功' : '';
+    const deployBtn = canDeploy
+      ? `<button class="btn-link" onclick="openDeployModal(${row.id})">部署</button>`
+      : `<button class="btn-link disabled" data-tooltip="${deployTip}">部署</button>`;
+
+    // Record button: click to fetch deployment record (one request per click, manual refresh)
+    const canViewRecord = isDeploying || isDeployed || isFailed;
+    const recordTip = isUnpublished ? '请先部署' : isPending ? '请先部署' : '';
+    const recordBtn = canViewRecord
+      ? `<button class="btn-link" onclick="openDrawer(${row.id})">记录</button>`
+      : `<button class="btn-link disabled" data-tooltip="${recordTip}">记录</button>`;
+
+    // Sync button
+    let syncBtn = '';
+    if (isDeployed && row.sync === 'synced') {
+      syncBtn = `<button class="btn-link" onclick="withdrawModel(${row.id})">撤回</button>`;
+    } else if (isDeployed && row.sync !== 'synced') {
+      syncBtn = `<button class="btn-link" onclick="syncModel(${row.id}, this)">同步</button>`;
+    } else {
+      syncBtn = `<button class="btn-link disabled" data-tooltip="部署成功后可同步">同步</button>`;
+    }
+
+    // Offline button
+    const offlineBtn = isDeployed
+      ? `<button class="btn-link" onclick="offlineModel(${row.id}, this)">下线</button>`
+      : `<button class="btn-link disabled" data-tooltip="部署成功后可下线">下线</button>`;
+
+    // Dropdown
+    const canEdit = isPending;
+    const canDelete = isUnpublished || isPending || isFailed || (isDeployed && row.withdrawn);
+    let dropdownItems = `<div class="more-dropdown-item" onclick="showToast('info','详情功能开发中');toggleDropdown(event)">📋 详情</div>`;
+    if (canEdit) {
+      dropdownItems += `<div class="more-dropdown-item" onclick="showToast('info','编辑功能开发中');toggleDropdown(event)">✏️ 编辑</div>`;
+    }
+    if (canDelete) {
+      dropdownItems += `<div class="more-dropdown-item danger" onclick="showToast('info','删除功能开发中');toggleDropdown(event)">🗑️ 删除</div>`;
+    }
+    dropdownItems += `<div class="more-dropdown-item" onclick="showToast('info','服务功能开发中');toggleDropdown(event)">⚙️ 服务</div>`;
+
+    return `
+      <tr class="${isDeploying ? 'row-deploying' : ''}" data-id="${row.id}">
+        <td><span class="model-name">${row.name}</span></td>
+        <td class="td-code">${row.code}</td>
+        <td>${row.group}</td>
+        <td>${row.type}</td>
+        <td class="td-code">${row.version}</td>
+        <td>${statusHTML}</td>
+        <td>${syncBadge(row.sync)}</td>
+        <td>${row.calls}</td>
+        <td>
+          <button class="btn btn-default btn-sm" ${row.demoEnabled ? '' : 'disabled'}>
+            演示体验
+          </button>
+        </td>
+        <td>
+          <div class="actions-cell">
+            ${publishBtn}
+            ${deployBtn}
+            ${recordBtn}
+            ${syncBtn}
+            ${offlineBtn}
+            <div class="more-dropdown">
+              <button class="btn-link" onclick="toggleDropdown(event)">···</button>
+              <div class="more-dropdown-menu">${dropdownItems}</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterTable() { renderTable(); }
+function changePageSize() { renderTable(); }
+
+// ============================================================
+// POPCONFIRM (bubble, no overlay, positioned above trigger)
+// ============================================================
+function openPopconfirm(title, desc, onOk, triggerEl) {
+  document.getElementById('popconfirmTitle').textContent = title;
+  var descEl = document.getElementById('popconfirmDesc');
+  if (desc) {
+    descEl.textContent = desc;
+    descEl.style.display = '';
+  } else {
+    descEl.style.display = 'none';
+  }
+  document.getElementById('popconfirmOkBtn').onclick = function() {
+    closePopconfirm();
+    if (onOk) onOk();
+  };
+
+  var wrap = document.getElementById('popconfirmWrap');
+  // Position above the trigger element
+  if (triggerEl) {
+    var rect = triggerEl.getBoundingClientRect();
+    var wrapW = 300; // approximate max width
+    var left = rect.left + rect.width / 2 - wrapW / 2;
+    // Keep within viewport
+    if (left < 8) left = 8;
+    if (left + wrapW > window.innerWidth - 8) left = window.innerWidth - wrapW - 8;
+    wrap.style.left = left + 'px';
+    wrap.style.top = (rect.top - 12) + 'px'; // 12px gap above button
+    wrap.style.transform = 'translateY(-100%)';
+    wrap.style.width = wrapW + 'px';
+  }
+  wrap.classList.add('visible');
+  document.getElementById('popconfirmShield').classList.add('visible');
+}
+
+function closePopconfirm() {
+  document.getElementById('popconfirmWrap').classList.remove('visible');
+  document.getElementById('popconfirmShield').classList.remove('visible');
+}
+
+function openDeployModal(id) {
+  if(!requireAuth())return;
+  var row = tableData.find(function(r) { return r.id === id; });
+  if (!row) return;
+  openPopconfirm(
+    '是否确定部署该服务？',
+    '容器部署（Pod 调度 + 容器启动）及接口健康校验，预计 3–15 分钟',
+    function() { startDeploy(id); },
+    document.querySelector('tr[data-id=\"' + id + '\"] .btn-link[onclick*=\"openDeployModal\"]')
+  );
+}
+
+// ============================================================
+// START DEPLOY (simulation)
+// ============================================================
+function startDeploy(id) {
+  if(!requireAuth())return;
+  if (!id) return;
+
+  const row = tableData.find(r => r.id === id);
+  if (!row) return;
+
+  const now = new Date();
+  const ts = () => {
+    const d = new Date();
+    return d.toTimeString().split(' ')[0];
+  };
+
+  deployStates[id] = {
+    status: 'deploying',
+    currentStep: 0,
+    startTime: now,
+    logs: [
+      { time: ts(), level: 'info', text: `Deploy triggered by user: admin` },
+      { time: ts(), level: 'info', text: `Model: ${row.name} (${row.code})` },
+      { time: ts(), level: 'info', text: `Version: ${row.version}` }
+    ],
+    healthResults: { required: {}, optional: {} },
+    willFail: Math.random() < 0.2,
+    failStep: Math.random() < 0.7 ? 'health' : 'container',
+    failInterface: null,
+    timers: []
+  };
+
+  if (deployStates[id].willFail && deployStates[id].failStep === 'health') {
+    const ri = Math.floor(Math.random() * 3);
+    deployStates[id].failInterface = HEALTH_CHECKS.required[ri].path;
+  }
+
+  row.status = 'deploying';
+  renderTable();
+  // No longer auto-open drawer — user clicks "记录" to check manually
+  advanceDeploySim(id);
+  showToast('success', `模型「${row.name}」部署已启动`);
+}
+
+// ============================================================
+// DEPLOY SIMULATION ENGINE
+// ============================================================
+function advanceDeploySim(id) {
+  const ds = deployStates[id];
+  if (!ds) return;
+
+  const ts = () => {
+    const d = new Date();
+    return d.toTimeString().split(' ')[0];
+  };
+
+  function addLog(level, text) {
+    ds.logs.push({ time: ts(), level, text });
+    if (openDrawerId === id) {
+      appendLogToDrawer({ time: ts(), level, text });
+    }
+  }
+
+  function nextStep() {
+    const row = tableData.find(r => r.id === id);
+    if (!row || !deployStates[id]) return;
+
+    ds.currentStep++;
+
+    if (ds.currentStep === 1) {
+      addLog('info', `Deploying container from image ${row.code}:${row.version}...`);
+      const t = setTimeout(() => {
+        if (ds.willFail && ds.failStep === 'container') {
+          addLog('error', `ERROR: Failed to deploy container — insufficient GPU resources on cluster`);
+          addLog('error', `ERROR: node gpu-p40-03: requested 8 GPU cores, only 2 available`);
+          failDeploy(id, 'container');
+        } else {
+          addLog('info', `Pod scheduled on node: gpu-p40-03`);
+          addLog('info', `Allocating GPU: NVIDIA Tesla P40 (1/8)`);
+          addLog('info', `Container starting...`);
+          addLog('success', `Container deployed — pod: ${row.code}-7d8f9b-${Math.random().toString(36).slice(2,6)}`);
+          updateTimeline(id);
+          const t2 = setTimeout(() => nextStep(), 2500);
+          ds.timers.push(t2);
+        }
+      }, 3000);
+      ds.timers.push(t);
+    } else if (ds.currentStep === 2) {
+      renderTable();
+      addLog('info', `Starting interface health checks...`);
+      addLog('info', `Required checks: ${HEALTH_CHECKS.required.map(h => h.path).join(', ')}`);
+      addLog('info', `Optional checks: ${HEALTH_CHECKS.optional.map(h => h.path).join(', ')}`);
+      runHealthChecks(id);
+    } else if (ds.currentStep === 3) {
+      addLog('success', `Deploy completed successfully!`);
+      addLog('info', `Service endpoint: http://0.0.0.0:30879/inference/${row.code}`);
+      completeDeploy(id);
+    }
+  }
+
+  const t = setTimeout(() => nextStep(), 1500);
+  ds.timers.push(t);
+  updateTimeline(id);
+}
+
+function updateTimeline(id) {
+  if (openDrawerId !== id) return;
+  renderTimeline(id);
+}
+
+// ============================================================
+// HEALTH CHECK SIMULATION
+// ============================================================
+function runHealthChecks(id) {
+  const ds = deployStates[id];
+  if (!ds) return;
+
+  const ts = () => { const d = new Date(); return d.toTimeString().split(' ')[0]; };
+  function addLog(level, text) {
+    ds.logs.push({ time: ts(), level, text });
+    if (openDrawerId === id) appendLogToDrawer({ time: ts(), level, text });
+  }
+
+  addLog('info', `Starting parallel health checks on 6 interfaces...`);
+  const allChecks = [
+    ...HEALTH_CHECKS.required.map(c => ({ ...c, required: true })),
+    ...HEALTH_CHECKS.optional.map(c => ({ ...c, required: false }))
+  ];
+
+  let completed = 0;
+  const totalChecks = allChecks.length;
+
+  allChecks.forEach(check => {
+    const isFail = check.required && ds.willFail && ds.failStep === 'health' && check.path === ds.failInterface;
+    const optFail = !check.required && Math.random() < 0.3;
+    const willFail = isFail || optFail;
+    const maxRetries = check.required ? 3 : 2;
+
+    let retriesUsed = 0;
+    let finalResult = null;
+
+    function attemptRetry(attempt) {
+      const delay = 800 + Math.random() * 1200;
+      const t = setTimeout(() => {
+        if (willFail && attempt <= maxRetries) {
+          retriesUsed = attempt;
+          addLog('warn', `${check.path}: attempt ${attempt}/${maxRetries} failed — retrying...`);
+          if (openDrawerId === id) refreshDrawerContent(id);
+          const nextT = setTimeout(() => attemptRetry(attempt + 1), 500 + Math.random() * 800);
+          ds.timers.push(nextT);
+        } else {
+          retriesUsed = attempt;
+          if (willFail && attempt > maxRetries) {
+            const result = FAIL_RESPONSES[Math.floor(Math.random() * FAIL_RESPONSES.length)];
+            finalResult = { ok: false, status: result.status, time: result.time(), retries: maxRetries };
+            if (check.required) {
+              addLog('error', `${check.path}: ${result.status} — ${result.time()}ms (FAILED after ${maxRetries} retries)`);
+            } else {
+              addLog('warn', `${check.path}: ${result.status} — ${result.time()}ms (FAILED — optional, ignored)`);
+            }
+          } else {
+            const result = OK_RESPONSES[Math.floor(Math.random() * OK_RESPONSES.length)];
+            finalResult = { ok: true, status: result.status, time: result.time(), retries: willFail ? retriesUsed : 0 };
+            addLog('success', `${check.path}: ${result.status} — ${result.time()}ms ✓ ${retriesUsed > 0 ? '(after ' + retriesUsed + ' retries)' : ''}`);
+          }
+          const targetMap = check.required ? ds.healthResults.required : ds.healthResults.optional;
+          targetMap[check.path] = finalResult;
+          completed++;
+          if (openDrawerId === id) refreshDrawerContent(id);
+          if (completed >= totalChecks) finalizeHealthCheck(id);
+        }
+      }, delay);
+      ds.timers.push(t);
+    }
+
+    attemptRetry(1);
+  });
+
+  function finalizeHealthCheck(id) {
+    const ds = deployStates[id];
+    const row = tableData.find(r => r.id === id);
+    if (!ds || !row) return;
+
+    const requiredOk = Object.values(ds.healthResults.required).every(r => r.ok);
+    const optionalOk = Object.values(ds.healthResults.optional).filter(r => r.ok).length;
+    const optionalTotal = HEALTH_CHECKS.optional.length;
+
+    addLog('info', `Health check summary: Required ${requiredOk ? 'ALL PASSED' : 'FAILED'}, Optional ${optionalOk}/${optionalTotal} passed`);
+
+    if (requiredOk) {
+      addLog('success', `All required interfaces healthy. Deployment ready.`);
+      ds.currentStep = 3;
+      ds.status = 'verifying';
+      const t = setTimeout(() => {
+        addLog('info', `Finalizing deployment...`);
+        updateTimeline(id);
+        const t2 = setTimeout(() => {
+          const row2 = tableData.find(r => r.id === id);
+          if (row2) {
+            row2.status = 'deployed';
+            row2.sync = 'unsynced';
+            row2.calls = 0;
+            row2.demoEnabled = true;
+          }
+          ds.status = 'deployed';
+          ds.currentStep = 3;
+          renderTable();
+          updateTimeline(id);
+          renderBanner(id);
+          if (openDrawerId === id) {
+            document.getElementById('btnDownloadLog').style.display = '';
+            document.getElementById('btnRedeploy').style.display = 'none';
+            document.getElementById('logTimestamp').textContent = new Date().toLocaleString('zh-CN');
+          }
+          const warnMsg = optionalOk < optionalTotal ? `（可选接口 ${optionalTotal - optionalOk}/${optionalTotal} 未通过，不影响部署）` : '';
+          showToast('success', `模型「${row2 ? row2.name : ''}」部署成功！所有必选接口校验通过 ${warnMsg}`);
+        }, 1500);
+        ds.timers.push(t2);
+      }, 1000);
+      ds.timers.push(t);
+    } else {
+      const failIf = ds.failInterface || 'unknown';
+      addLog('error', `Deploy FAILED: Required interface ${failIf} is unreachable after 3 retries.`);
+      failDeploy(id, 'health');
+    }
+  }
+}
+
+function failDeploy(id, step) {
+  const ds = deployStates[id];
+  const row = tableData.find(r => r.id === id);
+  if (!ds || !row) return;
+
+  row.status = 'failed';
+  ds.status = 'failed';
+  ds.currentStep = step === 'container' ? 1 : 2;
+
+  if (step === 'container') {
+    ds.failReason = '容器部署失败：集群 GPU 资源不足，无法调度 Pod';
+  } else {
+    ds.failReason = `必选接口 ${ds.failInterface} 校验失败：${ds.healthResults.required[ds.failInterface]?.status || '无响应'}`;
+  }
+
+  renderTable();
+  if (openDrawerId === id) {
+    updateTimeline(id);
+    renderHealthChecks(id);
+    renderBanner(id);
+    document.getElementById('btnDownloadLog').style.display = '';
+    document.getElementById('btnRedeploy').style.display = '';
+    document.getElementById('logTimestamp').textContent = new Date().toLocaleString('zh-CN');
+    appendLogToDrawer({ time: new Date().toTimeString().split(' ')[0], level: 'error', text: `=== DEPLOY FAILED ===` });
+    appendLogToDrawer({ time: new Date().toTimeString().split(' ')[0], level: 'error', text: ds.failReason });
+  }
+  showToast('error', `模型「${row.name}」部署失败：${ds.failReason}`);
+}
+
+function completeDeploy(id) {
+  const ds = deployStates[id];
+  const row = tableData.find(r => r.id === id);
+  if (!ds || !row) return;
+
+  const requiredOk = Object.values(ds.healthResults.required).every(r => r.ok);
+  const optionalOkCount = Object.values(ds.healthResults.optional).filter(r => r.ok).length;
+
+  if (requiredOk) {
+    row.status = 'deployed';
+    row.sync = 'unsynced';
+    row.calls = 0;
+    row.demoEnabled = true;
+    row.withdrawn = false;
+    ds.status = 'deployed';
+    ds.currentStep = 3;
+    renderTable();
+    if (openDrawerId === id) {
+      updateTimeline(id);
+      renderBanner(id);
+      document.getElementById('btnDownloadLog').style.display = '';
+      document.getElementById('btnRedeploy').style.display = 'none';
+      document.getElementById('logTimestamp').textContent = new Date().toLocaleString('zh-CN');
+    }
+    const warnMsg = optionalOkCount < 3 ? `（可选接口 ${3 - optionalOkCount}/3 未通过，不影响部署）` : '';
+    showToast('success', `模型「${row.name}」部署成功！所有必选接口校验通过 ${warnMsg}`);
+  } else {
+    failDeploy(id, 'health');
+  }
+}
+
+// ============================================================
+// REDEPLOY
+// ============================================================
+function triggerRedeploy() {
+  if (!openDrawerId) return;
+  openPopconfirm(
+    '是否确定重新部署该服务？',
+    '将终止当前部署并释放资源，已有记录和校验结果将被清空',
+    function() {
+      const id = openDrawerId;
+      if (!id) return;
+      clearDeployTimers(id);
+      deployStates[id] = null;
+      const row2 = tableData.find(r => r.id === id);
+      if (row2) row2.status = 'pending';
+      renderTable();
+      closeDrawer();
+      showToast('info', '已终止当前部署，可以重新部署');
+      setTimeout(function() { openDeployModal(id); }, 500);
+    },
+    document.getElementById('btnRedeploy')
+  );
+}
+
+// ============================================================
+// DRAWER
+// ============================================================
+function openDrawer(id) {
+  if (openDrawerId === id && document.getElementById('deployDrawer').classList.contains('open')) {
+    return;
+  }
+  forcedDrawerState = null;
+  document.getElementById('stateDemoSelect').value = '';
+
+  openDrawerId = id;
+  const row = tableData.find(r => r.id === id);
+  if (!row) return;
+
+  document.getElementById('drawerTitle').textContent = `部署详情 — ${row.name} ${row.version}`;
+  document.getElementById('drawerOverlay').classList.add('visible');
+  document.getElementById('deployDrawer').classList.add('open');
+
+  refreshDrawerContent(id);
+
+  // In result-only mode during deploying: show placeholder banner, no real-time data
+  const actualStatus = row.status;
+  if (actualStatus === 'deploying') {
+    const banner = document.getElementById('drawerBanner');
+    banner.className = 'deploy-banner deploying';
+    document.getElementById('bannerIcon').innerHTML = '<span class="building-spinner"></span>';
+    document.getElementById('bannerTitle').textContent = '部署进行中...';
+    document.getElementById('bannerDesc').textContent = '部署完成后可查看部署流程与校验结果详情。请等待部署完成。';
+  }
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('visible');
+  document.getElementById('deployDrawer').classList.remove('open');
+  openDrawerId = null;
+}
+
+function refreshDrawer() {
+  if (openDrawerId === null) return;
+  // Re-fetch current deploy state: simulate one API request
+  const row = tableData.find(r => r.id === openDrawerId);
+  if (!row) return;
+  refreshDrawerContent(openDrawerId);
+  // Update banner timestamp to reflect fresh fetch
+  document.getElementById('logTimestamp').textContent = new Date().toLocaleString('zh-CN');
+  showToast('info', '已刷新部署进度');
+}
+
+function elapsed(ds) {
+  if (!ds || !ds.startTime) return '--';
+  const diff = Math.floor((new Date() - ds.startTime) / 1000);
+  if (diff < 60) return `${diff} 秒`;
+  return `${Math.floor(diff / 60)} 分 ${diff % 60} 秒`;
+}
+
+function appendLogToDrawer(logLine) {
+  const container = document.getElementById('drawerLogContent');
+  if (container.querySelector('.drawer-log-empty')) {
+    container.innerHTML = '';
+  }
+  let cls = 'info';
+  if (logLine.level === 'success') cls = 'success';
+  else if (logLine.level === 'warn') cls = 'warn';
+  else if (logLine.level === 'error') cls = 'error';
+  const div = document.createElement('div');
+  div.className = `drawer-log-line ${cls}`;
+  div.textContent = `[${logLine.time}] ${logLine.level.toUpperCase().padEnd(5)} ${logLine.text}`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  document.getElementById('logTimestamp').textContent = new Date().toLocaleString('zh-CN');
+}
+
+// ============================================================
+// TIMER CLEANUP
+// ============================================================
+function clearDeployTimers(id) {
+  const ds = deployStates[id];
+  if (ds && ds.timers) {
+    ds.timers.forEach(t => clearTimeout(t));
+    ds.timers = [];
+  }
+}
+
+// ============================================================
+// PRD TOGGLE
+// ============================================================
+function togglePRD() {
+  const panels = document.querySelectorAll('.prd-panel');
+  const btn = document.getElementById('prdToggle');
+  const isVisible = panels[0]?.classList.contains('visible');
+  panels.forEach(p => p.classList.toggle('visible', !isVisible));
+  btn.classList.toggle('active', !isVisible);
+}
+
+// ============================================================
+// GUIDE SYSTEM
+// ============================================================
+function toggleGuide() {
+  const overlay = document.getElementById('guideOverlay');
+  overlay.classList.toggle('visible');
+  if (!overlay.classList.contains('visible')) {
+    switchGuideTab('fields', document.querySelector('.guide-tab.active'));
+  }
+}
+
+function switchGuideTab(tab, el) {
+  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.guide-tab-content').forEach(c => c.style.display = 'none');
+  const content = document.getElementById('guideTab-' + tab);
+  if (content) content.style.display = '';
+}
+
+// ============================================================
+// DRAWER STATE DEMO
+// ============================================================
+let forcedDrawerState = null;
+
+function switchDrawerState(state) {
+  forcedDrawerState = state || null;
+  if (openDrawerId !== null) {
+    refreshDrawerContent(openDrawerId);
+  }
+}
+
+function getEffectiveState(id) {
+  if (forcedDrawerState) return forcedDrawerState;
+  const row = tableData.find(r => r.id === id);
+  return row ? row.status : 'pending';
+}
+
+function refreshDrawerContent(id) {
+  const effectiveState = getEffectiveState(id);
+  const row = tableData.find(r => r.id === id);
+  const ds = deployStates[id];
+
+  let demoState = ds;
+  const needsDemo = forcedDrawerState || (!ds && (effectiveState === 'failed' || effectiveState === 'deployed' || effectiveState === 'deploying'));
+  if (needsDemo) {
+    demoState = buildDemoState(id, forcedDrawerState || effectiveState);
+  }
+
+  renderBannerWithState(id, effectiveState, demoState);
+  renderTimelineWithState(id, effectiveState, demoState);
+  renderHealthChecksWithState(id, effectiveState, demoState);
+  renderDrawerLogsWithState(id, effectiveState, demoState);
+
+  const isDeployingNow = effectiveState === 'deploying';
+  const isDone = effectiveState === 'deployed';
+  const isFailed = effectiveState === 'failed';
+  document.getElementById('btnRefresh').style.display = isDeployingNow ? '' : 'none';
+  document.getElementById('btnDownloadLog').style.display = (isDone || isFailed) ? '' : 'none';
+  document.getElementById('btnRedeploy').style.display = isFailed ? '' : 'none';
+}
+
+function buildDemoState(id, state) {
+  const row = tableData.find(r => r.id === id);
+  const now = new Date();
+  const ts = () => now.toTimeString().split(' ')[0];
+
+  if (state === 'pending') {
+    return { status: 'pending', currentStep: -1, startTime: now, logs: [], healthResults: { required: {}, optional: {} } };
+  }
+  if (state === 'deploying') {
+    return {
+      status: 'deploying', currentStep: 1, startTime: new Date(now - 120000),
+      logs: [
+        { time: '14:32:01', level: 'info', text: 'Deploy triggered by user: admin' },
+        { time: '14:32:03', level: 'info', text: 'Deploying container from image ' + (row?row.code:'model') + ':' + (row?row.version:'v1') + '...' },
+        { time: '14:32:12', level: 'info', text: 'Pod scheduled on node: gpu-p40-03' },
+        { time: '14:32:28', level: 'success', text: 'Container deployed — pod: ' + (row?row.code:'model') + '-7d8f9b-xk2m' },
+      ],
+      healthResults: { required: {}, optional: {} }
+    };
+  }
+  if (state === 'deployed') {
+    return {
+      status: 'deployed', currentStep: 3, startTime: new Date(now - 300000),
+      logs: [
+        { time: '14:32:01', level: 'info', text: 'Deploy triggered by user: admin' },
+        { time: '14:32:28', level: 'success', text: 'Container deployed — pod: ' + (row?row.code:'svc') + '-7d8f9b-xk2m' },
+        { time: '14:34:01', level: 'success', text: '/reasoning: 200 OK — 128ms ✓' },
+        { time: '14:34:02', level: 'success', text: '/health: 200 OK — 45ms ✓' },
+        { time: '14:34:03', level: 'success', text: '/info: 200 OK — 32ms ✓' },
+        { time: '14:34:05', level: 'success', text: '/batch-reasoning: 200 OK — 256ms ✓' },
+        { time: '14:34:06', level: 'success', text: '/models: 200 OK — 89ms ✓' },
+        { time: '14:34:07', level: 'warn', text: '/warmup: 404 Not Found — 52ms (FAILED — optional, ignored)' },
+        { time: '14:34:08', level: 'info', text: 'Health check summary: Required ALL PASSED, Optional 2/3 passed' },
+        { time: '14:34:10', level: 'success', text: 'All required interfaces healthy. Deployment ready.' },
+        { time: '14:34:12', level: 'success', text: 'Deploy completed successfully!' },
+      ],
+      healthResults: {
+        required: {
+          '/reasoning': { ok: true, status: '200 OK', time: 128, retries: 0 },
+          '/health': { ok: true, status: '200 OK', time: 45, retries: 0 },
+          '/info': { ok: true, status: '200 OK', time: 32, retries: 0 },
+        },
+        optional: {
+          '/batch-reasoning': { ok: true, status: '200 OK', time: 256, retries: 0 },
+          '/models': { ok: true, status: '200 OK', time: 89, retries: 2 },
+          '/warmup': { ok: false, status: '404 Not Found', time: 52, retries: 2 },
+        }
+      }
+    };
+  }
+  if (state === 'failed') {
+    return {
+      status: 'failed', currentStep: 2, startTime: new Date(now - 240000),
+      failReason: '必选接口 /reasoning 三次重试后仍不可达 (503 Service Unavailable)',
+      failInterface: '/reasoning',
+      logs: [
+        { time: '14:32:01', level: 'info', text: 'Deploy triggered by user: admin' },
+        { time: '14:32:28', level: 'success', text: 'Container deployed — pod: model-004-7d8f9b-xk2m' },
+        { time: '14:33:10', level: 'success', text: 'Container deployed' },
+        { time: '14:33:11', level: 'info', text: 'Starting parallel health checks on 6 interfaces...' },
+        { time: '14:33:12', level: 'success', text: '/health: 200 OK — 45ms ✓' },
+        { time: '14:33:12', level: 'success', text: '/info: 200 OK — 32ms ✓' },
+        { time: '14:33:13', level: 'success', text: '/batch-reasoning: 200 OK — 156ms ✓' },
+        { time: '14:33:14', level: 'warn', text: '/reasoning: attempt 1/3 failed — retrying...' },
+        { time: '14:33:16', level: 'warn', text: '/models: attempt 1/2 failed — retrying...' },
+        { time: '14:33:17', level: 'warn', text: '/reasoning: attempt 2/3 failed — retrying...' },
+        { time: '14:33:18', level: 'success', text: '/models: 200 OK — 89ms ✓ (after 2 retries)' },
+        { time: '14:33:21', level: 'warn', text: '/reasoning: attempt 3/3 failed — retrying...' },
+        { time: '14:33:25', level: 'error', text: '/reasoning: 503 Service Unavailable — 5103ms (FAILED after 3 retries)' },
+        { time: '14:33:26', level: 'error', text: 'Deploy FAILED: Required interface /reasoning is unreachable after 3 retries.' },
+      ],
+      healthResults: {
+        required: {
+          '/reasoning': { ok: false, status: '503 Service Unavailable', time: 5103, retries: 3 },
+          '/health': { ok: true, status: '200 OK', time: 45, retries: 0 },
+          '/info': { ok: true, status: '200 OK', time: 32, retries: 0 },
+        },
+        optional: {
+          '/batch-reasoning': { ok: true, status: '200 OK', time: 156, retries: 0 },
+          '/models': { ok: true, status: '200 OK', time: 89, retries: 2 },
+        }
+      }
+    };
+  }
+  return deployStates[id] || { status: 'pending', currentStep: -1, startTime: now, logs: [], healthResults: { required: {}, optional: {} } };
+}
+
+function renderBanner(id) { renderBannerWithState(id, getEffectiveState(id), null); }
+function renderTimeline(id) { renderTimelineWithState(id, getEffectiveState(id), null); }
+function renderHealthChecks(id) { renderHealthChecksWithState(id, getEffectiveState(id), null); }
+function renderDrawerLogs(id) { renderDrawerLogsWithState(id, getEffectiveState(id), null); }
+
+function renderBannerWithState(id, state, overrideDS) {
+  const row = tableData.find(r => r.id === id);
+  const ds = overrideDS || deployStates[id];
+
+  const banner = document.getElementById('drawerBanner');
+  const icon = document.getElementById('bannerIcon');
+  const title = document.getElementById('bannerTitle');
+  const desc = document.getElementById('bannerDesc');
+
+  banner.className = 'deploy-banner ' + state;
+  let iconText, titleText, descText;
+
+  switch (state) {
+    case 'pending':
+      iconText = '📋'; titleText = '待部署';
+      descText = '该模型尚未触发部署。点击表格中的「部署」按钮开始部署流程。'; break;
+    case 'deploying':
+      iconText = '<span class="building-spinner"></span>'; titleText = '部署进行中...';
+      descText = `容器部署至 K8s 集群，预计 3–15 分钟。${ds ? '已用时 ' + elapsed(ds) : ''}`; break;
+    case 'deployed':
+      iconText = '✅'; titleText = '部署成功';
+      descText = `所有必选接口校验通过，服务已就绪。${ds ? '总用时 ' + elapsed(ds) : ''}`; break;
+    case 'failed':
+      iconText = '❌'; titleText = '部署失败';
+      descText = ds ? (ds.failReason || '部署过程中出现异常') : '部署过程中出现异常'; break;
+    default:
+      iconText = '📋'; titleText = '--'; descText = '';
+  }
+
+  icon.innerHTML = iconText;
+  title.textContent = titleText;
+  desc.textContent = descText;
+}
+
+function renderTimelineWithState(id, state, overrideDS) {
+  const ds = overrideDS || deployStates[id];
+  const container = document.getElementById('timeline');
+  let currentStep = ds ? ds.currentStep : -1;
+  let deployStatus = state;
+
+  if (state === 'pending' || currentStep < 0) {
+    container.innerHTML = DEPLOY_STEPS.map((step, i) => `
+      <div class="timeline-item">
+        <div class="timeline-dot-wrap">
+          <div class="timeline-dot waiting"></div>
+          ${i < DEPLOY_STEPS.length - 1 ? '<div class="timeline-line"></div>' : ''}
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-time">--</div>
+          <div class="timeline-label">${step.icon} ${step.label}</div>
+          <div class="timeline-status waiting">等待中</div>
+        </div>
+      </div>
+    `).join('');
+    return;
+  }
+
+  const baseTime = ds ? ds.startTime : new Date();
+  function stepTime(offsetMin, offsetSec) {
+    const d = new Date(baseTime.getTime() + offsetMin * 60000 + offsetSec * 1000);
+    return d.toLocaleTimeString('zh-CN', { hour12: false });
+  }
+
+  container.innerHTML = DEPLOY_STEPS.map((step, i) => {
+    let dotClass = 'waiting', statusClass = 'waiting', statusText = '等待中', timeText = '--', extraHTML = '';
+
+    if (i < currentStep) {
+      dotClass = 'done'; statusClass = 'done'; statusText = '✓ 完成';
+      timeText = stepTime(i * 1.5, i * 20);
+    } else if (i === currentStep) {
+      if (deployStatus === 'failed') {
+        dotClass = 'failed'; statusClass = 'failed';
+        const reason = (ds && ds.failReason) ? ds.failReason : '';
+        statusText = '✕ 失败 — ' + reason;
+        timeText = stepTime(i * 2, i * 30);
+      } else if (deployStatus === 'deployed') {
+        dotClass = 'done'; statusClass = 'done'; statusText = '✓ 完成';
+        timeText = stepTime(i * 1.5, i * 20);
+      } else {
+        dotClass = 'active'; statusClass = 'active'; statusText = '进行中...';
+        timeText = stepTime(i * 1.5, i * 20);
+      }
+    } else {
+      dotClass = 'waiting'; statusClass = 'waiting'; statusText = '等待中';
+    }
+
+    let lineClass = '';
+    if (i < DEPLOY_STEPS.length - 1 && i < currentStep) {
+      lineClass = (deployStatus === 'failed' && i >= currentStep - 1) ? 'failed' : 'done';
+    }
+
+    return `
+      <div class="timeline-item">
+        <div class="timeline-dot-wrap">
+          <div class="timeline-dot ${dotClass}"></div>
+          ${i < DEPLOY_STEPS.length - 1 ? `<div class="timeline-line ${lineClass}"></div>` : ''}
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-time">${timeText}</div>
+          <div class="timeline-label">${step.icon} ${step.label}</div>
+          <div class="timeline-status ${statusClass}">${statusText}</div>
+          ${extraHTML}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderHealthChecksWithState(id, state, overrideDS) {
+  const ds = overrideDS || deployStates[id];
+
+  const reqContainer = document.getElementById('requiredChecks');
+  let reqOkCount = 0;
+  reqContainer.innerHTML = HEALTH_CHECKS.required.map(check => {
+    const result = ds ? ds.healthResults.required[check.path] : null;
+    let icon = '⏳', iconClass = 'waiting', resultText = '等待中', resultClass = 'waiting';
+    if (result) {
+      if (result.ok) {
+        icon = '✅'; iconClass = 'ok';
+        const retryInfo = result.retries > 0 ? ` (重试${result.retries}次后通过)` : '';
+        resultText = `${result.status} · ${result.time}ms${retryInfo}`;
+        resultClass = 'ok'; reqOkCount++;
+      } else {
+        icon = '❌'; iconClass = 'fail';
+        resultText = `${result.status} · ${result.time}ms (重试${result.retries}次后失败)`;
+        resultClass = 'fail';
+      }
+    } else if (state === 'failed') {
+      icon = '—'; iconClass = 'waiting'; resultText = '未执行'; resultClass = 'waiting';
+    }
+    return `<div class="hc-item">
+      <span class="hc-icon ${iconClass}">${icon}</span>
+      <span class="hc-path">${check.path}</span><span class="hc-desc">${check.desc}</span>
+      <span class="hc-badge required">必选</span>
+      <span class="hc-result ${resultClass}">${resultText}</span>
+    </div>`;
+  }).join('');
+  const rc = document.getElementById('requiredCount');
+  rc.textContent = `(${reqOkCount}/3)`;
+  rc.className = 'count ' + (reqOkCount === 3 ? 'ok' : reqOkCount > 0 ? 'warn' : '');
+
+  const optContainer = document.getElementById('optionalChecks');
+  let optOkCount = 0;
+  optContainer.innerHTML = HEALTH_CHECKS.optional.map(check => {
+    const result = ds ? ds.healthResults.optional[check.path] : null;
+    let icon = '⏳', iconClass = 'waiting', resultText = '等待中', resultClass = 'waiting';
+    if (result) {
+      if (result.ok) {
+        icon = '✅'; iconClass = 'ok';
+        const retryInfo = result.retries > 0 ? ` (重试${result.retries}次后通过)` : '';
+        resultText = `${result.status} · ${result.time}ms${retryInfo}`;
+        resultClass = 'ok'; optOkCount++;
+      } else {
+        icon = '❌'; iconClass = 'fail';
+        resultText = `${result.status} · ${result.time}ms (重试${result.retries}次后失败)`;
+        resultClass = 'fail';
+      }
+    } else if (state === 'failed') {
+      icon = '—'; iconClass = 'waiting'; resultText = '未执行'; resultClass = 'waiting';
+    }
+    return `<div class="hc-item">
+      <span class="hc-icon ${iconClass}">${icon}</span>
+      <span class="hc-path">${check.path}</span><span class="hc-desc">${check.desc}</span>
+      <span class="hc-badge optional">可选</span>
+      <span class="hc-result ${resultClass}">${resultText}</span>
+    </div>`;
+  }).join('');
+  const oc = document.getElementById('optionalCount');
+  oc.textContent = `(${optOkCount}/3)`;
+  oc.className = 'count ' + (optOkCount === 3 ? 'ok' : '');
+}
+
+function renderDrawerLogsWithState(id, state, overrideDS) {
+  const ds = overrideDS || deployStates[id];
+  const container = document.getElementById('drawerLogContent');
+  const timestamp = document.getElementById('logTimestamp');
+
+  if (!ds || !ds.logs || ds.logs.length === 0) {
+    container.innerHTML = '<div class="drawer-log-empty">暂无日志</div>';
+    timestamp.textContent = '--';
+    return;
+  }
+  container.innerHTML = ds.logs.map(l => {
+    let cls = 'info';
+    if (l.level === 'success') cls = 'success';
+    else if (l.level === 'warn') cls = 'warn';
+    else if (l.level === 'error') cls = 'error';
+    return `<div class="drawer-log-line ${cls}">[${l.time}] ${l.level.toUpperCase().padEnd(5)} ${l.text}</div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+  timestamp.textContent = new Date().toLocaleString('zh-CN');
+}
+
+// ============================================================
+// NEW INFERENCE SERVICE MODAL
+// ============================================================
+function openNewServiceModal() {
+  const availableModels = tableData.filter(r => r.status === 'unpublished' || r.status === 'pending');
+  const list = document.getElementById('serviceModelList');
+  const empty = document.getElementById('serviceModelEmpty');
+
+  if (availableModels.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+  } else {
+    empty.style.display = 'none';
+    list.innerHTML = availableModels.map(m => `
+      <tr>
+        <td>${m.name}</td>
+        <td class="td-code">${m.code}</td>
+        <td class="td-code">${m.version}</td>
+        <td><span class="status-chip ${m.status === 'unpublished' ? 'default' : 'default'}">${m.status === 'unpublished' ? '未发布' : '待部署'}</span></td>
+        <td><button class="btn btn-primary btn-sm" onclick="quickPublishAndDeploy(${m.id})">选择并发布</button></td>
+      </tr>
+    `).join('');
+  }
+  document.getElementById('newServiceDialog').classList.add('visible');
+}
+
+function closeNewServiceModal() {
+  document.getElementById('newServiceDialog').classList.remove('visible');
+}
+
+function quickPublishAndDeploy(id) {
+  closeNewServiceModal();
+  const row = tableData.find(r => r.id === id);
+  if (!row) return;
+  if (row.status === 'unpublished') {
+    row.status = 'pending';
+    renderTable();
+    showToast('success', `模型「${row.name}」已发布为推理服务，可执行部署`);
+  }
+  setTimeout(() => openDeployModal(id), 400);
+}
+
+// ============================================================
+// SERVICE RESOURCE MONITORING DRAWER
+// ============================================================
+function openMonitorDrawer() {
+  const deployedModels = tableData.filter(r => r.status === 'deployed' || r.status === 'deploying');
+  const container = document.getElementById('monitorServiceList');
+
+  if (deployedModels.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(0,0,0,0.45)">当前没有已部署或部署中的服务</div>';
+  } else {
+    container.innerHTML = deployedModels.map((m, i) => {
+      const cpu = 15 + Math.floor(Math.random() * 35);
+      const mem = 1.2 + Math.random() * 2.8;
+      const qps = Math.floor(Math.random() * 80) + 5;
+      const p99 = 80 + Math.floor(Math.random() * 200);
+      const statusColor = m.status === 'deployed' ? '#52c41a' : '#2f54eb';
+      return `<div style="padding:12px;margin-bottom:8px;background:#fafafa;border-radius:6px;border-left:3px solid ${statusColor}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-weight:600;font-size:14px">${m.name}</span>
+          <span class="status-chip ${m.status === 'deployed' ? 'success' : 'pending'}">${m.status === 'deployed' ? '部署成功' : '部署中'}</span>
+        </div>
+        <div style="display:flex;gap:16px;font-size:12px;color:rgba(0,0,0,0.65)">
+          <span>CPU: ${cpu}%</span><span>内存: ${mem.toFixed(1)} GB</span><span>QPS: ${qps}</span><span>P99: ${p99}ms</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('monitorOverlay').classList.add('visible');
+  document.getElementById('monitorDrawer').classList.add('open');
+}
+
+function closeMonitorDrawer() {
+  document.getElementById('monitorOverlay').classList.remove('visible');
+  document.getElementById('monitorDrawer').classList.remove('open');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(type, msg) {
+  const toast = document.getElementById('toast');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${msg}`;
+  toast.style.display = 'flex';
+  setTimeout(() => { toast.style.display = 'none'; }, 4000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+// ===== AUTH STATE (must run first) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+// ============================================================
+// NAV TARGETS
+// ============================================================
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', data:'dataset-management.html', demand:'demand-hall.html', docs:'doc-center.html' };
+renderTable();
+// ===== NOTIFICATIONS DATA (must be defined before renderNotifs) =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+renderNotifs();
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+// ===== TOAST =====
+function showToast(msg){ var t = document.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2000;padding:10px 20px;border-radius:6px;font-size:14px;background:#2f54eb;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity 0.3s;'; document.body.appendChild(t); setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2000); }
+// ===== NOTIFICATIONS =====
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'info\',\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

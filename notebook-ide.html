@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在线 IDE — 洛书·模型服务平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #1e1e2e;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+[data-prefers-color="dark"] body { background-color: #0d0d1a; color: rgba(255,255,255,0.85); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+/* ============================================================
+   TOP HEADER BAR
+   ============================================================ */
+.ide-header {
+  height: 44px; background: #252536; border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; padding: 0 16px; gap: 12px;
+  flex-shrink: 0; z-index: 10;
+}
+[data-prefers-color="dark"] .ide-header { background: #14142b; }
+.ide-header-logo {
+  display: flex; align-items: center; gap: 6px; font-size: 14px;
+  font-weight: 600; color: rgba(255,255,255,0.85); flex-shrink: 0;
+}
+.ide-header-logo svg { width: 20px; height: 20px; }
+.ide-header-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+.ide-nb-name { font-size: 13px; color: rgba(255,255,255,0.65); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ide-status { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 4px; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.ide-status.running { color: #52c41a; background: rgba(82,196,26,0.12); }
+.ide-status.running .ide-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #52c41a; animation: pulse-dot 2s infinite; }
+.ide-status.stopped { color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.ide-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.ide-btn {
+  display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px;
+  border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer;
+  border: 1px solid transparent; transition: all 0.15s; white-space: nowrap;
+  color: rgba(255,255,255,0.7); background: transparent; border-color: rgba(255,255,255,0.12);
+}
+.ide-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.ide-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+.ide-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+.ide-btn.run { background: #52c41a; color: #fff; border-color: #52c41a; }
+.ide-btn.run:hover { background: #73d13d; border-color: #73d13d; }
+
+/* ============================================================
+   MAIN BODY — flex row
+   ============================================================ */
+.ide-body { display: flex; flex: 1; height: calc(100vh - 44px); overflow: hidden; }
+
+/* ============================================================
+   LEFT SIDEBAR — file tree + session info
+   ============================================================ */
+.ide-sidebar {
+  width: 260px; flex-shrink: 0; background: #1e1e2e;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+[data-prefers-color="dark"] .ide-sidebar { background: #0d0d1a; }
+
+/* Session info card */
+.ide-session-info {
+  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ide-session-title { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.ide-session-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+.ide-session-label { color: rgba(255,255,255,0.35); }
+.ide-session-value { color: rgba(255,255,255,0.65); font-weight: 500; text-align: right; }
+.ide-session-value code { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 11px; background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 3px; color: #2f54eb; }
+
+/* File tree */
+.ide-file-tree { flex: 1; overflow-y: auto; padding: 10px 0; }
+.ide-file-header { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 16px; margin-bottom: 8px; }
+.ide-file-item {
+  display: flex; align-items: center; gap: 6px; padding: 5px 16px; font-size: 13px;
+  color: rgba(255,255,255,0.55); cursor: pointer; transition: background 0.1s;
+  white-space: nowrap; user-select: none;
+}
+.ide-file-item:hover { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.75); }
+.ide-file-item.active { background: rgba(47,84,235,0.15); color: #85a5ff; }
+.ide-file-item .file-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.ide-file-item .file-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }
+.ide-file-item .file-dot.modified { background: #faad14; }
+.ide-file-item .file-dot.saved { background: #52c41a; }
+
+/* ============================================================
+   RIGHT MAIN AREA — editor + terminal
+   ============================================================ */
+.ide-main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Editor toolbar / file tabs */
+.ide-editor-toolbar {
+  height: 36px; background: #1e1e2e; border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: stretch; flex-shrink: 0; overflow-x: auto;
+}
+[data-prefers-color="dark"] .ide-editor-toolbar { background: #0d0d1a; }
+.ide-file-tab {
+  display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
+  font-size: 12px; color: rgba(255,255,255,0.4); cursor: pointer;
+  border-right: 1px solid rgba(255,255,255,0.04); white-space: nowrap;
+  transition: all 0.15s; user-select: none; flex-shrink: 0;
+}
+.ide-file-tab:hover { color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03); }
+.ide-file-tab.active { color: rgba(255,255,255,0.85); background: #252536; border-bottom: 2px solid #2f54eb; margin-bottom: -1px; }
+.ide-file-tab .tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ide-file-tab .tab-dot.modified { background: #faad14; }
+.ide-file-tab .tab-dot.saved { background: rgba(255,255,255,0.15); }
+.ide-file-tab .tab-close { font-size: 14px; opacity: 0.5; margin-left: 2px; }
+.ide-file-tab .tab-close:hover { opacity: 1; }
+
+/* Editor body */
+.ide-editor-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Code area */
+.ide-code-wrap {
+  flex: 1; display: flex; overflow: hidden; background: #1e1e2e;
+  position: relative;
+}
+.ide-line-nums {
+  width: 52px; flex-shrink: 0; overflow: hidden; padding: 12px 0;
+  text-align: right; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace;
+  font-size: 13px; line-height: 1.625; color: rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.15); user-select: none;
+}
+.ide-line-nums div { padding-right: 12px; }
+.ide-code-area {
+  flex: 1; min-width: 0; border: none; outline: none; resize: none;
+  padding: 12px 16px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace;
+  font-size: 13px; line-height: 1.625; color: #cdd6f4;
+  background: #1e1e2e; overflow: auto; white-space: pre; tab-size: 2;
+}
+.ide-code-area::selection { background: rgba(47,84,235,0.35); }
+
+/* Terminal */
+.ide-terminal { flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.ide-term-header {
+  height: 32px; background: #252536; display: flex; align-items: center;
+  padding: 0 12px; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.ide-term-tab {
+  padding: 0 12px; height: 32px; display: inline-flex; align-items: center;
+  font-size: 12px; color: rgba(255,255,255,0.35); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all 0.15s; user-select: none;
+}
+.ide-term-tab:hover { color: rgba(255,255,255,0.55); }
+.ide-term-tab.active { color: rgba(255,255,255,0.85); border-bottom-color: #2f54eb; }
+.ide-term-body {
+  height: 180px; overflow-y: auto; padding: 10px 14px;
+  background: #16162a; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.5);
+}
+.ide-term-body .prompt { color: #52c41a; }
+.ide-term-body .cmd { color: #cdd6f4; }
+.ide-term-body .output { color: rgba(255,255,255,0.45); white-space: pre-wrap; }
+.ide-term-body .err { color: #ff4d4f; }
+[data-prefers-color="dark"] .ide-term-body { background: #0a0a18; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .ide-sidebar { width: 200px; }
+  .ide-line-nums { width: 40px; }
+}
+@media (max-width: 640px) {
+  .ide-sidebar { display: none; }
+  .ide-header-logo span { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="ide-header">
+  <div class="ide-header-logo">
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs></svg>
+    <span>洛书 IDE</span>
+  </div>
+  <div class="ide-header-sep"></div>
+  <span class="ide-nb-name" id="headerNbName">Notebook 名称</span>
+  <span class="ide-status running" id="headerStatus"><span class="ide-status-dot"></span><span id="headerStatusText">运行中</span></span>
+  <div class="ide-header-actions">
+    <button class="ide-btn" onclick="ideSave()" title="保存 (Ctrl+S)">💾 保存</button>
+    <button class="ide-btn" onclick="ideSnapshot()" title="创建快照">📸 快照</button>
+    <button class="ide-btn run" onclick="ideRun()" title="运行 (Ctrl+Enter)">▶ 运行</button>
+    <button class="ide-btn primary" onclick="ideDeploy()" title="部署为推理服务">🚀 部署</button>
+  </div>
+</header>
+
+<!-- ==================== BODY ==================== -->
+<div class="ide-body">
+  <!-- Left sidebar -->
+  <aside class="ide-sidebar">
+    <!-- Session info -->
+    <div class="ide-session-info">
+      <div class="ide-session-title">📋 会话信息</div>
+      <div id="ideInfoPanel"></div>
+    </div>
+    <!-- File tree -->
+    <div class="ide-file-tree">
+      <div class="ide-file-header">📁 工作区文件</div>
+      <div class="ide-file-item active" data-file="main" onclick="ideSwitchFile('main', this)">
+        <span class="file-icon">🐍</span>main.py
+        <span class="file-dot modified" id="dot-main"></span>
+      </div>
+      <div class="ide-file-item" data-file="config" onclick="ideSwitchFile('config', this)">
+        <span class="file-icon">⚙️</span>config.yaml
+        <span class="file-dot saved" id="dot-config"></span>
+      </div>
+      <div class="ide-file-item" data-file="requirements" onclick="ideSwitchFile('requirements', this)">
+        <span class="file-icon">📦</span>requirements.txt
+        <span class="file-dot saved" id="dot-requirements"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right main area -->
+  <div class="ide-main">
+    <!-- File tabs -->
+    <div class="ide-editor-toolbar">
+      <div class="ide-file-tab active" data-tab="main" onclick="ideSwitchFile('main')">
+        <span class="tab-dot modified"></span>main.py <span class="tab-close">×</span>
+      </div>
+      <div class="ide-file-tab" data-tab="config" onclick="ideSwitchFile('config')">
+        <span class="tab-dot saved"></span>config.yaml <span class="tab-close">×</span>
+      </div>
+      <div class="ide-file-tab" data-tab="requirements" onclick="ideSwitchFile('requirements')">
+        <span class="tab-dot saved"></span>requirements.txt <span class="tab-close">×</span>
+      </div>
+    </div>
+
+    <!-- Editor body -->
+    <div class="ide-editor-body">
+      <!-- Code area -->
+      <div class="ide-code-wrap">
+        <div class="ide-line-nums" id="ideLineNums"></div>
+        <textarea class="ide-code-area" id="ideCodeEditor" spellcheck="false" oninput="ideUpdateLineNums()" onscroll="ideSyncScroll()" onkeydown="ideHandleTab(event)"></textarea>
+      </div>
+      <!-- Terminal -->
+      <div class="ide-terminal">
+        <div class="ide-term-header">
+          <span class="ide-term-tab active">📟 终端</span>
+          <span class="ide-term-tab">📋 输出</span>
+          <span class="ide-term-tab">⚠️ 问题 (0)</span>
+        </div>
+        <div class="ide-term-body" id="ideTermBody">
+          <div><span class="prompt">dev@notebook:~$</span> <span class="cmd">nvidia-smi</span></div>
+          <div class="output">+-----------------------------------------------------------------------------+</div>
+          <div class="output">| NVIDIA-SMI 535.104.12   Driver Version: 535.104.12   CUDA Version: 12.2   |</div>
+          <div class="output">|   0  NVIDIA A100-SXM4-40GB    Off  | 00000000:00:1E.0 Off |                    0 |</div>
+          <div class="output">| 30%   35C    P0    68W / 400W |      0MiB / 40960MiB |      0%      Default |</div>
+          <div class="output">+-------------------------------+----------------------+----------------------+</div>
+          <div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span style="color:#cdd6f4;">_</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== NOTEBOOK DATA (mirrored from workbench.html) =====
+var NOTEBOOKS = [
+  { id:'NB-001', name:'病虫害监测 — 数据分析', taskId:'DM-20260722-002', taskTitle:'友谊农场第三管理区病虫害监测', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'pytorch-training:1.0.0', cpu:'8核', memory:'16G', gpu:'A100 × 1', createdAt:'2026-07-24 09:30', lastActive:'2026-07-27 15:42', mountDataset:'水稻病害叶片数据集 v2.1' },
+  { id:'NB-002', name:'大豆面积提取模型训练', taskId:'DM-20260718-003', taskTitle:'洪河农场大豆种植面积核查', type:'VSCode', typeIcon:'🖥️', status:'running', statusText:'运行中', image:'image-classifier:1.2.0', cpu:'4核', memory:'8G', gpu:'T4 × 1', createdAt:'2026-07-20 14:15', lastActive:'2026-07-27 10:08', mountDataset:'东北大田遥感影像 2025' },
+  { id:'NB-003', name:'水稻纹枯病预警 — LSTM训练', taskId:'DM-20260715-006', taskTitle:'大兴农场水稻纹枯病预警模型', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'pytorch-training:1.0.0', cpu:'16核', memory:'32G', gpu:'A100 × 2', createdAt:'2026-07-16 10:00', lastActive:'2026-07-27 16:30', mountDataset:'农业气象预报数据集' },
+  { id:'NB-004', name:'土地利用变化检测分析', taskId:'DM-20260710-004', taskTitle:'青龙山农场土地利用变化检测', type:'VSCode', typeIcon:'🖥️', status:'stopped', statusText:'已停止', image:'geospatial-analysis:3.0.0', cpu:'8核', memory:'16G', gpu:'—', createdAt:'2026-07-12 08:45', lastActive:'2026-07-20 18:00', mountDataset:'农田地块卫星遥感数据集' },
+  { id:'NB-005', name:'作物产量预估 — 特征工程', taskId:'DM-20260726-001', taskTitle:'东安农场2026年水稻产量预估', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'crop-yield-model:1.5.0', cpu:'8核', memory:'16G', gpu:'A100 × 1', createdAt:'2026-07-27 09:00', lastActive:'2026-07-27 14:55', mountDataset:'作物产量预估评测数据集' },
+  { id:'NB-006', name:'玉米估产模型参数调优', taskId:'DM-20260705-005', taskTitle:'前锋农场玉米估产模型优化', type:'VSCode', typeIcon:'🖥️', status:'stopped', statusText:'已停止', image:'crop-yield-model:1.5.0', cpu:'4核', memory:'8G', gpu:'—', createdAt:'2026-07-08 11:20', lastActive:'2026-07-15 09:30', mountDataset:'—' }
+];
+
+var FILE_CONTENTS = {
+  main: '#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n"""Notebook 训练脚本"""\nimport torch\nimport torch.nn as nn\n\nDEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")\nprint(f"Using device: {DEVICE}")\n\n# ===== 数据加载 =====\n# TODO: 加载训练数据和验证数据\n\n# ===== 模型定义 =====\nclass MyModel(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.conv1 = nn.Conv2d(3, 64, 3, padding=1)\n        self.relu = nn.ReLU()\n        self.fc = nn.Linear(64 * 32 * 32, 10)\n    \n    def forward(self, x):\n        x = self.conv1(x)\n        x = self.relu(x)\n        x = x.view(x.size(0), -1)\n        x = self.fc(x)\n        return x\n\n# ===== 训练配置 =====\nmodel = MyModel().to(DEVICE)\ncriterion = nn.CrossEntropyLoss()\noptimizer = torch.optim.Adam(model.parameters(), lr=1e-3)\n\nprint("Model initialized. Ready to train.")\n# Start coding here...\n',
+  config: '# 开发环境配置\nimage: pytorch-training:1.0.0\ngpu:\n  enabled: true\n  type: A100\n  count: 1\nresources:\n  memory: 16G\n  cpu: 8核\ndataset:\n  mount_path: /home/dataset\n  type: image\nssh:\n  enabled: false\n  port: 2222\n',
+  requirements: 'torch>=2.0.0\ntorchvision>=0.15.0\nnumpy>=1.24.0\npandas>=2.0.0\nmatplotlib>=3.7.0\nscikit-learn>=1.3.0\ntqdm>=4.65.0\ntensorboard>=2.13.0\nopencv-python>=4.8.0\nalbumentations>=1.3.0\npillow>=10.0.0\n'
+};
+
+var _currentFile = 'main';
+var _lineCount = 0;
+var _nb = null;
+
+// ============================================================
+// INIT
+// ============================================================
+(function init(){
+  var params = new URLSearchParams(window.location.search);
+  var nbId = params.get('id');
+  _nb = NOTEBOOKS.find(function(n){ return n.id === nbId; });
+  if(!_nb){
+    // Dynamically created notebook from workspace modal — build from URL params
+    var nbName = params.get('name') || '新建 Notebook';
+    var taskId = params.get('taskId') || '';
+    var taskTitle = params.get('taskTitle') || '独立开发任务';
+    _nb = {
+      id: nbId || 'NB-NEW',
+      name: nbName,
+      taskId: taskId,
+      taskTitle: taskTitle,
+      type: 'JupyterLab', typeIcon: '📓',
+      status: 'running', statusText: '运行中',
+      image: 'pytorch-training:1.0.0', cpu: '8核', memory: '16G', gpu: 'A100 × 1',
+      createdAt: new Date().toISOString().slice(0,10),
+      lastActive: '刚刚',
+      mountDataset: '—'
+    };
+    document.title = nbName + ' — 洛书 IDE';
+  } else {
+    document.title = _nb.name + ' — 洛书 IDE';
+  }
+  // Update header
+  document.getElementById('headerNbName').textContent = _nb.name + ' · ' + _nb.taskTitle;
+  document.getElementById('headerStatusText').textContent = _nb.statusText;
+  var statusEl = document.getElementById('headerStatus');
+  statusEl.className = 'ide-status ' + _nb.status;
+  if(_nb.status === 'running'){
+    statusEl.innerHTML = '<span class="ide-status-dot"></span><span id="headerStatusText">'+_nb.statusText+'</span>';
+  }
+  // Update session info
+  document.getElementById('ideInfoPanel').innerHTML =
+    '<div class="ide-session-row"><span class="ide-session-label">类型</span><span class="ide-session-value">'+_nb.typeIcon+' '+_nb.type+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">镜像</span><span class="ide-session-value"><code>'+escHtml(_nb.image)+'</code></span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">CPU</span><span class="ide-session-value">'+_nb.cpu+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">内存</span><span class="ide-session-value">'+_nb.memory+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">GPU</span><span class="ide-session-value">'+_nb.gpu+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">数据集</span><span class="ide-session-value">'+escHtml(_nb.mountDataset)+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">创建</span><span class="ide-session-value">'+_nb.createdAt+'</span></div>'+
+    '<div class="ide-session-row"><span class="ide-session-label">活动</span><span class="ide-session-value">'+_nb.lastActive+'</span></div>';
+  // Load main.py
+  document.getElementById('ideCodeEditor').value = FILE_CONTENTS.main;
+  ideUpdateLineNums();
+})();
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ============================================================
+// FILE SWITCHING
+// ============================================================
+function ideSwitchFile(fileKey, el){
+  // Save current content
+  FILE_CONTENTS[_currentFile] = document.getElementById('ideCodeEditor').value;
+  // Update
+  _currentFile = fileKey;
+  document.getElementById('ideCodeEditor').value = FILE_CONTENTS[fileKey];
+  _lineCount = 0;
+  ideUpdateLineNums();
+  // Update file tree active
+  document.querySelectorAll('.ide-file-item').forEach(function(f){ f.classList.remove('active'); });
+  var treeEl = document.querySelector('.ide-file-item[data-file="'+fileKey+'"]');
+  if(treeEl) treeEl.classList.add('active');
+  // Update tabs
+  document.querySelectorAll('.ide-file-tab').forEach(function(t){ t.classList.remove('active'); });
+  var tabEl = document.querySelector('.ide-file-tab[data-tab="'+fileKey+'"]');
+  if(tabEl) tabEl.classList.add('active');
+}
+
+// ============================================================
+// LINE NUMBERS
+// ============================================================
+function ideUpdateLineNums(){
+  var ta = document.getElementById('ideCodeEditor');
+  var lines = ta.value.split('\n');
+  var newCount = lines.length;
+  if(newCount === _lineCount) return;
+  _lineCount = newCount;
+  FILE_CONTENTS[_currentFile] = ta.value;
+  var html = '';
+  for(var i = 1; i <= _lineCount; i++){ html += '<div>'+i+'</div>'; }
+  document.getElementById('ideLineNums').innerHTML = html;
+  // Mark file as modified
+  var dot = document.getElementById('dot-' + _currentFile);
+  if(dot){ dot.className = 'file-dot modified'; }
+  var tabDot = document.querySelector('.ide-file-tab[data-tab="'+_currentFile+'"] .tab-dot');
+  if(tabDot){ tabDot.className = 'tab-dot modified'; }
+}
+
+function ideSyncScroll(){
+  var ta = document.getElementById('ideCodeEditor');
+  document.getElementById('ideLineNums').scrollTop = ta.scrollTop;
+}
+
+function ideHandleTab(e){
+  if(e.key === 'Tab'){ e.preventDefault(); var ta = e.target; var s = ta.selectionStart; ta.value = ta.value.substring(0, s) + '  ' + ta.value.substring(ta.selectionEnd); ta.selectionStart = ta.selectionEnd = s + 2; ideUpdateLineNums(); }
+}
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey || e.metaKey) && e.key === 's'){ e.preventDefault(); ideSave(); }
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); ideRun(); }
+});
+
+// ============================================================
+// ACTIONS
+// ============================================================
+function ideSave(){
+  FILE_CONTENTS[_currentFile] = document.getElementById('ideCodeEditor').value;
+  // Mark file as saved
+  var dot = document.getElementById('dot-' + _currentFile);
+  if(dot){ dot.className = 'file-dot saved'; }
+  var tabDot = document.querySelector('.ide-file-tab[data-tab="'+_currentFile+'"] .tab-dot');
+  if(tabDot){ tabDot.className = 'tab-dot saved'; }
+  ideToast('✅ 文件已保存');
+}
+
+function ideSnapshot(){
+  ideToast('📸 快照已创建 (' + new Date().toLocaleTimeString() + ')');
+}
+
+function ideRun(){
+  ideSave();
+  // Simulate running code
+  var term = document.getElementById('ideTermBody');
+  var now = new Date().toLocaleTimeString();
+  term.innerHTML += '\n<div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span class="cmd">python main.py</span></div>';
+  term.innerHTML += '<div class="output">Using device: cuda</div>';
+  term.innerHTML += '<div class="output">Model initialized. Ready to train.</div>';
+  term.innerHTML += '<div class="output" style="color:#52c41a;">[✓] Process completed in 2.34s</div>';
+  term.innerHTML += '<div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span style="color:#cdd6f4;">_</span></div>';
+  term.scrollTop = term.scrollHeight;
+  ideToast('▶ 代码已运行');
+}
+
+// ============================================================
+// DEPLOY AS INFERENCE SERVICE
+// ============================================================
+function ideDeploy(){
+  var nbName = document.getElementById('headerNbName').textContent || 'Notebook';
+  var params = new URLSearchParams(window.location.search);
+  var taskId = params.get('taskId') || '';
+  var taskTitle = params.get('taskTitle') || '';
+  ideToast('📦 正在跳转到镜像封装页面...');
+  setTimeout(function(){
+    // Package notebook output as image → image-custom-create.html
+    var qs = '?from=notebook&name=' + encodeURIComponent(nbName.replace(/[^a-zA-Z0-9一-鿿]/g, '-').toLowerCase() + '-image');
+    if (taskTitle) qs += '&desc=' + encodeURIComponent('从 Notebook「' + taskTitle + '」产出的推理镜像');
+    window.open('image-custom-create.html' + qs, '_blank');
+  }, 800);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function ideToast(msg){
+  var existing = document.getElementById('ideToast');
+  if(existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.id = 'ideToast';
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:8px 16px;border-radius:6px;font-size:13px;background:#252536;color:#cdd6f4;border:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:opacity 0.3s;opacity:1;';
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.style.opacity = '0'; setTimeout(function(){ toast.remove(); }, 300); }, 2000);
+}
+
+// Auto-focus editor on load
+setTimeout(function(){ document.getElementById('ideCodeEditor').focus(); }, 300);
+</script>
+</body>
+</html>

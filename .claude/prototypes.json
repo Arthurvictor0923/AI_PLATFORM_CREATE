@@ -1,0 +1,215 @@
+{
+  "_description": "洛书·模型服务平台 — 原型文件注册表。新增原型时在此文件中追加条目，并同步更新所有已有原型的侧边栏导航链接。",
+  "_updated": "2026-07-27",
+  "_convention": {
+    "sidebar": "每个原型的侧边栏分为两个 group：'模型管理'（资源总览、模型部署）和 '开发中心'（镜像管理、在线开发、工作流）。新增原型时在对应 group 下添加菜单项，并在所有其他原型的侧边栏中添加指向新原型的链接。推理服务已整合至工作台「我的模型→发布」抽屉中。",
+    "naming": "原型文件使用英文小写+连字符命名，如 model-deployment.html、image-custom-list.html",
+    "registry": "每次新增或删除原型，必须同步更新此注册表文件"
+  },
+  "prototypes": [
+    {
+      "id": "portal",
+      "file": "portal.html",
+      "title": "门户首页",
+      "module": "首页",
+      "description": "门户首页v3(供需对接定位，面向消费侧客户)。品牌名：北大荒智慧农业协同创新平台。Hero badge「科研力量汇聚·供需精准对接」，h1「连接顶尖科研力量，解决田间真实需求」。3项统计(187+模型/50+数据集/农场需求已落地)。5优势卡片(科研力量→需求匹配→数据优势→场景深耕→开箱即用)，强调实力背书+服务承诺双线叙事。6个section：Hero→热门模型→数据资源→需求大厅预览→合作机构。文案已统一：全页以供需对接为主线，协同创新为品牌名，消除三种不同描述造成的认知负担。",
+      "status": "active",
+      "created": "2026-07-23",
+      "linksTo": ["model-marketplace"]
+    },
+    {
+      "id": "login",
+      "file": "login.html",
+      "title": "登录",
+      "module": "首页",
+      "description": "平台登录页，支持用户名+密码+验证码表单验证，登录成功后跳转至工作台",
+      "status": "active",
+      "created": "2026-07-23",
+      "linksTo": ["portal", "workbench", "model-marketplace", "model-deployment", "image-custom-list"]
+    },
+    {
+      "id": "workbench",
+      "file": "workbench.html",
+      "title": "工作台",
+      "module": "首页",
+      "description": "登录后工作台 7 Tab（模型/数据集/需求/任务/镜像/在线开发/我的申请），快速创建入口，候选人筛选 Modal，申请审批追踪",
+      "status": "active",
+      "created": "2026-07-23",
+      "linksTo": ["portal", "model-marketplace", "model-deployment", "image-custom-list"]
+    },
+    {
+      "id": "model-deployment",
+      "file": "model-deployment.html",
+      "title": "模型部署",
+      "module": "模型管理",
+      "description": "模型部署列表页，支持异步部署流程、接口健康校验、部署日志查看",
+      "status": "active",
+      "created": "2026-07-17",
+      "linksTo": ["image-custom-list", "image-custom-detail", "image-custom-create", "model-marketplace"]
+    },
+    {
+      "id": "image-custom-list",
+      "file": "image-custom-list.html",
+      "title": "镜像管理",
+      "module": "开发中心",
+      "description": "自定义镜像卡片列表页，支持搜索、筛选、创建/编辑/删除镜像",
+      "status": "active",
+      "created": "2026-07-08",
+      "linksTo": ["image-custom-create", "image-custom-detail", "model-deployment", "model-marketplace"]
+    },
+    {
+      "id": "image-custom-detail",
+      "file": "image-custom-detail.html",
+      "title": "镜像详情",
+      "module": "开发中心",
+      "description": "镜像详情页（分栏布局），查看 Dockerfile、构建日志、执行构建/发布操作",
+      "status": "active",
+      "created": "2026-07-08",
+      "linksTo": ["image-custom-list", "image-custom-create", "model-deployment", "model-marketplace"]
+    },
+    {
+      "id": "image-custom-create",
+      "file": "image-custom-create.html",
+      "title": "镜像创建/编辑",
+      "module": "开发中心",
+      "description": "镜像创建与编辑页（分栏布局），支持 Dockerfile 在线编辑和 Tar 包上传",
+      "status": "active",
+      "created": "2026-07-08",
+      "linksTo": ["image-custom-list", "image-custom-detail", "model-deployment", "model-marketplace"]
+    },
+    {
+      "id": "model-marketplace",
+      "file": "model-marketplace.html",
+      "title": "模型广场",
+      "module": "模型广场",
+      "description": "模型卡片市场页（21个农业AI模型含4个合集），左侧筛选+卡片网格+分页。详情页含模型介绍/文件/部署三Tab+操作按钮（部署/试用/Notebook）。合集独立简化视图+子模型跳转。在线试用弹窗（文件上传/LLM聊天双模式）。系谱双向展示+弹窗确认跳转。收藏可切换。",
+      "status": "active",
+      "created": "2026-07-24",
+      "updated": "2026-07-24",
+      "linksTo": ["model-deployment", "image-custom-list"]
+    },
+    {
+      "id": "demand-hall",
+      "file": "demand-hall.html",
+      "title": "需求大厅",
+      "module": "需求市场",
+      "description": "需求市场卡片网格页（模型广场风格，左侧238px筛选面板+2列卡片网格+分页）。14条Mock数据。核心操作：发布需求（抽屉）、申请接单（候选池机制，非直接分配）、查看详情。已申请显示✓已申请。",
+      "status": "active",
+      "created": "2026-07-26",
+      "linksTo": ["demand-my", "demand-workspace", "portal"]
+    },
+    {
+      "id": "demand-my",
+      "file": "demand-my.html",
+      "title": "我的需求/任务",
+      "module": "首页",
+      "description": "个人中心·我的需求与任务双Tab页面（工作台进入）。使用workbench布局（wb-topbar+wb-sidebar+wb-main）。消费侧Tab：需求列表+状态筛选+查看详情/撤回/验收操作。研发侧Tab：任务列表+状态筛选+进入处理/标记完成操作。面包屑导航返回工作台。",
+      "status": "active",
+      "created": "2026-07-26",
+      "linksTo": ["workbench", "demand-hall", "demand-workspace", "portal"]
+    },
+    {
+      "id": "app-center",
+      "file": "app-center.html",
+      "title": "应用中心",
+      "module": "应用中心",
+      "description": "应用中心卡片网格页（模型广场风格，左侧筛选面板+3列卡片网格+分页）。8条Mock数据覆盖全部4种交付物类型。筛选支持分类（6类）+类型（4种）+搜索+排序。点击卡片→app-detail.html。",
+      "status": "active",
+      "created": "2026-07-26",
+      "linksTo": ["app-detail", "demand-hall"]
+    },
+    {
+      "id": "app-detail",
+      "file": "app-detail.html",
+      "title": "应用详情",
+      "module": "应用中心",
+      "description": "应用详情页（左右70/30分栏布局）。左侧：图标+名称+类型chip+发布方信息+描述+交付物展示（报告预览/数据集文件列表/工作流链接/部署服务地址）+来源需求链接。右侧sticky：使用次数统计+申请使用按钮(Popconfirm)+标签+发布方卡片。URL参数?id=xxx读取MOCK_APPS数据（8条，覆盖全部4种交付物类型）。",
+      "status": "active",
+      "created": "2026-07-26",
+      "linksTo": ["app-center", "demand-hall"]
+    },
+    {
+      "id": "demand-workspace",
+      "file": "demand-workspace.html",
+      "title": "需求处理工作台",
+      "module": "首页",
+      "description": "需求处理工作台（个人中心内页，workbench布局）。顶导「首页」active，侧边栏为个人中心（用户卡片+我的需求/任务/应用+快捷入口）。左右65/35分栏，通过?id=xxx&role=dev|consumer切换研发/消费视图。研发侧：需求信息卡片+在线处理区+交付物上传+操作按钮。消费侧：交付物预览/下载+验收/退回。3条Mock数据。入口：工作台→我的任务→进入处理。",
+      "status": "active",
+      "created": "2026-07-26",
+      "updated": "2026-07-27",
+      "linksTo": ["workbench", "demand-my", "demand-hall", "portal"]
+    },
+    {
+      "id": "demand-detail",
+      "file": "demand-detail.html",
+      "title": "需求详情",
+      "module": "需求市场",
+      "description": "需求详情页（左右70/30分栏）。左侧：图标+标题+状态chip+标签+描述+处理进展+交付物。右侧sticky：状态概览+申请接单按钮/候选人列表+选择+需求概览+提交方卡片。候选池机制：需求方可从候选人中选择开发者。",
+      "status": "active",
+      "created": "2026-07-26",
+      "linksTo": ["demand-hall", "app-center"]
+    },
+    {
+      "id": "resource-overview",
+      "file": "resource-overview.html",
+      "title": "资源总览",
+      "module": "个人中心",
+      "description": "资源总览仪表盘（工作台内页），使用 workbench 布局（wb-topbar + wb-sidebar + wb-main）。展示 CPU/内存/GPU/存储统计卡片、节点状态表格（含集群筛选pills）、GPU使用排行、模型资源分配卡片。从工作台侧边栏「📈 资源总览」进入。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["workbench", "model-deployment"]
+    },
+    {
+      "id": "online-dev",
+      "file": "online-dev.html",
+      "title": "在线开发",
+      "module": "开发中心",
+      "description": "在线开发 — Notebook 列表→IDE 编辑器。独立页面保留完整功能，同时已内联至 workbench.html 的「在线开发」Tab 中（notebookArea split-panel：会话信息+代码编辑器+终端）。6条Mock数据关联到我的任务。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["image-custom-list", "image-custom-create", "knowledge-base"]
+    },
+    {
+      "id": "knowledge-base",
+      "file": "knowledge-base.html",
+      "title": "知识库",
+      "module": "智能应用",
+      "description": "知识库文档管理页（split-panel布局），左侧分类树+文档列表（可折叠/搜索）+右侧WangEditor风格富文本编辑器。8篇Mock文档覆盖3个分类（模型文档/研究报告/技术规范）。支持加粗/斜体/列表/链接/表格/代码块等格式，实时字数统计，保存草稿/发布文档操作。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["online-dev", "app-center"]
+    },
+    {
+      "id": "dataset-management",
+      "file": "dataset-management.html",
+      "title": "数据集管理",
+      "module": "数据管理",
+      "description": "数据集管理 v3（marketplace布局，无侧边栏）。左侧238px筛选面板+2列卡片网格+分页。15条Mock数据覆盖7个类目。详情页：全页视图（Header+70/30两栏），含申请使用按钮（-30积分）+查看示例数据Modal（15类×5行样本数据）。平台不提供直接下载。支持搜索/筛选/排序/分页，深色模式完整。积分联动：申请使用消耗30积分。",
+      "status": "active",
+      "created": "2026-07-27",
+      "updated": "2026-07-27",
+      "linksTo": ["portal", "model-deployment"]
+    },
+    {
+      "id": "notebook-ide",
+      "file": "notebook-ide.html",
+      "title": "在线 IDE",
+      "module": "开发中心",
+      "description": "独立在线IDE页面（新标签页打开）。深色主题全屏编辑器：顶部44px header（Notebook名称+状态+保存/快照/运行按钮），左侧260px侧边栏（会话信息+文件树），右侧代码编辑器（行号+Monaco风格代码区）+底部180px终端面板。支持Ctrl+S保存/Ctrl+Enter运行。通过URL参数?id=NB-XXX读取Notebook数据。从工作台「我的任务→进入处理」或「在线开发→打开」新标签页打开。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["workbench", "online-dev", "image-custom-create"]
+    },
+    {
+      "id": "doc-center",
+      "file": "doc-center.html",
+      "title": "文档中心",
+      "module": "文档中心",
+      "description": "平台文档中心原型（3栏布局：左侧280px导航树+中间内容区+右侧200px锚点目录）。10大分类、26篇文档覆盖平台全部功能模块，面向研发侧和消费侧双角色。支持搜索过滤、折叠分类、TOC锚点滚动定位、登录态铃铛通知。参考 ModelScope 文档中心设计。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["portal", "workbench", "model-marketplace"]
+    }
+  ],
+  "planned": []
+}

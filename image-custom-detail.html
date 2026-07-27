@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜像详情 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base — matches live XXXX platform
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sf-img-0: url("data:image/png;base64,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");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88);
+  background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* BG-LIST */
+.bg-list { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sf-img-0) center / cover no-repeat; z-index: 0; pointer-events: none; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px; background-color: transparent; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid rgba(5,5,5,0.06); z-index: 19; display: flex; flex-direction: column; padding: 0; }
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rDSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(47,84,235,0.2); color: rgb(47,84,235); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.app-body { display: flex; padding-top: 60px; min-height: 100vh; position: relative; z-index: 1; }
+.sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: 200px; background: transparent; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+.sidebar-inner { padding: 16px 8px; }
+.sidebar-menu { display: flex; flex-direction: column; }
+.sidebar-menu-group { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 24px 4px; text-transform: uppercase; }
+.sidebar-menu-item { display: flex; align-items: center; gap: 8px; height: 40px; line-height: 40px; padding-inline: 16px; margin: 0 16px 4px; width: calc(100% - 32px); border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; white-space: nowrap; overflow: hidden; }
+.sidebar-menu-item:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.88); }
+.sidebar-menu-item.active { color: rgb(47,84,235); background: rgba(47,84,235,0.2); font-weight: 600; border-radius: 4px !important; }
+.sidebar-menu-icon { font-size: 16px; width: 16px; text-align: center; flex-shrink: 0; }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content-area { flex: 1; margin-left: 0; padding: 24px 40px; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+.page-procard { background: transparent; }
+.page-card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02); border: 1px solid rgba(5,5,5,0.06); }
+[data-prefers-color="dark"] .page-card { background: #1f1f1f; border-color: #303030; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 6px -1px rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.09); }
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   BREADCRUMB
+   ============================================================ */
+.breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 14px; color: rgba(0,0,0,0.45); margin-bottom: 16px; }
+.breadcrumb a { color: rgba(0,0,0,0.45); transition: color 0.2s; cursor: pointer; }
+.breadcrumb a:hover { color: #2f54eb; }
+.breadcrumb .sep { margin: 0 4px; }
+.breadcrumb .current { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .breadcrumb a { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+.btn-lg { height: 40px; padding: 6px 23px; font-size: 15px; }
+.btn.loading { pointer-events: none; opacity: 0.65; }
+.btn .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: btnSpin 0.6s linear infinite; }
+.btn.loading .btn-spinner { display: inline-block; }
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   STATUS CHIPS
+   ============================================================ */
+.status-chip { display: inline-flex; align-items: center; justify-content: center; height: 20px; padding: 0 8px; font-size: 12px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.status-chip.success { color: #52c41a; background: #d9f7be; }
+.status-chip.pending { color: #2f54eb; background: #d6e4ff; }
+.status-chip.error { color: #ff4d4f; background: #fff2f0; }
+.status-chip.default { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.status-chip.published { color: #23ada4; background: #e6fffb; }
+[data-prefers-color="dark"] .status-chip.default { color: rgba(255,255,255,0.65); background: #303030; }
+[data-prefers-color="dark"] .status-chip.published { background: rgba(35,173,164,0.15); }
+
+/* ============================================================
+   TWO-COLUMN DETAIL BODY — matches create page layout
+   ============================================================ */
+.detail-body { display: flex; gap: 0; min-height: 500px; }
+
+.detail-left {
+  width: 460px; flex-shrink: 0;
+  border-right: 1px solid #f0f0f0;
+  padding: 24px; overflow-y: auto;
+  display: flex; flex-direction: column;
+  gap: 20px;
+}
+[data-prefers-color="dark"] .detail-left { border-right-color: #303030; }
+
+.detail-right {
+  flex: 1; padding: 24px;
+  display: flex; flex-direction: column;
+  min-width: 0; overflow-y: auto;
+}
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+.section-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: rgb(47,84,235); border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .section-title { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   STATUS BANNER (in left panel)
+   ============================================================ */
+.status-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 6px; font-size: 14px; }
+.status-banner.unbuilt { background: #fafafa; border: 1px solid #f0f0f0; color: rgba(0,0,0,0.65); }
+.status-banner.building { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+.status-banner.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.status-banner.failed { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.status-banner.published { background: #e6fffb; border: 1px solid #b5f5ec; color: #23ada4; }
+[data-prefers-color="dark"] .status-banner.unbuilt { background: rgba(255,255,255,0.03); border-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .status-banner.building { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.25); }
+[data-prefers-color="dark"] .status-banner.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.25); }
+[data-prefers-color="dark"] .status-banner.failed { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.25); }
+[data-prefers-color="dark"] .status-banner.published { background: rgba(35,173,164,0.1); border-color: rgba(35,173,164,0.25); }
+
+.status-banner-icon { font-size: 20px; flex-shrink: 0; }
+.status-banner-text { flex: 1; line-height: 1.6; }
+.status-banner-text .banner-title { font-weight: 600; font-size: 14px; }
+.status-banner-text .banner-desc { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+
+.building-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(47,84,235,0.25); border-top-color: #2f54eb; border-radius: 50%; animation: btnSpin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+
+/* ============================================================
+   INFO LIST — single column in left panel
+   ============================================================ */
+.info-list { display: flex; flex-direction: column; }
+.info-row { display: flex; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #fafafa; }
+.info-row:last-child { border-bottom: none; }
+[data-prefers-color="dark"] .info-row { border-bottom-color: #2a2a2a; }
+
+.info-label { width: 72px; flex-shrink: 0; font-size: 13px; color: rgba(0,0,0,0.45); line-height: 1.6; }
+.info-value { flex: 1; font-size: 14px; color: rgba(0,0,0,0.88); font-weight: 500; word-break: break-all; line-height: 1.6; }
+.info-value code { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; background: rgba(0,0,0,0.03); padding: 1px 5px; border-radius: 3px; color: #2f54eb; font-weight: 400; }
+[data-prefers-color="dark"] .info-label { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .info-value { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .info-value code { background: rgba(255,255,255,0.08); color: #91a9ff; }
+
+/* Description row */
+.info-desc-block { padding-top: 8px; margin-top: 4px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .info-desc-block { border-top-color: #303030; }
+.info-desc-block .info-label { width: auto; margin-bottom: 4px; }
+.info-desc-block .info-value { font-weight: 400; }
+
+/* ============================================================
+   READ-ONLY CODE VIEWER (right panel)
+   ============================================================ */
+.code-viewer-wrap { display: flex; flex: 1; border: 1px solid #d9d9d9; border-radius: 6px; overflow: hidden; background: #1e1e2e; min-height: 280px; }
+[data-prefers-color="dark"] .code-viewer-wrap { border-color: #434343; }
+.line-numbers { width: 48px; flex-shrink: 0; background: #252535; padding: 12px 0; user-select: none; overflow: hidden; text-align: right; }
+.line-num { height: 22px; line-height: 22px; padding-right: 10px; font-size: 12px; font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace; color: #636380; }
+.code-content { flex: 1; padding: 12px 14px; overflow: auto; }
+.code-line { height: 22px; line-height: 22px; font-size: 13px; font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace; color: #cdd6f4; white-space: pre; tab-size: 2; }
+
+/* Tarball placeholder in right panel */
+.tarball-info-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px; text-align: center; background: #1e1e2e; gap: 12px; }
+.tarball-info-placeholder .tarball-icon { font-size: 48px; opacity: 0.6; }
+.tarball-info-placeholder .tarball-name { font-size: 14px; color: #cdd6f4; font-weight: 500; }
+.tarball-info-placeholder .tarball-meta { font-size: 12px; color: #636380; }
+.tarball-info-placeholder .tarball-note { font-size: 12px; color: #ff9113; margin-top: 8px; padding: 8px 14px; background: rgba(255,145,19,0.1); border-radius: 4px; line-height: 1.5; }
+
+/* ============================================================
+   PRD TOGGLE & PANELS
+   ============================================================ */
+.prd-toggle-btn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; font-size: 13px; color: rgba(0,0,0,0.45); border-radius: 4px; cursor: pointer; user-select: none; transition: all 0.2s; font-weight: 400; }
+.prd-toggle-btn:hover { color: #2f54eb; background: rgba(47,84,235,0.06); }
+.prd-toggle-btn.active { color: #2f54eb; background: rgba(47,84,235,0.1); }
+.prd-toggle-icon { font-size: 14px; transition: transform 0.2s; }
+.prd-toggle-btn.active .prd-toggle-icon { transform: rotate(180deg); }
+[data-prefers-color="dark"] .prd-toggle-btn { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .prd-toggle-btn:hover,
+[data-prefers-color="dark"] .prd-toggle-btn.active { color: #597ef7; background: rgba(47,84,235,0.15); }
+
+.prd-panel { display: none; margin-top: 8px; margin-bottom: 12px; padding: 10px 14px; background: #fafbff; border-left: 3px solid #2f54eb; border-radius: 0 6px 6px 0; font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.7; }
+.prd-panel.visible { display: block; }
+.prd-panel .prd-label { font-size: 11px; font-weight: 600; color: #2f54eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.prd-panel code { background: rgba(47,84,235,0.08); padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; color: #2f54eb; }
+[data-prefers-color="dark"] .prd-panel { background: rgba(47,84,235,0.06); border-left-color: #597ef7; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .prd-panel .prd-label { color: #597ef7; }
+[data-prefers-color="dark"] .prd-panel code { background: rgba(47,84,235,0.15); color: #91a9ff; }
+
+/* ============================================================
+   BUILD LOG (right panel)
+   ============================================================ */
+.build-log-wrap { border: 1px solid #d9d9d9; border-radius: 6px; overflow: hidden; background: #1e1e2e; max-height: 200px; overflow-y: auto; }
+[data-prefers-color="dark"] .build-log-wrap { border-color: #434343; }
+.build-log-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; background: #252535; border-bottom: 1px solid #333345; }
+.build-log-title { font-size: 12px; color: #636380; font-weight: 500; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; }
+.build-log-content { padding: 10px 14px; }
+.build-log-line { font-size: 12px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; line-height: 1.8; color: #a0a0b0; }
+.build-log-line.success { color: #52c41a; }
+.build-log-line.warn { color: #ff9113; }
+.build-log-line.error { color: #ff4d4f; }
+
+/* ============================================================
+   ACTION BAR (left panel bottom)
+   ============================================================ */
+.action-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 4px; }
+.action-bar-spacer { flex: 1; }
+
+/* ============================================================
+   BUILD PROGRESS BAR
+   ============================================================ */
+.build-progress-wrap { margin-top: 10px; }
+.build-progress-bar-outer { height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden; }
+.build-progress-bar-inner { height: 100%; background: linear-gradient(90deg, #2f54eb, #597ef7); border-radius: 2px; transition: width 0.3s ease; position: relative; }
+.build-progress-bar-inner::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,0.25) 8px, rgba(255,255,255,0.25) 16px); animation: progressStripe 0.8s linear infinite; }
+@keyframes progressStripe { 0% { background-position: 0 0; } 100% { background-position: 22px 0; } }
+.build-progress-text { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; font-size: 11px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .build-progress-bar-outer { background: #303030; }
+
+/* ============================================================
+   MODAL / DIALOG
+   ============================================================ */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.visible { display: flex; }
+.modal-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); width: 480px; max-width: 90vw; overflow: hidden; }
+[data-prefers-color="dark"] .modal-box { background: #1f1f1f; }
+.modal-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-header { border-bottom-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close { font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+.modal-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.modal-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .modal-body { color: rgba(255,255,255,0.65); }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-footer { border-top-color: #303030; }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 2000; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ============================================================
+   INTERACTION GUIDE
+   ============================================================ */
+.guide-trigger { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; background: #2f54eb; color: #fff; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; box-shadow: 0 4px 12px rgba(47,84,235,0.35); transition: all 0.2s; }
+.guide-trigger:hover { background: #597ef7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,84,235,0.4); }
+.guide-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
+.guide-overlay.visible { display: flex; }
+.guide-drawer { background: #ffffff; border-radius: 12px; width: 680px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .guide-drawer { background: #1f1f1f; }
+.guide-drawer-header { display: flex; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: #ffffff; z-index: 1; border-radius: 12px 12px 0 0; }
+[data-prefers-color="dark"] .guide-drawer-header { background: #1f1f1f; border-bottom-color: #303030; }
+.guide-drawer-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .guide-drawer-title { color: rgba(255,255,255,0.85); }
+.guide-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.guide-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.guide-drawer-body { padding: 24px; }
+.guide-section { margin-bottom: 24px; }
+.guide-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.guide-section-title::before { display: none; }
+[data-prefers-color="dark"] .guide-section-title { color: rgba(255,255,255,0.85); }
+.guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.guide-table th, .guide-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+.guide-table th { background: rgba(0,0,0,0.02); font-weight: 600; color: rgba(0,0,0,0.65); white-space: nowrap; }
+.guide-table td { color: rgba(0,0,0,0.65); line-height: 1.5; }
+.guide-table td:first-child { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .guide-table th { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td:first-child { color: rgba(255,255,255,0.85); }
+.guide-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.guide-tag.do { background: #d9f7be; color: #52c41a; }
+.guide-tag.error { background: #fff2f0; color: #ff4d4f; }
+.guide-tag.modal { background: #d6e4ff; color: #2f54eb; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .detail-body { flex-direction: column; }
+  .detail-left { width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 16px; }
+  .sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item active" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+        <!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+<div class="notif-popover" id="notifPopover">
+  <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+    <span>通知</span>
+    <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+  </div>
+  <div id="notifList"></div>
+  <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+    <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('info','功能开发中')">查看全部通知 →</a>
+  </div>
+</div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <!-- User dropdown -->
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">A</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">A研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+  <main class="content-area">
+
+    <div class="page-procard">
+      <div class="page-card">
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title" id="detailTitle">镜像详情</span>
+          <button class="btn btn-sm btn-default" onclick="location.href='workbench.html'" style="margin-left:auto;margin-right:8px;">🏠 返回工作台</button>
+          <span class="prd-toggle-btn" id="prdToggle" onclick="togglePRD()" title="查看字段说明">
+            <span class="prd-toggle-icon">📋</span> 字段说明
+          </span>
+        </div>
+
+        <div class="card-body" style="padding:0;display:flex;flex-direction:column;">
+
+          <!-- ===== TWO-COLUMN BODY ===== -->
+          <div class="detail-body">
+
+            <!-- LEFT: Status + Info + Actions -->
+            <div class="detail-left">
+
+              <!-- Status Banner -->
+              <div class="status-banner" id="statusBanner">
+                <span class="status-banner-icon" id="bannerIcon">📋</span>
+                <div class="status-banner-text">
+                  <div class="banner-title" id="bannerTitle">未构建</div>
+                  <div class="banner-desc" id="bannerDesc"></div>
+                </div>
+              </div>
+
+              <!-- Basic Info -->
+              <div>
+                <div class="section-title">基础信息</div>
+                <div class="prd-panel" data-prd="info">
+                  <div class="prd-label">📖 镜像信息字段说明</div>
+                  <b>镜像名称：</b>镜像在平台中的唯一标识，由小写字母、数字及连字符组成，长度限制 20 字符。仅「未构建」和「构建失败」状态可通过编辑按钮修改。<br>
+                  <b>镜像分类：</b>镜像所属业务领域，创建后不可修改。分为 sensing（感知）、decision（决策）、simulation（仿真）、llm（大模型）四类。<br>
+                  <b>功能：</b>语义化描述镜像核心 AI 能力的功能标签，如 <code>object-detector</code>。创建后不可修改。<br>
+                  <b>版本号：</b>遵循语义化版本规范（Major.Minor.Patch），创建后不可修改。<br>
+                  <b>GPU 资源：</b>标识镜像是否需要 GPU 算力，创建后不可修改。<br>
+                  <b>镜像地址：</b>由系统自动生成的镜像仓库地址，格式为 <code>registry/分类/名称:版本</code>。<br>
+                  <b>创建方式：</b>Dockerfile 在线编辑或 .tar.gz 压缩包上传。压缩包方式无法反向解析为 Dockerfile 文本。<br>
+                  <b>状态：</b>镜像生命周期：<b>未构建</b>→<b>构建中</b>→<b>构建成功</b>/<b>构建失败</b>→<b>已发布</b>。当前状态决定可执行的操作。
+                </div>
+                <div class="info-list" id="infoList"></div>
+              </div>
+
+              <!-- Action Bar -->
+              <div class="action-bar" id="actionBar">
+                <button class="btn btn-default" id="btnEdit" style="display:none;" onclick="editImage()">✏️ 编辑</button>
+                <span class="action-bar-spacer"></span>
+                <button class="btn btn-primary btn-lg" id="btnBuild" style="display:none;" onclick="confirmBuild()">🔨 构建镜像</button>
+                <button class="btn btn-primary btn-lg" id="btnPublish" style="display:none;" onclick="confirmPublish()">📤 发布到镜像市场</button>
+                <span id="buildingStatus" style="display:none;color:#2f54eb;font-size:14px;font-weight:500;"><span class="building-spinner"></span> 构建中，请稍候...</span>
+                <span id="publishedStatus" style="display:none;color:#23ada4;font-size:14px;font-weight:500;">✅ 已发布到镜像市场</span>
+              </div>
+
+            </div><!-- /detail-left -->
+
+            <!-- RIGHT: Dockerfile + Build Log -->
+            <div class="detail-right">
+
+              <!-- Dockerfile Section -->
+              <div id="dockerfileSection">
+                <div class="section-title" id="dockerfileSectionTitle">Dockerfile</div>
+
+                <!-- Code Viewer -->
+                <div class="code-viewer-wrap" id="codeViewer">
+                  <div class="line-numbers" id="lineNums"></div>
+                  <div class="code-content" id="codeContent"></div>
+                </div>
+
+                <!-- Tarball Placeholder -->
+                <div class="code-viewer-wrap" id="tarballViewer" style="display:none;">
+                  <div class="tarball-info-placeholder">
+                    <div class="tarball-icon">📦</div>
+                    <div class="tarball-name" id="tarballFileName">--</div>
+                    <div class="tarball-meta" id="tarballFileMeta">--</div>
+                    <div class="tarball-note">⚠️ 该镜像通过压缩包方式上传，系统无法将压缩包内容反向解析为 Dockerfile 文本。<br>如需查看或修改镜像构建内容，建议使用 Dockerfile 在线编辑方式重新创建。</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Build Log -->
+              <div id="buildLogSection" style="display:none;margin-top:20px;">
+                <div class="section-title">构建日志</div>
+                <div class="build-log-wrap">
+                  <div class="build-log-header">
+                    <span class="build-log-title">BUILD LOG</span>
+                    <span style="font-size:11px;color:#636380;" id="logTimestamp">--</span>
+                  </div>
+                  <div class="build-log-content" id="buildLogContent"></div>
+                </div>
+              </div>
+
+            </div><!-- /detail-right -->
+
+          </div><!-- /detail-body -->
+
+        </div><!-- /card-body -->
+      </div><!-- /page-card -->
+    </div><!-- /page-procard -->
+  </main>
+</div><!-- /app-body -->
+
+<!-- ===== BUILD CONFIRMATION MODAL ===== -->
+<div class="modal-overlay" id="buildModal">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-title">确认构建镜像</span><span class="modal-close" onclick="closeBuildModal()">✕</span></div>
+    <div class="modal-body" id="buildModalBody">确认对该镜像进行构建操作吗？构建过程可能需要 3–15 分钟。</div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="closeBuildModal()">取消</button><button class="btn btn-primary" id="confirmBuildBtn" onclick="startBuild()">确认构建</button></div>
+  </div>
+</div>
+
+<!-- ===== PUBLISH CONFIRMATION MODAL ===== -->
+<div class="modal-overlay" id="publishModal">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-title">确认发布镜像</span><span class="modal-close" onclick="closePublishModal()">✕</span></div>
+    <div class="modal-body" id="publishModalBody">确认将该镜像发布到镜像市场吗？</div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="closePublishModal()">取消</button><button class="btn btn-primary" id="confirmPublishBtn" onclick="doPublish()">确认发布</button></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== INTERACTION GUIDE ===== -->
+<button class="guide-trigger" id="guideTrigger" onclick="toggleGuide()">🧪 交互演示指引</button>
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-drawer">
+    <div class="guide-drawer-header"><span class="guide-drawer-title">🧪 交互演示指引 — 镜像详情页</span><span class="guide-drawer-close" onclick="toggleGuide()">✕</span></div>
+    <div class="guide-drawer-body">
+      <div class="guide-section">
+        <div class="guide-section-title">📋 一、页面布局</div>
+        <table class="guide-table">
+          <thead><tr><th>区域</th><th>位置</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>基础信息 + 操作</td><td>左侧（460px 固定宽度）</td><td>状态横幅、镜像元数据（名称/分类/功能/版本/GPU/地址/描述等）、操作按钮</td></tr>
+            <tr><td>Dockerfile + 日志</td><td>右侧（自适应宽度）</td><td>只读代码查看器（或压缩包信息）、构建日志终端</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">🔄 二、状态流转与操作</div>
+        <table class="guide-table">
+          <thead><tr><th>当前状态</th><th>操作按钮</th><th>操作结果</th></tr></thead>
+          <tbody>
+            <tr><td><span class="status-chip default">未构建</span></td><td>🔨 构建镜像 + ✏️ 编辑</td><td>进入构建流程，状态变为「构建中」</td></tr>
+            <tr><td><span class="status-chip pending">构建中</span></td><td>无操作按钮（spinner）</td><td>等待构建完成（3–8秒模拟）</td></tr>
+            <tr><td><span class="status-chip error">构建失败</span></td><td>🔨 重新构建 + ✏️ 编辑</td><td>重新进入构建流程</td></tr>
+            <tr><td><span class="status-chip success">构建成功</span></td><td>📤 发布到镜像市场</td><td>确认后发布，状态变为「已发布」</td></tr>
+            <tr><td><span class="status-chip published">已发布</span></td><td>无操作按钮（已发布标识）</td><td>终态，镜像已在市场中可用</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">🔨 三、构建流程</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>触发构建 <span class="guide-tag modal">Modal</span></td><td>点击左侧 <b>🔨 构建镜像</b></td><td>弹出构建确认 Modal → 确认后开始构建</td></tr>
+            <tr><td>构建进度</td><td>确认构建后</td><td>状态变为「构建中」+ 右侧构建日志逐行输出</td></tr>
+            <tr><td>构建成功 <span class="guide-tag do">90%</span></td><td>构建流程完成</td><td>状态变为「构建成功」+ 显示「📤 发布」按钮</td></tr>
+            <tr><td>构建失败 <span class="guide-tag error">10%</span></td><td>构建流程以错误结束</td><td>状态变为「构建失败」+ 日志中显示错误</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">📤 四、发布流程</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>触发发布 <span class="guide-tag modal">Modal</span></td><td>构建成功后点击 <b>📤 发布到镜像市场</b></td><td>弹出发布确认 Modal</td></tr>
+            <tr><td>确认发布 <span class="guide-tag do">Toast</span></td><td>Modal 中点击「确认发布」</td><td>状态变为「已发布」+ 绿色 Toast</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">🌓 五、其他</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>编辑镜像</td><td>未构建/构建失败状态下点击 <b>✏️ 编辑</b></td><td>跳转到创建页 <code>?edit=&lt;id&gt;</code></td></tr>
+            <tr><td>切换镜像</td><td>修改 URL 中 <code>?id=</code> 参数值 (1–9)</td><td>显示不同镜像的详情</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+/* ============================================================
+   MOCK DATA
+   ============================================================ */
+var MOCK_IMAGES = [
+  { id:1, name:'pytorch-training', category:'sensing', function:'object-detector', version:'1.0.0', address:'registry.example.com/sensing/pytorch-training:1.0.0', status:'published', statusText:'已发布', gpu:true, description:'基于 PyTorch 2.0 的训练镜像，包含 CUDA 11.7 和常用计算机视觉库（torchvision、opencv-python）。适用于目标检测、图像分割等感知类模型训练。', createdAt:'2026-07-08 14:30:00', publishedAt:'2026-07-08 17:45:00', size:'3.2 GB', buildMethod:'dockerfile', dockerfile:'FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime\n\nWORKDIR /workspace\n\n# Install system dependencies\nRUN apt-get update && apt-get install -y \\\n    libgl1-mesa-glx \\\n    libglib2.0-0 \\\n    && rm -rf /var/lib/apt/lists/*\n\n# Copy requirements and install Python packages\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copy application code\nCOPY . .\n\n# Set environment variables\nENV PYTHONUNBUFFERED=1\nENV CUDA_VISIBLE_DEVICES=0\n\n# Default command\nCMD ["python", "train.py"]', buildLog:[{type:'info',text:'[2026-07-08 14:31:00] Step 1/8 : FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime'},{type:'success',text:'[2026-07-08 14:31:12]  ---> 4a3b2c1d0e9f'},{type:'info',text:'[2026-07-08 14:33:45] Step 3/8 : RUN apt-get update && apt-get install...'},{type:'success',text:'[2026-07-08 14:35:25] Successfully built a7b8c9d0e1f2'},{type:'success',text:'[2026-07-08 14:35:26] BUILD COMPLETE — 镜像构建成功 ✓'}] },
+  { id:2, name:'llm-inference', category:'llm', function:'text-generator', version:'2.1.0', address:'registry.example.com/llm/llm-inference:2.1.0', status:'building', statusText:'构建中', gpu:true, description:'大模型推理镜像，支持 LLaMA、ChatGLM 等主流开源模型的高效推理部署。', createdAt:'2026-07-07 09:15:00', publishedAt:null, size:'8.7 GB', buildMethod:'dockerfile', dockerfile:'FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04\n\nWORKDIR /app\n\n# Install Python and dependencies\nRUN apt-get update && apt-get install -y python3.10 python3-pip\n\n# Install PyTorch with CUDA support\nRUN pip3 install torch torchvision torchaudio\n\n# Install inference engine\nRUN pip3 install vllm transformers accelerate\n\n# Copy model serving code\nCOPY ./serve /app/serve\n\n# Expose API port\nEXPOSE 8000\n\nCMD ["python3", "-m", "serve.api_server"]', buildLog:[{type:'info',text:'[2026-07-07 09:16:00] Step 1/10 : FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04'},{type:'success',text:'[2026-07-07 09:16:30]  ---> 8f9e0d1c2b3a'},{type:'info',text:'[2026-07-07 09:20:30] Building in progress...'},{type:'warn',text:'[2026-07-07 09:22:00] Slow network detected, downloading large packages...'}] },
+  { id:3, name:'sim-env-v2', category:'simulation', function:'env-simulator', version:'1.0.3-beta', address:'registry.example.com/simulation/sim-env-v2:1.0.3-beta', status:'unbuilt', statusText:'未构建', gpu:false, description:'自动驾驶仿真环境镜像，基于 CARLA 0.9.14 构建，支持多传感器数据模拟与场景回放。', createdAt:'2026-07-06 16:45:00', publishedAt:null, size:'12.1 GB', buildMethod:'dockerfile', dockerfile:'FROM carlasim/carla:0.9.14\n\nWORKDIR /home/carla\n\n# Install additional Python dependencies\nRUN pip install --no-cache-dir \\\n    numpy \\\n    opencv-python \\\n    scipy\n\n# Copy simulation scripts\nCOPY ./scenarios /home/carla/scenarios\nCOPY ./config /home/carla/config\n\n# Set environment\nENV CARLA_SERVER_HOST=localhost\nENV CARLA_SERVER_PORT=2000\n\nCMD ["python3", "run_simulation.py"]', buildLog:[] },
+  { id:4, name:'decision-planner', category:'decision', function:'path-planner', version:'0.9.0', address:'registry.example.com/decision/decision-planner:0.9.0', status:'failed', statusText:'构建失败', gpu:false, description:'路径规划决策镜像，基于 ROS 2 Humble 和 Navigation2 框架。', createdAt:'2026-07-05 11:20:00', publishedAt:null, size:'--', buildMethod:'dockerfile', dockerfile:'FROM ros:humble-ros-core\n\nWORKDIR /ros_ws\n\n# Install Navigation2 dependencies\nRUN apt-get update && apt-get install -y \\\n    ros-humble-navigation2 \\\n    ros-humble-nav2-bringup\n\n# Copy planner package\nCOPY ./src /ros_ws/src\n\n# Build workspace\nRUN . /opt/ros/humble/setup.sh && colcon build\n\nCMD ["ros2", "launch", "nav2_bringup", "bringup_launch.py"]', buildLog:[{type:'info',text:'[2026-07-05 11:21:00] Step 1/8 : FROM ros:humble-ros-core'},{type:'success',text:'[2026-07-05 11:21:45]  ---> 7c8d9e0f1a2b'},{type:'warn',text:'[2026-07-05 11:23:30] WARNING: Package ros-humble-turtlebot3-gazebo not found'},{type:'error',text:'[2026-07-05 11:23:31] E: Unable to locate package ros-humble-turtlebot3-gazebo'},{type:'error',text:'[2026-07-05 11:23:31] BUILD FAILED — 请检查依赖包名称是否正确后重新构建'}] },
+  { id:5, name:'image-classifier', category:'sensing', function:'image-classifier', version:'1.2.0', address:'registry.example.com/sensing/image-classifier:1.2.0', status:'success', statusText:'构建成功', gpu:true, description:'图像分类推理镜像，基于 TensorFlow 2.13，支持 ResNet/VGG/EfficientNet', createdAt:'2026-07-09 08:00:00', publishedAt:null, size:'5.4 GB', buildMethod:'dockerfile', dockerfile:'FROM tensorflow/tensorflow:2.13.0-gpu\n\nWORKDIR /app\n\n# Install additional dependencies\nRUN pip install --no-cache-dir \\\n    pillow \\\n    numpy \\\n    scikit-learn\n\n# Copy model and inference code\nCOPY ./model /app/model\nCOPY ./inference.py /app/\n\n# Expose REST API port\nEXPOSE 8501\n\nCMD ["python", "inference.py"]', buildLog:[{type:'info',text:'[2026-07-09 08:01:00] Step 1/6 : FROM tensorflow/tensorflow:2.13.0-gpu'},{type:'success',text:'[2026-07-09 08:01:45]  ---> 3f2e1d0c9b8a'},{type:'info',text:'[2026-07-09 08:04:00] Step 3/6 : RUN pip install dependencies...'},{type:'success',text:'[2026-07-09 08:05:30] Successfully built d1e2f3a4b5c6'},{type:'success',text:'[2026-07-09 08:05:31] BUILD COMPLETE — 镜像构建成功 ✓'}] },
+  { id:6, name:'yolov8-detector', category:'sensing', function:'object-detector', version:'2.0.1', address:'registry.example.com/sensing/yolov8-detector:2.0.1', status:'building', statusText:'构建中', method:'tarball', gpu:true, description:'YOLOv8 目标检测镜像，通过 .tar.gz 包上传', createdAt:'2026-07-10 10:30:00', publishedAt:null, size:'6.1 GB', buildMethod:'tarball', tarballFile:{name:'yolov8-detector-v2.0.1.tar.gz',size:'6.1 GB'}, dockerfile:'', buildLog:[{type:'info',text:'[2026-07-10 10:31:00] Extracting tarball...'},{type:'success',text:'[2026-07-10 10:32:00] Extraction complete'},{type:'info',text:'[2026-07-10 10:33:00] Building image from extracted content...'},{type:'warn',text:'[2026-07-10 10:34:00] Large model weights detected, this may take a while...'}] },
+  { id:7, name:'bert-embedding', category:'llm', function:'text-embedder', version:'3.0.0', address:'registry.example.com/llm/bert-embedding:3.0.0', status:'success', statusText:'构建成功', method:'tarball', gpu:false, description:'BERT 文本向量化镜像，通过 .tar.gz 包上传', createdAt:'2026-07-09 15:00:00', publishedAt:null, size:'4.3 GB', buildMethod:'tarball', tarballFile:{name:'bert-embedding-v3.0.0.tar.gz',size:'4.3 GB'}, dockerfile:'', buildLog:[{type:'info',text:'[2026-07-09 15:01:00] Extracting tarball...'},{type:'success',text:'[2026-07-09 15:02:30] Extraction complete'},{type:'info',text:'[2026-07-09 15:03:00] Building image...'},{type:'success',text:'[2026-07-09 15:05:00] Image built'},{type:'success',text:'[2026-07-09 15:05:01] BUILD COMPLETE — 镜像构建成功 ✓'}] },
+  { id:8, name:'speech-recognizer', category:'decision', function:'speech-recognizer', version:'1.5.2', address:'registry.example.com/decision/speech-recognizer:1.5.2', status:'failed', statusText:'构建失败', method:'tarball', gpu:true, description:'语音识别镜像，基于 Whisper 模型，通过 .tar.gz 包上传', createdAt:'2026-07-11 09:45:00', publishedAt:null, size:'--', buildMethod:'tarball', tarballFile:{name:'speech-recognizer-v1.5.2.tar.gz',size:'7.8 GB'}, dockerfile:'', buildLog:[{type:'info',text:'[2026-07-11 09:46:00] Extracting tarball...'},{type:'success',text:'[2026-07-11 09:47:30] Extraction complete'},{type:'info',text:'[2026-07-11 09:48:00] Building image...'},{type:'error',text:'[2026-07-11 09:49:00] ERROR: CUDA version mismatch — requires CUDA >= 11.8'},{type:'error',text:'[2026-07-11 09:49:01] BUILD FAILED — 请检查 GPU 驱动版本后重新构建'}] },
+  { id:9, name:'resnet-classifier', category:'sensing', function:'image-classifier', version:'1.0.0', address:'registry.example.com/sensing/resnet-classifier:1.0.0', status:'published', statusText:'已发布', method:'tarball', gpu:false, description:'ResNet-50 图像分类镜像，通过 .tar.gz 包上传，已发布至镜像市场', createdAt:'2026-07-08 11:00:00', publishedAt:'2026-07-08 19:00:00', size:'2.8 GB', buildMethod:'tarball', tarballFile:{name:'resnet-classifier-v1.0.0.tar.gz',size:'2.8 GB'}, dockerfile:'', buildLog:[{type:'info',text:'[2026-07-08 11:01:00] Extracting tarball...'},{type:'success',text:'[2026-07-08 11:02:30] Extraction complete'},{type:'info',text:'[2026-07-08 11:03:00] Building image...'},{type:'success',text:'[2026-07-08 11:05:00] Image built'},{type:'success',text:'[2026-07-08 11:05:01] BUILD COMPLETE — 镜像构建成功 ✓'}] }
+];
+
+var _currentImage = null;
+var _buildTimer = null;
+var _buildLogLines = [];
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function initDetail() {
+  var params = new URLSearchParams(window.location.search);
+  var id = parseInt(params.get('id'), 10);
+  if (!id || isNaN(id)) { showToast('error', '未指定镜像 ID，请从镜像管理页面进入'); return; }
+  _currentImage = MOCK_IMAGES.find(function(img) { return img.id === id; });
+  if (!_currentImage) { showToast('error', '未找到 ID 为「' + id + '」的镜像'); return; }
+  renderDetail();
+}
+
+function statusClass(s) {
+  switch(s) { case 'unbuilt': return 'default'; case 'building': return 'pending'; case 'success': return 'success'; case 'failed': return 'error'; case 'published': return 'published'; default: return 'default'; }
+}
+function catIcon(c) {
+  switch(c) { case 'sensing': return '👁️'; case 'decision': return '🧠'; case 'simulation': return '🌐'; case 'llm': return '🤖'; default: return '📦'; }
+}
+
+/* ============================================================
+   RENDER FULL DETAIL
+   ============================================================ */
+function renderDetail() {
+  var img = _currentImage; if (!img) return;
+  document.getElementById('detailTitle').innerHTML = '镜像详情 <span class="status-chip ' + statusClass(img.status) + '" style="margin-left:12px;">' + img.statusText + '</span>';
+  renderBanner(img);
+  renderInfoList(img);
+  renderBuildContent(img);
+  renderBuildLog(img);
+  renderActions(img);
+}
+
+/* ---- Status Banner ---- */
+function renderBanner(img) {
+  var banner = document.getElementById('statusBanner');
+  var icon = document.getElementById('bannerIcon');
+  var title = document.getElementById('bannerTitle');
+  var desc = document.getElementById('bannerDesc');
+  banner.className = 'status-banner ' + img.status;
+  switch(img.status) {
+    case 'unbuilt': icon.textContent='📋'; title.textContent='未构建'; desc.textContent='该镜像已保存但尚未构建。点击下方「构建镜像」按钮启动构建流程，构建完成后才可发布。'; break;
+    case 'building': icon.innerHTML='<span class="building-spinner"></span>'; title.textContent='构建中'; desc.textContent='镜像正在构建，请耐心等待。可在右侧查看实时构建日志。'; break;
+    case 'success': icon.textContent='✅'; title.textContent='构建成功'; desc.textContent='镜像已构建成功并通过安全扫描，可以发布到镜像市场。'; break;
+    case 'failed': icon.textContent='❌'; title.textContent='构建失败'; desc.textContent='构建过程中出现错误，请查看右侧构建日志了解失败原因。'; break;
+    case 'published': icon.textContent='🚀'; title.textContent='已发布'; desc.textContent='该镜像已发布到镜像市场。发布于 ' + (img.publishedAt || '--'); break;
+  }
+}
+
+/* ---- Info List (left panel) ---- */
+function renderInfoList(img) {
+  var rows = [
+    { label: '镜像名称', value: escapeHTML(img.name) },
+    { label: '镜像分类', value: catIcon(img.category) + ' ' + escapeHTML(img.category) },
+    { label: '功能', value: escapeHTML(img.function) },
+    { label: '版本号', value: escapeHTML(img.version) },
+    { label: 'GPU 资源', value: img.gpu ? '需要 GPU 资源' : '不需要 GPU 资源' },
+    { label: '镜像大小', value: escapeHTML(img.size) },
+    { label: '镜像地址', value: '<code>' + escapeHTML(img.address) + '</code>' },
+    { label: '创建方式', value: (img.buildMethod === 'dockerfile' ? '📄 Dockerfile 在线编辑' : '📦 .tar.gz 压缩包上传') },
+    { label: '创建时间', value: escapeHTML(img.createdAt) },
+    { label: '当前状态', value: '<span class="status-chip ' + statusClass(img.status) + '">' + img.statusText + '</span>' }
+  ];
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div class="info-row"><span class="info-label">' + r.label + '</span><span class="info-value">' + r.value + '</span></div>';
+  });
+  // Description row
+  html += '<div class="info-row info-desc-block"><div><span class="info-label">描述</span><span class="info-value" style="font-weight:400;">' + escapeHTML(img.description || '（未填写）') + '</span></div></div>';
+  document.getElementById('infoList').innerHTML = html;
+}
+
+/* ---- Build Content (right panel) ---- */
+function renderBuildContent(img) {
+  if (img.buildMethod === 'tarball') {
+    document.getElementById('dockerfileSectionTitle').textContent = '构建内容';
+    document.getElementById('codeViewer').style.display = 'none';
+    document.getElementById('tarballViewer').style.display = 'flex';
+    document.getElementById('tarballFileName').textContent = (img.tarballFile && img.tarballFile.name) ? img.tarballFile.name : '--';
+    document.getElementById('tarballFileMeta').textContent = (img.tarballFile && img.tarballFile.size) ? '文件大小：' + img.tarballFile.size : '文件大小：--';
+  } else {
+    document.getElementById('dockerfileSectionTitle').textContent = 'Dockerfile';
+    document.getElementById('codeViewer').style.display = 'flex';
+    document.getElementById('tarballViewer').style.display = 'none';
+    var lines = (img.dockerfile || '# 暂无 Dockerfile 内容').split('\n');
+    var lineHtml = '', codeHtml = '';
+    for (var i = 0; i < lines.length; i++) {
+      lineHtml += '<div class="line-num">' + (i + 1) + '</div>';
+      codeHtml += '<div class="code-line">' + escapeHTML(lines[i]) + '</div>';
+    }
+    document.getElementById('lineNums').innerHTML = lineHtml;
+    document.getElementById('codeContent').innerHTML = codeHtml;
+  }
+}
+
+/* ---- Build Log (right panel) ---- */
+function renderBuildLog(img) {
+  var section = document.getElementById('buildLogSection');
+  var content = document.getElementById('buildLogContent');
+  if (!img.buildLog || img.buildLog.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  var html = '';
+  img.buildLog.forEach(function(e) { html += '<div class="build-log-line ' + e.type + '">' + escapeHTML(e.text) + '</div>'; });
+  content.innerHTML = html;
+}
+
+/* ---- Action Bar (left panel) ---- */
+function renderActions(img) {
+  var btnEdit = document.getElementById('btnEdit');
+  var btnBuild = document.getElementById('btnBuild');
+  var btnPublish = document.getElementById('btnPublish');
+  var buildingStatus = document.getElementById('buildingStatus');
+  var publishedStatus = document.getElementById('publishedStatus');
+  btnEdit.style.display = 'none'; btnBuild.style.display = 'none'; btnPublish.style.display = 'none';
+  buildingStatus.style.display = 'none'; publishedStatus.style.display = 'none';
+  switch(img.status) {
+    case 'unbuilt': btnBuild.style.display = ''; btnEdit.style.display = ''; break;
+    case 'building': buildingStatus.style.display = ''; break;
+    case 'failed': btnBuild.style.display = ''; btnBuild.innerHTML = '🔨 重新构建'; btnEdit.style.display = ''; break;
+    case 'success': btnPublish.style.display = ''; break;
+    case 'published': publishedStatus.style.display = ''; break;
+  }
+}
+
+/* ============================================================
+   BUILD FLOW
+   ============================================================ */
+function confirmBuild() {
+  if(!requireAuth())return;
+  if (!_currentImage) return;
+  var bodyHtml = '<div style="line-height:2;"><div><b>镜像名称：</b>' + escapeHTML(_currentImage.name) + '</div><div><b>版本号：</b>' + escapeHTML(_currentImage.version) + '</div><div><b>创建方式：</b>' + (_currentImage.buildMethod === 'dockerfile' ? 'Dockerfile 在线编辑' : '.tar.gz 压缩包上传') + '</div></div><div style="margin-top:12px;padding:10px 14px;background:#f0f5ff;border-radius:6px;font-size:13px;color:#2f54eb;">⏱ 构建过程可能需要 3–15 分钟，期间镜像将处于「构建中」状态。</div>';
+  document.getElementById('buildModalBody').innerHTML = bodyHtml;
+  document.getElementById('buildModal').classList.add('visible');
+}
+function closeBuildModal() { document.getElementById('buildModal').classList.remove('visible'); }
+
+function startBuild() {
+  closeBuildModal();
+  if (!_currentImage) return;
+  _currentImage.status = 'building'; _currentImage.statusText = '构建中'; _currentImage.buildLog = []; _buildLogLines = [];
+  renderDetail();
+  document.getElementById('buildLogSection').style.display = '';
+  showToast('info', '镜像构建已启动，正在构建中...');
+
+  var buildSteps = [
+    {type:'info',text:'['+now()+'] Step 1/8 : FROM base-image:latest'},{type:'success',text:'['+now()+']  ---> Pulling base image...'},{type:'success',text:'['+now()+']  ---> Digest: sha256:'+rhex(12)},{type:'info',text:'['+now()+'] Step 2/8 : WORKDIR /workspace'},{type:'success',text:'['+now()+']  ---> Running in '+rhex(12)},{type:'info',text:'['+now()+'] Step 3/8 : RUN apt-get update && apt-get install -y dependencies...'},{type:'success',text:'['+now()+']  ---> Installing packages...'},{type:'warn',text:'['+now()+'] WARNING: Some optional dependencies may not be installed'},{type:'info',text:'['+now()+'] Step 4/8 : COPY requirements.txt .'},{type:'success',text:'['+now()+']  ---> '+rhex(12)},{type:'info',text:'['+now()+'] Step 5/8 : RUN pip install -r requirements.txt'},{type:'success',text:'['+now()+']  ---> Installing Python dependencies...'},{type:'info',text:'['+now()+'] Step 6/8 : COPY . .'},{type:'success',text:'['+now()+']  ---> Copying application code...'},{type:'info',text:'['+now()+'] Step 7/8 : ENV APP_ENV=production'},{type:'success',text:'['+now()+']  ---> Running in '+rhex(12)},{type:'info',text:'['+now()+'] Step 8/8 : CMD ["python", "main.py"]'},{type:'success',text:'['+now()+']  ---> '+rhex(12)}
+  ];
+
+  var willSucceed = Math.random() > 0.1;
+  var stepIndex = 0;
+  function appendLog(l) { _buildLogLines.push(l); _currentImage.buildLog = _buildLogLines.slice(); var c = document.getElementById('buildLogContent'); c.innerHTML += '<div class="build-log-line ' + l.type + '">' + escapeHTML(l.text) + '</div>'; var w = document.querySelector('.build-log-wrap'); if (w) w.scrollTop = w.scrollHeight; }
+
+  _buildTimer = setInterval(function() {
+    if (stepIndex < buildSteps.length) { appendLog(buildSteps[stepIndex]); stepIndex++; }
+    else { clearInterval(_buildTimer);
+      if (willSucceed) {
+        [{type:'success',text:'['+now()+'] Successfully built '+rhex(12)},{type:'success',text:'['+now()+'] Successfully tagged '+_currentImage.address},{type:'success',text:'['+now()+'] BUILD COMPLETE — 镜像构建成功 ✓'}].forEach(function(l){appendLog(l);});
+        _currentImage.status = 'success'; _currentImage.statusText = '构建成功';
+      } else {
+        [{type:'error',text:'['+now()+'] ERROR: Dependency resolution failed'},{type:'error',text:'['+now()+'] The command returned a non-zero code: 1'},{type:'error',text:'['+now()+'] BUILD FAILED — 请检查 Dockerfile 配置后重新构建'}].forEach(function(l){appendLog(l);});
+        _currentImage.status = 'failed'; _currentImage.statusText = '构建失败';
+      }
+      renderDetail();
+      showToast(willSucceed ? 'success' : 'error', '镜像「' + _currentImage.name + '」构建' + (willSucceed ? '成功' : '失败') + '！' + (willSucceed ? '可发布到镜像市场。' : '请查看构建日志。'));
+    }
+  }, 600);
+}
+
+/* ============================================================
+   PUBLISH FLOW
+   ============================================================ */
+function confirmPublish() {
+  if(!requireAuth())return;
+  if (!_currentImage) return;
+  document.getElementById('publishModalBody').innerHTML = '<div style="line-height:2;"><div><b>镜像名称：</b>' + escapeHTML(_currentImage.name) + '</div><div><b>版本号：</b>' + escapeHTML(_currentImage.version) + '</div><div><b>镜像地址：</b><code style="font-size:12px;">' + escapeHTML(_currentImage.address) + '</code></div></div><div style="margin-top:12px;padding:10px 14px;background:#e6fffb;border-radius:6px;font-size:13px;color:#23ada4;">📤 发布后该镜像将在镜像市场中公开可见，其他用户可通过镜像地址拉取使用。</div>';
+  document.getElementById('publishModal').classList.add('visible');
+}
+function closePublishModal() { document.getElementById('publishModal').classList.remove('visible'); }
+function doPublish() {
+  closePublishModal();
+  if (!_currentImage) return;
+  _currentImage.status = 'published'; _currentImage.statusText = '已发布'; _currentImage.publishedAt = now();
+  renderDetail();
+  showToast('success', '镜像「' + _currentImage.name + '」已成功发布到镜像市场！');
+}
+
+/* ============================================================
+   EDIT
+   ============================================================ */
+function editImage() { if (!_currentImage) return; window.location.href = 'image-custom-create.html?edit=' + _currentImage.id; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+var _toastTimer = null;
+function showToast(type, msg) { var t = document.getElementById('toast'); t.className = 'toast ' + type + ' visible'; t.textContent = (type==='success'?'✅ ':type==='error'?'❌ ':'ℹ️ ') + msg; clearTimeout(_toastTimer); _toastTimer = setTimeout(function(){t.classList.remove('visible');}, 4000); }
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function escapeHTML(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function now() { var d=new Date(),pad=function(n){return n<10?'0'+n:n;}; return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
+function rhex(n) { var c='0123456789abcdef',r=''; for(var i=0;i<n;i++) r+=c[Math.floor(Math.random()*16)]; return r; }
+
+/* ============================================================
+   MODAL OVERLAY CLICK
+   ============================================================ */
+document.getElementById('buildModal').addEventListener('click', function(e) { if (e.target === this) closeBuildModal(); });
+document.getElementById('publishModal').addEventListener('click', function(e) { if (e.target === this) closePublishModal(); });
+
+/* ============================================================
+   PRD TOGGLE
+   ============================================================ */
+var _prdVisible = false;
+function togglePRD() {
+  _prdVisible = !_prdVisible;
+  document.querySelectorAll('.prd-panel').forEach(function(p) { p.classList.toggle('visible', _prdVisible); });
+  document.querySelectorAll('.prd-toggle-btn').forEach(function(b) { b.classList.toggle('active', _prdVisible); });
+}
+
+/* ============================================================
+   GUIDE TOGGLE
+   ============================================================ */
+function toggleGuide() { document.getElementById('guideOverlay').classList.toggle('visible'); }
+document.getElementById('guideOverlay').addEventListener('click', function(e) { if (e.target === this) toggleGuide(); });
+
+/* ============================================================
+   INIT
+   ============================================================ */
+// ===== NOTIFICATIONS =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'info\',\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+
+// ===== AUTH STATE (must run first) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+initDetail();
+renderNotifs();
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('success', '已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

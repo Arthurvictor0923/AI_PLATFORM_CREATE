@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在线开发 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bdh-micro-main-base-header-height: 64px;
+  --sf-img-0: url("data:image/png;base64,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");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88);
+  background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* BG-LIST */
+.bg-list {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--sf-img-0) center / cover no-repeat;
+  z-index: 0; pointer-events: none;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px; line-height: 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19;
+  display: flex; flex-direction: column; padding: 0;
+}
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.logo-link img { height: 32px !important; width: auto; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s, border-color 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.app-body { display: flex; padding-top: 60px; min-height: 100vh; position: relative; z-index: 1; }
+.sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: 200px; background: transparent; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+.sidebar-inner { padding: 16px 8px; }
+.sidebar-menu { display: flex; flex-direction: column; }
+.sidebar-menu-group { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 24px 4px; text-transform: uppercase; }
+.sidebar-menu-item { display: flex; align-items: center; gap: 8px; height: 40px; line-height: 40px; padding-inline: 16px; margin: 0 16px 4px; width: calc(100% - 32px); border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; white-space: nowrap; overflow: hidden; }
+.sidebar-menu-item:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.88); }
+.sidebar-menu-item.active { color: rgb(47,84,235); background: rgba(47,84,235,0.2); font-weight: 600; border-radius: 4px !important; }
+.sidebar-menu-icon { font-size: 16px; width: 16px; text-align: center; flex-shrink: 0; }
+
+[data-prefers-color="dark"] .sidebar-menu-group { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .sidebar-menu-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .sidebar-menu-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content-area { flex: 1; margin-left: 200px; padding: 24px 40px; min-height: calc(100vh - 60px); position: relative; z-index: 1; min-width: 0; overflow-x: hidden; }
+
+.page-procard { background: transparent; }
+.page-card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02); border: 1px solid rgba(5,5,5,0.06); }
+[data-prefers-color="dark"] .page-card { background: #1f1f1f; border-color: #303030; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 6px -1px rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.09); }
+
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 24px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; height: 32px; padding: 4px 15px;
+  font-size: 14px; font-weight: 400; border-radius: 6px;
+  border: 1px solid transparent; cursor: pointer; user-select: none;
+  white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-text { background: transparent; color: rgba(0,0,0,0.88); border-color: transparent; }
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+.btn-danger-text { background: transparent; color: rgba(0,0,0,0.65); border-color: transparent; }
+.btn-danger-text:hover { color: #ff4d4f; background: #fff2f0; }
+.btn-lg { height: 40px; padding: 6px 23px; }
+.btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .btn-text:hover { background: rgba(255,255,255,0.08); }
+
+/* ============================================================
+   FORM STYLES
+   ============================================================ */
+.section-title {
+  font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.section-title::before {
+  content: ''; display: inline-block;
+  width: 3px; height: 14px;
+  background: rgb(47,84,235); border-radius: 2px;
+}
+[data-prefers-color="dark"] .section-title { color: rgba(255,255,255,0.85); }
+
+.form-item { margin-bottom: 24px; }
+.form-label { display: flex; align-items: center; height: 32px; font-size: 14px; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .form-label { color: rgba(255,255,255,0.85); }
+.form-label .required { color: #ff4d4f; margin-right: 4px; font-family: SimSun, sans-serif; }
+.form-label .optional { color: rgba(0,0,0,0.45); font-weight: 400; margin-left: 4px; }
+
+.form-input, .form-select {
+  width: 100%; height: 32px; padding: 4px 11px;
+  font-size: 14px; color: rgba(0,0,0,0.88);
+  background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); outline: none;
+}
+.form-input::placeholder { color: rgba(0,0,0,0.25); }
+.form-input:hover, .form-select:hover { border-color: #597ef7; }
+.form-input:focus, .form-select:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+
+[data-prefers-color="dark"] .form-input, [data-prefers-color="dark"] .form-select {
+  background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85);
+}
+
+.form-select-wrap { position: relative; }
+.form-select { appearance: none; -webkit-appearance: none; padding-right: 28px; cursor: pointer; }
+.form-select-wrap::after {
+  content: ''; position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid rgba(0,0,0,0.45); pointer-events: none;
+}
+
+.form-textarea {
+  width: 100%; min-height: 72px; padding: 8px 11px; font-size: 14px;
+  color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9;
+  border-radius: 6px; resize: vertical; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  outline: none; font-family: inherit; line-height: 1.5715;
+}
+.form-textarea:hover { border-color: #597ef7; }
+.form-textarea:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.form-textarea::placeholder { color: rgba(0,0,0,0.25); }
+[data-prefers-color="dark"] .form-textarea { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* Input with affix (suffix unit) */
+.input-affix-wrap {
+  display: flex; align-items: center; width: 100%; height: 32px;
+  background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); overflow: hidden;
+}
+.input-affix-wrap:hover { border-color: #597ef7; }
+.input-affix-wrap:focus-within { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.input-affix-wrap .affix-input {
+  flex: 1; height: 100%; border: none; outline: none; padding: 4px 11px;
+  font-size: 14px; color: rgba(0,0,0,0.88); background: transparent; min-width: 0;
+}
+.input-affix-wrap .affix-input::placeholder { color: rgba(0,0,0,0.25); }
+.input-affix-wrap .affix-prefix {
+  display: flex; align-items: center; padding-left: 11px;
+  font-size: 14px; color: rgba(0,0,0,0.45); white-space: nowrap; flex-shrink: 0;
+}
+.input-affix-wrap .affix-suffix {
+  display: flex; align-items: center; padding-right: 11px;
+  font-size: 14px; color: rgba(0,0,0,0.45); white-space: nowrap; flex-shrink: 0;
+}
+[data-prefers-color="dark"] .input-affix-wrap { background: #1f1f1f; border-color: #434343; }
+[data-prefers-color="dark"] .input-affix-wrap .affix-input { color: rgba(255,255,255,0.85); }
+
+/* Radio Group */
+.radio-group { display: flex; align-items: center; gap: 24px; }
+.radio-item { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; height: 32px; font-size: 14px; color: rgba(0,0,0,0.88); }
+.radio-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #d9d9d9; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.radio-item:hover .radio-dot { border-color: #2f54eb; }
+.radio-item.checked .radio-dot { border-color: #2f54eb; }
+.radio-item.checked .radio-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #2f54eb; }
+[data-prefers-color="dark"] .radio-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .radio-dot { background: transparent; border-color: #434343; }
+
+/* Radio Button Group (solid) */
+.radio-solid-group { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid #d9d9d9; }
+[data-prefers-color="dark"] .radio-solid-group { border-color: #434343; }
+.radio-solid-item {
+  height: 32px; padding: 0 16px; font-size: 14px; color: rgba(0,0,0,0.65);
+  background: #ffffff; cursor: pointer; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  display: flex; align-items: center; gap: 6px; border-right: 1px solid #d9d9d9;
+}
+.radio-solid-item:last-child { border-right: none; }
+.radio-solid-item:hover { color: #2f54eb; }
+.radio-solid-item.active { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+[data-prefers-color="dark"] .radio-solid-item { background: transparent; color: rgba(255,255,255,0.65); border-color: #434343; }
+
+/* Toggle Switch */
+.toggle-row { display: flex; align-items: center; gap: 8px; height: 32px; }
+.toggle-switch {
+  position: relative; width: 44px; height: 22px;
+  background: rgba(0,0,0,0.25); border-radius: 99px;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); flex-shrink: 0;
+}
+.toggle-switch.on { background: #2f54eb; }
+.toggle-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 18px; height: 18px; background: #fff; border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { left: 24px; }
+.toggle-label { font-size: 14px; color: rgba(0,0,0,0.65); }
+[data-prefers-color="dark"] .toggle-label { color: rgba(255,255,255,0.65); }
+
+/* Field hint */
+.field-hint { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 4px; line-height: 1.5; }
+[data-prefers-color="dark"] .field-hint { color: rgba(255,255,255,0.45); }
+.field-hint code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-family: monospace; font-size: 11px; color: #c7254e; }
+[data-prefers-color="dark"] .field-hint code { background: #303030; color: #ff7875; }
+
+/* Input with character count */
+.input-with-count { position: relative; }
+.input-with-count .char-count { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-size: 12px; color: rgba(0,0,0,0.45); pointer-events: none; }
+.input-with-count input { padding-right: 52px; }
+
+/* Image selector + quick add */
+.image-select-row { display: flex; gap: 12px; align-items: center; }
+.image-select-row .form-select-wrap { flex: 1; }
+.image-quick-add { font-size: 13px; color: #2f54eb; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px; user-select: none; }
+.image-quick-add:hover { color: #597ef7; }
+
+/* ============================================================
+   SPLIT-PANEL LAYOUT (same pattern as image-custom-create)
+   ============================================================ */
+.create-body { display: flex; gap: 0; }
+.create-left { width: 460px; flex-shrink: 0; border-right: 1px solid #f0f0f0; padding: 24px; overflow-y: auto; max-height: calc(100vh - 60px - 56px - 48px); }
+[data-prefers-color="dark"] .create-left { border-right-color: #303030; }
+.create-right { flex: 1; padding: 24px; display: flex; flex-direction: column; min-width: 0; }
+
+/* ============================================================
+   CODE EDITOR (Monaco-style)
+   ============================================================ */
+.editor-header {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; margin-bottom: 12px;
+}
+[data-prefers-color="dark"] .editor-header { border-bottom-color: #303030; }
+.editor-file-tabs { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
+.editor-file-tab {
+  display: flex; align-items: center; gap: 6px;
+  height: 28px; padding: 0 12px; font-size: 13px;
+  color: rgba(0,0,0,0.65); background: transparent; border-radius: 4px;
+  cursor: pointer; white-space: nowrap; user-select: none;
+  border: 1px solid transparent; transition: all 0.2s;
+}
+.editor-file-tab:hover { background: rgba(0,0,0,0.04); }
+.editor-file-tab.active { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); font-weight: 500; border-color: #f0f0f0; }
+.editor-file-tab .tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.editor-file-tab .tab-dot.modified { background: #ff9113; }
+.editor-file-tab .tab-dot.saved { background: #52c41a; }
+[data-prefers-color="dark"] .editor-file-tab { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .editor-file-tab:hover { background: rgba(255,255,255,0.08); }
+[data-prefers-color="dark"] .editor-file-tab.active { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.1); border-color: #303030; }
+
+.editor-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.editor-lang-select {
+  height: 28px; padding: 0 24px 0 10px; font-size: 12px;
+  color: rgba(0,0,0,0.65); background: transparent; border: 1px solid #d9d9d9;
+  border-radius: 4px; cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+  transition: all 0.2s;
+}
+.editor-lang-select:hover { border-color: #597ef7; }
+[data-prefers-color="dark"] .editor-lang-select { color: rgba(255,255,255,0.65); border-color: #434343; background-color: transparent; }
+
+.code-editor-wrap {
+  display: flex; flex: 1; border: 1px solid #d9d9d9; border-radius: 6px;
+  overflow: hidden; background: #1e1e2e; min-height: 320px;
+}
+[data-prefers-color="dark"] .code-editor-wrap { border-color: #434343; }
+
+.line-numbers {
+  width: 52px; flex-shrink: 0; background: #252535; padding: 12px 0;
+  user-select: none; overflow: hidden; text-align: right;
+}
+.line-num {
+  height: 22px; line-height: 22px; padding-right: 12px;
+  font-size: 12px; font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace;
+  color: #636380;
+}
+.line-num.active { color: #cdd6f4; background: rgba(47,84,235,0.15); }
+
+.code-area {
+  flex: 1; background: transparent; border: none; outline: none; resize: none;
+  padding: 12px 14px; font-size: 13px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace;
+  line-height: 22px; color: #cdd6f4; width: 100%; tab-size: 2;
+  white-space: pre; overflow: auto;
+}
+.code-area::placeholder { color: #45475a; }
+
+/* Terminal / Output panel */
+.terminal-panel {
+  margin-top: 12px; border: 1px solid #d9d9d9; border-radius: 6px;
+  overflow: hidden; background: #1e1e2e;
+}
+[data-prefers-color="dark"] .terminal-panel { border-color: #434343; }
+.terminal-header {
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+  background: #252535; border-bottom: 1px solid #333;
+}
+.terminal-tab {
+  font-size: 12px; color: #636380; cursor: pointer; padding: 2px 8px;
+  border-radius: 3px; transition: all 0.2s;
+}
+.terminal-tab:hover { color: #cdd6f4; }
+.terminal-tab.active { color: #cdd6f4; background: rgba(255,255,255,0.08); }
+.terminal-body {
+  padding: 10px 14px; font-size: 12px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace;
+  color: #a6adc8; line-height: 1.6; min-height: 80px; max-height: 180px; overflow-y: auto;
+}
+.terminal-body .prompt { color: #52c41a; }
+.terminal-body .cmd { color: #cdd6f4; }
+.terminal-body .output { color: #a6adc8; }
+.terminal-body .error { color: #ff4d4f; }
+
+/* ============================================================
+   PRD TOGGLE
+   ============================================================ */
+.prd-toggle-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 28px; padding: 0 8px; font-size: 13px;
+  color: rgba(0,0,0,0.45); border-radius: 4px;
+  cursor: pointer; user-select: none; transition: all 0.2s;
+  margin-left: 8px; font-weight: 400;
+}
+.prd-toggle-btn:hover { color: #2f54eb; background: rgba(47,84,235,0.06); }
+.prd-toggle-btn.active { color: #2f54eb; background: rgba(47,84,235,0.1); }
+.prd-toggle-icon { font-size: 14px; transition: transform 0.2s; }
+.prd-toggle-btn.active .prd-toggle-icon { transform: rotate(180deg); }
+
+[data-prefers-color="dark"] .prd-toggle-btn { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .prd-toggle-btn:hover,
+[data-prefers-color="dark"] .prd-toggle-btn.active { color: #597ef7; background: rgba(47,84,235,0.15); }
+
+.prd-panel {
+  display: none; margin-top: 6px; padding: 10px 14px;
+  background: #fafbff; border-left: 3px solid #2f54eb;
+  border-radius: 0 6px 6px 0; font-size: 13px;
+  color: rgba(0,0,0,0.65); line-height: 1.7;
+}
+.prd-panel.visible { display: block; }
+.prd-panel .prd-label { font-size: 11px; font-weight: 600; color: #2f54eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.prd-panel code { background: rgba(47,84,235,0.08); padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", monospace; font-size: 12px; color: #2f54eb; }
+
+[data-prefers-color="dark"] .prd-panel { background: rgba(47,84,235,0.06); border-left-color: #597ef7; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .prd-panel .prd-label { color: #597ef7; }
+[data-prefers-color="dark"] .prd-panel code { background: rgba(47,84,235,0.15); color: #91a9ff; }
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 14px; color: rgba(0,0,0,0.45); margin-bottom: 16px;
+}
+.breadcrumb a { color: rgba(0,0,0,0.45); transition: color 0.2s; }
+.breadcrumb a:hover { color: #2f54eb; }
+.breadcrumb .sep { margin: 0 4px; }
+.breadcrumb .current { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .breadcrumb a { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+/* Form Actions */
+.form-actions {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 16px; border-top: 1px solid #f0f0f0; margin-top: 8px;
+}
+[data-prefers-color="dark"] .form-actions { border-top-color: #303030; }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; top: 76px; right: 24px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 6px;
+  font-size: 14px; z-index: 2000;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12);
+  animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================================
+   SSH INFO PANEL (when SSH is toggled on)
+   ============================================================ */
+.ssh-info-panel {
+  display: none; margin-top: 12px; padding: 12px 16px;
+  background: #f0f5ff; border: 1px solid #d6e4ff; border-radius: 6px;
+  font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.8;
+}
+.ssh-info-panel.visible { display: block; }
+.ssh-info-panel .ssh-title { font-weight: 600; color: #2f54eb; margin-bottom: 4px; }
+.ssh-info-panel code {
+  background: rgba(47,84,235,0.08); padding: 2px 6px; border-radius: 3px;
+  font-family: "SF Mono", monospace; font-size: 12px; color: #2f54eb;
+}
+[data-prefers-color="dark"] .ssh-info-panel { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.2); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .ssh-info-panel .ssh-title { color: #597ef7; }
+[data-prefers-color="dark"] .ssh-info-panel code { background: rgba(47,84,235,0.2); color: #91a9ff; }
+
+/* ============================================================
+   GUIDE TRIGGER
+   ============================================================ */
+.guide-trigger {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  display: flex; align-items: center; gap: 6px;
+  height: 40px; padding: 0 16px;
+  background: #2f54eb; color: #fff;
+  border-radius: 20px; font-size: 14px; font-weight: 500;
+  cursor: pointer; user-select: none;
+  box-shadow: 0 4px 12px rgba(47,84,235,0.35);
+  transition: all 0.2s;
+}
+.guide-trigger:hover { background: #597ef7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,84,235,0.4); }
+
+.guide-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 2000;
+  align-items: center; justify-content: center;
+}
+.guide-overlay.visible { display: flex; }
+
+.guide-drawer {
+  background: #ffffff; border-radius: 12px;
+  width: 680px; max-width: 90vw; max-height: 80vh;
+  overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+[data-prefers-color="dark"] .guide-drawer { background: #1f1f1f; }
+
+.guide-drawer-header {
+  display: flex; align-items: center; padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0; position: sticky; top: 0;
+  background: #ffffff; z-index: 1; border-radius: 12px 12px 0 0;
+}
+[data-prefers-color="dark"] .guide-drawer-header { background: #1f1f1f; border-bottom-color: #303030; }
+
+.guide-drawer-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .guide-drawer-title { color: rgba(255,255,255,0.85); }
+
+.guide-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.guide-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+
+.guide-drawer-body { padding: 24px; }
+
+.guide-section { margin-bottom: 24px; }
+.guide-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .guide-section-title { color: rgba(255,255,255,0.85); }
+
+.guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.guide-table th, .guide-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+.guide-table th { background: rgba(0,0,0,0.02); font-weight: 600; color: rgba(0,0,0,0.65); white-space: nowrap; }
+.guide-table td { color: rgba(0,0,0,0.65); line-height: 1.5; }
+.guide-table td:first-child { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .guide-table th { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td:first-child { color: rgba(255,255,255,0.85); }
+
+.guide-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.guide-tag.do { background: #d9f7be; color: #52c41a; }
+.guide-tag.error { background: #fff2f0; color: #ff4d4f; }
+.guide-tag.modal { background: #d6e4ff; color: #2f54eb; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .create-body { flex-direction: column; }
+  .create-left { width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; max-height: none; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 16px; }
+  .sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative BG Image -->
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs>
+              <linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item active" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
+        <!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+        <span class="top-nav-item" onclick="location.href='doc-center.html'">文档中心</span>
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+        <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+        <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+        <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+          <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+          <span class="badge-dot"></span>
+        </button>
+        <div class="notif-popover" id="notifPopover">
+          <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+            <span>通知</span>
+            <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+          </div>
+          <div id="notifList"></div>
+          <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+            <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+          </div>
+        </div>
+        <div class="dropdown-wrap" id="userDropdownWrap">
+          <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+          <div class="dropdown-menu" id="userDropdown">
+            <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+              <div style="font-weight:600;font-size:14px">张研究员</div>
+              <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+            </div>
+            <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+          </div>
+        </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+
+  <!-- Sidebar — workbench style -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-menu">
+        <div class="sidebar-menu-group">开发中心</div>
+        <a class="sidebar-menu-item" href="workbench.html#my-images">
+          <span class="sidebar-menu-icon">📦</span> 镜像管理
+        </a>
+        <a class="sidebar-menu-item active" href="online-dev.html">
+          <span class="sidebar-menu-icon">💻</span> 在线开发
+        </a>
+        <a class="sidebar-menu-item" href="#" onclick="showToast('info','模块「工作流」尚未开发');return false;">
+          <span class="sidebar-menu-icon">🔀</span> 工作流
+        </a>
+      </div>
+      <div style="margin-top:24px;">
+        <div class="sidebar-menu-group">快速导航</div>
+        <a class="sidebar-menu-item" href="workbench.html"><span class="sidebar-menu-icon">🏠</span> 返回工作台</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content-area">
+    <div class="page-procard">
+      <div class="page-card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title">在线开发</span>
+        </div>
+
+        <div class="card-body" style="padding:0;gap:0;display:flex;flex-direction:column;">
+
+          <!-- ====== LIST VIEW (default) ====== -->
+          <div id="notebookListView" style="padding:24px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:13px;color:rgba(0,0,0,0.45);">共 <b id="nbCount">0</b> 个 Notebook</span>
+              </div>
+            </div>
+            <div id="notebookTableWrap" style="overflow-x:auto;">
+              <table class="guide-table" style="width:100%;">
+                <thead><tr>
+                  <th>Notebook 名称</th><th>关联需求</th><th>类型</th><th>状态</th><th>创建时间</th><th>上次活动</th><th style="text-align:right;">操作</th>
+                </tr></thead>
+                <tbody id="notebookTableBody"></tbody>
+              </table>
+            </div>
+            <div id="notebookEmpty" style="display:none;text-align:center;padding:60px 20px;">
+              <div style="font-size:48px;opacity:0.3;margin-bottom:12px;">💻</div>
+              <div style="font-size:14px;color:rgba(0,0,0,0.65);margin-bottom:6px;">暂无 Notebook 会话</div>
+              <div style="font-size:13px;color:rgba(0,0,0,0.45);">从「我的任务」中启动 Notebook 后，会话将显示在此处</div>
+            </div>
+          </div>
+
+          <!-- ====== EDITOR VIEW (hidden, shown on row click) ====== -->
+          <div id="notebookEditorView" style="display:none;flex-direction:column;">
+            <!-- Back bar -->
+            <div style="padding:8px 24px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:12px;">
+              <a href="javascript:void(0)" onclick="backToList()" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#2f54eb;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:4px;" onmouseover="this.style.background='rgba(47,84,235,0.06)'" onmouseout="this.style.background='transparent'">← 返回列表</a>
+              <span style="font-size:15px;font-weight:600;color:rgba(0,0,0,0.88);" id="editorNotebookName">Notebook 名称</span>
+              <span class="status-chip" id="editorStatusChip" style="margin-left:8px;">运行中</span>
+              <span style="flex:1;"></span>
+              <button class="btn btn-sm btn-default" onclick="showToast('info','Notebook 已保存')">💾 保存</button>
+              <button class="btn btn-sm btn-default" onclick="showToast('info','快照已创建')">📸 快照</button>
+              <button class="btn btn-sm btn-primary" onclick="runCode()">▶ 运行</button>
+            </div>
+
+            <!-- Two-Column Body -->
+            <div class="create-body">
+
+              <!-- LEFT: Notebook info panel -->
+              <div class="create-left" id="editorLeftPanel">
+                <div class="section-title">会话信息</div>
+                <div id="editorInfoPanel"></div>
+              </div>
+
+              <!-- RIGHT: Code Editor -->
+              <div class="create-right">
+                <div class="editor-header">
+                  <div class="editor-file-tabs">
+                    <div class="editor-file-tab active" onclick="switchFileTab(this, 'main')"><span class="tab-dot modified" title="未保存"></span> main.py</div>
+                    <div class="editor-file-tab" onclick="switchFileTab(this, 'config')"><span class="tab-dot saved" title="已保存"></span> config.yaml</div>
+                    <div class="editor-file-tab" onclick="switchFileTab(this, 'requirements')"><span class="tab-dot saved" title="已保存"></span> requirements.txt</div>
+                  </div>
+                  <div class="editor-actions">
+                    <select class="editor-lang-select" onchange="showToast('info','语言切换为: '+this.value)">
+                      <option value="python">Python</option><option value="yaml">YAML</option><option value="text">Plain Text</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="code-editor-wrap">
+                  <div class="line-numbers" id="lineNumbers"></div>
+                  <textarea class="code-area" id="codeEditor" spellcheck="false" oninput="updateLineNumbers()" onscroll="syncScroll()" onkeydown="handleTab(event)">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Notebook 训练脚本"""
+import torch
+import torch.nn as nn
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {DEVICE}")
+# Start coding here...</textarea>
+                </div>
+                <div class="terminal-panel">
+                  <div class="terminal-header">
+                    <span class="terminal-tab active">📟 终端</span>
+                    <span class="terminal-tab">📋 输出</span>
+                    <span class="terminal-tab">⚠️ 问题</span>
+                  </div>
+                  <div class="terminal-body" id="terminalBody">
+                    <div><span class="prompt">dev@notebook:~$</span> <span class="cmd">nvidia-smi</span></div>
+                    <div class="output">+-----------------------------------------------------------------------------+</div>
+                    <div class="output">| NVIDIA-SMI 535.104.12   Driver Version: 535.104.12   CUDA Version: 12.2   |</div>
+                    <div class="output">|   0  NVIDIA A100-SXM4-40GB    Off  | 00000000:00:1E.0 Off |                    0 |</div>
+                    <div class="output">| 30%   35C    P0    68W / 400W |      0MiB / 40960MiB |      0%      Default |</div>
+                    <div class="output">+-------------------------------+----------------------+----------------------+</div>
+                    <div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span style="color:#cdd6f4;">_</span></div>
+                  </div>
+                </div>
+              </div><!-- /create-right -->
+            </div><!-- /create-body -->
+          </div><!-- /notebookEditorView -->
+
+        </div><!-- /card-body -->
+      </div><!-- /page-card -->
+    </div><!-- /page-procard -->
+  </main>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== GUIDE TRIGGER ===== -->
+<button class="guide-trigger" id="guideTrigger" onclick="toggleGuide()" title="查看交互演示指引">
+  🧪 交互演示指引
+</button>
+
+<!-- ===== GUIDE OVERLAY ===== -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-drawer">
+    <div class="guide-drawer-header">
+      <span class="guide-drawer-title">🧪 交互演示指引 — 在线开发原型</span>
+      <span class="guide-drawer-close" onclick="toggleGuide()">✕</span>
+    </div>
+    <div class="guide-drawer-body">
+      <div class="guide-section">
+        <div class="guide-section-title">📋 一、Notebook 列表交互</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>查看列表</td><td>页面加载</td><td>显示 6 条 Notebook 会话记录（关联到我的任务）</td></tr>
+            <tr><td>打开 Notebook</td><td>点击表格行 / 「📝 打开」按钮</td><td><span class="guide-tag modal">切换视图</span> 进入在线 IDE 编辑器，左侧显示会话信息</td></tr>
+            <tr><td>返回列表</td><td>点击左上角「← 返回列表」</td><td>回到 Notebook 列表视图，刷新列表数据</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="guide-section">
+        <div class="guide-section-title">🖊️ 二、在线 IDE 交互</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>文件切换</td><td>点击顶部文件 Tab: main.py / config.yaml / requirements.txt</td><td>Tab 高亮，编辑器内容切换</td></tr>
+            <tr><td>运行代码</td><td>点击「▶ 运行」按钮</td><td>终端面板追加模拟运行输出</td></tr>
+            <tr><td>保存</td><td>点击「💾 保存」按钮</td><td>Toast 提示「Notebook 已保存」</td></tr>
+            <tr><td>Tab 缩进</td><td>按 Tab 键</td><td>插入 2 空格缩进</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOGOUT CONFIRM OVERLAY ===== -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="font-size:16px;font-weight:600;color:rgba(0,0,0,0.88);margin-bottom:8px;">确认退出</div>
+    <div style="font-size:14px;color:rgba(0,0,0,0.65);margin-bottom:20px;">确定要退出登录吗？</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-primary" style="background:#ff4d4f;border-color:#ff4d4f;" onclick="doLogout()">确认退出</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+/* ============================================================
+   MOCK DATA — Notebooks (linked to tasks from workbench)
+   ============================================================ */
+var NOTEBOOKS = [
+  { id:'NB-001', name:'病虫害监测 — 数据分析', taskId:'DM-20260722-002', taskTitle:'友谊农场第三管理区病虫害监测', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'pytorch-training:1.0.0', cpu:'8核', memory:'16G', gpu:'A100 × 1', createdAt:'2026-07-24 09:30', lastActive:'2026-07-27 15:42', mountDataset:'水稻病害叶片数据集 v2.1' },
+  { id:'NB-002', name:'大豆面积提取模型训练', taskId:'DM-20260718-003', taskTitle:'洪河农场大豆种植面积核查', type:'VSCode', typeIcon:'🖥️', status:'running', statusText:'运行中', image:'image-classifier:1.2.0', cpu:'4核', memory:'8G', gpu:'T4 × 1', createdAt:'2026-07-20 14:15', lastActive:'2026-07-27 10:08', mountDataset:'东北大田遥感影像 2025' },
+  { id:'NB-003', name:'水稻纹枯病预警 — LSTM训练', taskId:'DM-20260715-006', taskTitle:'大兴农场水稻纹枯病预警模型', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'pytorch-training:1.0.0', cpu:'16核', memory:'32G', gpu:'A100 × 2', createdAt:'2026-07-16 10:00', lastActive:'2026-07-27 16:30', mountDataset:'农业气象预报数据集' },
+  { id:'NB-004', name:'土地利用变化检测分析', taskId:'DM-20260710-004', taskTitle:'青龙山农场土地利用变化检测', type:'VSCode', typeIcon:'🖥️', status:'stopped', statusText:'已停止', image:'geospatial-analysis:3.0.0', cpu:'8核', memory:'16G', gpu:'—', createdAt:'2026-07-12 08:45', lastActive:'2026-07-20 18:00', mountDataset:'农田地块卫星遥感数据集' },
+  { id:'NB-005', name:'作物产量预估 — 特征工程', taskId:'DM-20260726-001', taskTitle:'东安农场2026年水稻产量预估', type:'JupyterLab', typeIcon:'📓', status:'running', statusText:'运行中', image:'crop-yield-model:1.5.0', cpu:'8核', memory:'16G', gpu:'A100 × 1', createdAt:'2026-07-27 09:00', lastActive:'2026-07-27 14:55', mountDataset:'作物产量预估评测数据集' },
+  { id:'NB-006', name:'玉米估产模型参数调优', taskId:'DM-20260705-005', taskTitle:'前锋农场玉米估产模型优化', type:'VSCode', typeIcon:'🖥️', status:'stopped', statusText:'已停止', image:'crop-yield-model:1.5.0', cpu:'4核', memory:'8G', gpu:'—', createdAt:'2026-07-08 11:20', lastActive:'2026-07-15 09:30', mountDataset:'—' }
+];
+var _openNotebookId = null;
+
+/* ============================================================
+   FILE CONTENTS — Code editor tabs
+   ============================================================ */
+var FILE_CONTENTS = {
+  main: document.getElementById('codeEditor').value,
+  config: '# 开发环境配置\nimage: pytorch-training:1.0.0\ngpu:\n  enabled: true\n  type: A100\n  count: 1\nresources:\n  memory: 16G\n  cpu: 8核\ndataset:\n  mount_path: /home/dataset\n  type: image\nssh:\n  enabled: false\n  port: 2222\n',
+  requirements: 'torch>=2.0.0\ntorchvision>=0.15.0\nnumpy>=1.24.0\npandas>=2.0.0\nmatplotlib>=3.7.0\nscikit-learn>=1.3.0\ntqdm>=4.65.0\ntensorboard>=2.13.0\nopencv-python>=4.8.0\nalbumentations>=1.3.0\npillow>=10.0.0\n'
+};
+
+var currentFile = 'main';
+var lineCount = 0;
+
+/* ============================================================
+   NOTEBOOK LIST RENDERING
+   ============================================================ */
+function renderNotebookList(){
+  var tbody = document.getElementById('notebookTableBody');
+  var empty = document.getElementById('notebookEmpty');
+  document.getElementById('nbCount').textContent = NOTEBOOKS.length;
+  if(NOTEBOOKS.length === 0){ tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  var stCls = {running:'success',stopped:'default'};
+  tbody.innerHTML = NOTEBOOKS.map(function(nb){
+    return '<tr style="cursor:pointer;" onclick="openNotebookEditor(\''+nb.id+'\')" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'">'+
+      '<td><span style="font-weight:500;color:#2f54eb;">'+escHTML(nb.name)+'</span></td>'+
+      '<td><span style="font-size:13px;color:rgba(0,0,0,0.65);">'+escHTML(nb.taskTitle)+'</span><br><span style="font-size:11px;color:rgba(0,0,0,0.35);">'+escHTML(nb.taskId)+'</span></td>'+
+      '<td><span style="font-size:13px;">'+nb.typeIcon+' '+nb.type+'</span></td>'+
+      '<td><span class="status-chip '+(stCls[nb.status]||'default')+'">'+nb.statusText+'</span></td>'+
+      '<td style="font-size:13px;color:rgba(0,0,0,0.65);">'+nb.createdAt+'</td>'+
+      '<td style="font-size:13px;color:rgba(0,0,0,0.65);">'+nb.lastActive+'</td>'+
+      '<td style="text-align:right;"><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openNotebookEditor(\''+nb.id+'\')">📝 打开</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function openNotebookEditor(id){
+  var nb = NOTEBOOKS.find(function(n){return n.id===id;}); if(!nb) return;
+  _openNotebookId = id;
+  document.getElementById('notebookListView').style.display = 'none';
+  document.getElementById('notebookEditorView').style.display = 'flex';
+  document.getElementById('editorNotebookName').textContent = nb.name;
+  var stCls = {running:'success',stopped:'default'};
+  document.getElementById('editorStatusChip').className = 'status-chip '+(stCls[nb.status]||'default');
+  document.getElementById('editorStatusChip').textContent = nb.statusText;
+  // Render info panel
+  document.getElementById('editorInfoPanel').innerHTML =
+    '<table class="guide-table" style="width:100%;"><tbody>'+
+    '<tr><td style="font-weight:500;">关联需求</td><td>'+escHTML(nb.taskTitle)+'<br><span style="font-size:11px;color:rgba(0,0,0,0.45);">'+escHTML(nb.taskId)+'</span></td></tr>'+
+    '<tr><td style="font-weight:500;">开发类型</td><td>'+nb.typeIcon+' '+nb.type+'</td></tr>'+
+    '<tr><td style="font-weight:500;">镜像</td><td><code style="font-size:12px;">'+escHTML(nb.image)+'</code></td></tr>'+
+    '<tr><td style="font-weight:500;">资源配置</td><td>CPU: '+nb.cpu+' / 内存: '+nb.memory+' / GPU: '+nb.gpu+'</td></tr>'+
+    '<tr><td style="font-weight:500;">挂载数据集</td><td>'+escHTML(nb.mountDataset)+'</td></tr>'+
+    '<tr><td style="font-weight:500;">创建时间</td><td>'+nb.createdAt+'</td></tr>'+
+    '<tr><td style="font-weight:500;">上次活动</td><td>'+nb.lastActive+'</td></tr>'+
+    '</tbody></table>';
+  // Reset editor
+  document.getElementById('codeEditor').value = FILE_CONTENTS.main;
+  lineCount = 0; currentFile = 'main';
+  updateLineNumbers();
+}
+
+function backToList(){
+  document.getElementById('notebookEditorView').style.display = 'none';
+  document.getElementById('notebookListView').style.display = '';
+  _openNotebookId = null;
+  renderNotebookList();
+}
+
+function escHTML(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function updateLineNumbers() {
+  var textarea = document.getElementById('codeEditor');
+  var lines = textarea.value.split('\n');
+  var newCount = lines.length;
+  if (newCount === lineCount) return;
+  lineCount = newCount;
+
+  // Save and restore file content
+  FILE_CONTENTS[currentFile] = textarea.value;
+
+  var html = '';
+  for (var i = 1; i <= lineCount; i++) {
+    html += '<div class="line-num">' + i + '</div>';
+  }
+  document.getElementById('lineNumbers').innerHTML = html;
+}
+
+function syncScroll() {
+  var textarea = document.getElementById('codeEditor');
+  var lineNums = document.getElementById('lineNumbers');
+  lineNums.scrollTop = textarea.scrollTop;
+}
+
+function handleTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var ta = e.target;
+    var start = ta.selectionStart;
+    var end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 2;
+    updateLineNumbers();
+  }
+}
+
+/* ============================================================
+   FILE TABS
+   ============================================================ */
+function switchFileTab(tab, fileKey) {
+  // Update active tab
+  var tabs = document.querySelectorAll('.editor-file-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  tab.classList.add('active');
+
+  // Save current content
+  FILE_CONTENTS[currentFile] = document.getElementById('codeEditor').value;
+
+  // Load new content
+  currentFile = fileKey;
+  document.getElementById('codeEditor').value = FILE_CONTENTS[fileKey];
+  lineCount = 0;
+  updateLineNumbers();
+}
+
+/* ============================================================
+   RUN CODE (simulated)
+   ============================================================ */
+function runCode() {
+  var terminal = document.getElementById('terminalBody');
+  var now = new Date().toLocaleTimeString();
+  terminal.innerHTML += '\n<div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span class="cmd">python main.py</span></div>';
+  terminal.innerHTML += '<div class="output">[' + now + '] INFO: Loading dataset...</div>';
+  terminal.innerHTML += '<div class="output">[' + now + '] INFO: Found 12,847 training samples</div>';
+  terminal.innerHTML += '<div class="output">[' + now + '] INFO: Epoch 1 — Loss: 0.612, Acc: 0.838</div>';
+  terminal.innerHTML += '<div style="margin-top:6px;"><span class="prompt">dev@notebook:~$</span> <span style="color:#cdd6f4;">_</span></div>';
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+var _toastTimer;
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' visible';
+  t.textContent = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : 'ℹ️ ') + msg;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 3000);
+}
+
+/* ============================================================
+   AUTH STATE
+   ============================================================ */
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+
+/* ============================================================
+   USER DROPDOWN
+   ============================================================ */
+function toggleUserMenu() {
+  var menu = document.getElementById('userDropdown');
+  menu.classList.toggle('visible');
+  var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible');
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('userDropdownWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('userDropdown').classList.remove('visible');
+  }
+});
+
+function goToWorkbench() {
+  location.href = 'workbench.html';
+}
+
+function confirmLogout(e) {
+  e.stopPropagation();
+  document.getElementById('userDropdown').classList.remove('visible');
+  document.getElementById('logoutOverlay').classList.add('on');
+}
+
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('success', '已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+function toast(msg, type) { showToast(type || 'info', msg); }
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+
+/* ============================================================
+   GUIDE OVERLAY
+   ============================================================ */
+function toggleGuide() {
+  document.getElementById('guideOverlay').classList.toggle('visible');
+}
+document.getElementById('guideOverlay').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('visible');
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(function(){
+  renderNotifs();
+  var params = new URLSearchParams(window.location.search);
+  var taskId = params.get('taskId');
+  if (taskId) {
+    var taskTitle = params.get('taskTitle') || '独立开发任务';
+    // Check if notebook already exists for this task
+    var existing = NOTEBOOKS.find(function(nb){ return nb.taskId === taskId; });
+    if (existing) {
+      renderNotebookList();
+      openNotebookEditor(existing.id);
+    } else {
+      // Create new notebook entry
+      var newId = 'NB-' + String(NOTEBOOKS.length + 1).padStart(3, '0');
+      var now = new Date();
+      var dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+      NOTEBOOKS.unshift({
+        id: newId, name: taskTitle + ' — Notebook', taskId: taskId, taskTitle: taskTitle,
+        type: 'JupyterLab', typeIcon: '📓', status: 'running', statusText: '运行中',
+        image: 'pytorch-training:1.0.0', cpu: '8核', memory: '16G', gpu: 'A100 × 1',
+        createdAt: dateStr, lastActive: '刚刚', mountDataset: '—'
+      });
+      renderNotebookList();
+      openNotebookEditor(newId);
+    }
+    // Clean URL: remove query params without reload
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  } else {
+    renderNotebookList();
+  }
+})();
+updateLineNumbers();
+</script>
+</body>
+</html>

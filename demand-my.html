@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的需求 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER (from workbench)
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+  background: transparent;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+[data-prefers-color="dark"] .app-header { background-color: rgba(28,30,33,0.88); border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaSg8U8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   BUTTONS (from workbench)
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645,0.045,0.355,1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #fff; color: rgba(0,0,0,0.88); border: 1px solid #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-text { background: transparent; color: rgba(0,0,0,0.88); border-color: transparent; }
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+.btn-danger-text { background: transparent; color: rgba(0,0,0,0.65); border-color: transparent; }
+.btn-danger-text:hover { color: #ff4d4f; background: #fff2f0; }
+.btn-accent-text { background: transparent; color: #23ada4; border-color: transparent; }
+.btn-accent-text:hover { color: #08979c; background: #e6fffb; }
+.btn-sm { height: 24px; padding: 0 7px; font-size: 12px; }
+
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .btn-text:hover { background: rgba(255,255,255,0.08); }
+
+/* ============================================================
+   STATUS CHIPS
+   ============================================================ */
+.status-chip { display: inline-flex; align-items: center; justify-content: center; height: 20px; padding: 0 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.status-chip.success { color: #52c41a; background: #d9f7be; }
+.status-chip.pending { color: #2f54eb; background: #d6e4ff; }
+.status-chip.warning { color: #ff9113; background: #ffeabc; }
+.status-chip.error { color: #ff4d4f; background: #fff2f0; }
+.status-chip.default { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.status-chip.published { color: #23ada4; background: #e6fffb; }
+
+[data-prefers-color="dark"] .status-chip.default { color: rgba(255,255,255,0.65); background: #303030; }
+
+/* ============================================================
+   WORKBENCH
+   ============================================================ */
+.workbench { padding-top: 60px; background: #F7F9FD; min-height: 100vh; }
+[data-prefers-color="dark"] .workbench { background: #1c1e21; }
+
+/* Top Bar */
+.wb-topbar {
+  background: #FFFFFF; border-bottom: 1px solid rgba(5,5,5,0.05);
+  padding: 14px 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+[data-prefers-color="dark"] .wb-topbar { background: #1f1f1f; border-bottom-color: #303030; }
+.wb-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(0,0,0,0.45); }
+.wb-breadcrumb a { color: rgba(0,0,0,0.45); transition: color 0.2s; }
+.wb-breadcrumb a:hover { color: #2f54eb; }
+.wb-breadcrumb .sep { color: rgba(0,0,0,0.25); }
+.wb-breadcrumb .current { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .wb-breadcrumb { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .wb-breadcrumb a { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .wb-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+/* Two-Column Layout */
+.wb-layout { display: flex; gap: 0; max-width: 1380px; margin: 0 auto; padding: 24px 40px; }
+.wb-sidebar { width: 240px; flex-shrink: 0; }
+.wb-main { flex: 1; min-width: 0; padding-left: 28px; }
+
+/* Sidebar Cards */
+.wb-sidebar-card {
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 10px; padding: 20px; margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+[data-prefers-color="dark"] .wb-sidebar-card { background: #1f1f1f; border-color: #303030; }
+.wb-sidebar-card h4 { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.45); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+[data-prefers-color="dark"] .wb-sidebar-card h4 { color: rgba(255,255,255,0.45); }
+.wb-sb-user { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.wb-sb-avatar {
+  width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 600; flex-shrink: 0;
+}
+.wb-sb-uname { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .wb-sb-uname { color: rgba(255,255,255,0.85); }
+.wb-sb-urole { font-size: 12px; color: rgba(0,0,0,0.45); }
+.wb-sb-stat { display: flex; gap: 16px; }
+.wb-sb-stat-item { text-align: center; flex: 1; }
+.wb-sb-stat-val { font-size: 18px; font-weight: 700; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .wb-sb-stat-val { color: rgba(255,255,255,0.85); }
+.wb-sb-stat-lbl { font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+.wb-sb-link {
+  display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px;
+  border-radius: 6px; font-size: 13px; color: rgba(0,0,0,0.65); cursor: pointer;
+  transition: all 0.2s; margin-bottom: 2px;
+}
+.wb-sb-link:hover { background: rgba(47,84,235,0.06); color: #2f54eb; }
+.wb-sb-link.active { background: rgba(47,84,235,0.1); color: #2f54eb; font-weight: 500; }
+.wb-sb-link .si { font-size: 15px; width: 18px; text-align: center; }
+
+/* ============================================================
+   MAIN CONTENT — Card
+   ============================================================ */
+.wb-content-card {
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+[data-prefers-color="dark"] .wb-content-card { background: #1f1f1f; border-color: #303030; }
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 24px; }
+
+/* ============================================================
+   MAIN TAB SWITCH
+   ============================================================ */
+.main-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+[data-prefers-color="dark"] .main-tabs { border-bottom-color: #303030; }
+.main-tab {
+  padding: 8px 20px; font-size: 14px; color: rgba(0,0,0,0.65);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.2s; margin-bottom: -1px; user-select: none;
+  display: flex; align-items: center; gap: 6px;
+}
+.main-tab:hover { color: #2f54eb; }
+.main-tab.active { color: #2f54eb; border-bottom-color: #2f54eb; font-weight: 600; }
+[data-prefers-color="dark"] .main-tab { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .main-tab.active { color: #597ef7; }
+.main-tab .tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  font-size: 11px; font-weight: 600; border-radius: 9px;
+  background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.65);
+}
+.main-tab.active .tab-badge { background: rgba(47,84,235,0.1); color: #2f54eb; }
+
+/* ============================================================
+   STATUS FILTER TABS
+   ============================================================ */
+.status-filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 12px; margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .status-filter-bar { border-bottom-color: #303030; }
+.status-filter-label { font-size: 13px; color: rgba(0,0,0,0.45); flex-shrink: 0; margin-right: 4px; }
+[data-prefers-color="dark"] .status-filter-label { color: rgba(255,255,255,0.45); }
+.status-filter-tab {
+  display: inline-flex; align-items: center;
+  height: 28px; padding: 0 12px; font-size: 13px;
+  color: rgba(0,0,0,0.65); border-radius: 4px;
+  cursor: pointer; user-select: none; transition: all 0.2s;
+}
+.status-filter-tab:hover { color: #2f54eb; background: rgba(47,84,235,0.06); }
+.status-filter-tab.active { color: #2f54eb; background: rgba(47,84,235,0.1); font-weight: 500; }
+[data-prefers-color="dark"] .status-filter-tab { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .status-filter-tab.active { color: #597ef7; background: rgba(47,84,235,0.15); }
+.status-filter-spacer { flex: 1; }
+.status-filter-count { font-size: 13px; color: rgba(0,0,0,0.45); white-space: nowrap; }
+[data-prefers-color="dark"] .status-filter-count { color: rgba(255,255,255,0.45); }
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.data-table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table thead th {
+  padding: 12px 8px; text-align: left; font-weight: 400;
+  color: rgba(0,0,0,0.65); background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid #f0f0f0; white-space: nowrap;
+}
+.data-table thead th:first-child { padding-left: 16px; }
+.data-table thead th:last-child { text-align: right; padding-right: 16px; }
+.data-table tbody td {
+  padding: 12px 8px; border-bottom: 1px solid #fafafa;
+  color: rgba(0,0,0,0.88); vertical-align: middle;
+}
+.data-table tbody td:first-child { padding-left: 16px; }
+.data-table tbody td:last-child { text-align: right; padding-right: 16px; }
+.data-table tbody tr { transition: background 0.2s; }
+.data-table tbody tr:hover { background: rgba(0,0,0,0.02); }
+
+[data-prefers-color="dark"] .data-table thead th {
+  color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.03);
+  border-bottom-color: #303030;
+}
+[data-prefers-color="dark"] .data-table tbody td {
+  color: rgba(255,255,255,0.85); border-bottom-color: #2a2a2a;
+}
+[data-prefers-color="dark"] .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.demand-id { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .demand-id { color: rgba(255,255,255,0.45); }
+.demand-title-link { color: rgba(0,0,0,0.88); cursor: pointer; transition: color 0.2s; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
+.demand-title-link:hover { color: #2f54eb; }
+[data-prefers-color="dark"] .demand-title-link { color: rgba(255,255,255,0.85); }
+.type-tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; font-size: 12px; border-radius: 4px; white-space: nowrap; background: rgba(47,84,235,0.06); color: #2f54eb; border: 1px solid rgba(47,84,235,0.15); }
+[data-prefers-color="dark"] .type-tag { background: rgba(47,84,235,0.12); color: #91a9ff; border-color: rgba(47,84,235,0.25); }
+.priority-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; }
+.priority-dot.urgent { background: #ff4d4f; }
+.priority-dot.normal { background: #d9d9d9; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state { text-align: center; padding: 80px 20px; }
+.empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.3; }
+.empty-title { font-size: 14px; color: rgba(0,0,0,0.65); margin-bottom: 8px; }
+.empty-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 24px; line-height: 1.6; }
+[data-prefers-color="dark"] .empty-title { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .empty-desc { color: rgba(255,255,255,0.45); }
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-top: 20px; margin-top: 8px; }
+.pagination-controls { display: flex; align-items: center; gap: 8px; }
+.page-size-select {
+  height: 32px; padding: 0 28px 0 10px; font-size: 13px; color: rgba(0,0,0,0.65);
+  background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px;
+  cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.page-size-select:focus { outline: none; border-color: #2f54eb; }
+[data-prefers-color="dark"] .page-size-select { background: transparent; border-color: #434343; color: rgba(255,255,255,0.65); }
+.page-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 32px; height: 32px; padding: 0 6px; font-size: 14px;
+  color: rgba(0,0,0,0.65); background: #ffffff;
+  border: 1px solid #d9d9d9; border-radius: 6px;
+  cursor: pointer; user-select: none; transition: all 0.2s;
+}
+.page-btn:hover { color: #2f54eb; border-color: #2f54eb; }
+.page-btn.active { color: #fff; background: #2f54eb; border-color: #2f54eb; font-weight: 600; }
+.page-btn:disabled { color: rgba(0,0,0,0.25); border-color: #d9d9d9; cursor: not-allowed; }
+[data-prefers-color="dark"] .page-btn { background: transparent; border-color: #434343; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .page-btn:disabled { color: rgba(255,255,255,0.25); border-color: #434343; }
+.pagination-info { font-size: 13px; color: rgba(0,0,0,0.45); margin: 0 8px; }
+[data-prefers-color="dark"] .pagination-info { color: rgba(255,255,255,0.45); }
+
+/* ============================================================
+   MODAL / DIALOG
+   ============================================================ */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.visible { display: flex; }
+.modal-box {
+  background: #ffffff; border-radius: 8px; width: 560px; max-width: 90vw; overflow: hidden;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+}
+[data-prefers-color="dark"] .modal-box { background: #1f1f1f; }
+.modal-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-header { border-bottom-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close { font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+.modal-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.modal-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .modal-body { color: rgba(255,255,255,0.65); }
+.modal-body .detail-row { display: flex; margin-bottom: 12px; }
+.modal-body .detail-label { width: 80px; flex-shrink: 0; color: rgba(0,0,0,0.45); font-size: 13px; }
+.modal-body .detail-value { flex: 1; color: rgba(0,0,0,0.88); font-size: 13px; word-break: break-all; }
+[data-prefers-color="dark"] .modal-body .detail-label { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .modal-body .detail-value { color: rgba(255,255,255,0.85); }
+.modal-body .detail-divider { margin: 12px 0; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-body .detail-divider { border-top-color: #303030; }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-footer { border-top-color: #303030; }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; top: 76px; right: 24px; z-index: 2000;
+  padding: 10px 16px; border-radius: 6px; font-size: 14px;
+  display: none; align-items: center; gap: 8px;
+  animation: toastIn 0.3s cubic-bezier(0.78,0.14,0.15,0.86);
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12);
+}
+.toast.visible { display: flex; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+@keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .top-nav-menu-wrap { display: none; }
+  .header-right { padding-right: 16px; }
+  .wb-topbar { padding: 12px 20px; }
+  .wb-layout { flex-direction: column; padding: 16px 20px; }
+  .wb-sidebar { width: 100%; }
+  .wb-main { padding-left: 0; padding-top: 20px; }
+  .status-filter-bar { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item active" data-nav="home" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" data-nav="marketplace" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" data-nav="data" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item" data-nav="dev" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" data-nav="demand" onclick="location.href='demand-hall.html'">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+        <!-- appcenter hidden -->
+        <!-- apps hidden -->
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <!-- User dropdown -->
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== WORKBENCH CONTENT ==================== -->
+<div class="workbench">
+
+  <!-- Breadcrumb Top Bar -->
+  <div class="wb-topbar">
+    <div class="wb-breadcrumb">
+      <a href="workbench.html">🏠 工作台</a>
+      <span class="sep">›</span>
+      <span class="current" id="breadcrumbCurrent">我的需求</span>
+    </div>
+  </div>
+
+  <!-- Two-Column Layout -->
+  <div class="wb-layout">
+
+    <!-- LEFT SIDEBAR — matches workbench.html -->
+    <aside class="wb-sidebar">
+      <div class="wb-sidebar-card">
+        <div class="wb-sb-user">
+          <div class="wb-sb-avatar">张</div>
+          <div><div class="wb-sb-uname">张研究员</div><div class="wb-sb-urole">开发者</div></div>
+        </div>
+        <div class="wb-sb-stat">
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">12</div><div class="wb-sb-stat-lbl">我的模型</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">5</div><div class="wb-sb-stat-lbl">数据集</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val" id="myTaskCount">4</div><div class="wb-sb-stat-lbl">进行中</div></div>
+        </div>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>快速导航</h4>
+        <div class="wb-sb-link" data-nav="my-models" onclick="goToWorkbenchTab('my-models')"><span class="si">🧠</span> 我的模型</div>
+        <a class="wb-sb-link" href="resource-overview.html"><span class="si">📈</span> 资源总览</a>
+        <a class="wb-sb-link" href="workbench.html#my-data"><span class="si">📊</span> 我的数据集</a>
+        <div class="wb-sb-link active" data-nav="my-demands" id="sbMyDemands"><span class="si">📝</span> 我的需求</div>
+        <div class="wb-sb-link" data-nav="my-tasks" id="sbMyTasks" onclick="switchMainTab('tasks')"><span class="si">📌</span> 我的任务</div>
+        <div class="wb-sb-link" data-nav="my-apps" onclick="goToWorkbenchTab('my-apps')"><span class="si">🤖</span> 我的应用</div>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>开发中心</h4>
+        <a class="wb-sb-link" href="image-custom-list.html"><span class="si">📦</span> 镜像管理</a>
+        <a class="wb-sb-link" href="workbench.html#my-notebooks"><span class="si">💻</span> 在线开发</a>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>平台概况</h4>
+        <div class="wb-sb-stat">
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">187</div><div class="wb-sb-stat-lbl">模型</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">42</div><div class="wb-sb-stat-lbl">数据集</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">23</div><div class="wb-sb-stat-lbl">需求</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="wb-main">
+      <div class="wb-content-card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title" id="cardTitle">我的需求</span>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Main Tab: 我的需求 / 我的任务 -->
+          <div class="main-tabs" id="mainTabs">
+            <div class="main-tab active" data-tab="demands" onclick="switchMainTab('demands')">
+              📝 我的需求<span class="tab-badge" id="demandCount">5</span>
+            </div>
+            <div class="main-tab" data-tab="tasks" onclick="switchMainTab('tasks')">
+              📌 我的任务<span class="tab-badge" id="taskCount">4</span>
+            </div>
+          </div>
+
+          <!-- Status Filter Bar -->
+          <div class="status-filter-bar" id="statusFilterBar"></div>
+
+          <!-- Data Table -->
+          <div class="data-table-wrap">
+            <table class="data-table" id="dataTable"></table>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="empty-icon" id="emptyIcon">📝</div>
+            <div class="empty-title" id="emptyTitle">暂无需求记录</div>
+            <div class="empty-desc" id="emptyDesc">您还没有提交过任何需求。<br>前往需求大厅提交您的第一个需求。</div>
+            <a class="btn btn-primary" href="demand-hall.html">📋 前往需求大厅</a>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination" id="pagination">
+            <div class="pagination-controls" id="paginationControls"></div>
+            <select class="page-size-select" id="pageSizeSelect" onchange="onPageSizeChange()">
+              <option value="10">10 条/页</option>
+              <option value="20">20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+
+        </div><!-- /card-body -->
+      </div><!-- /wb-content-card -->
+    </main>
+  </div>
+</div>
+
+<!-- ===== DEMAND DETAIL MODAL ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">需求详情</span>
+      <span class="modal-close" onclick="closeDetailModal()">✕</span>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONFIRMATION MODAL ===== -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="confirmModalTitle">确认操作</span>
+      <span class="modal-close" onclick="closeConfirmModal()">✕</span>
+    </div>
+    <div class="modal-body" id="confirmModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeConfirmModal()">取消</button>
+      <button class="btn btn-primary" id="confirmBtn" onclick="executeConfirm()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+/* ============================================================
+   MOCK DATA — 我的需求（消费侧）
+   ============================================================ */
+var myDemands = [
+  {
+    id: "DM-20260726-001",
+    title: "东安农场2026年水稻产量预估",
+    type: "数据分析",
+    description: "需要利用多时相遥感影像，对东安农场2026年水稻种植面积进行提取并预估产量，输出产量分布图和统计报告。覆盖面积约8500亩。",
+    consumerName: "张农场", consumerUnit: "东安农场", contactPerson: "张农场",
+    deliverables: "产量预估报告 + 空间分布图（GeoTIFF格式）",
+    tags: ["产量预估", "水稻", "遥感"],
+    status: "待接单", priority: "普通",
+    claimedBy: null, claimedAt: null,
+    submittedAt: "2026-07-26", deadline: "2026-08-15",
+    processingNotes: "", completedAt: null, feedback: ""
+  },
+  {
+    id: "DM-20260722-002",
+    title: "友谊农场第三管理区病虫害监测",
+    type: "数据分析",
+    description: "针对友谊农场第三管理区玉米和大豆地块，利用无人机多光谱影像进行病虫害早期识别与监测，需要定期（每周）输出监测报告。",
+    consumerName: "李技术", consumerUnit: "友谊农场", contactPerson: "李技术",
+    deliverables: "病虫害监测周报 + 风险热力图 + 防治建议",
+    tags: ["病虫害", "无人机", "多光谱"],
+    status: "处理中", priority: "紧急",
+    claimedBy: "王科研", claimedAt: "2026-07-23",
+    submittedAt: "2026-07-22", deadline: "2026-08-05",
+    processingNotes: "已完成第一轮影像采集，正在标注训练样本", completedAt: null, feedback: ""
+  },
+  {
+    id: "DM-20260718-003",
+    title: "洪河农场大豆种植面积核查",
+    type: "模型开发",
+    description: "基于哨兵二号卫星影像，开发大豆种植面积自动提取模型，用于洪河农场2026年大豆补贴面积核查。要求精度不低于92%。",
+    consumerName: "赵核查", consumerUnit: "洪河农场", contactPerson: "赵核查",
+    deliverables: "大豆面积提取模型 + 核查报告 + 精度评估",
+    tags: ["面积核查", "大豆", "哨兵二号"],
+    status: "待验收", priority: "普通",
+    claimedBy: "陈算法", claimedAt: "2026-07-19",
+    submittedAt: "2026-07-18", deadline: "2026-07-30",
+    processingNotes: "模型已训练完成，mIoU 94.2%，交付物已上传", completedAt: null, feedback: ""
+  },
+  {
+    id: "DM-20260710-004",
+    title: "青龙山农场土地利用变化检测",
+    type: "数据分析",
+    description: "对比2025年和2026年高分辨率影像，检测青龙山农场土地利用变化情况，重点识别新增建筑用地和耕地转其他用途。",
+    consumerName: "孙管理", consumerUnit: "青龙山农场", contactPerson: "孙管理",
+    deliverables: "变化检测报告 + 变化图斑矢量数据",
+    tags: ["变化检测", "土地利用", "高分辨率"],
+    status: "已完成", priority: "普通",
+    claimedBy: "刘遥感", claimedAt: "2026-07-11",
+    submittedAt: "2026-07-10", deadline: "2026-07-25",
+    processingNotes: "", completedAt: "2026-07-20",
+    feedback: "交付物质量很好，已通过验收"
+  },
+  {
+    id: "DM-20260705-005",
+    title: "前锋农场玉米估产模型优化",
+    type: "技术咨询",
+    description: "现有玉米估产模型误差偏大（MAPE ~18%），需要优化模型参数和特征工程，将误差降低至10%以内。",
+    consumerName: "周数据", consumerUnit: "前锋农场", contactPerson: "周数据",
+    deliverables: "优化后的估产模型 + 技术报告 + 参数说明文档",
+    tags: ["估产", "玉米", "模型优化"],
+    status: "待接单", priority: "普通",
+    claimedBy: null, claimedAt: null,
+    submittedAt: "2026-07-05", deadline: "2026-08-20",
+    processingNotes: "", completedAt: null, feedback: ""
+  }
+];
+
+/* ============================================================
+   MOCK DATA — 我的任务（研发侧）
+   ============================================================ */
+var myTasks = [
+  {
+    id: "DM-20260722-002",
+    title: "友谊农场第三管理区病虫害监测",
+    type: "数据分析",
+    description: "针对友谊农场第三管理区玉米和大豆地块，利用无人机多光谱影像进行病虫害早期识别与监测。",
+    consumerName: "李技术", consumerUnit: "友谊农场", contactPerson: "李技术",
+    deliverables: "病虫害监测周报 + 风险热力图 + 防治建议",
+    tags: ["病虫害", "无人机", "多光谱"],
+    status: "处理中", priority: "紧急",
+    claimedBy: "王科研", claimedAt: "2026-07-23",
+    submittedAt: "2026-07-22", deadline: "2026-08-05",
+    processingNotes: "已完成第一轮影像采集，正在标注训练样本", completedAt: null, feedback: ""
+  },
+  {
+    id: "DM-20260718-003",
+    title: "洪河农场大豆种植面积核查",
+    type: "模型开发",
+    description: "基于哨兵二号卫星影像，开发大豆种植面积自动提取模型。",
+    consumerName: "赵核查", consumerUnit: "洪河农场", contactPerson: "赵核查",
+    deliverables: "大豆面积提取模型 + 核查报告 + 精度评估",
+    tags: ["面积核查", "大豆", "哨兵二号"],
+    status: "待验收", priority: "普通",
+    claimedBy: "陈算法", claimedAt: "2026-07-19",
+    submittedAt: "2026-07-18", deadline: "2026-07-30",
+    processingNotes: "模型已训练完成，mIoU 94.2%，交付物已上传，等待农场方验收", completedAt: null, feedback: ""
+  },
+  {
+    id: "DM-20260710-004",
+    title: "青龙山农场土地利用变化检测",
+    type: "数据分析",
+    description: "对比2025年和2026年高分辨率影像，检测青龙山农场土地利用变化情况。",
+    consumerName: "孙管理", consumerUnit: "青龙山农场", contactPerson: "孙管理",
+    deliverables: "变化检测报告 + 变化图斑矢量数据",
+    tags: ["变化检测", "土地利用", "高分辨率"],
+    status: "已完成", priority: "普通",
+    claimedBy: "刘遥感", claimedAt: "2026-07-11",
+    submittedAt: "2026-07-10", deadline: "2026-07-25",
+    processingNotes: "", completedAt: "2026-07-20",
+    feedback: "交付物质量很好，已通过验收"
+  },
+  {
+    id: "DM-20260715-006",
+    title: "大兴农场水稻纹枯病预警模型",
+    type: "模型开发",
+    description: "开发基于气象+遥感的水稻纹枯病风险预警模型，输出逐日风险等级图。覆盖大兴农场全域约12000亩水田。",
+    consumerName: "吴农艺", consumerUnit: "大兴农场", contactPerson: "吴农艺",
+    deliverables: "预警模型 + 部署服务 + API文档 + 操作手册",
+    tags: ["纹枯病", "预警", "水稻", "气象"],
+    status: "处理中", priority: "紧急",
+    claimedBy: "王科研", claimedAt: "2026-07-16",
+    submittedAt: "2026-07-15", deadline: "2026-08-10",
+    processingNotes: "气象数据已对接，正在训练LSTM预警模型", completedAt: null, feedback: ""
+  }
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var _activeTab = 'demands';
+var _statusFilter = '';
+var _currentPage = 1;
+var _pageSize = 10;
+var _confirmAction = null;
+var _confirmTargetId = null;
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function statusClass(s) {
+  switch(s) {
+    case '已完成': return 'success';
+    case '处理中': return 'pending';
+    case '待接单': return 'warning';
+    case '待验收': return 'published';
+    case '已发布': return 'published';
+    default: return 'default';
+  }
+}
+function typeIcon(t) {
+  switch(t) {
+    case '数据分析': return '📊';
+    case '模型开发': return '🧠';
+    case '数据标注': return '🏷️';
+    case '应用开发': return '⚙️';
+    case '技术咨询': return '💡';
+    default: return '📋';
+  }
+}
+function escapeHTML(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function getActiveData() {
+  return _activeTab === 'demands' ? myDemands : myTasks;
+}
+
+function getFilteredData() {
+  var data = getActiveData();
+  if (_statusFilter) data = data.filter(function(d) { return d.status === _statusFilter; });
+  return data;
+}
+
+function getStatusFilters() {
+  return _activeTab === 'demands'
+    ? ['全部', '待接单', '处理中', '待验收', '已完成']
+    : ['全部', '处理中', '待验收', '已完成'];
+}
+
+function findDataById(id) {
+  return myDemands.find(function(d) { return d.id === id; })
+      || myTasks.find(function(d) { return d.id === id; });
+}
+
+/* ============================================================
+   STATUS FILTER BAR
+   ============================================================ */
+function renderStatusFilterBar() {
+  var bar = document.getElementById('statusFilterBar');
+  var filters = getStatusFilters();
+  var filtered = getFilteredData();
+
+  var html = '<span class="status-filter-label">状态：</span>';
+  filters.forEach(function(f) {
+    var val = f === '全部' ? '' : f;
+    var active = _statusFilter === val ? ' active' : '';
+    html += '<span class="status-filter-tab' + active + '" onclick="setStatusFilter(\'' + val + '\')">' + f + '</span>';
+  });
+  html += '<span class="status-filter-spacer"></span>';
+  html += '<span class="status-filter-count">共 ' + filtered.length + ' 条' + (_statusFilter ? '（已筛选）' : '') + '</span>';
+  bar.innerHTML = html;
+}
+
+function setStatusFilter(val) {
+  _statusFilter = val;
+  _currentPage = 1;
+  renderAll();
+}
+
+/* ============================================================
+   MAIN TAB SWITCH
+   ============================================================ */
+function switchMainTab(tab) {
+  _activeTab = tab;
+  _statusFilter = '';
+  _currentPage = 1;
+
+  document.querySelectorAll('.main-tab').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+
+  // Update sidebar
+  document.getElementById('sbMyDemands').classList.toggle('active', tab === 'demands');
+  document.getElementById('sbMyTasks').classList.toggle('active', tab === 'tasks');
+
+  // Update breadcrumb & card title
+  document.getElementById('breadcrumbCurrent').textContent = tab === 'demands' ? '我的需求' : '我的任务';
+  document.getElementById('cardTitle').textContent = tab === 'demands' ? '我的需求' : '我的任务';
+
+  renderAll();
+}
+
+/* ============================================================
+   RENDER TABLE
+   ============================================================ */
+function renderTable() {
+  var filtered = getFilteredData();
+  var totalPages = Math.ceil(filtered.length / _pageSize);
+  if (_currentPage > totalPages) _currentPage = Math.max(1, totalPages);
+  var start = (_currentPage - 1) * _pageSize;
+  var pageItems = filtered.slice(start, start + _pageSize);
+
+  var table = document.getElementById('dataTable');
+  var empty = document.getElementById('emptyState');
+  var pag = document.getElementById('pagination');
+
+  if (filtered.length === 0) {
+    table.style.display = 'none';
+    pag.style.display = 'none';
+    empty.style.display = '';
+    if (_activeTab === 'demands') {
+      document.getElementById('emptyIcon').textContent = '📝';
+      document.getElementById('emptyTitle').textContent = _statusFilter ? '暂无匹配的需求' : '暂无需求记录';
+      document.getElementById('emptyDesc').innerHTML = _statusFilter ? '当前筛选条件下没有匹配的需求。' : '您还没有提交过任何需求。<br>前往需求大厅提交您的第一个需求。';
+    } else {
+      document.getElementById('emptyIcon').textContent = '📌';
+      document.getElementById('emptyTitle').textContent = _statusFilter ? '暂无匹配的任务' : '暂无任务记录';
+      document.getElementById('emptyDesc').innerHTML = _statusFilter ? '当前筛选条件下没有匹配的任务。' : '您还没有接单任何任务。<br>前往需求大厅浏览并接单。';
+    }
+    return;
+  }
+
+  table.style.display = '';
+  pag.style.display = '';
+  empty.style.display = 'none';
+
+  var thead = _activeTab === 'demands'
+    ? '<thead><tr><th>需求编号</th><th>标题</th><th>类型</th><th>优先级</th><th>提交时间</th><th>截止日期</th><th>状态</th><th style="text-align:right;">操作</th></tr></thead>'
+    : '<thead><tr><th>需求编号</th><th>标题</th><th>类型</th><th>提交方</th><th>接单时间</th><th>截止日期</th><th>状态</th><th style="text-align:right;">操作</th></tr></thead>';
+
+  var tbody = '<tbody>';
+  pageItems.forEach(function(d) {
+    var chipCls = statusClass(d.status);
+    var dotCls = d.priority === '紧急' ? 'urgent' : 'normal';
+
+    tbody += '<tr>';
+    tbody += '<td><span class="demand-id">' + escapeHTML(d.id) + '</span></td>';
+    tbody += '<td><span class="demand-title-link" onclick="openDetailModal(\'' + d.id + '\')" title="' + escapeHTML(d.title) + '">' + escapeHTML(d.title) + '</span></td>';
+    tbody += '<td><span class="type-tag">' + typeIcon(d.type) + ' ' + escapeHTML(d.type) + '</span></td>';
+
+    if (_activeTab === 'demands') {
+      tbody += '<td><span class="priority-dot ' + dotCls + '"></span>' + escapeHTML(d.priority) + '</td>';
+      tbody += '<td style="font-size:13px;color:rgba(0,0,0,0.65);">' + d.submittedAt + '</td>';
+    } else {
+      tbody += '<td style="font-size:13px;">' + escapeHTML(d.consumerUnit) + '<br><span style="font-size:11px;color:rgba(0,0,0,0.45);">' + escapeHTML(d.consumerName) + '</span></td>';
+      tbody += '<td style="font-size:13px;color:rgba(0,0,0,0.65);">' + (d.claimedAt || '--') + '</td>';
+    }
+
+    tbody += '<td style="font-size:13px;color:rgba(0,0,0,0.65);">' + d.deadline + '</td>';
+    tbody += '<td><span class="status-chip ' + chipCls + '">' + d.status + '</span></td>';
+
+    // Actions
+    tbody += '<td><div style="display:flex;justify-content:flex-end;gap:4px;">';
+    tbody += '<button class="btn btn-text btn-sm" onclick="openDetailModal(\'' + d.id + '\')">📋 查看</button>';
+
+    if (_activeTab === 'demands') {
+      if (d.status === '待接单') {
+        tbody += '<button class="btn btn-danger-text btn-sm" onclick="openWithdrawConfirm(\'' + d.id + '\')">↩ 撤回</button>';
+      }
+      if (d.status === '待验收') {
+        tbody += '<button class="btn btn-accent-text btn-sm" onclick="goToWorkspace(\'' + d.id + '\', \'consumer\')">✅ 验收</button>';
+      }
+    } else {
+      if (d.status === '处理中') {
+        tbody += '<button class="btn btn-primary btn-sm" onclick="goToWorkspace(\'' + d.id + '\', \'dev\')">🔧 进入处理</button>';
+        tbody += '<button class="btn btn-accent-text btn-sm" onclick="openCompleteConfirm(\'' + d.id + '\')">📤 标记完成</button>';
+      }
+      if (d.status === '待验收') {
+        tbody += '<button class="btn btn-text btn-sm" onclick="goToWorkspace(\'' + d.id + '\', \'dev\')">📋 查看进度</button>';
+      }
+    }
+    tbody += '</div></td>';
+    tbody += '</tr>';
+  });
+  tbody += '</tbody>';
+
+  table.innerHTML = thead + tbody;
+  renderPagination(totalPages);
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+function renderPagination(totalPages) {
+  var controls = document.getElementById('paginationControls');
+  if (totalPages <= 1) {
+    controls.innerHTML = '<span class="pagination-info">共 1 页</span>';
+    return;
+  }
+  var html = '<button class="page-btn" ' + (_currentPage <= 1 ? 'disabled' : '') + ' onclick="goPage(' + (_currentPage - 1) + ')">‹</button>';
+  for (var i = 1; i <= totalPages; i++) {
+    html += '<button class="page-btn' + (i === _currentPage ? ' active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+  html += '<button class="page-btn" ' + (_currentPage >= totalPages ? 'disabled' : '') + ' onclick="goPage(' + (_currentPage + 1) + ')">›</button>';
+  html += '<span class="pagination-info">共 ' + totalPages + ' 页</span>';
+  controls.innerHTML = html;
+}
+
+function goPage(p) { _currentPage = p; renderTable(); }
+function onPageSizeChange() {
+  _pageSize = parseInt(document.getElementById('pageSizeSelect').value, 10);
+  _currentPage = 1;
+  renderTable();
+}
+
+/* ============================================================
+   RENDER ALL
+   ============================================================ */
+function renderAll() {
+  document.getElementById('demandCount').textContent = myDemands.length;
+  document.getElementById('taskCount').textContent = myTasks.length;
+  document.getElementById('myTaskCount').textContent = myTasks.length;
+  renderStatusFilterBar();
+  renderTable();
+}
+
+/* ============================================================
+   DETAIL MODAL
+   ============================================================ */
+function openDetailModal(id) {
+  var d = findDataById(id);
+  if (!d) return;
+
+  var statusChip = '<span class="status-chip ' + statusClass(d.status) + '">' + d.status + '</span>';
+  var priorityDot = '<span class="priority-dot ' + (d.priority === '紧急' ? 'urgent' : 'normal') + '"></span>';
+  var tagsHtml = d.tags.map(function(t) {
+    return '<span style="display:inline-block;padding:1px 8px;margin:2px;background:rgba(0,0,0,0.04);border-radius:3px;font-size:12px;">' + escapeHTML(t) + '</span>';
+  }).join('');
+
+  var html = '';
+  html += '<div class="detail-row"><span class="detail-label">需求编号</span><span class="detail-value"><span class="demand-id">' + escapeHTML(d.id) + '</span></span></div>';
+  html += '<div class="detail-row"><span class="detail-label">标题</span><span class="detail-value" style="font-weight:600;">' + escapeHTML(d.title) + '</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">类型</span><span class="detail-value"><span class="type-tag">' + typeIcon(d.type) + ' ' + escapeHTML(d.type) + '</span></span></div>';
+  html += '<div class="detail-row"><span class="detail-label">状态</span><span class="detail-value">' + statusChip + '</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">优先级</span><span class="detail-value">' + priorityDot + escapeHTML(d.priority) + '</span></div>';
+  html += '<div class="detail-divider"></div>';
+  html += '<div class="detail-row"><span class="detail-label">提交方</span><span class="detail-value">' + escapeHTML(d.consumerName) + '（' + escapeHTML(d.consumerUnit) + '）</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">联系人</span><span class="detail-value">' + escapeHTML(d.contactPerson) + '</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">提交时间</span><span class="detail-value">' + d.submittedAt + '</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">截止日期</span><span class="detail-value">' + d.deadline + '</span></div>';
+  if (d.claimedBy) {
+    html += '<div class="detail-row"><span class="detail-label">接单方</span><span class="detail-value">' + escapeHTML(d.claimedBy) + '（' + (d.claimedAt || '--') + '）</span></div>';
+  }
+  html += '<div class="detail-divider"></div>';
+  html += '<div class="detail-row"><span class="detail-label">描述</span><span class="detail-value">' + escapeHTML(d.description) + '</span></div>';
+  html += '<div class="detail-row"><span class="detail-label">期望交付物</span><span class="detail-value">' + escapeHTML(d.deliverables) + '</span></div>';
+  if (d.tags && d.tags.length) {
+    html += '<div class="detail-row"><span class="detail-label">标签</span><span class="detail-value">' + tagsHtml + '</span></div>';
+  }
+  if (d.processingNotes) {
+    html += '<div class="detail-divider"></div>';
+    html += '<div class="detail-row"><span class="detail-label">处理备注</span><span class="detail-value">' + escapeHTML(d.processingNotes) + '</span></div>';
+  }
+  if (d.completedAt) {
+    html += '<div class="detail-row"><span class="detail-label">完成时间</span><span class="detail-value">' + d.completedAt + '</span></div>';
+  }
+  if (d.feedback) {
+    html += '<div class="detail-row"><span class="detail-label">验收反馈</span><span class="detail-value" style="color:#52c41a;">' + escapeHTML(d.feedback) + '</span></div>';
+  }
+
+  document.getElementById('detailModalBody').innerHTML = html;
+  document.getElementById('detailModal').classList.add('visible');
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('visible');
+}
+
+/* ============================================================
+   CONFIRMATION MODAL
+   ============================================================ */
+function openWithdrawConfirm(id) {
+  var d = findDataById(id);
+  if (!d) return;
+  _confirmAction = 'withdraw';
+  _confirmTargetId = id;
+  document.getElementById('confirmModalTitle').textContent = '撤回需求';
+  document.getElementById('confirmModalBody').innerHTML = '确定要撤回需求 <b>' + escapeHTML(d.title) + '</b> 吗？<br><br>撤回后该需求将从需求大厅移除，此操作不可恢复。';
+  document.getElementById('confirmBtn').style.background = '#ff4d4f';
+  document.getElementById('confirmBtn').style.borderColor = '#ff4d4f';
+  document.getElementById('confirmBtn').textContent = '确认撤回';
+  document.getElementById('confirmModal').classList.add('visible');
+}
+
+function openCompleteConfirm(id) {
+  var d = findDataById(id);
+  if (!d) return;
+  _confirmAction = 'complete';
+  _confirmTargetId = id;
+  document.getElementById('confirmModalTitle').textContent = '标记完成';
+  document.getElementById('confirmModalBody').innerHTML = '确定将需求 <b>' + escapeHTML(d.title) + '</b> 标记为完成吗？<br><br>标记完成后，需求状态将变更为「待验收」，由提交方进行验收确认。';
+  document.getElementById('confirmBtn').style.background = '#2f54eb';
+  document.getElementById('confirmBtn').style.borderColor = '#2f54eb';
+  document.getElementById('confirmBtn').textContent = '确认标记';
+  document.getElementById('confirmModal').classList.add('visible');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('visible');
+  _confirmAction = null;
+  _confirmTargetId = null;
+}
+
+function executeConfirm() {
+  if (!_confirmAction || !_confirmTargetId) return;
+  if (_confirmAction === 'withdraw') {
+    var d = findDataById(_confirmTargetId);
+    myDemands = myDemands.filter(function(item) { return item.id !== _confirmTargetId; });
+    closeConfirmModal();
+    renderAll();
+    showToast('success', '需求「' + (d ? d.title : '--') + '」已撤回。');
+  } else if (_confirmAction === 'complete') {
+    var task = myTasks.find(function(item) { return item.id === _confirmTargetId; });
+    if (task) { task.status = '待验收'; }
+    var demand = myDemands.find(function(item) { return item.id === _confirmTargetId; });
+    if (demand) { demand.status = '待验收'; }
+    closeConfirmModal();
+    renderAll();
+    showToast('success', '已标记为「待验收」，等待提交方验收。');
+  }
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function goToWorkspace(id, role) {
+  window.location.href = 'demand-workspace.html?id=' + id + '&role=' + role;
+}
+
+function goToWorkbenchTab(tab) {
+  window.location.href = 'workbench.html#' + tab;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+var _toastTimer = null;
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast visible ' + type;
+  t.textContent = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : 'ℹ️ ') + msg;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 3000);
+}
+
+/* ============================================================
+   MODAL CLICK OUTSIDE TO CLOSE
+   ============================================================ */
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDetailModal();
+});
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirmModal();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+// ===== AUTH STATE (must run first — forced login page) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return;}switchAuthState(true);})();
+// ===== NOTIFICATIONS =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+renderAll();
+renderNotifs();
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('success', '已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

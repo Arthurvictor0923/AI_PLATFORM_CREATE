@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型广场 — 洛书·模型服务平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+html, body {
+  width: 100%; min-width: 1280px; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+a { color: #2f54eb; text-decoration: none; transition: color 0.3s; }
+a:hover { color: #597ef7; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+  background: transparent;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   PAGE CONTAINER
+   ============================================================ */
+.page-wrap { padding-top: 60px; }
+.page-inner { max-width: 1280px; margin: 0 auto; padding: 24px 0 48px; }
+
+/* ============================================================
+   SEARCH BAR — ModelScope-style full-width
+   ============================================================ */
+.search-section { padding: 0 0 20px; }
+.search-wrap { position: relative; max-width: 720px; }
+.search-wrap .search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: #8284A4; font-size: 16px; pointer-events: none;
+}
+.search-input {
+  width: 100%; height: 40px; padding: 0 16px 0 40px; font-size: 15px;
+  color: #27254C; background: #ffffff; border: 1px solid #d9d9d9;
+  border-radius: 8px; outline: none; transition: all 0.2s;
+}
+.search-input:hover { background: #F0F3FA; }
+.search-input:focus { background: #ffffff; border-color: #624AFF; box-shadow: 0 0 0 2px rgba(98,74,255,0.08); }
+.search-input::placeholder { color: #C4C3D9; }
+[data-prefers-color="dark"] .search-input { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.08); }
+[data-prefers-color="dark"] .search-input::placeholder { color: rgba(255,255,255,0.25); }
+
+/* ============================================================
+   PAGE LAYOUT — left filter sidebar + right content (ModelScope style)
+   ============================================================ */
+.marketplace-layout { display: flex; gap: 28px; align-items: flex-start; }
+
+/* Left filter sidebar */
+.filter-sidebar { width: 238px; flex-shrink: 0; position: sticky; top: 76px; }
+
+/* Filter sidebar header: icon + title + clear */
+.filter-sidebar-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.filter-sidebar-icon { width: 24px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, rgba(98,74,255,0.1), rgba(98,74,255,0.04)); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.filter-sidebar-title { font-size: 15px; font-weight: 600; color: #27254C; flex: 1; }
+.filter-sidebar-clear { font-size: 12px; color: #8284A4; cursor: pointer; border: none; background: none; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; flex-shrink: 0; }
+.filter-sidebar-clear:hover { color: #624AFF; background: rgba(98,74,255,0.04); }
+[data-prefers-color="dark"] .filter-sidebar-clear { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .filter-sidebar-clear:hover { color: #624AFF; }
+
+.filter-tab-row { display: flex; gap: 0; margin-bottom: 18px; background: #F4F6FA; border-radius: 6px; padding: 2px; }
+.filter-tab-btn { flex: 1; height: 30px; border-radius: 5px; font-size: 13px; color: rgba(0,0,0,0.55); cursor: pointer; border: none; background: transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.filter-tab-btn:hover { color: #27254C; }
+.filter-tab-btn.active { background: #FFFFFF; color: #27254C; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+/* Filter groups wrapper — show/hide per tab */
+.filter-tab-content { display: none; }
+.filter-tab-content.active { display: block; }
+
+.filter-group { margin-bottom: 20px; }
+.filter-group:last-child { margin-bottom: 0; }
+.filter-group-title { font-size: 13px; font-weight: 600; color: #27254C; line-height: 20px; margin-bottom: 6px; }
+.filter-group-items { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+/* Filter card tags — card-style multi-select, 2 per row */
+.filter-card-tag {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 28px; padding: 0 6px; border-radius: 6px;
+  font-size: 12px; color: #464D5B; background: #F4F6FA;
+  border: 1px solid transparent; cursor: pointer;
+  transition: all 0.15s; user-select: none; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.filter-card-tag:hover { background: #EBEBFF; color: #27254C; }
+.filter-card-tag.checked { background: #533FD9; color: #FFFFFF; border-color: #533FD9; }
+.filter-card-tag .fc-label { line-height: 1; overflow: hidden; text-overflow: ellipsis; }
+.filter-card-tag .fc-count { font-size: 10px; opacity: 0.5; flex-shrink: 0; }
+.filter-card-tag.checked .fc-count { opacity: 0.7; }
+
+[data-prefers-color="dark"] .filter-card-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .filter-card-tag:hover { background: rgba(98,74,255,0.12); color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .filter-card-tag.checked { background: #624AFF; color: #fff; }
+
+/* Right content area */
+.content-main { flex: 1; min-width: 0; }
+
+/* ============================================================
+   TOOLBAR — sort + count
+   ============================================================ */
+.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sort-select {
+  height: 32px; padding: 0 28px 0 11px; font-size: 14px;
+  color: rgba(0,0,0,0.65); background: #fff; border: 1px solid #d9d9d9;
+  border-radius: 6px; cursor: pointer; outline: none; appearance: none;
+  -webkit-appearance: none; transition: all 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.sort-select:hover { border-color: #8a73ff; }
+.result-count { font-size: 13px; color: #8284A4; }
+.result-count strong { color: #27254C; font-weight: 600; }
+[data-prefers-color="dark"] .sort-select { background-color: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .result-count { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .result-count strong { color: rgba(255,255,255,0.85); }
+
+/* Reset link */
+.filter-reset-link {
+  font-size: 13px; color: #624AFF; cursor: pointer; transition: opacity 0.2s;
+  white-space: nowrap; margin-left: 12px;
+}
+.filter-reset-link:hover { opacity: 0.7; }
+
+/* ============================================================
+   MODEL CARD GRID — ModelScope 2-column grid
+   ============================================================ */
+.model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Card — ModelScope model library style */
+.model-card {
+  background: linear-gradient(90deg, #F7F9FD 14%, #FFFFFF 99%);
+  border: 2px solid #F7F9FD; border-radius: 12px;
+  padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.model-card:hover { border-color: #624AFF; box-shadow: 0 2px 16px rgba(98,74,255,0.06); }
+
+/* Card thumbnail */
+.model-card-thumb {
+  width: 80px; height: 80px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; background: linear-gradient(135deg, rgba(47,84,235,0.06), rgba(117,102,255,0.04));
+}
+.model-card-thumb.collection { background: linear-gradient(135deg, rgba(35,173,164,0.08), rgba(35,173,164,0.02)); }
+
+/* Card body */
+.model-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+
+/* Title row */
+.model-card-title-row { display: flex; align-items: center; gap: 8px; }
+.model-card-name { font-size: 16px; font-weight: 400; color: #27254C; line-height: 24px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+.model-card-badge { flex-shrink: 0; padding: 0 5px; border-radius: 4px; font-size: 12px; font-weight: 400; white-space: nowrap; line-height: 20px; height: 20px; }
+.model-card-badge.collection { color: #23ada4; background: rgba(35,173,164,0.08); }
+.model-card-badge.model { color: #2f54eb; background: rgba(47,84,235,0.08); }
+
+/* Description */
+.model-card-desc { font-size: 13px; color: #8284A4; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Tags */
+.model-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.model-tag {
+  display: inline-block; padding: 0 5px; border-radius: 4px;
+  font-size: 12px; line-height: 20px; height: 20px;
+  background: #FFFFFF; color: #464D5B; border: none;
+  transition: box-shadow 0.2s; white-space: nowrap;
+}
+.model-tag:hover { box-shadow: 0px 2px 12px 0px rgba(150,150,176,0.3); }
+
+/* Meta footer */
+.model-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid #ECEDF1; margin-top: auto; }
+.model-card-uploader { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.uploader-avatar { width: 18px; height: 18px; border-radius: 50%; background: rgba(47,84,235,0.1); color: #2f54eb; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.uploader-name { font-size: 12px; color: #8284A4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.model-card-stats { display: flex; align-items: center; gap: 0; font-size: 12px; color: #8284A4; flex-shrink: 0; }
+.model-card-stats .stat-item { padding: 0 10px; border-right: 1px solid #ECEDF1; white-space: nowrap; }
+.model-card-stats .stat-item:last-child { border-right: none; padding-right: 0; }
+.model-card-stats .stat-item:first-child { padding-left: 0; }
+
+[data-prefers-color="dark"] .model-card { background: linear-gradient(90deg, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0.06) 99%); border-color: rgba(255,255,255,0.04); }
+[data-prefers-color="dark"] .model-card:hover { border-color: #624AFF; }
+[data-prefers-color="dark"] .model-card-name { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .model-card-desc { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .model-card-meta { border-color: rgba(255,255,255,0.06); }
+[data-prefers-color="dark"] .model-card-stats { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .model-card-stats .stat-item { border-color: rgba(255,255,255,0.06); }
+[data-prefers-color="dark"] .model-tag { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.65); }
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.pagination-wrap {
+  display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+  padding: 32px 0 8px;
+}
+.page-info { font-size: 13px; color: #8284A4; margin-right: auto; }
+[data-prefers-color="dark"] .page-info { color: rgba(255,255,255,0.45); }
+.pagination { display: flex; align-items: center; gap: 8px; }
+.page-btn {
+  min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px;
+  font-size: 14px; line-height: 30px; color: rgba(0,0,0,0.65);
+  background: #FFFFFF; border: 1px solid #d9d9d9; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover { color: #624AFF; border-color: #8a73ff; }
+.page-btn.active { background: #624AFF; border-color: #624AFF; color: #FFFFFF; font-weight: 500; }
+.page-btn:disabled { color: #C4C3D9; cursor: not-allowed; border-color: #d9d9d9; background: #fff; }
+[data-prefers-color="dark"] .page-btn { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .page-btn:hover { color: #624AFF; border-color: #624AFF; }
+[data-prefers-color="dark"] .page-btn.active { background: #624AFF; color: #fff; }
+[data-prefers-color="dark"] .page-btn:disabled { opacity: 0.4; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state { display: none; text-align: center; padding: 80px 20px; }
+.empty-state.visible { display: block; }
+.empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.3; }
+.empty-state h3 { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: rgba(0,0,0,0.45); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1400px) {
+  html, body { min-width: 0; }
+  .page-inner { padding: 24px 20px 48px; }
+}
+@media (max-width: 1080px) {
+  .marketplace-layout { flex-direction: column; }
+  .filter-sidebar { width: 100%; position: static; display: flex; gap: 20px; overflow-x: auto; }
+  .filter-group { min-width: 140px; flex-shrink: 0; }
+  .model-grid { grid-template-columns: 1fr; }
+  .header-right { padding-right: 16px; }
+}
+@media (max-width: 768px) {
+  .top-nav-menu-wrap { display: none; }
+  .page-inner { padding: 16px; }
+  .marketplace-layout { flex-direction: column; gap: 16px; }
+  .filter-sidebar { width: 100%; position: static; display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+  .filter-group { min-width: 130px; flex-shrink: 0; margin-bottom: 0; }
+  .filter-group-title { font-size: 13px; }
+  .filter-card-tag { height: 26px; font-size: 12px; padding: 0 8px; }
+}
+
+/* ============================================================
+   MODEL DETAIL VIEW
+   ============================================================ */
+#modelDetailView { display: none; }
+#modelDetailView.visible { display: block; }
+
+/* Buttons (reused in detail view) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+
+/* Breadcrumb */
+.md-breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 14px; color: rgba(0,0,0,0.45); margin-bottom: 16px; }
+.md-breadcrumb .md-back-link { color: #2f54eb; cursor: pointer; transition: color 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+.md-breadcrumb .md-back-link:hover { color: #597ef7; }
+.md-breadcrumb .md-sep { margin: 0 4px; color: rgba(0,0,0,0.25); }
+.md-breadcrumb .md-current { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .md-breadcrumb { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .md-breadcrumb .md-current { color: rgba(255,255,255,0.85); }
+
+/* Header Card */
+.md-header-card { background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px 32px; margin-bottom: 16px; }
+[data-prefers-color="dark"] .md-header-card { background: #1f1f1f; border-color: #303030; }
+.md-header-top { display: flex; gap: 20px; align-items: flex-start; }
+.md-header-icon { width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 44px; background: linear-gradient(135deg, rgba(47,84,235,0.08), rgba(117,102,255,0.04)); flex-shrink: 0; }
+.md-header-icon.collection { background: linear-gradient(135deg, rgba(35,173,164,0.1), rgba(35,173,164,0.03)); }
+.md-header-info { flex: 1; min-width: 0; }
+.md-header-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.md-header-name { font-size: 22px; font-weight: 600; color: #27254C; line-height: 1.3; margin: 0; }
+[data-prefers-color="dark"] .md-header-name { color: rgba(255,255,255,0.85); }
+.md-header-badge { flex-shrink: 0; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; white-space: nowrap; line-height: 22px; }
+.md-header-badge.collection { color: #23ada4; background: rgba(35,173,164,0.1); }
+.md-header-badge.model { color: #2f54eb; background: rgba(47,84,235,0.08); }
+.md-header-desc { font-size: 14px; color: #8284A4; line-height: 1.7; margin-bottom: 12px; }
+[data-prefers-color="dark"] .md-header-desc { color: rgba(255,255,255,0.45); }
+.md-header-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.md-header-meta-row { display: flex; align-items: center; gap: 20px; font-size: 13px; color: #8284A4; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .md-header-meta-row { border-top-color: #303030; color: rgba(255,255,255,0.45); }
+.md-header-meta-row .md-meta-item { display: flex; align-items: center; gap: 5px; }
+.md-header-meta-row .md-meta-label { color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .md-header-meta-row .md-meta-label { color: rgba(255,255,255,0.35); }
+.md-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+/* ============================================================
+   HEADER ACTION BAR — three core operations below meta row
+   ============================================================ */
+.md-header-action-bar { display: flex; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .md-header-action-bar { border-top-color: #303030; }
+.md-header-action-bar .action-bar-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.2s cubic-bezier(0.645,0.045,0.355,1); white-space: nowrap; user-select: none; }
+.md-header-action-bar .action-bar-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.md-header-action-bar .action-bar-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+.md-header-action-bar .action-bar-btn.primary:active { background: #1d39c4; border-color: #1d39c4; }
+.md-header-action-bar .action-bar-btn.trial { background: #23ada4; color: #fff; border-color: #23ada4; box-shadow: 0 2px 0 rgba(35,173,164,0.1); }
+.md-header-action-bar .action-bar-btn.trial:hover { background: #2ec4bb; border-color: #2ec4bb; }
+.md-header-action-bar .action-bar-btn.trial:active { background: #1a8f87; border-color: #1a8f87; }
+.md-header-action-bar .action-bar-btn.default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.md-header-action-bar .action-bar-btn.default:hover { color: #597ef7; border-color: #597ef7; }
+.md-header-action-bar .action-bar-btn.default:active { color: #1d39c4; border-color: #1d39c4; }
+[data-prefers-color="dark"] .md-header-action-bar .action-bar-btn.default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+
+/* Tab Bar */
+.md-tab-bar { display: flex; align-items: center; gap: 0; border-bottom: 1px solid #f0f0f0; background: #FFFFFF; border-radius: 8px 8px 0 0; padding: 0 20px; margin-bottom: 0; }
+[data-prefers-color="dark"] .md-tab-bar { background: #1f1f1f; border-bottom-color: #303030; }
+.md-tab-btn { position: relative; display: inline-flex; align-items: center; height: 44px; padding: 0 20px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.2s; white-space: nowrap; }
+.md-tab-btn:hover { color: #2f54eb; }
+.md-tab-btn.active { color: #2f54eb; font-weight: 600; }
+.md-tab-btn.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: #2f54eb; border-radius: 1px; }
+[data-prefers-color="dark"] .md-tab-btn { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .md-tab-btn.active { color: #597ef7; }
+
+/* Compact operation buttons in tab bar — aligned to spec: 32px height, 6px radius, 13px font */
+.md-tab-bar-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-right: 4px; }
+.md-tab-op-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 32px; padding: 0 12px; font-size: 13px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645,0.045,0.355,1); flex-shrink: 0; }
+.md-tab-op-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.08); }
+.md-tab-op-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+.md-tab-op-btn.primary:active { background: #1d39c4; border-color: #1d39c4; }
+.md-tab-op-btn.trial { background: #23ada4; color: #fff; border-color: #23ada4; box-shadow: 0 2px 0 rgba(35,173,164,0.08); }
+.md-tab-op-btn.trial:hover { background: #2ec4bb; border-color: #2ec4bb; }
+.md-tab-op-btn.trial:active { background: #1a8f87; border-color: #1a8f87; }
+.md-tab-op-btn.default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.md-tab-op-btn.default:hover { color: #2f54eb; border-color: #2f54eb; }
+.md-tab-op-btn.default:active { color: #1d39c4; border-color: #1d39c4; }
+[data-prefers-color="dark"] .md-tab-op-btn.default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+.md-tab-sep { width: 1px; height: 22px; background: #e8e8e8; margin: 0 12px; flex-shrink: 0; }
+[data-prefers-color="dark"] .md-tab-sep { background: #303030; }
+
+/* Tab Content Area */
+.md-tab-content-wrap { background: #FFFFFF; border: 1px solid #f0f0f0; border-top: none; border-radius: 0 0 8px 8px; padding: 28px 32px; min-height: 400px; }
+[data-prefers-color="dark"] .md-tab-content-wrap { background: #1f1f1f; border-color: #303030; }
+.md-tab-panel { display: none; }
+.md-tab-panel.active { display: block; }
+
+/* Section Title */
+.md-section-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 16px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+.md-section-title:first-child { margin-top: 0; }
+.md-section-title::before { content: ''; display: inline-block; width: 3px; height: 16px; background: #2f54eb; border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .md-section-title { color: rgba(255,255,255,0.85); }
+
+/* Readme text */
+.md-readme { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.8; }
+.md-readme p { margin-bottom: 12px; }
+.md-readme h3 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin: 20px 0 10px; }
+[data-prefers-color="dark"] .md-readme { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .md-readme h3 { color: rgba(255,255,255,0.85); }
+
+/* Info Table */
+.md-info-table { width: 100%; border-collapse: collapse; }
+.md-info-table tr { border-bottom: 1px solid #fafafa; }
+.md-info-table tr:last-child { border-bottom: none; }
+[data-prefers-color="dark"] .md-info-table tr { border-bottom-color: #2a2a2a; }
+.md-info-table td { padding: 10px 0; font-size: 14px; vertical-align: top; }
+.md-info-table .md-info-label { width: 100px; color: rgba(0,0,0,0.45); font-size: 13px; padding-right: 16px; white-space: nowrap; }
+[data-prefers-color="dark"] .md-info-table .md-info-label { color: rgba(255,255,255,0.45); }
+.md-info-table .md-info-value { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .md-info-table .md-info-value { color: rgba(255,255,255,0.85); }
+.md-info-table .md-info-value code { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; background: rgba(0,0,0,0.04); padding: 2px 6px; border-radius: 4px; color: #2f54eb; }
+
+/* Use Case list */
+.md-usecase-list { display: flex; flex-direction: column; gap: 8px; }
+.md-usecase-item { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+.md-usecase-item .md-bullet { width: 6px; height: 6px; border-radius: 50%; background: #2f54eb; flex-shrink: 0; margin-top: 8px; }
+
+/* Deploy Steps */
+.md-step-list { display: flex; flex-direction: column; gap: 0; }
+.md-step-item { display: flex; gap: 14px; padding: 10px 0; }
+.md-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(47,84,235,0.08); color: #2f54eb; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.md-step-text { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 28px; }
+[data-prefers-color="dark"] .md-step-text { color: rgba(255,255,255,0.65); }
+.md-step-text code { font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; font-size: 12px; background: rgba(0,0,0,0.04); padding: 2px 6px; border-radius: 4px; color: #2f54eb; }
+
+/* API Code Block */
+.md-code-block { background: #1e1e2e; border-radius: 6px; padding: 16px 20px; overflow-x: auto; margin-top: 12px; }
+.md-code-block pre { font-size: 13px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; color: #cdd6f4; line-height: 1.7; margin: 0; white-space: pre-wrap; word-break: break-all; }
+[data-prefers-color="dark"] .md-code-block { background: #121212; }
+
+/* File Card Grid (for collection sub-models) */
+.md-file-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.md-file-card { display: flex; gap: 14px; padding: 16px; border: 1px solid #f0f0f0; border-radius: 8px; background: #FCFCFE; cursor: default; transition: border-color 0.2s, box-shadow 0.2s; }
+.md-file-card:hover { border-color: #d6e4ff; box-shadow: 0 2px 8px rgba(47,84,235,0.04); }
+[data-prefers-color="dark"] .md-file-card { background: rgba(255,255,255,0.02); border-color: #303030; }
+[data-prefers-color="dark"] .md-file-card:hover { border-color: rgba(47,84,235,0.3); }
+.md-file-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; background: linear-gradient(135deg, rgba(47,84,235,0.06), rgba(117,102,255,0.03)); flex-shrink: 0; }
+.md-file-info { flex: 1; min-width: 0; }
+.md-file-name { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
+[data-prefers-color="dark"] .md-file-name { color: rgba(255,255,255,0.85); }
+.md-file-desc { font-size: 12px; color: #8284A4; line-height: 1.5; margin-bottom: 4px; }
+.md-file-size { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .md-file-size { color: rgba(255,255,255,0.35); }
+
+/* ============================================================
+   DETAIL TWO-COLUMN LAYOUT + SIDEBAR
+   ============================================================ */
+.md-detail-layout { display: flex; gap: 24px; align-items: flex-start; }
+.md-detail-left { flex: 1; min-width: 0; }
+.md-detail-right { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 76px; }
+
+/* Sidebar cards */
+.md-sidebar-card { background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px 18px; }
+[data-prefers-color="dark"] .md-sidebar-card { background: #1f1f1f; border-color: #303030; }
+.md-sidebar-card-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .md-sidebar-card-title { color: rgba(255,255,255,0.85); }
+.md-sidebar-list { display: flex; flex-direction: column; gap: 6px; }
+.md-sidebar-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; font-size: 13px; color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.15s; text-decoration: none; }
+.md-sidebar-item:hover { background: rgba(47,84,235,0.04); color: #2f54eb; }
+[data-prefers-color="dark"] .md-sidebar-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .md-sidebar-item:hover { background: rgba(47,84,235,0.1); color: #597ef7; }
+.md-sidebar-item-icon { font-size: 16px; flex-shrink: 0; }
+.md-sidebar-item-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.md-sidebar-item-count { font-size: 11px; color: rgba(0,0,0,0.35); flex-shrink: 0; }
+.md-sidebar-empty { font-size: 12px; color: rgba(0,0,0,0.35); text-align: center; padding: 12px 0; }
+[data-prefers-color="dark"] .md-sidebar-empty { color: rgba(255,255,255,0.25); }
+
+/* Lineage Tree */
+.md-lineage-tree { display: flex; flex-direction: column; gap: 0; }
+.md-lineage-node { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; position: relative; }
+.md-lineage-node::before { content: ''; position: absolute; left: 7px; top: 26px; bottom: -6px; width: 1.5px; background: #e8e8e8; }
+.md-lineage-node:last-child::before { display: none; }
+.md-lineage-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d9d9d9; background: #fff; flex-shrink: 0; margin-top: 2px; position: relative; z-index: 1; transition: all 0.2s; }
+.md-lineage-node.current .md-lineage-dot { border-color: #2f54eb; background: #2f54eb; box-shadow: 0 0 0 3px rgba(47,84,235,0.15); }
+.md-lineage-node.clickable .md-lineage-dot { border-color: #597ef7; }
+.md-lineage-node.clickable:hover .md-lineage-dot { border-color: #2f54eb; background: #2f54eb; }
+.md-lineage-info { flex: 1; min-width: 0; }
+.md-lineage-label { font-size: 11px; color: rgba(0,0,0,0.35); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1px; }
+.md-lineage-name { font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.md-lineage-node.current .md-lineage-name { color: #2f54eb; font-weight: 600; }
+.md-lineage-node.clickable .md-lineage-name { cursor: pointer; }
+.md-lineage-node.clickable:hover .md-lineage-name { color: #2f54eb; }
+[data-prefers-color="dark"] .md-lineage-node::before { background: #303030; }
+[data-prefers-color="dark"] .md-lineage-dot { background: #1f1f1f; border-color: #434343; }
+[data-prefers-color="dark"] .md-lineage-name { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .md-lineage-label { color: rgba(255,255,255,0.25); }
+
+/* Lineage jump confirmation dialog */
+#lineageJumpDialog .dialog-box { width: 420px; }
+.lj-model-preview { display: flex; gap: 14px; align-items: flex-start; padding: 12px; background: #fafafa; border-radius: 8px; margin-bottom: 4px; }
+[data-prefers-color="dark"] .lj-model-preview { background: rgba(255,255,255,0.03); }
+.lj-model-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; background: linear-gradient(135deg, rgba(47,84,235,0.08), rgba(117,102,255,0.04)); flex-shrink: 0; }
+.lj-model-info { flex: 1; min-width: 0; }
+.lj-model-name { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
+[data-prefers-color="dark"] .lj-model-name { color: rgba(255,255,255,0.85); }
+.lj-model-meta { font-size: 12px; color: rgba(0,0,0,0.45); line-height: 1.5; }
+[data-prefers-color="dark"] .lj-model-meta { color: rgba(255,255,255,0.35); }
+.lj-model-desc { font-size: 13px; color: rgba(0,0,0,0.55); line-height: 1.5; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+[data-prefers-color="dark"] .lj-model-desc { color: rgba(255,255,255,0.5); }
+.lj-relation-badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+.lj-relation-badge.parent { color: #2f54eb; background: rgba(47,84,235,0.08); }
+.lj-relation-badge.child { color: #23ada4; background: rgba(35,173,164,0.08); }
+
+/* Responsive: sidebar collapses below on narrow screens */
+@media (max-width: 1080px) {
+  .md-detail-layout { flex-direction: column; }
+  .md-detail-right { width: 100%; position: static; }
+}
+
+/* ============================================================
+   COLLECTION DETAIL VIEW — simplified: header + sub-model grid
+   ============================================================ */
+#collectionDetailView { display: none; }
+#collectionDetailView.visible { display: block; }
+
+/* Sub-model card grid */
+.cd-model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+
+/* Sub-model card — reuses marketplace card style with subtle tweaks */
+.cd-model-card {
+  background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px;
+  padding: 16px 18px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.cd-model-card:hover { border-color: #2f54eb; box-shadow: 0 2px 12px rgba(47,84,235,0.06); }
+[data-prefers-color="dark"] .cd-model-card { background: rgba(255,255,255,0.03); border-color: #303030; }
+[data-prefers-color="dark"] .cd-model-card:hover { border-color: #597ef7; }
+.cd-model-card .cd-card-icon {
+  width: 56px; height: 56px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 30px;
+  background: linear-gradient(135deg, rgba(47,84,235,0.06), rgba(117,102,255,0.03));
+}
+.cd-model-card .cd-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cd-model-card .cd-card-name { font-size: 15px; font-weight: 600; color: #27254C; line-height: 1.3; }
+[data-prefers-color="dark"] .cd-model-card .cd-card-name { color: rgba(255,255,255,0.85); }
+.cd-model-card .cd-card-desc { font-size: 13px; color: #8284A4; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+[data-prefers-color="dark"] .cd-model-card .cd-card-desc { color: rgba(255,255,255,0.45); }
+.cd-model-card .cd-card-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .cd-model-card .cd-card-meta { color: rgba(255,255,255,0.35); }
+.cd-model-card .cd-card-arrow { font-size: 14px; color: rgba(0,0,0,0.25); flex-shrink: 0; align-self: center; transition: color 0.2s; }
+.cd-model-card:hover .cd-card-arrow { color: #2f54eb; }
+[data-prefers-color="dark"] .cd-model-card .cd-card-arrow { color: rgba(255,255,255,0.25); }
+
+/* Collection header tweaks */
+.cd-header-card { background: #FFFFFF; border: 1px solid #f0f0f0; border-radius: 8px; padding: 28px 32px; }
+[data-prefers-color="dark"] .cd-header-card { background: #1f1f1f; border-color: #303030; }
+.cd-header-top { display: flex; gap: 20px; align-items: flex-start; }
+.cd-header-icon { width: 72px; height: 72px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; background: linear-gradient(135deg, rgba(35,173,164,0.1), rgba(35,173,164,0.03)); flex-shrink: 0; }
+.cd-header-info { flex: 1; min-width: 0; }
+.cd-header-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.cd-header-name { font-size: 22px; font-weight: 600; color: #27254C; line-height: 1.3; }
+[data-prefers-color="dark"] .cd-header-name { color: rgba(255,255,255,0.85); }
+.cd-header-desc { font-size: 14px; color: #8284A4; line-height: 1.7; margin-bottom: 14px; }
+[data-prefers-color="dark"] .cd-header-desc { color: rgba(255,255,255,0.45); }
+.cd-header-meta { display: flex; align-items: center; gap: 20px; font-size: 13px; color: #8284A4; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .cd-header-meta { border-top-color: #303030; color: rgba(255,255,255,0.45); }
+.cd-header-meta .cd-meta-item { display: flex; align-items: center; gap: 5px; }
+.cd-section-header { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 12px; }
+.cd-section-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); display: flex; align-items: center; gap: 8px; }
+.cd-section-title::before { content: ''; display: inline-block; width: 3px; height: 16px; background: #23ada4; border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .cd-section-title { color: rgba(255,255,255,0.85); }
+.cd-section-count { font-size: 13px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .cd-section-count { color: rgba(255,255,255,0.35); }
+
+@media (max-width: 768px) {
+  .cd-header-top { flex-direction: column; align-items: center; text-align: center; }
+  .cd-header-meta { flex-direction: column; gap: 8px; align-items: center; }
+  .cd-model-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   COLLECTION DIALOG
+   ============================================================ */
+.dialog-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+.dialog-overlay.visible { display: flex; }
+.dialog-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); width: 480px; max-width: 90vw; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; }
+[data-prefers-color="dark"] .dialog-box { background: #1f1f1f; }
+.dialog-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .dialog-header { border-bottom-color: #303030; }
+.dialog-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .dialog-title { color: rgba(255,255,255,0.85); }
+.dialog-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.2s; flex-shrink: 0; }
+.dialog-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.dialog-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+.dialog-body-label { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 10px; }
+[data-prefers-color="dark"] .dialog-body-label { color: rgba(255,255,255,0.65); }
+.dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid #f0f0f0; flex-shrink: 0; }
+[data-prefers-color="dark"] .dialog-footer { border-top-color: #303030; }
+
+/* Collection list */
+.coll-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
+.coll-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; user-select: none; }
+.coll-item:hover { background: rgba(0,0,0,0.03); }
+[data-prefers-color="dark"] .coll-item:hover { background: rgba(255,255,255,0.04); }
+.coll-checkbox { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid #d9d9d9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.coll-item.checked .coll-checkbox { background: #2f54eb; border-color: #2f54eb; }
+.coll-item.checked .coll-checkbox::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; line-height: 1; }
+.coll-name { flex: 1; font-size: 14px; color: rgba(0,0,0,0.88); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+[data-prefers-color="dark"] .coll-name { color: rgba(255,255,255,0.85); }
+.coll-vis-badge { font-size: 11px; padding: 1px 8px; border-radius: 10px; font-weight: 500; flex-shrink: 0; }
+.coll-vis-badge.public { color: #23ada4; background: rgba(35,173,164,0.1); }
+.coll-vis-badge.private { color: #ff9113; background: rgba(255,145,19,0.1); }
+.coll-empty { text-align: center; padding: 20px 0; font-size: 13px; color: rgba(0,0,0,0.35); }
+[data-prefers-color="dark"] .coll-empty { color: rgba(255,255,255,0.25); }
+
+/* New collection form */
+.coll-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: rgba(0,0,0,0.35); font-size: 12px; }
+.coll-divider::before, .coll-divider::after { content: ''; flex: 1; height: 1px; background: #f0f0f0; }
+[data-prefers-color="dark"] .coll-divider::before, [data-prefers-color="dark"] .coll-divider::after { background: #303030; }
+.coll-new-input { width: 100%; height: 32px; padding: 0 11px; font-size: 14px; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 10px; color: rgba(0,0,0,0.88); }
+.coll-new-input:hover { border-color: #597ef7; }
+.coll-new-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.coll-new-input::placeholder { color: rgba(0,0,0,0.25); }
+[data-prefers-color="dark"] .coll-new-input { background: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.85); }
+.coll-vis-toggle { display: flex; gap: 16px; }
+.coll-vis-opt { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; }
+.coll-vis-opt:hover { color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .coll-vis-opt { color: rgba(255,255,255,0.65); }
+.coll-vis-radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #d9d9d9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.coll-vis-opt.active .coll-vis-radio { border-color: #2f54eb; }
+.coll-vis-opt.active .coll-vis-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #2f54eb; }
+[data-prefers-color="dark"] .coll-vis-radio { border-color: #434343; }
+
+@media (max-width: 768px) {
+  .md-header-top { flex-direction: column; align-items: center; text-align: center; }
+  .md-header-title-row { justify-content: center; }
+  .md-header-tags { justify-content: center; }
+  .md-header-meta-row { flex-direction: column; gap: 8px; align-items: center; }
+  .md-header-actions { margin-top: 12px; }
+  .md-file-grid { grid-template-columns: 1fr; }
+  .md-tab-btn { padding: 0 12px; font-size: 13px; }
+  .md-tab-content-wrap { padding: 20px 16px; }
+  .md-header-actions { flex-wrap: wrap; justify-content: center; }
+}
+
+/* ============================================================
+   TRIAL PLAYGROUND — 在线试用
+   ============================================================ */
+.md-trial-layout { display: flex; gap: 20px; align-items: flex-start; }
+.md-trial-input { flex: 1; min-width: 0; }
+.md-trial-output { flex: 1; min-width: 0; }
+.md-trial-section-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .md-trial-section-title { color: rgba(255,255,255,0.85); }
+.md-trial-section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #2f54eb; border-radius: 2px; flex-shrink: 0; }
+
+/* Upload zone */
+.md-trial-upload-zone { border: 2px dashed #d9d9d9; border-radius: 8px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; margin-bottom: 16px; }
+.md-trial-upload-zone:hover { border-color: #2f54eb; background: rgba(47,84,235,0.02); }
+.md-trial-upload-zone.has-file { border-color: #52c41a; border-style: solid; background: #f6ffed; }
+[data-prefers-color="dark"] .md-trial-upload-zone { background: rgba(255,255,255,0.02); border-color: #434343; }
+[data-prefers-color="dark"] .md-trial-upload-zone:hover { border-color: #597ef7; }
+[data-prefers-color="dark"] .md-trial-upload-zone.has-file { border-color: #52c41a; background: rgba(82,196,26,0.06); }
+.md-trial-upload-icon { font-size: 36px; margin-bottom: 8px; display: block; }
+.md-trial-upload-text { font-size: 14px; color: rgba(0,0,0,0.65); margin-bottom: 4px; }
+.md-trial-upload-hint { font-size: 12px; color: rgba(0,0,0,0.35); }
+[data-prefers-color="dark"] .md-trial-upload-text { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .md-trial-upload-hint { color: rgba(255,255,255,0.25); }
+.md-trial-file-info { display: none; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-bottom: 16px; font-size: 13px; color: rgba(0,0,0,0.65); }
+.md-trial-file-info.visible { display: flex; }
+.md-trial-file-info .file-icon { font-size: 20px; flex-shrink: 0; }
+.md-trial-file-info .file-name { flex: 1; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.md-trial-file-info .file-remove { color: rgba(0,0,0,0.45); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+.md-trial-file-info .file-remove:hover { color: #ff4d4f; background: rgba(255,77,79,0.06); }
+
+/* Trial params */
+.md-trial-params { margin-bottom: 16px; }
+.md-trial-param-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.md-trial-param-label { font-size: 13px; color: rgba(0,0,0,0.65); width: 80px; flex-shrink: 0; text-align: right; }
+[data-prefers-color="dark"] .md-trial-param-label { color: rgba(255,255,255,0.65); }
+.md-trial-param-input { flex: 1; height: 32px; padding: 0 11px; font-size: 13px; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; transition: border-color 0.2s; color: rgba(0,0,0,0.88); }
+.md-trial-param-input:hover { border-color: #597ef7; }
+.md-trial-param-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+[data-prefers-color="dark"] .md-trial-param-input { background: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* Chat interface (LLM models) */
+.md-trial-chat { border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+[data-prefers-color="dark"] .md-trial-chat { border-color: #303030; }
+.md-trial-chat-history { min-height: 200px; max-height: 320px; overflow-y: auto; padding: 16px; background: #fafafa; display: flex; flex-direction: column; gap: 12px; }
+[data-prefers-color="dark"] .md-trial-chat-history { background: rgba(255,255,255,0.02); }
+.md-trial-chat-msg { display: flex; gap: 8px; align-items: flex-start; }
+.md-trial-chat-msg.user { flex-direction: row-reverse; }
+.md-trial-chat-msg .msg-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.md-trial-chat-msg.assistant .msg-avatar { background: rgba(47,84,235,0.1); }
+.md-trial-chat-msg.user .msg-avatar { background: rgba(35,173,164,0.1); }
+.md-trial-chat-msg .msg-bubble { max-width: 78%; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.55; color: rgba(0,0,0,0.88); word-break: break-word; }
+.md-trial-chat-msg.assistant .msg-bubble { background: #fff; border: 1px solid #f0f0f0; white-space: pre-wrap; }
+.md-trial-chat-msg.user .msg-bubble { background: rgba(47,84,235,0.06); border: 1px solid rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .md-trial-chat-msg.assistant .msg-bubble { background: rgba(255,255,255,0.04); border-color: #303030; color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .md-trial-chat-msg.user .msg-bubble { background: rgba(47,84,235,0.12); border-color: rgba(47,84,235,0.2); color: rgba(255,255,255,0.85); }
+.md-trial-chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #f0f0f0; background: #fff; }
+[data-prefers-color="dark"] .md-trial-chat-input-row { background: #1f1f1f; border-color: #303030; }
+.md-trial-chat-input { flex: 1; height: 36px; padding: 0 14px; font-size: 13px; border: 1px solid #d9d9d9; border-radius: 18px; outline: none; transition: border-color 0.2s; color: rgba(0,0,0,0.88); }
+.md-trial-chat-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.md-trial-chat-send { width: 36px; height: 36px; border-radius: 50%; background: #2f54eb; color: #fff; border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.md-trial-chat-send:hover { background: #597ef7; }
+.md-trial-chat-send:disabled { background: #d9d9d9; cursor: not-allowed; }
+[data-prefers-color="dark"] .md-trial-chat-input { background: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* Run button */
+.md-trial-run-wrap { margin-bottom: 0; }
+.md-trial-run-btn { width: 100%; height: 38px; border-radius: 6px; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; background: #2f54eb; color: #fff; border: none; cursor: pointer; }
+.md-trial-run-btn:hover { background: #597ef7; }
+.md-trial-run-btn:active { background: #1d39c4; }
+.md-trial-run-btn:disabled { background: #d9d9d9; color: rgba(0,0,0,0.25); cursor: not-allowed; }
+
+/* Running spinner */
+@keyframes md-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.md-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: md-spin 0.8s linear infinite; }
+
+/* Result area */
+.md-trial-result-placeholder { text-align: center; padding: 60px 20px; color: rgba(0,0,0,0.25); }
+.md-trial-result-placeholder .placeholder-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.45; display: block; }
+.md-trial-result-placeholder .placeholder-text { font-size: 14px; }
+[data-prefers-color="dark"] .md-trial-result-placeholder { color: rgba(255,255,255,0.18); }
+.md-trial-result-content { display: none; }
+.md-trial-result-content.visible { display: block; }
+.md-trial-result-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 12px; color: rgba(0,0,0,0.45); }
+.md-trial-result-meta .meta-ok { color: #52c41a; font-weight: 500; }
+[data-prefers-color="dark"] .md-trial-result-meta { color: rgba(255,255,255,0.35); }
+.md-trial-result-box { background: #1e1e2e; border-radius: 6px; padding: 16px 18px; overflow-x: auto; max-height: 420px; overflow-y: auto; }
+.md-trial-result-box pre { font-size: 13px; font-family: "SF Mono", Monaco, Menlo, Consolas, monospace; color: #cdd6f4; line-height: 1.65; margin: 0; white-space: pre-wrap; word-break: break-all; }
+[data-prefers-color="dark"] .md-trial-result-box { background: #121212; }
+
+/* ============================================================
+   NOTEBOOK DIALOG
+   ============================================================ */
+#notebookDialog .dialog-box { width: 540px; }
+.nb-form-group { margin-bottom: 16px; }
+.nb-form-label { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 6px; display: block; }
+[data-prefers-color="dark"] .nb-form-label { color: rgba(255,255,255,0.65); }
+.nb-form-input { width: 100%; height: 32px; padding: 0 11px; font-size: 14px; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; transition: border-color 0.2s; color: rgba(0,0,0,0.88); }
+.nb-form-input:hover { border-color: #597ef7; }
+.nb-form-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.nb-form-input::placeholder { color: rgba(0,0,0,0.25); }
+[data-prefers-color="dark"] .nb-form-input { background: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.85); }
+.nb-form-select { width: 100%; height: 32px; padding: 0 28px 0 11px; font-size: 14px; border: 1px solid #d9d9d9; border-radius: 6px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; color: rgba(0,0,0,0.88); background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; transition: border-color 0.2s; }
+.nb-form-select:hover { border-color: #597ef7; }
+[data-prefers-color="dark"] .nb-form-select { background-color: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.85); }
+.nb-resource-options { display: flex; gap: 8px; }
+.nb-resource-opt { flex: 1; padding: 10px 10px; border: 1.5px solid #d9d9d9; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
+.nb-resource-opt:hover { border-color: #597ef7; }
+.nb-resource-opt.active { border-color: #2f54eb; background: rgba(47,84,235,0.04); }
+.nb-resource-opt .res-icon { font-size: 22px; margin-bottom: 4px; display: block; }
+.nb-resource-opt .res-name { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.88); }
+.nb-resource-opt .res-spec { font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+[data-prefers-color="dark"] .nb-resource-opt { border-color: #434343; }
+[data-prefers-color="dark"] .nb-resource-opt.active { border-color: #2f54eb; background: rgba(47,84,235,0.1); }
+
+/* ============================================================
+   API DIALOG
+   ============================================================ */
+#apiDialog .dialog-box { width: 720px; }
+.api-section { margin-bottom: 20px; }
+.api-section:last-child { margin-bottom: 0; }
+.api-section-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 8px; display: block; }
+[data-prefers-color="dark"] .api-section-title { color: rgba(255,255,255,0.65); }
+.api-endpoint-row { display: flex; align-items: center; gap: 10px; background: #f5f5f5; padding: 10px 14px; border-radius: 6px; }
+[data-prefers-color="dark"] .api-endpoint-row { background: rgba(255,255,255,0.06); }
+.api-method { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 10px; border-radius: 4px; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.api-method.post { background: #2f54eb; }
+.api-method.get { background: #23ada4; }
+.api-url { font-family: "SF Mono","Consolas","Monaco",monospace; font-size: 13px; color: rgba(0,0,0,0.88); word-break: break-all; }
+[data-prefers-color="dark"] .api-url { color: rgba(255,255,255,0.85); }
+.api-auth-info { font-size: 13px; color: rgba(0,0,0,0.65); background: #fffbe6; border: 1px solid #ffe58f; padding: 8px 12px; border-radius: 6px; }
+[data-prefers-color="dark"] .api-auth-info { color: rgba(255,255,255,0.65); background: rgba(250,173,20,0.1); border-color: rgba(250,173,20,0.3); }
+.api-params-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.api-params-table th { text-align: left; padding: 6px 10px; background: #fafafa; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,0.65); font-weight: 600; }
+[data-prefers-color="dark"] .api-params-table th { background: rgba(255,255,255,0.04); border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+.api-params-table td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .api-params-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.85); }
+.api-params-table .param-required { color: #ff4d4f; font-weight: 600; }
+.api-params-table .param-type { font-family: "SF Mono","Consolas",monospace; font-size: 12px; color: #2f54eb; }
+.api-params-table .param-desc { color: rgba(0,0,0,0.55); }
+[data-prefers-color="dark"] .api-params-table .param-desc { color: rgba(255,255,255,0.45); }
+.api-code-tabs { display: flex; gap: 0; margin-bottom: 6px; }
+.api-code-tab { padding: 4px 14px; font-size: 12px; border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.2s; }
+.api-code-tab:first-child { border-radius: 4px 0 0 4px; }
+.api-code-tab:last-child { border-radius: 0 4px 4px 0; }
+.api-code-tab.active { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+[data-prefers-color="dark"] .api-code-tab { background: rgba(255,255,255,0.04); border-color: #434343; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .api-code-tab.active { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+[data-prefers-color="dark"] .nb-resource-opt .res-name { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .nb-resource-opt .res-spec { color: rgba(255,255,255,0.35); }
+
+/* Trial tab responsive */
+@media (max-width: 900px) {
+  .md-trial-layout { flex-direction: column; }
+}
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" data-nav="home">首页</span>
+        <span class="top-nav-item active" data-nav="marketplace">模型广场</span>
+        <span class="top-nav-item" data-nav="data">数据管理</span>
+        <!-- <span class="top-nav-item" data-nav="dev">开发中心</span> -->
+        <span class="top-nav-item" data-nav="demand">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+        <!-- <span class="top-nav-item" data-nav="appcenter">应用中心</span> -->
+        <!-- <span class="top-nav-item" data-nav="apps">智能应用</span> -->
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="搜索"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <!-- User dropdown -->
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== PAGE CONTENT ==================== -->
+<div class="page-wrap">
+<div class="page-inner">
+
+  <!-- ===== LEFT-RIGHT LAYOUT ===== -->
+  <div class="marketplace-layout">
+
+    <!-- ===== LEFT: FILTER SIDEBAR ===== -->
+    <aside class="filter-sidebar" id="filterSidebar">
+      <div class="filter-sidebar-header">
+        <div class="filter-sidebar-icon">🧠</div>
+        <span class="filter-sidebar-title">模型库</span>
+        <button class="filter-sidebar-clear" onclick="resetFilters()" title="清空筛选">清空</button>
+      </div>
+      <div class="filter-tab-row" id="filterTabRow">
+        <button class="filter-tab-btn active" data-tab="task">任务</button>
+        <button class="filter-tab-btn" data-tab="org">组织</button>
+      </div>
+      <div class="filter-tab-content active" data-tab-content="task" id="filterTabTask">
+        <div class="filter-group" id="filterGroupCategory"></div>
+        <div class="filter-group" id="filterGroupScene"></div>
+        <div class="filter-group" id="filterGroupDirection"></div>
+        <div class="filter-group" id="filterGroupPubdate"></div>
+      </div>
+      <div class="filter-tab-content" data-tab-content="org" id="filterTabOrg">
+        <div class="filter-group" id="filterGroupOrgList"></div>
+        <div class="filter-group" id="filterGroupType"></div>
+      </div>
+    </aside>
+
+    <!-- ===== RIGHT: CONTENT ===== -->
+    <div class="content-main">
+
+      <!-- Search bar -->
+      <div class="search-section">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" id="searchInput" placeholder="搜索模型名称、标签或描述…" oninput="onSearch()">
+        </div>
+      </div>
+
+      <!-- Toolbar: sort + count + reset -->
+      <div class="toolbar">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select class="sort-select" id="sortSelect" onchange="onSort()">
+            <option value="newest">最新发布</option>
+            <option value="popular">最多调用</option>
+            <option value="stars">最多收藏</option>
+          </select>
+          <span class="filter-reset-link" onclick="resetFilters()">重置筛选</span>
+        </div>
+        <span class="result-count" id="resultCount">共 <strong>0</strong> 个模型</span>
+      </div>
+
+      <!-- Model card grid -->
+      <div class="model-grid" id="modelGrid"></div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <h3>未找到匹配的模型</h3>
+        <p>请尝试调整筛选条件或搜索关键词</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-wrap" id="paginationWrap">
+        <span class="page-info" id="pageInfo"></span>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+    </div><!-- /.content-main -->
+  </div><!-- /.marketplace-layout -->
+
+  <!-- ==================== MODEL DETAIL VIEW ==================== -->
+  <div id="modelDetailView">
+    <!-- Breadcrumb -->
+    <div class="md-breadcrumb">
+      <a class="md-back-link" onclick="backToList()">← 返回模型广场</a>
+      <span class="md-sep">/</span>
+      <span class="md-current" id="mdBreadcrumbName">模型名称</span>
+    </div>
+
+    <!-- Model Header Card -->
+    <div class="md-header-card">
+      <div class="md-header-top">
+        <div class="md-header-icon" id="mdIcon">🌽</div>
+        <div class="md-header-info">
+          <div class="md-header-title-row">
+            <h1 class="md-header-name" id="mdName">模型名称</h1>
+            <span class="md-header-badge" id="mdBadge">模型</span>
+          </div>
+          <div class="md-header-desc" id="mdDesc">模型描述</div>
+          <div class="md-header-tags" id="mdTags"></div>
+          <div class="md-header-meta-row">
+            <div class="md-meta-item"><span class="md-meta-label">上传者</span> <span id="mdUploader">--</span></div>
+            <div class="md-meta-item"><span class="md-meta-label">机构</span> <span id="mdOrg">--</span></div>
+            <div class="md-meta-item"><span class="md-meta-label">更新于</span> <span id="mdUpdated">--</span></div>
+            <span style="flex:1;"></span>
+            <div class="md-meta-item">📞 <span id="mdCalls">--</span> 次调用</div>
+            <div class="md-meta-item">⭐ <span id="mdStars">--</span> 收藏</div>
+          </div>
+        </div>
+        <div class="md-header-actions">
+          <button class="btn btn-default" onclick="onStarModel()">☆ 收藏</button>
+          <button class="btn btn-default" onclick="openCollectionDialog()">📁 添加到合集</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="md-tab-bar" id="mdTabBar">
+      <button class="md-tab-btn active" data-tab="overview">模型介绍</button>
+      <button class="md-tab-btn" data-tab="files" id="mdTabBtnFiles">模型文件</button>
+      <!-- 部署使用 tab 暂时隐藏 -->
+      <span style="flex:1;"></span>
+      <span class="md-tab-sep"></span>
+      <div class="md-tab-bar-actions">
+        <button class="md-tab-op-btn trial" onclick="openTrialDialog()">使用</button>
+        <button class="md-tab-op-btn default" id="mdApplyNotebookBtn" onclick="onApplyNotebook()">📝 申请Notebook</button>
+        <button class="md-tab-op-btn default" id="mdApplyApiBtn" onclick="onApplyApi()">📝 申请API</button>
+      </div>
+    </div>
+
+    <!-- Tab Content: two-column layout -->
+    <div class="md-tab-content-wrap">
+      <div class="md-detail-layout">
+        <!-- LEFT: Tab panels -->
+        <div class="md-detail-left">
+          <!-- Tab: 模型介绍 -->
+          <div class="md-tab-panel active" data-tab-panel="overview" id="mdPanelOverview">
+            <div class="md-section-title">模型描述</div>
+            <div class="md-readme" id="mdReadme"></div>
+            <div class="md-section-title">技术信息</div>
+            <table class="md-info-table" id="mdInfoTable"></table>
+            <div class="md-section-title">适用场景</div>
+            <div class="md-usecase-list" id="mdUseCases"></div>
+            <div class="md-section-title">性能指标</div>
+            <div class="md-usecase-list" id="mdMetrics"></div>
+          </div>
+          <!-- Tab: 模型文件（合集专用） -->
+          <div class="md-tab-panel" data-tab-panel="files" id="mdPanelFiles">
+            <div class="md-section-title">子模型列表</div>
+            <div class="md-file-grid" id="mdFileGrid"></div>
+          </div>
+          <!-- Tab: 部署使用 (暂时隐藏)
+          <div class="md-tab-panel" data-tab-panel="deploy" id="mdPanelDeploy">
+            <div class="md-section-title">部署步骤</div>
+            <div class="md-step-list" id="mdDeploySteps"></div>
+            <div class="md-section-title">运行环境要求</div>
+            <table class="md-info-table" id="mdReqTable"></table>
+            <div class="md-section-title">API 调用示例</div>
+            <div class="md-code-block"><pre id="mdCodeExample"># 示例代码</pre></div>
+          </div>
+          -->
+        </div>
+        <!-- RIGHT: Sidebar -->
+        <div class="md-detail-right">
+          <!-- 模型系谱 -->
+          <div class="md-sidebar-card" id="mdLineageCard">
+            <div class="md-sidebar-card-title">📊 模型系谱</div>
+            <div class="md-lineage-tree" id="mdLineageTree"></div>
+          </div>
+          <!-- 收录合集 -->
+          <div class="md-sidebar-card" id="mdCollectionsCard">
+            <div class="md-sidebar-card-title">📁 收录合集</div>
+            <div class="md-sidebar-list" id="mdSidebarCollList"></div>
+          </div>
+          <!-- 关联应用 (暂时隐藏)
+          <div class="md-sidebar-card" id="mdAppsCard">
+            <div class="md-sidebar-card-title">🧩 关联应用</div>
+            <div class="md-sidebar-list" id="mdSidebarAppList"></div>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+  </div><!-- /#modelDetailView -->
+
+  <!-- ==================== COLLECTION DETAIL VIEW ==================== -->
+  <div id="collectionDetailView">
+    <!-- Breadcrumb -->
+    <div class="md-breadcrumb">
+      <a class="md-back-link" onclick="backToList()">← 返回模型广场</a>
+      <span class="md-sep">/</span>
+      <span class="md-current" id="cdBreadcrumbName">合集名称</span>
+    </div>
+
+    <!-- Collection Header -->
+    <div class="cd-header-card">
+      <div class="cd-header-top">
+        <div class="cd-header-icon" id="cdIcon">📁</div>
+        <div class="cd-header-info">
+          <div class="cd-header-title-row">
+            <h1 class="cd-header-name" id="cdName">合集名称</h1>
+            <span class="md-header-badge collection">合集</span>
+          </div>
+          <div class="cd-header-desc" id="cdDesc">合集描述</div>
+          <div class="cd-header-meta">
+            <div class="cd-meta-item"><span class="md-meta-label">创建者</span> <span id="cdUploader">--</span></div>
+            <div class="cd-meta-item"><span class="md-meta-label">机构</span> <span id="cdOrg">--</span></div>
+            <div class="cd-meta-item"><span class="md-meta-label">更新于</span> <span id="cdUpdated">--</span></div>
+            <div class="cd-meta-item"><span class="md-meta-label">子模型</span> <span id="cdModelCountMeta">--</span></div>
+            <span style="flex:1;"></span>
+            <div class="cd-meta-item">⭐ <span id="cdStars">--</span> 收藏</div>
+          </div>
+        </div>
+        <div class="md-header-actions">
+          <button class="btn btn-default" onclick="onStarModel()">☆ 收藏</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-model Section -->
+    <div class="cd-section-header">
+      <span class="cd-section-title">收录模型</span>
+      <span class="cd-section-count" id="cdModelCount">共 -- 个模型</span>
+    </div>
+    <div class="cd-model-grid" id="cdModelGrid"></div>
+  </div><!-- /#collectionDetailView -->
+
+  <!-- ==================== TRIAL DIALOG ==================== -->
+  <div class="dialog-overlay" id="trialDialog">
+    <div class="dialog-box" style="width:900px;max-width:95vw;">
+      <div class="dialog-header">
+        <span class="dialog-title">使用 — <span id="trialDialogModelName">模型名称</span></span>
+        <span class="dialog-close" onclick="closeTrialDialog()">✕</span>
+      </div>
+      <div class="dialog-body">
+        <div class="md-trial-layout">
+          <!-- LEFT: Input Area -->
+          <div class="md-trial-input">
+            <div class="md-trial-section-title">📥 输入数据</div>
+            <div id="trialUploadArea">
+              <div class="md-trial-upload-zone" id="trialUploadZone" onclick="document.getElementById('trialFileInput').click()">
+                <span class="md-trial-upload-icon">📁</span>
+                <div class="md-trial-upload-text">点击或拖拽文件到此处</div>
+                <div class="md-trial-upload-hint" id="trialUploadHint">支持 GeoTIFF / PNG / JPEG / CSV，最大 50MB</div>
+              </div>
+              <input type="file" id="trialFileInput" style="display:none" onchange="onTrialFileSelected(this)" accept=".tif,.tiff,.png,.jpg,.jpeg,.csv,.json,.txt">
+              <div class="md-trial-file-info" id="trialFileInfo">
+                <span class="file-icon">📄</span>
+                <span class="file-name" id="trialFileName"></span>
+                <span class="file-remove" onclick="removeTrialFile()" title="移除">✕</span>
+              </div>
+            </div>
+            <div id="trialChatArea" style="display:none;">
+              <div class="md-trial-chat">
+                <div class="md-trial-chat-history" id="trialChatHistory">
+                  <div class="md-trial-chat-msg assistant">
+                    <div class="msg-avatar">🤖</div>
+                    <div class="msg-bubble" id="trialChatWelcome">你好！请在下方向我提问。</div>
+                  </div>
+                </div>
+                <div class="md-trial-chat-input-row">
+                  <input class="md-trial-chat-input" id="trialChatInput" type="text" placeholder="输入你的问题…" onkeydown="if(event.key==='Enter')sendTrialChat()">
+                  <button class="md-trial-chat-send" onclick="sendTrialChat()" id="trialChatSendBtn">▶</button>
+                </div>
+              </div>
+            </div>
+            <div class="md-trial-section-title">⚙️ 推理参数</div>
+            <div class="md-trial-params" id="trialParams"></div>
+            <div class="md-trial-run-wrap">
+              <button class="md-trial-run-btn" id="trialRunBtn" onclick="runTrialInference()">🚀 运行推理</button>
+            </div>
+          </div>
+          <!-- RIGHT: Result Area -->
+          <div class="md-trial-output">
+            <div class="md-trial-section-title">📤 推理结果</div>
+            <div class="md-trial-result-placeholder" id="trialResultPlaceholder">
+              <span class="placeholder-icon">🔍</span>
+              <div class="placeholder-text">运行推理后，结果将在此展示</div>
+            </div>
+            <div class="md-trial-result-content" id="trialResultContent">
+              <div class="md-trial-result-meta">
+                <span class="meta-ok">✓ 推理成功</span>
+                <span>耗时 <strong id="trialLatency">--</strong></span>
+                <span>请求ID: <code id="trialRequestId">--</code></span>
+              </div>
+              <div class="md-trial-result-box"><pre id="trialResultJson"></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LINEAGE JUMP DIALOG ==================== -->
+  <div class="dialog-overlay" id="lineageJumpDialog">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <span class="dialog-title">🔗 模型系谱跳转</span>
+        <span class="dialog-close" onclick="closeLineageJumpDialog()">✕</span>
+      </div>
+      <div class="dialog-body">
+        <div style="margin-bottom:8px;">
+          <span class="lj-relation-badge parent" id="ljRelationBadge">上游模型</span>
+        </div>
+        <div class="lj-model-preview">
+          <div class="lj-model-icon" id="ljIcon">🧠</div>
+          <div class="lj-model-info">
+            <div class="lj-model-name" id="ljName">模型名称</div>
+            <div class="lj-model-meta" id="ljMeta">--</div>
+            <div class="lj-model-desc" id="ljDesc">--</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(0,0,0,0.45);text-align:center;margin-top:8px;" id="ljHint">
+          点击「查看此模型」将跳转至该模型的详情页
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-default" onclick="closeLineageJumpDialog()">取消</button>
+        <button class="btn btn-primary" onclick="confirmLineageJump()">🔍 查看此模型</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== NOTEBOOK DIALOG ==================== -->
+  <div class="dialog-overlay" id="notebookDialog">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <span class="dialog-title">📓 启动 Notebook</span>
+        <span class="dialog-close" onclick="closeNotebookDialog()">✕</span>
+      </div>
+      <div class="dialog-body">
+        <div class="nb-form-group">
+          <label class="nb-form-label">Notebook 名称</label>
+          <input class="nb-form-input" type="text" id="nbName" placeholder="输入 Notebook 名称…" maxlength="50">
+        </div>
+        <div class="nb-form-group">
+          <label class="nb-form-label">选择镜像</label>
+          <select class="nb-form-select" id="nbImage">
+            <option value="pytorch-agri">PyTorch 2.1 + 农业遥感工具链 (推荐)</option>
+            <option value="tensorflow-agri">TensorFlow 2.15 + 遥感预处理</option>
+            <option value="llm-agri">AgriLLM + RAG 知识库环境</option>
+            <option value="basic">基础 Python 3.10 环境</option>
+          </select>
+        </div>
+        <div class="nb-form-group">
+          <label class="nb-form-label">计算资源</label>
+          <div class="nb-resource-options" id="nbResourceOptions">
+            <div class="nb-resource-opt" data-res="cpu" onclick="selectNBResource(this)">
+              <span class="res-icon">💻</span>
+              <div class="res-name">CPU</div>
+              <div class="res-spec">4核 · 8GB</div>
+            </div>
+            <div class="nb-resource-opt active" data-res="t4" onclick="selectNBResource(this)">
+              <span class="res-icon">⚡</span>
+              <div class="res-name">GPU T4</div>
+              <div class="res-spec">16GB 显存</div>
+            </div>
+            <div class="nb-resource-opt" data-res="a10" onclick="selectNBResource(this)">
+              <span class="res-icon">🔥</span>
+              <div class="res-name">GPU A10</div>
+              <div class="res-spec">24GB 显存</div>
+            </div>
+          </div>
+        </div>
+        <div class="nb-form-group">
+          <label class="nb-form-label">工作目录</label>
+          <input class="nb-form-input" type="text" id="nbWorkDir" placeholder="/workspace" value="/workspace">
+        </div>
+        <div id="nbModelRef" style="font-size:12px;color:rgba(0,0,0,0.45);padding:8px 12px;background:rgba(47,84,235,0.04);border-radius:6px;">
+          关联模型：<strong id="nbModelName">--</strong>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-default" onclick="closeNotebookDialog()">取消</button>
+        <button class="btn btn-primary" onclick="launchNotebook()">🚀 启动 Notebook</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== API DIALOG ==================== -->
+  <div class="dialog-overlay" id="apiDialog">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <span class="dialog-title">📡 API调用 — <span id="apiDialogModelName">模型名称</span></span>
+        <span class="dialog-close" onclick="closeApiDialog()">✕</span>
+      </div>
+      <div class="dialog-body">
+        <div class="api-section">
+          <div class="api-section-title">接口地址</div>
+          <div class="api-endpoint-row">
+            <span class="api-method post">POST</span>
+            <code class="api-url" id="apiUrl"></code>
+          </div>
+        </div>
+        <div class="api-section">
+          <div class="api-section-title">认证方式</div>
+          <div class="api-auth-info">🔑 Bearer Token — 部署后在「镜像详情 → 构建发布」页面获取 API Key</div>
+        </div>
+        <div class="api-section">
+          <div class="api-section-title">请求参数（Body / JSON）</div>
+          <table class="api-params-table">
+            <thead><tr><th>参数名</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+            <tbody id="apiInputParams"></tbody>
+          </table>
+        </div>
+        <div class="api-section">
+          <div class="api-section-title">返回参数</div>
+          <table class="api-params-table">
+            <thead><tr><th>参数名</th><th>类型</th><th>说明</th></tr></thead>
+            <tbody id="apiOutputParams"></tbody>
+          </table>
+        </div>
+        <div class="api-section">
+          <div class="api-section-title">调用示例</div>
+          <div class="api-code-tabs" id="apiCodeTabs">
+            <button class="api-code-tab active" data-lang="curl">cURL</button>
+            <button class="api-code-tab" data-lang="python">Python</button>
+          </div>
+          <div class="md-code-block"><pre id="apiCodeExample"></pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COLLECTION DIALOG ==================== -->
+  <div class="dialog-overlay" id="collectionDialog">
+    <div class="dialog-box">
+      <div class="dialog-header">
+        <span class="dialog-title">📁 添加到合集</span>
+        <span class="dialog-close" onclick="closeCollectionDialog()">✕</span>
+      </div>
+      <div class="dialog-body">
+        <div class="dialog-body-label">已有合集</div>
+        <div class="coll-list" id="collList"></div>
+        <div class="coll-divider">或新建合集</div>
+        <input class="coll-new-input" type="text" id="collNewName" placeholder="输入合集名称…" maxlength="30">
+        <div class="coll-vis-toggle" id="collVisToggle">
+          <span class="coll-vis-opt active" data-vis="public"><span class="coll-vis-radio"></span>公开</span>
+          <span class="coll-vis-opt" data-vis="private"><span class="coll-vis-radio"></span>私人</span>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn btn-default" onclick="closeCollectionDialog()">取消</button>
+        <button class="btn btn-primary" onclick="saveCollectionSelections()">确定</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+// ============================================================
+// DATA — 21 agricultural AI models
+// ============================================================
+// field legend: category ∈ 模型类别, scene ∈ 农业场景, direction ∈ 研究方向, updated for 发布日期
+var MODELS = [
+  // =====================================================================
+  // 1. 玉米病虫害遥感识别模型集 (COLLECTION)
+  // =====================================================================
+  {cardType:'collection', icon:'🌽', title:'玉米病虫害遥感识别模型集', tags:['作物识别','无人机遥感','目标检测','规模应用'], category:'作物识别', scene:'管', direction:'规模应用', models:[
+    {icon:'🌽',name:'玉米病虫害识别 v1',size:'1.2 GB',desc:'基于 Sentinel-2 多光谱影像的玉米常见病害（大斑病、小斑病、锈病）高精度识别模型'},
+    {icon:'🛰️',name:'病虫害遥感检测 v2',size:'980 MB',desc:'融合多时相遥感数据的虫害早期预警与危害等级评估'},
+    {icon:'📷',name:'多光谱影像分析模型',size:'1.5 GB',desc:'多光谱数据预处理与植被指数计算基础模型'}
+  ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-20', calls:'1.2k', stars:'89', notebookCost:40, apiCost:25,
+    readme:'本模型集面向玉米主要病虫害的遥感监测与识别，包含三个协同工作的子模型：病虫害识别模型基于深度学习目标检测算法，可识别玉米大斑病、小斑病、锈病等常见病害；遥感检测模型融合多时相 Sentinel-2 影像，实现虫害早期预警；多光谱分析模型提供标准化的数据预处理与植被指数计算管线。\n\n三个模型可独立部署，也可编排为推理流水线实现从数据预处理到病虫害诊断的全链路自动化。',
+    framework:'PyTorch 2.1 + MMDetection', license:'Apache 2.0', modelSize:'3.7 GB (合计)', inputFormat:'GeoTIFF / 512×512', outputFormat:'GeoJSON 矢量 + 分类栅格', accuracy:'mAP@0.5: 89.2%, 召回率: 92.1%',
+    useCases:['玉米大斑病、小斑病、锈病识别','虫害早期预警与危害等级评估','多光谱数据标准化预处理','大田种植区病虫害巡检'],
+    requirements:'GPU ≥ 16GB VRAM (NVIDIA T4/A10), CUDA 11.8+, RAM 32GB+',
+    deploySteps:['在镜像管理中选择 "crop-pest-detection" 镜像','配置推理服务：GPU ≥ 16GB，副本数 ≥ 2','启动服务后获取 API 端点','调用 /detect 接口传入 GeoTIFF 影像路径'],
+    lineage:{ baseModel:'ViT-L/16 (ImageNet-21k)', baseModelLink:null, finetuneStage:'农业病虫害数据集微调 → 多光谱适配训练', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'智慧农场智能决策助手',icon:'🤖',desc:'集成玉米病虫害识别作为核心诊断算子'},{name:'农田病虫害巡检系统',icon:'🔍',desc:'作为病虫害检测算子，驱动无人机巡检流程'}]},
+  // =====================================================================
+  // 2. 水稻产量预估模型 v2 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌾', title:'水稻产量预估模型 v2', tags:['作物生长检测','卫星遥感','气象预警','时序分析'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'结合气象与 Sentinel-2 遥感数据的端到端产量预测，覆盖黑龙江垦区主要水稻产区', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-18', calls:'856', stars:'67', notebookCost:50, apiCost:30,
+    readme:'本模型基于多模态深度学习框架，融合气象站数据与 Sentinel-2 卫星遥感影像，实现水稻产量的端到端预测。模型采用 ConvLSTM 架构捕捉 NDVI 时序变化特征，同时引入注意力机制融合气温、降水、日照等气象因子。\n\nv2 版本相比 v1 的主要改进：扩大了训练数据集覆盖范围至黑龙江垦区全部水稻产区，新增了土壤有机质含量作为辅助输入特征，预测精度提升约 12%。',
+    framework:'PyTorch 2.0 + ConvLSTM', license:'Apache 2.0', modelSize:'1.8 GB', inputFormat:'GeoTIFF (NDVI 时序) + CSV (气象)', outputFormat:'JSON (分地块产量预测值)', accuracy:'RMSE: 385 kg/ha, R²: 0.87',
+    useCases:['寒地水稻产量预测','种植规划与产量目标制定','农业保险定损评估','粮食收储调度决策支持'],
+    requirements:'GPU ≥ 8GB VRAM, CUDA 11.8+, RAM 16GB+, 存储 30GB+（时序影像缓存）',
+    deploySteps:['选择镜像 "rice-yield-prediction"','配置 GPU 资源 ≥ 8GB','启动推理服务','准备 NDVI 时序 GeoTIFF 与气象 CSV 数据','调用 /predict-yield API 接口'],
+    lineage:{ baseModel:'ResNet-50 (ImageNet)', baseModelLink:null, finetuneStage:'时序遥感预训练 → ConvLSTM 产量预测头替换', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'智慧农场智能决策助手',icon:'🤖',desc:'集成产量预测能力，支撑种植规划决策'},{name:'粮食收储调度平台',icon:'🌾',desc:'提供分地块产量预估，驱动仓储调度'}]},
+  // =====================================================================
+  // 3. 大豆补贴核查工具集 (COLLECTION)
+  // =====================================================================
+  {cardType:'collection', icon:'🫘', title:'大豆补贴核查工具集', tags:['分类','作物识别','卫星遥感','精准管控'], category:'分类', scene:'收', direction:'精准管控', models:[
+    {icon:'🫘',name:'大豆种植面积提取',size:'2.1 GB',desc:'基于 Sentinel-2 多时相影像的大豆种植地块自动分割与面积统计'},
+    {icon:'📋',name:'补贴申报数据核查',size:'850 MB',desc:'多源遥感数据交叉验证的补贴申报真实性自动核查'}
+  ], uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-15', calls:'634', stars:'45', notebookCost:40, apiCost:25,
+    readme:'本工具集面向大豆种植补贴核查业务场景，解决传统人工核查效率低、覆盖不全的痛点。种植面积提取模型基于 U-Net++ 语义分割架构，利用大豆关键生育期的多时相 Sentinel-2 影像实现地块级自动提取。数据核查模型通过多源遥感数据交叉验证，自动比对申报面积与遥感提取面积的差异，标记异常申报记录。\n\n两模型可串联使用：先提取实际种植面积，再与申报数据自动比对，生成核查报告。',
+    framework:'PyTorch 2.1 + U-Net++', license:'Apache 2.0', modelSize:'2.95 GB (合计)', inputFormat:'GeoTIFF (Sentinel-2 L2A) + CSV (申报数据)', outputFormat:'GeoJSON + PDF 核查报告', accuracy:'面积提取 mIoU: 0.91, 核查准确率: 94.3%',
+    useCases:['大豆种植补贴面积核查','轮作休耕面积核验','种植结构调整监测','农业补贴精准发放'],
+    requirements:'GPU ≥ 12GB VRAM, CUDA 11.8+, RAM 24GB+, 存储 50GB+',
+    deploySteps:['选择镜像 "soybean-subsidy-audit"','配置推理服务：GPU ≥ 12GB','分别部署面积提取与数据核查两个服务端点','调用 /extract-area 和 /audit-claim 接口'],
+    lineage:{ baseModel:'Swin Transformer (ImageNet-22k)', baseModelLink:null, finetuneStage:'农业遥感语义分割预训练 → 补贴核查场景精调', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'农业补贴精准发放平台',icon:'💰',desc:'集成大豆面积核查能力，支撑补贴发放审核'}]},
+  // =====================================================================
+  // 4. 林草湿地变化监测模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌲', title:'林草湿地变化监测模型', tags:['变化检测','卫星遥感','分割','多期影像'], category:'变化检测', scene:'管', direction:'规模应用', desc:'2018–2025 年多期变化图斑自动检测算法，支持耕地、林地、草地、湿地变化识别', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-12', calls:'412', stars:'31', notebookCost:50, apiCost:30,
+    readme:'基于 Siamese-UNet 双时相变化检测架构，支持耕地、林地、草地、湿地四种地类的变化图斑自动提取。模型使用 2018–2025 年 Landsat 8/9 和 Sentinel-2 构建的多期影像数据集训练，可检测新增、消失、类型转换等多种变化模式。\n\n输出包含变化图斑矢量边界、变化类型分类、变化时间推断，可直接导入 GIS 系统进行后续分析。',
+    framework:'PyTorch 2.0 + Siamese-UNet', license:'MIT', modelSize:'2.4 GB', inputFormat:'双期 GeoTIFF (512×512)', outputFormat:'GeoJSON (变化图斑) + 变化类型栅格', accuracy:'变化检测 F1: 0.88, 类型分类 OA: 91.5%',
+    useCases:['退耕还林/还草监测','湿地保护与恢复评估','建设用地扩张监测','年度国土变更调查'],
+    requirements:'GPU ≥ 16GB VRAM, CUDA 11.8+, RAM 32GB+',
+    deploySteps:['选择镜像 "landcover-change-detection"','配置 GPU ≥ 16GB','启动推理服务','准备前后两期影像（含预处理）','调用 /detect-change 接口'],
+    lineage:{ baseModel:'EfficientNet-B7 (ImageNet)', baseModelLink:null, finetuneStage:'变化检测数据集预训练 → 多类别地类变化精调', parentModel:'耕地变化检测工具集 - 地块变化检测', parentModelIdx:6 },
+    relatedApps:[{name:'国土变更调查系统',icon:'🗺️',desc:'驱动林草湿地类变化图斑自动提取'}]},
+  // =====================================================================
+  // 5. 土壤养分遥感反演模型集 (COLLECTION)
+  // =====================================================================
+  {cardType:'collection', icon:'🗺️', title:'土壤养分遥感反演模型集', tags:['分类','分割','卫星遥感','精准管控'], category:'分类', scene:'种', direction:'精准管控', models:[
+    {icon:'🗺️',name:'有机质含量反演',size:'1.6 GB',desc:'基于多光谱遥感与地形因子的土壤有机质空间分布反演模型'},
+    {icon:'🧪',name:'氮磷钾空间分布',size:'1.3 GB',desc:'融合遥感与土壤采样数据的氮磷钾养分空间插值与制图'},
+    {icon:'📊',name:'土壤肥力评估',size:'980 MB',desc:'综合多指标的耕地土壤肥力等级划分与推荐施肥方案'}
+  ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-10', calls:'520', stars:'38', notebookCost:40, apiCost:25,
+    readme:'本模型集利用多源遥感数据（Sentinel-2、DEM、气候数据）结合地面土壤采样点，实现耕地土壤养分的高精度空间反演。有机质反演模型采用随机森林+地理加权回归的混合方法；氮磷钾分布模型基于 cokriging 空间插值；肥力评估模型综合多指标进行等级划分。\n\n适用于精准施肥决策、高标准农田建设规划、耕地质量评价等场景。',
+    framework:'scikit-learn + XGBoost + PyTorch', license:'Apache 2.0', modelSize:'3.88 GB (合计)', inputFormat:'GeoTIFF (遥感+DEM) + CSV (采样点)', outputFormat:'GeoTIFF (养分分布图) + PDF (评估报告)', accuracy:'有机质 R²: 0.82, 氮 R²: 0.78, 磷 R²: 0.73, 钾 R²: 0.76',
+    useCases:['精准施肥处方图生成','高标准农田建设规划','耕地质量等级评价','变量施肥作业指导'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 32GB+, 存储 100GB+（多源数据）',
+    deploySteps:['选择镜像 "soil-nutrient-inversion"','配置推理服务：GPU ≥ 8GB','上传遥感影像与采样点 CSV','调用 /invert-nutrient 接口获取养分分布图'],
+    lineage:{ baseModel:'XGBoost + GWR 混合模型', baseModelLink:null, finetuneStage:'东北黑土区土壤采样数据训练 → 多光谱协变量引入', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'精准施肥处方图系统',icon:'🧪',desc:'集成养分反演结果，生成变量施肥处方图'},{name:'高标准农田评估平台',icon:'🏗️',desc:'驱动耕地质量等级评价模块'}]},
+  // =====================================================================
+  // 6. 智慧农场智能决策助手 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🤖', title:'智慧农场智能决策助手', tags:['大语言模型','智能装备','决策支持','种','管','收'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'集成长势监测+产量预测+病虫害识别的综合性智能应用，支持多模型协同编排', uploader:'陈教授', org:'中国农业大学', updated:'2026-07-08', calls:'1.8k', stars:'156', notebookCost:80, apiCost:60,
+    readme:'基于农业垂直领域大语言模型（AgriLLM-7B）的综合性智能决策助手，集成了长势监测、产量预测、病虫害识别、农事建议四大核心能力。模型在 500 万条农业科技文献、农技推广资料、田间试验报告上进行继续训练，具备专业的农业知识问答与决策推理能力。\n\n支持自然语言交互，农户可通过语音或文字描述田间情况，系统自动调用相应的视觉模型进行分析并给出综合建议。',
+    framework:'PyTorch 2.1 + vLLM (AgriLLM-7B)', license:'Apache 2.0', modelSize:'14 GB (FP16)', inputFormat:'自然语言文本 + 可选图片', outputFormat:'JSON (结构化决策建议)', accuracy:'农技问答准确率: 91.2%, 决策建议采纳率: 87.5%',
+    useCases:['农事操作最佳时间窗推荐','病虫害诊断与防治建议','施肥与灌溉决策支持','农产品市场价格预测'],
+    requirements:'GPU ≥ 24GB VRAM (A10/A100), CUDA 12.1+, RAM 64GB+, 存储 100GB+',
+    deploySteps:['选择镜像 "agrillm-assistant"','配置高配 GPU ≥ 24GB (推荐 A100)','启动推理服务（首次加载约 2 分钟）','通过 RESTful API 或 WebSocket 进行自然语言交互'],
+    lineage:{ baseModel:'Qwen-7B (阿里通义千问)', baseModelLink:null, finetuneStage:'500万条农业文献继续训练 → 农技知识 RAG 对齐 → 多模态视觉接入', parentModel:'农业知识问答大模型', parentModelIdx:10 },
+    relatedApps:[{name:'农场管理驾驶舱',icon:'📊',desc:'作为核心智能助手，集成全部农场决策能力'},{name:'农技服务小程序',icon:'📱',desc:'面向农户提供自然语言农技问答'}]},
+  // =====================================================================
+  // 7. 耕地变化检测工具集 (COLLECTION)
+  // =====================================================================
+  {cardType:'collection', icon:'🛰️', title:'耕地变化检测工具集', tags:['变化检测','卫星遥感','人车识别','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', models:[
+    {icon:'🛰️',name:'耕地地块变化检测',size:'1.8 GB',desc:'基于高分辨率遥感影像的耕地地块新增、消失、边界变化自动检测'},
+    {icon:'🌲',name:'林草湿地变化监测',size:'1.2 GB',desc:'多时相影像的林草湿地与耕地互转变化监测'}
+  ], uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-07-05', calls:'367', stars:'29', notebookCost:40, apiCost:25,
+    readme:'面向自然资源管理与耕地保护业务需求，提供耕地变化自动检测能力。地块变化检测模型基于高分辨率影像（高分系列 + Sentinel-2）的双时相变化检测，可识别耕地新增开垦、建设用地占用、闲置撂荒等变化类型。林草湿地变化监测模型专注于耕地与生态用地之间的转换监测。\n\n两模型均已对接国土调查数据库格式，输出结果可直接用于变更调查。',
+    framework:'PyTorch 2.1 + ChangeFormer', license:'MIT', modelSize:'3.0 GB (合计)', inputFormat:'GeoTIFF (高分+Sentinel-2)', outputFormat:'GeoJSON + 变化统计报表', accuracy:'变化检测 Precision: 90.2%, Recall: 87.8%',
+    useCases:['耕地保护红线监测','建设用地扩张监测','闲置撂荒耕地识别','国土年度变更调查'],
+    requirements:'GPU ≥ 16GB VRAM, CUDA 11.8+, RAM 32GB+, 存储 80GB+',
+    deploySteps:['选择镜像 "cropland-change-detection"','配置推理服务：GPU ≥ 16GB','上传前后两期高分影像','调用 /detect-changes 接口获取变化图斑'],
+    lineage:{ baseModel:'Siamese-UNet (自研)', baseModelLink:null, finetuneStage:'直接训练于 2018-2025 多期 Landsat/Sentinel-2 数据集', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'国土变更调查系统',icon:'🗺️',desc:'驱动年度国土变更图斑自动检测'},{name:'耕地保护红线监测平台',icon:'🛡️',desc:'集成变化检测能力，实时监测耕地占用'}]},
+  // =====================================================================
+  // 8. 作物补贴申报智能核查 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'📋', title:'作物补贴申报智能核查', tags:['分类','作物识别','数据分析','精准管控'], category:'分类', scene:'收', direction:'精准管控', desc:'基于多源遥感数据交叉验证的补贴申报自动核查工具，降低人工核查成本', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'298', stars:'22', notebookCost:50, apiCost:30,
+    readme:'利用多源遥感数据（Sentinel-2、高分一号/二号）对作物种植补贴申报数据进行自动化交叉验证。模型首先通过遥感影像分类提取实际种植作物类型与面积，然后与农户申报数据进行逐地块比对，自动识别申报面积超标、作物类型不符、地块不存在等异常情况。\n\n支持与农业农村部门现有的补贴管理系统对接，输出标准化核查报告，可将核查效率提升 80% 以上。',
+    framework:'PyTorch 1.13 + Random Forest', license:'Apache 2.0', modelSize:'1.1 GB', inputFormat:'GeoTIFF + CSV (申报台账)', outputFormat:'JSON (核查结果) + PDF 报告', accuracy:'作物分类 OA: 93.1%, 异常检测召回率: 95.6%',
+    useCases:['种植补贴申报面积核查','轮作休耕补贴核验','政策性农业保险定损','种植结构调整补贴审核'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 40GB+',
+    deploySteps:['选择镜像 "subsidy-audit-tool"','配置推理服务','上传遥感影像与申报台账 CSV','调用 /audit 接口获取核查结果'],
+    lineage:{ baseModel:'ResNet-152 (ImageNet)', baseModelLink:null, finetuneStage:'遥感作物分类预训练 → 补贴核查场景精调', parentModel:'大豆补贴核查工具集 - 大豆种植面积提取', parentModelIdx:2 },
+    relatedApps:[{name:'农业补贴精准发放平台',icon:'💰',desc:'集成申报核查能力，自动标记异常申报'}]},
+  // =====================================================================
+  // 9. 向日葵种植区智能识别 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌻', title:'向日葵种植区智能识别', tags:['作物识别','卫星遥感','分割','Sentinel-2'], category:'作物识别', scene:'种', direction:'精准管控', desc:'基于 Sentinel-2 多光谱影像的向日葵地块自动提取与面积统计', uploader:'张研究员', org:'全重实验室', updated:'2026-07-22', calls:'342', stars:'28', notebookCost:50, apiCost:30,
+    readme:'面向向日葵种植区的高精度自动识别模型。利用向日葵开花期特有的光谱特征（Sentinel-2 Band 3/4/8 组合指数），基于 DeepLabV3+ 语义分割架构实现地块级精确提取。模型在黑龙江省西部向日葵主产区训练，对连片种植和零星分布均有良好识别效果。',
+    framework:'PyTorch 2.0 + DeepLabV3+', license:'Apache 2.0', modelSize:'920 MB', inputFormat:'GeoTIFF (Sentinel-2 L2A)', outputFormat:'GeoJSON + 面积统计 CSV', accuracy:'mIoU: 0.89, 面积误差: < 5%',
+    useCases:['向日葵种植面积统计','经济作物种植结构调整','作物轮作模式分析','油料作物产量预估'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 30GB+',
+    deploySteps:['选择镜像 "sunflower-detection"','配置推理服务','上传 Sentinel-2 开花期影像','调用 /extract-sunflower 接口'],
+    lineage:{ baseModel:'DeepLabV3+ (Cityscapes 预训练)', baseModelLink:null, finetuneStage:'向日葵开花期光谱特征训练 → 黑龙江主产区验证', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'油料作物监测平台',icon:'🌻',desc:'驱动向日葵种植面积统计与产量预估'}]},
+  // =====================================================================
+  // 10. 玉米螟虫害遥感检测 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🐛', title:'玉米螟虫害遥感检测', tags:['作物生育检测','无人机遥感','多光谱','作物模型'], category:'作物生育检测', scene:'管', direction:'作物模型', desc:'结合多光谱与热红外数据的玉米螟早期检测与危害等级评估', uploader:'张研究员', org:'全重实验室', updated:'2026-07-18', calls:'486', stars:'36', notebookCost:50, apiCost:30,
+    readme:'专门针对亚洲玉米螟（Ostrinia furnacalis）的遥感检测模型。利用无人机搭载的多光谱+热红外传感器获取玉米冠层高分辨率影像，通过 NDVI 异常、冠层温度升高、叶片含水量下降等多指标综合分析，实现玉米螟危害的早期检测（比人工目视可提前 5-7 天）。\n\n模型输出包含虫害发生区域、危害等级（轻/中/重）、建议防治措施等结构化信息。',
+    framework:'PyTorch 2.1 + YOLOv8', license:'Apache 2.0', modelSize:'780 MB', inputFormat:'多光谱 GeoTIFF + 热红外 (无人机)', outputFormat:'GeoJSON (虫害斑块) + 危害等级图', accuracy:'早期检测准确率: 85.3%, 危害等级分类 OA: 91.7%',
+    useCases:['玉米螟早期预警','精准施药指导','虫害损失评估','植保无人机航线规划'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 支持热红外影像输入',
+    deploySteps:['选择镜像 "corn-borer-detection"','配置推理服务','上传无人机多光谱+热红外影像','调用 /detect-borer 接口获取虫害分布'],
+    lineage:{ baseModel:'YOLOv8 (COCO 预训练)', baseModelLink:null, finetuneStage:'无人机多光谱虫害数据集训练 → 玉米螟专项精调', parentModel:'玉米病虫害遥感识别模型集 - 病虫害遥感检测 v2', parentModelIdx:0 },
+    relatedApps:[{name:'植保无人机调度平台',icon:'🚁',desc:'集成虫害检测结果，自动规划施药航线'}]},
+  // =====================================================================
+  // 11. 农业知识问答大模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'💬', title:'农业知识问答大模型', tags:['大语言模型','知识库','RAG','智能装备'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于农技知识库的 RAG 增强问答系统，覆盖 200+ 作物品种的种植技术问答', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'678', stars:'52', notebookCost:80, apiCost:60,
+    readme:'基于开源 LLM（Qwen-7B）进行农业领域继续训练，并构建了覆盖 200+ 作物品种、50 万条农技知识的结构化知识库。采用 RAG（检索增强生成）架构，在回答用户农业技术问题时，先从知识库中检索最相关的技术文档片段，再结合大语言模型的推理能力生成专业、准确的回答。\n\n支持的问题类型包括：病虫害防治、施肥管理、灌溉技术、品种选择、农时安排等。',
+    framework:'PyTorch 2.1 + LangChain (Qwen-7B-Agri)', license:'Apache 2.0', modelSize:'14 GB (FP16)', inputFormat:'自然语言文本', outputFormat:'JSON (回答 + 引用来源)', accuracy:'农业问答 BLEU: 42.3, 回答准确率: 88.6%',
+    useCases:['农技知识问答','病虫害诊断问答','施肥方案推荐','农业政策咨询'],
+    requirements:'GPU ≥ 24GB VRAM (A10), CUDA 12.1+, RAM 64GB+, 存储 80GB+ (含知识库)',
+    deploySteps:['选择镜像 "agri-knowledge-llm"','配置高配 GPU ≥ 24GB','首次启动需加载知识向量库（约 5 分钟）','通过 /chat API 或 WebSocket 进行问答交互'],
+    lineage:{ baseModel:'Qwen-7B (阿里通义千问)', baseModelLink:null, finetuneStage:'50万条农技知识继续训练 → RAG 知识库构建', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'农技服务小程序',icon:'📱',desc:'面向农户提供自然语言农技问答'},{name:'农场管理驾驶舱',icon:'📊',desc:'作为知识问答模块集成'}]},
+  // =====================================================================
+  // 12. 玉米产量多源数据融合预测 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌽', title:'玉米产量多源数据融合预测', tags:['作物生长检测','卫星遥感','无人机遥感','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'融合地面测产+无人机+卫星遥感的多层级产量预估模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-05', calls:'423', stars:'33', notebookCost:50, apiCost:30,
+    readme:'采用多层级数据融合策略的玉米产量预估模型。底层利用 Sentinel-2 卫星数据进行大范围产量趋势分析，中层引入无人机高分辨率影像进行地块级精细化估产，顶层融合地面测产样点数据进行模型校准。\n\n三层数据通过贝叶斯融合框架进行不确定性量化，输出包含点估计和置信区间的产量预测结果。',
+    framework:'PyTorch 2.0 + 贝叶斯融合框架', license:'Apache 2.0', modelSize:'2.2 GB', inputFormat:'GeoTIFF (卫星+无人机) + CSV (测产点)', outputFormat:'JSON (产量预测 + 95% CI)', accuracy:'RMSE: 412 kg/ha, R²: 0.85',
+    useCases:['玉米产量高精度预估','多源遥感数据融合分析','产量保险精算定价','粮食收储库容规划'],
+    requirements:'GPU ≥ 12GB VRAM, RAM 24GB+, 存储 50GB+（多层级数据）',
+    deploySteps:['选择镜像 "corn-yield-fusion"','配置 GPU ≥ 12GB','上传三级数据（卫星/无人机/地面测产）','调用 /predict-yield-fusion 接口'],
+    lineage:{ baseModel:'贝叶斯融合框架 (自研)', baseModelLink:null, finetuneStage:'多层级遥感+地面数据融合训练', parentModel:'水稻产量预估模型 v2', parentModelIdx:1 },
+    relatedApps:[{name:'粮食收储调度平台',icon:'🌾',desc:'提供玉米产量预测，驱动仓储容量规划'}]},
+  // =====================================================================
+  // 13. 水稻秧田面积遥感提取 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌿', title:'水稻秧田面积遥感提取', tags:['作物识别','无人机遥感','目标检测','精准管控'], category:'作物识别', scene:'种', direction:'精准管控', desc:'面向寒地水稻的秧田面积高精度提取，支持无人机与卫星影像', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-10', calls:'567', stars:'41', notebookCost:50, apiCost:30,
+    readme:'专门针对寒地水稻秧田的高精度面积提取模型。利用水稻秧田特有的光谱特征（灌水后蓝光波段反射率显著变化）和纹理特征，基于 Mask R-CNN 架构实现秧田地块边界精确提取。模型在黑龙江省水稻主产区训练和验证，能够处理多种水稻种植模式（直播、移栽、旱直播）的秧田。\n\n支持无人机影像和卫星影像两种数据源，自动适配不同的空间分辨率。',
+    framework:'PyTorch 2.0 + Mask R-CNN', license:'Apache 2.0', modelSize:'1.3 GB', inputFormat:'GeoTIFF (无人机/卫星)', outputFormat:'GeoJSON (秧田边界) + 面积统计', accuracy:'mIoU: 0.93, 面积误差: < 3.5%',
+    useCases:['水稻秧田面积核实','育秧补贴面积核查','水稻种植面积早期监测','灌溉水源调度规划'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 30GB+',
+    deploySteps:['选择镜像 "rice-seedling-extraction"','配置推理服务','上传水稻插秧期影像','调用 /extract-seedling 接口'],
+    lineage:{ baseModel:'Mask R-CNN (COCO 预训练)', baseModelLink:null, finetuneStage:'寒地水稻秧田数据集训练 → 多分辨率适配', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'水稻种植管理平台',icon:'🌿',desc:'驱动秧田面积核实与灌溉调度'}]},
+  // =====================================================================
+  // 14. 蝗虫迁飞路径预测模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🦗', title:'蝗虫迁飞路径预测模型', tags:['气象预警','目标检测','时序分析','作物模型'], category:'气象预警', scene:'管', direction:'作物模型', desc:'基于气象雷达与植被指数的蝗群监测与迁飞路径预警', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-28', calls:'312', stars:'25', notebookCost:50, apiCost:30,
+    readme:'利用气象雷达反射率数据与 NDVI 植被指数，结合大气环流模型（WRF），实现蝗群空中密度监测与未来 72 小时迁飞路径预测。模型采用 ConvLSTM + 物理约束神经网络的混合架构，既能捕捉蝗群时空迁移模式，又能遵循大气动力学规律。\n\n输出包含迁飞路径预测、风险区域分级预警、建议防控措施等。',
+    framework:'PyTorch 2.0 + ConvLSTM + WRF耦合', license:'Apache 2.0', modelSize:'1.6 GB', inputFormat:'气象雷达 NetCDF + NDVI GeoTIFF', outputFormat:'GeoJSON (迁飞路径) + 风险热力图', accuracy:'24h路径误差: < 15km, 48h: < 30km, 72h: < 50km',
+    useCases:['蝗虫迁飞路径预警','跨境蝗灾联防联控','精准施药区域规划','农业生产安全应急响应'],
+    requirements:'GPU ≥ 16GB VRAM, RAM 32GB+, 需接入实时气象雷达数据',
+    deploySteps:['选择镜像 "locust-migration-prediction"','配置 GPU ≥ 16GB','接入气象雷达数据流','调用 /predict-migration 接口获取 72h 预测'],
+    lineage:{ baseModel:'ConvLSTM (自研气象模型)', baseModelLink:null, finetuneStage:'东亚飞蝗历史迁飞数据训练 → WRF 物理约束耦合', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'蝗灾应急预警系统',icon:'⚠️',desc:'驱动蝗虫迁飞路径预测与风险分级预警'}]},
+  // =====================================================================
+  // 15. 多源遥感数据融合分析平台 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'📡', title:'多源遥感数据融合分析平台', tags:['卫星遥感','分类','多源融合','智能装备'], category:'卫星遥感', scene:'管', direction:'智能装备', desc:'整合 Sentinel/Landsat/高分系列的多源遥感一站式分析工具', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-18', calls:'456', stars:'35', notebookCost:50, apiCost:30,
+    readme:'整合 Sentinel-1/2、Landsat 8/9、高分一号/二号/六号等多源卫星遥感数据的一站式融合分析平台。提供数据预处理（辐射定标、大气校正、几何配准）、时空融合（多源数据统一分辨率与投影）、地物分类与变化检测等标准化分析管线。\n\n平台内置了多个预训练模型，支持用户通过配置文件快速组合分析流程，无需编写代码。',
+    framework:'PyTorch 2.0 + GDAL + 多模型集成', license:'MIT', modelSize:'3.5 GB', inputFormat:'多源卫星影像 (GeoTIFF)', outputFormat:'GeoTIFF + GeoJSON + 统计报表', accuracy:'融合精度: SSIM > 0.92, 分类 OA: 90.5%',
+    useCases:['多源遥感数据融合分析','地表覆盖自动分类','长时间序列变化分析','生态环境质量评估'],
+    requirements:'GPU ≥ 16GB VRAM, RAM 32GB+, 存储 200GB+ (多源数据缓存)',
+    deploySteps:['选择镜像 "multi-source-rs-fusion"','配置 GPU ≥ 16GB，存储 ≥ 200GB','上传多源卫星影像数据','通过可视化界面或 API 配置分析流程'],
+    lineage:{ baseModel:'GDAL + PyTorch 多模型集成', baseModelLink:null, finetuneStage:'多源遥感数据配准与融合训练', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'生态环境监测平台',icon:'🌍',desc:'提供多源遥感融合分析能力'}]},
+  // =====================================================================
+  // 16. 防护林带退化遥感监测 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🌳', title:'防护林带退化遥感监测', tags:['变化检测','卫星遥感','时序分析','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', desc:'基于高分一号时序影像的农田防护林健康评估与退化预警', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-30', calls:'167', stars:'14', notebookCost:30, apiCost:20,
+    readme:'利用高分一号多时相影像对农田防护林带的健康状况进行长时间序列监测。模型通过分析 NDVI 时序趋势、纹理特征变化、林带宽度变化等指标，自动评估防护林退化程度（健康/轻度退化/中度退化/重度退化/消失）。\n\n特别适用于三北防护林工程区的农田防护林网监测，支持林带逐条编号管理与退化预警。',
+    framework:'PyTorch 2.0 + TimeSformer', license:'MIT', modelSize:'1.4 GB', inputFormat:'GeoTIFF (高分时序)', outputFormat:'GeoJSON (林带退化评估) + 趋势报告', accuracy:'退化等级分类 OA: 88.9%, 变化检测 F1: 0.86',
+    useCases:['农田防护林退化监测','三北防护林工程评估','退耕还林成效监测','林业碳汇评估'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 50GB+ (时序数据)',
+    deploySteps:['选择镜像 "shelterbelt-monitoring"','配置推理服务','上传多时相高分影像','调用 /assess-degradation 接口'],
+    lineage:{ baseModel:'TimeSformer (Kinetics 预训练)', baseModelLink:null, finetuneStage:'三北防护林时序影像训练 → 林带退化等级分类', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'三北防护林监测平台',icon:'🌳',desc:'驱动防护林健康评估与退化预警'}]},
+  // =====================================================================
+  // 17. 湿地水体面积动态监测 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'💧', title:'湿地水体面积动态监测', tags:['变化检测','水资源','卫星遥感','规模应用'], category:'水资源', scene:'水', direction:'规模应用', desc:'基于 SAR 影像的湿地水体面积季节变化监测与趋势分析', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-22', calls:'234', stars:'19', notebookCost:30, apiCost:20,
+    readme:'利用 Sentinel-1 SAR 影像全天候、不受云雨影响的优势，实现湿地水体面积的高频动态监测。模型基于 U-Net 架构对 SAR 影像进行水体/非水体语义分割，通过分析多期水体范围的季节变化和年际趋势，识别湿地退化、萎缩等生态风险。\n\n支持自动生成水体面积变化曲线、趋势分析报告和生态预警。',
+    framework:'PyTorch 2.0 + U-Net (SAR)', license:'Apache 2.0', modelSize:'980 MB', inputFormat:'GeoTIFF (Sentinel-1 GRD)', outputFormat:'GeoJSON + 面积变化曲线图', accuracy:'水体分割 mIoU: 0.94, 面积监测误差: < 3%',
+    useCases:['湿地水体面积动态监测','湖泊/水库水位变化评估','洪涝灾害快速评估','湿地生态补水决策支持'],
+    requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 支持 SAR 数据预处理',
+    deploySteps:['选择镜像 "wetland-water-monitoring"','配置推理服务','上传 Sentinel-1 SAR 时序影像','调用 /monitor-water-area 接口获取变化曲线'],
+    lineage:{ baseModel:'U-Net (医学影像预训练 → SAR 迁移)', baseModelLink:null, finetuneStage:'Sentinel-1 水体分割数据集训练 → 时序变化分析', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'湿地保护监测平台',icon:'💧',desc:'驱动湿地水体动态监测与生态补水决策'}]},
+  // =====================================================================
+  // 18. 大豆产量预估模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🫘', title:'大豆产量预估模型', tags:['作物生长检测','卫星遥感','气象预警','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键生育期遥感指数的寒地大豆产量预测，支持分地块估产', uploader:'陈教授', org:'中国农业大学', updated:'2026-06-20', calls:'345', stars:'29', notebookCost:50, apiCost:30,
+    readme:'专用的寒地大豆产量预估模型，聚焦大豆四个关键生育期（出苗、开花、结荚、鼓粒）的遥感植被指数（NDVI、EVI、NDWI）与气象因子（积温、降水、日照时数）。采用 XGBoost + LSTM 的混合模型架构，兼顾特征工程的可解释性与时序依赖的捕获能力。\n\n支持分地块产量预测，输出结果可直接对接农场管理信息系统。',
+    framework:'XGBoost + LSTM (PyTorch)', license:'Apache 2.0', modelSize:'1.1 GB', inputFormat:'CSV (遥感指数+气象) + 地块矢量', outputFormat:'JSON (分地块产量) + CSV 统计', accuracy:'RMSE: 245 kg/ha, R²: 0.83',
+    useCases:['大豆产量预估','大豆轮作规划','大豆贸易采购决策','农业保险精算'],
+    requirements:'GPU ≥ 6GB VRAM (CPU推理也可), RAM 16GB+',
+    deploySteps:['选择镜像 "soybean-yield-prediction"','配置推理服务','上传生育期遥感指数与气象 CSV','调用 /predict-soybean-yield 接口'],
+    lineage:{ baseModel:'XGBoost + LSTM 混合模型', baseModelLink:null, finetuneStage:'寒地大豆生育期数据训练 → 关键物候期特征工程', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'大豆贸易决策系统',icon:'📈',desc:'提供大豆产量预测，支撑贸易采购决策'}]},
+  // =====================================================================
+  // 19. 马铃薯产量遥感估算 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🥔', title:'马铃薯产量遥感估算', tags:['作物生长检测','卫星遥感','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于 NDVI 时序曲线的马铃薯块茎产量估算模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-15', calls:'198', stars:'18', notebookCost:30, apiCost:20,
+    readme:'利用马铃薯全生育期 NDVI 时序曲线特征进行块茎产量估算的专用模型。建模核心是 NDVI 时序曲线的积分面积（累积光合有效辐射）与块茎产量之间的统计关系，同时引入关键生育期（块茎形成期、块茎膨大期）的气象条件作为约束因子。\n\n在黑龙江省马铃薯主产区验证，适用于加工薯和鲜食薯两种类型。',
+    framework:'scikit-learn + LSTM', license:'MIT', modelSize:'650 MB', inputFormat:'CSV (NDVI 时序 + 气象)', outputFormat:'JSON (产量预测)', accuracy:'RMSE: 1.8 t/ha, R²: 0.79',
+    useCases:['马铃薯产量预估','加工薯原料采购规划','种薯生产基地评估','马铃薯仓储物流调度'],
+    requirements:'CPU 推理即可，RAM 8GB+, 存储 10GB+',
+    deploySteps:['选择镜像 "potato-yield-estimation"','配置推理服务（CPU即可）','上传 NDVI 时序与气象 CSV','调用 /estimate-potato-yield 接口'],
+    lineage:{ baseModel:'scikit-learn + LSTM (自研)', baseModelLink:null, finetuneStage:'黑龙江马铃薯主产区 NDVI 时序训练', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'马铃薯仓储物流平台',icon:'🥔',desc:'驱动产量预估，支撑仓储调度与加工规划'}]},
+  // =====================================================================
+  // 20. 冬小麦产量预估模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🍚', title:'冬小麦产量预估模型', tags:['作物生长检测','气象预警','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键物候期气象因子的冬小麦产量回归预测', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-03', calls:'276', stars:'22', notebookCost:30, apiCost:20,
+    readme:'专注于冬小麦关键物候期（返青、拔节、抽穗、灌浆、成熟）气象因子的产量预测模型。模型基于多年冬小麦产量与逐日气象数据的统计关系，识别出返青期积温、抽穗期降水、灌浆期日照时数为最关键影响因子。\n\n采用贝叶斯回归方法，输出产量预测的点估计值及其不确定性区间，便于进行风险决策。',
+    framework:'Stan + PyMC (贝叶斯回归)', license:'MIT', modelSize:'220 MB', inputFormat:'CSV (逐日气象数据)', outputFormat:'JSON (产量 + 95% CI)', accuracy:'RMSE: 312 kg/ha, R²: 0.81',
+    useCases:['冬小麦产量预估','小麦市场行情分析','粮食安全保障决策','冬小麦种植保险'],
+    requirements:'CPU 推理即可，RAM 4GB+, 存储 5GB+',
+    deploySteps:['选择镜像 "wheat-yield-prediction"','配置推理服务（轻量级）','上传关键物候期气象 CSV','调用 /predict-wheat-yield 接口'],
+    lineage:{ baseModel:'Stan + PyMC (贝叶斯回归)', baseModelLink:null, finetuneStage:'冬小麦多年产量与气象数据训练', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'粮食安全保障平台',icon:'🍚',desc:'提供冬小麦产量预估，支撑粮食安全预警'}]},
+  // =====================================================================
+  // 21. 农事操作智能排期模型 (MODEL)
+  // =====================================================================
+  {cardType:'model', icon:'🗓️', title:'农事操作智能排期模型', tags:['大语言模型','智能装备','时序规划','气象预警'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于天气预报与作物生长模型的农事操作最佳时间窗推荐', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-06-28', calls:'189', stars:'15', notebookCost:80, apiCost:60,
+    readme:'结合数值天气预报（7-15 天）与作物生长模型（DSSAT），利用运筹学优化算法（遗传算法 + 约束满足），为播种、施肥、喷药、灌溉、收获等关键农事操作推荐最佳时间窗口。\n\n模型综合考虑气象条件适宜度、土壤墒情、农机可用性、劳动力约束、农资供应时间等多维约束，输出优化的农事操作排期表，支持按地块、按作物、按操作类型的多维度规划。',
+    framework:'Python + OR-Tools + DSSAT集成', license:'Apache 2.0', modelSize:'480 MB', inputFormat:'JSON (天气预报+地块信息+资源约束)', outputFormat:'JSON (优化排期表) + iCal 日历', accuracy:'排期满意度: 92.3%, 气象窗口利用率: 88.7%',
+    useCases:['农事操作时间窗推荐','农机跨区作业调度','施肥喷药最佳时机选择','大规模农场生产计划编制'],
+    requirements:'CPU 推理即可，RAM 8GB+, 需接入气象预报 API',
+    deploySteps:['选择镜像 "farm-scheduler"','配置推理服务','上传地块信息、资源约束 JSON','调用 /optimize-schedule 接口获取排期表'],
+    lineage:{ baseModel:'OR-Tools + DSSAT (运筹学+作物模型)', baseModelLink:null, finetuneStage:'黑龙江垦区多年农事记录训练 → 多约束优化', parentModel:null, parentModelIdx:null },
+    relatedApps:[{name:'智慧农场管理驾驶舱',icon:'📊',desc:'集成排期能力，驱动全农场生产计划编制'},{name:'农机跨区调度平台',icon:'🚜',desc:'提供农事时间窗推荐，优化农机调度'}]}
+];
+
+// ============================================================
+// COLLECTIONS DATA
+// ============================================================
+var COLLECTIONS = [
+  { id:'c1', name:'病虫害监测模型集', isPublic:true, modelIds:[0,9], createdAt:'2026-07-15', desc:'玉米病虫害全链路监测相关模型' },
+  { id:'c2', name:'产量预估精选', isPublic:false, modelIds:[1,11,17,19], createdAt:'2026-07-10', desc:'主要作物产量预测模型精选合集' },
+  { id:'c3', name:'遥感基础模型', isPublic:true, modelIds:[3,14,16], createdAt:'2026-07-01', desc:'遥感影像分析基础能力模型' }
+];
+
+
+// ============================================================
+// ============================================================
+// STATE
+// ============================================================
+var state = {
+  search: '',
+  sort: 'newest',
+  page: 1,
+  pageSize: 10,
+  filters: {},
+  view: 'list',
+  detailModelIndex: -1
+};
+
+// ============================================================
+// BUILD FILTER SIDEBAR — Task & Org tabs
+// ============================================================
+
+// Task tab filter config
+var FILTER_TASK_GROUPS = [
+  { id:'category', title:'模型类别', items:[
+    '分类','分割','变化检测','卫星遥感','无人机遥感','气象预警','水资源','水旱灾害','人车识别','作物识别','作物生育检测','作物生长检测','作物纯度鉴定','大语言模型'
+  ]},
+  { id:'scene', title:'农业场景', items:['耕','种','管','收','水'] },
+  { id:'direction', title:'研究方向', items:['作物模型','精准管控','规模应用','智能装备'] },
+  { id:'pubdate', title:'发布日期', items:[
+    {value:'30d',label:'近30天'},{value:'90d',label:'近90天'}
+  ]}
+];
+
+// Org tab filter config
+var FILTER_ORG_GROUPS = [
+  { id:'org', title:'上传机构', items:[
+    '全重实验室','北大荒信息公司','哈工大AI实验室','中国农业大学','中科院东北地理所'
+  ]},
+  { id:'type', title:'模型类型', items:[
+    {value:'collection',label:'模型合集'},{value:'model',label:'单模型'}
+  ]}
+];
+
+// DOM container mapping — task tab
+var TASK_CONTAINERS = ['filterGroupCategory','filterGroupScene','filterGroupDirection','filterGroupPubdate'];
+// DOM container mapping — org tab
+var ORG_CONTAINERS = ['filterGroupOrgList','filterGroupType'];
+
+function buildFilterGroupHTML(grp){
+  var html = '<div class="filter-group-title">'+grp.title+'</div><div class="filter-group-items">';
+  grp.items.forEach(function(item){
+    var val = typeof item === 'string' ? item : item.value;
+    var lbl = typeof item === 'string' ? item : item.label;
+    html += '<span class="filter-card-tag" data-group="'+grp.id+'" data-value="'+val+'" onclick="toggleFilter(this)"><span class="fc-label">'+lbl+'</span></span>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildFilterTags(){
+  // Task tab
+  FILTER_TASK_GROUPS.forEach(function(grp, idx){
+    var container = document.getElementById(TASK_CONTAINERS[idx]);
+    if (container) container.innerHTML = buildFilterGroupHTML(grp);
+  });
+  // Org tab
+  FILTER_ORG_GROUPS.forEach(function(grp, idx){
+    var container = document.getElementById(ORG_CONTAINERS[idx]);
+    if (container) container.innerHTML = buildFilterGroupHTML(grp);
+  });
+}
+
+// Tab switching
+document.getElementById('filterTabRow').addEventListener('click', function(e){
+  var btn = e.target.closest('.filter-tab-btn');
+  if (!btn) return;
+  var tab = btn.dataset.tab;
+  // Toggle active tab button
+  this.querySelectorAll('.filter-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Toggle tab content
+  document.querySelectorAll('.filter-tab-content').forEach(function(c){ c.classList.remove('active'); });
+  var contentEl = document.querySelector('[data-tab-content="'+tab+'"]');
+  if (contentEl) contentEl.classList.add('active');
+});
+
+function toggleFilter(el){
+  el.classList.toggle('checked');
+  var g = el.dataset.group;
+  var v = el.dataset.value;
+  if (!state.filters[g]) state.filters[g] = {};
+  if (el.classList.contains('checked')) {
+    state.filters[g][v] = true;
+  } else {
+    delete state.filters[g][v];
+  }
+  state.page = 1;
+  renderAll();
+}
+
+// ============================================================
+// FILTERING & SORTING
+// ============================================================
+function getFilteredModels(){
+  var models = MODELS.slice();
+
+  // Search
+  if (state.search) {
+    var q = state.search.toLowerCase();
+    models = models.filter(function(m){
+      if (m.title.toLowerCase().indexOf(q) >= 0) return true;
+      if (m.desc && m.desc.toLowerCase().indexOf(q) >= 0) return true;
+      if (m.tags.some(function(t){return t.toLowerCase().indexOf(q) >= 0;})) return true;
+      return false;
+    });
+  }
+
+  // Category filter (模型类别)
+  if (state.filters.category) {
+    var catVals = Object.keys(state.filters.category);
+    if (catVals.length > 0) {
+      models = models.filter(function(m){
+        return catVals.indexOf(m.category) >= 0;
+      });
+    }
+  }
+
+  // Scene filter (农业场景)
+  if (state.filters.scene) {
+    var sceneVals = Object.keys(state.filters.scene);
+    if (sceneVals.length > 0) {
+      models = models.filter(function(m){
+        return sceneVals.indexOf(m.scene) >= 0;
+      });
+    }
+  }
+
+  // Direction filter (研究方向)
+  if (state.filters.direction) {
+    var dirVals = Object.keys(state.filters.direction);
+    if (dirVals.length > 0) {
+      models = models.filter(function(m){
+        return dirVals.indexOf(m.direction) >= 0;
+      });
+    }
+  }
+
+  // Pubdate filter (发布日期) — date range comparison
+  if (state.filters.pubdate) {
+    var pubVals = Object.keys(state.filters.pubdate);
+    if (pubVals.length > 0) {
+      var today = new Date('2026-07-24');
+      models = models.filter(function(m){
+        var d = new Date(m.updated);
+        var diffDays = Math.floor((today - d) / (1000 * 60 * 60 * 24));
+        return pubVals.some(function(v){
+          if (v === '30d') return diffDays <= 30;
+          if (v === '90d') return diffDays <= 90;
+          return false;
+        });
+      });
+    }
+  }
+
+  // Type filter (模型类型) — org tab
+  if (state.filters.type) {
+    var typeVals = Object.keys(state.filters.type);
+    if (typeVals.length > 0) {
+      models = models.filter(function(m){ return typeVals.indexOf(m.cardType) >= 0; });
+    }
+  }
+
+  // Org filter (上传机构) — org tab
+  if (state.filters.org) {
+    var orgVals = Object.keys(state.filters.org);
+    if (orgVals.length > 0) {
+      models = models.filter(function(m){ return orgVals.indexOf(m.org) >= 0; });
+    }
+  }
+
+  // Sort
+  if (state.sort === 'newest') {
+    models.sort(function(a,b){ return b.updated.localeCompare(a.updated); });
+  } else if (state.sort === 'popular') {
+    models.sort(function(a,b){ return parseFloat(b.calls) - parseFloat(a.calls); });
+  } else if (state.sort === 'stars') {
+    models.sort(function(a,b){ return parseInt(b.stars) - parseInt(a.stars); });
+  }
+
+  return models;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll(){
+  var filtered = getFilteredModels();
+
+  // Update count
+  document.getElementById('resultCount').innerHTML = '共 <strong>'+filtered.length+'</strong> 个模型';
+
+  // Sync filter card tag states
+  document.querySelectorAll('.filter-card-tag').forEach(function(el){
+    var g = el.dataset.group;
+    var v = el.dataset.value;
+    if (state.filters[g] && state.filters[g][v]) {
+      el.classList.add('checked');
+    } else {
+      el.classList.remove('checked');
+    }
+  });
+
+  // Pagination
+  var totalPages = Math.ceil(filtered.length / state.pageSize);
+  if (state.page > totalPages) state.page = Math.max(1, totalPages);
+  var start = (state.page - 1) * state.pageSize;
+  var pageModels = filtered.slice(start, start + state.pageSize);
+
+  // Cards
+  if (filtered.length === 0) {
+    document.getElementById('modelGrid').innerHTML = '';
+    document.getElementById('emptyState').classList.add('visible');
+    document.getElementById('paginationWrap').style.display = 'none';
+  } else {
+    document.getElementById('emptyState').classList.remove('visible');
+    document.getElementById('paginationWrap').style.display = '';
+    document.getElementById('modelGrid').innerHTML = pageModels.map(renderCard).join('');
+  }
+
+  // Pagination buttons
+  renderPagination(totalPages);
+}
+
+function renderCard(m){
+  var isCollection = m.cardType === 'collection';
+  var isModel = !isCollection;
+
+  // Thumbnail
+  var thumb = '<div class="model-card-thumb'+(isCollection?' collection':'')+'">'+m.icon+'</div>';
+
+  // Title + badge
+  var titleRow = '<div class="model-card-title-row"><h4 class="model-card-name">'+m.title+'</h4><span class="model-card-badge '+(isCollection?'collection':'model')+'">'+(isCollection?'合集':'模型')+'</span></div>';
+
+  // Description
+  var descText = '';
+  if (isCollection) {
+    descText = '包含 '+m.models.length+' 个子模型：'+m.models.map(function(sm){return sm.icon+' '+sm.name;}).join('、');
+  } else {
+    descText = m.desc || m.tags.join(' · ');
+  }
+  var desc = '<div class="model-card-desc">'+descText+'</div>';
+
+  // Tags (show up to 6)
+  var tagsHtml = m.tags.slice(0,6).map(function(t){return '<span class="model-tag">'+t+'</span>';}).join('');
+  var tags = '<div class="model-card-tags">'+tagsHtml+'</div>';
+
+  // Meta footer
+  var initial = m.uploader.charAt(0);
+  var meta = '<div class="model-card-meta">'+
+    '<div class="model-card-uploader"><div class="uploader-avatar">'+initial+'</div><span class="uploader-name">'+m.uploader+' · '+m.org+'</span></div>'+
+    '<div class="model-card-stats"><span class="stat-item">'+m.updated+'</span><span class="stat-item">'+m.calls+' 次调用</span><span class="stat-item">⭐ '+m.stars+'</span></div>'+
+    '</div>';
+
+  var idx = MODELS.indexOf(m);
+  return '<div class="model-card" onclick="showDetail('+idx+')">'+thumb+'<div class="model-card-body">'+titleRow+desc+tags+meta+'</div></div>';
+}
+
+function renderPagination(totalPages){
+  document.getElementById('pageInfo').textContent = '第 '+(state.page)+'/'+totalPages+' 页';
+
+  var html = '';
+  html += '<button class="page-btn" '+(state.page<=1?'disabled':'')+' onclick="goPage('+(state.page-1)+')">←</button>';
+
+  for (var i=1; i<=totalPages; i++) {
+    if (totalPages <= 7 || i === 1 || i === totalPages || (i >= state.page-1 && i <= state.page+1)) {
+      html += '<button class="page-btn'+(i===state.page?' active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+    } else if (i === 2 && state.page > 4) {
+      html += '<button class="page-btn" disabled>…</button>';
+    } else if (i === totalPages-1 && state.page < totalPages-3) {
+      html += '<button class="page-btn" disabled>…</button>';
+    }
+  }
+
+  html += '<button class="page-btn" '+(state.page>=totalPages?'disabled':'')+' onclick="goPage('+(state.page+1)+')">→</button>';
+  document.getElementById('pagination').innerHTML = html;
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+function onSearch(){
+  state.search = document.getElementById('searchInput').value.trim();
+  state.page = 1;
+  renderAll();
+}
+
+function onSort(){
+  state.sort = document.getElementById('sortSelect').value;
+  state.page = 1;
+  renderAll();
+}
+
+function goPage(n){
+  state.page = n;
+  renderAll();
+  window.scrollTo({top: document.querySelector('.search-section').offsetTop + 60, behavior:'smooth'});
+}
+
+function resetFilters(){
+  state.filters = {};
+  state.search = '';
+  state.sort = 'newest';
+  state.page = 1;
+  document.getElementById('searchInput').value = '';
+  document.getElementById('sortSelect').value = 'newest';
+  renderAll();
+}
+
+// ============================================================
+// TOP NAV
+// ============================================================
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (nav === 'home') { window.location.href = 'portal.html'; return; }
+    if (nav === 'marketplace') return;
+    if (nav === 'data') { window.location.href = 'dataset-management.html'; return; }
+    if (nav === 'dev') { window.location.href = 'image-custom-list.html'; return; }
+    if (nav === 'demand') { window.location.href = 'demand-hall.html'; return; }
+    if (nav === 'docs') { window.location.href = 'doc-center.html'; return; }
+    if (nav === 'appcenter') { window.location.href = 'app-center.html'; return; }
+    showToast('模块「'+e.target.textContent+'」页面待开发', 'info');
+  }
+});
+
+
+// ============================================================
+// DETAIL VIEW
+// ============================================================
+function showDetail(index){
+  var m = MODELS[index];
+  if (!m) return;
+
+  // Collections → simplified collection detail view
+  if (m.cardType === 'collection') {
+    state.view = 'collection';
+    state.detailModelIndex = index;
+    history.pushState({view:'collection', modelIndex:index}, '', '#'+encodeURIComponent(m.title));
+    document.querySelector('.marketplace-layout').style.display = 'none';
+    document.getElementById('modelDetailView').classList.remove('visible');
+    document.getElementById('collectionDetailView').classList.add('visible');
+    renderCollectionDetail(m);
+    window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
+
+  // Single model → full detail view
+  state.view = 'detail';
+  state.detailModelIndex = index;
+  history.pushState({view:'detail', modelIndex:index}, '', '#'+encodeURIComponent(m.title));
+  document.querySelector('.marketplace-layout').style.display = 'none';
+  document.getElementById('collectionDetailView').classList.remove('visible');
+  document.getElementById('modelDetailView').classList.add('visible');
+  renderDetail(m);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function backToList(){
+  state.view = 'list';
+  state.detailModelIndex = -1;
+  history.pushState({view:'list'}, '', window.location.pathname);
+  document.getElementById('modelDetailView').classList.remove('visible');
+  document.getElementById('collectionDetailView').classList.remove('visible');
+  document.querySelector('.marketplace-layout').style.display = '';
+  renderAll();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Browser back/forward
+window.addEventListener('popstate', function(e){
+  if (e.state && e.state.view === 'collection' && MODELS[e.state.modelIndex]) {
+    state.view = 'collection';
+    state.detailModelIndex = e.state.modelIndex;
+    document.querySelector('.marketplace-layout').style.display = 'none';
+    document.getElementById('modelDetailView').classList.remove('visible');
+    document.getElementById('collectionDetailView').classList.add('visible');
+    renderCollectionDetail(MODELS[e.state.modelIndex]);
+  } else if (e.state && e.state.view === 'detail' && MODELS[e.state.modelIndex]) {
+    state.view = 'detail';
+    state.detailModelIndex = e.state.modelIndex;
+    document.querySelector('.marketplace-layout').style.display = 'none';
+    document.getElementById('collectionDetailView').classList.remove('visible');
+    document.getElementById('modelDetailView').classList.add('visible');
+    renderDetail(MODELS[e.state.modelIndex]);
+  } else {
+    state.view = 'list';
+    state.detailModelIndex = -1;
+    document.getElementById('modelDetailView').classList.remove('visible');
+    document.getElementById('collectionDetailView').classList.remove('visible');
+    document.querySelector('.marketplace-layout').style.display = '';
+    renderAll();
+  }
+});
+
+// Tab switching
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('.md-tab-btn');
+  if (!btn) return;
+  var tab = btn.dataset.tab;
+  document.querySelectorAll('.md-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.md-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  var panel = document.querySelector('[data-tab-panel="'+tab+'"]');
+  if (panel) panel.classList.add('active');
+});
+
+// Deploy action
+function hasAppliedModel(id, type) {
+  try { var apps = JSON.parse(localStorage.getItem('luoshu_applications') || '[]'); return apps.some(function(a){ return a.type === (type || 'model') && a.targetId === id && a.status === 'pending'; }); } catch(e) { return false; }
+}
+function onDeployModel(){
+  if(!requireAuth())return;
+  var m = MODELS[state.detailModelIndex];
+  if (!m) return;
+  if (hasAppliedModel(m.title, 'model')) {
+    showToast('info', '已提交过部署申请，请等待审核');
+    var btn = document.getElementById('mdApplyDeployBtn');
+    if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+    return;
+  }
+  // Create application record
+  var apps = []; try { apps = JSON.parse(localStorage.getItem('luoshu_applications') || '[]'); } catch(e) {}
+  var appId = 'APP-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(apps.length + 1).padStart(3,'0');
+  var now = new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,8);
+  apps.unshift({id:appId, type:'model', targetId:m.title, targetTitle:m.title, applicantName:'当前用户', applicantUnit:'',
+    reason:'', pointsCost:m.apiCost||50, status:'pending', appliedAt:now, reviewedAt:null, reviewComment:''});
+  try { localStorage.setItem('luoshu_applications', JSON.stringify(apps)); } catch(e) {}
+  spendPoints(m.apiCost||50, '模型部署申请');
+  var btn = document.getElementById('mdApplyDeployBtn');
+  if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+  showToast('success', '部署申请已提交，请在工作台「我的申请」中查看进度');
+}
+
+// Star state — tracks which model/collection indices are starred by the user
+var starredModels = {};
+
+// Star toggle action
+function onStarModel(idx){
+  if(!requireAuth())return;
+  if (idx === undefined) idx = state.detailModelIndex;
+  if (idx < 0 || idx >= MODELS.length) return;
+  var m = MODELS[idx];
+  var isStarred = !!starredModels[idx];
+
+  if (isStarred) {
+    delete starredModels[idx];
+    showToast('已取消收藏「'+m.title+'」', 'info');
+  } else {
+    starredModels[idx] = true;
+    showToast('已收藏「'+m.title+'」⭐', 'success');
+  }
+  updateStarButtons();
+  updateStarCounts();
+}
+
+// Update all star buttons to reflect current state
+function updateStarButtons(){
+  var idx = state.detailModelIndex;
+  var isStarred = idx >= 0 && !!starredModels[idx];
+
+  // Model detail page star button
+  var btnMd = document.querySelector('#modelDetailView .md-header-actions .btn-default[onclick*="onStarModel"]');
+  if (btnMd) {
+    btnMd.innerHTML = isStarred ? '⭐ 已收藏' : '☆ 收藏';
+    if (isStarred) { btnMd.style.color = '#faad14'; btnMd.style.borderColor = '#faad14'; }
+    else { btnMd.style.color = ''; btnMd.style.borderColor = ''; }
+  }
+
+  // Collection detail page star button
+  var btnCd = document.querySelector('#collectionDetailView .md-header-actions .btn-default[onclick*="onStarModel"]');
+  if (btnCd) {
+    btnCd.innerHTML = isStarred ? '⭐ 已收藏' : '☆ 收藏';
+    if (isStarred) { btnCd.style.color = '#faad14'; btnCd.style.borderColor = '#faad14'; }
+    else { btnCd.style.color = ''; btnCd.style.borderColor = ''; }
+  }
+}
+
+// Update star counts in both views
+function updateStarCounts(){
+  var idx = state.detailModelIndex;
+  if (idx < 0) return;
+  var m = MODELS[idx];
+  var baseStars = parseInt(m.stars) || 0;
+  var displayStars = baseStars + (starredModels[idx] ? 1 : 0);
+
+  var elMd = document.getElementById('mdStars');
+  if (elMd) elMd.textContent = displayStars;
+  var elCd = document.getElementById('cdStars');
+  if (elCd) elCd.textContent = displayStars;
+}
+
+// ============================================================
+// COLLECTION DIALOG
+// ============================================================
+function openCollectionDialog(){
+  if(!requireAuth())return;
+  renderCollectionList();
+  // Reset new collection form
+  document.getElementById('collNewName').value = '';
+  document.querySelectorAll('.coll-vis-opt').forEach(function(o){ o.classList.remove('active'); });
+  document.querySelector('.coll-vis-opt[data-vis="public"]').classList.add('active');
+  document.getElementById('collectionDialog').classList.add('visible');
+}
+
+function closeCollectionDialog(){
+  document.getElementById('collectionDialog').classList.remove('visible');
+}
+
+function renderCollectionList(){
+  var modelIdx = state.detailModelIndex;
+  var container = document.getElementById('collList');
+  if (COLLECTIONS.length === 0) {
+    container.innerHTML = '<div class="coll-empty">暂无合集，在下方新建</div>';
+    return;
+  }
+  container.innerHTML = COLLECTIONS.map(function(c){
+    var checked = c.modelIds.indexOf(modelIdx) >= 0;
+    return '<div class="coll-item'+(checked?' checked':'')+'" data-coll-id="'+c.id+'" onclick="toggleCollCheck(this)">'+
+      '<span class="coll-checkbox"></span>'+
+      '<span class="coll-name">'+c.name+'</span>'+
+      '<span class="coll-vis-badge '+(c.isPublic?'public':'private')+'">'+(c.isPublic?'公开':'私人')+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleCollCheck(el){
+  el.classList.toggle('checked');
+}
+
+function saveCollectionSelections(){
+  var modelIdx = state.detailModelIndex;
+  // Update existing collections
+  document.querySelectorAll('.coll-item').forEach(function(item){
+    var collId = item.dataset.collId;
+    var checked = item.classList.contains('checked');
+    var coll = COLLECTIONS.find(function(c){ return c.id === collId; });
+    if (!coll) return;
+    var idxInColl = coll.modelIds.indexOf(modelIdx);
+    if (checked && idxInColl < 0) {
+      coll.modelIds.push(modelIdx);
+    } else if (!checked && idxInColl >= 0) {
+      coll.modelIds.splice(idxInColl, 1);
+    }
+  });
+
+  // Create new collection if name is filled
+  var newName = document.getElementById('collNewName').value.trim();
+  if (newName) {
+    var isPublic = document.querySelector('.coll-vis-opt.active').dataset.vis === 'public';
+    COLLECTIONS.push({
+      id: 'c'+Date.now(),
+      name: newName,
+      isPublic: isPublic,
+      modelIds: [modelIdx],
+      createdAt: new Date().toISOString().split('T')[0],
+      desc: ''
+    });
+  }
+
+  closeCollectionDialog();
+  // Toast feedback
+  showToast('合集已更新 ✅');
+}
+
+// Simple toast
+function showToast(msg, type){
+  var t = document.getElementById('collectionToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'collectionToast';
+    t.style.cssText = 'position:fixed;top:76px;right:24px;z-index:2000;padding:10px 16px;border-radius:6px;font-size:14px;transition:opacity 0.3s;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08);';
+    document.body.appendChild(t);
+  }
+  t.textContent = (type==='error'?'⚠ ':'') + msg;
+  if (type === 'success' || !type) { t.style.background = '#f6ffed'; t.style.border = '1px solid #b7eb8f'; t.style.color = '#52c41a'; }
+  else if (type === 'error') { t.style.background = '#fff2f0'; t.style.border = '1px solid #ffccc7'; t.style.color = '#ff4d4f'; }
+  else if (type === 'info') { t.style.background = '#f0f5ff'; t.style.border = '1px solid #d6e4ff'; t.style.color = '#2f54eb'; }
+  t.style.opacity = '1';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(function(){ t.style.opacity = '0'; }, 4000);
+}
+
+// Click outside dialog to close
+document.getElementById('collectionDialog').addEventListener('click', function(e){
+  if (e.target === this) closeCollectionDialog();
+});
+
+// Visibility toggle in new collection form
+document.getElementById('collVisToggle').addEventListener('click', function(e){
+  var opt = e.target.closest('.coll-vis-opt');
+  if (!opt) return;
+  this.querySelectorAll('.coll-vis-opt').forEach(function(o){ o.classList.remove('active'); });
+  opt.classList.add('active');
+});
+
+// ============================================================
+// DETAIL RENDER
+// ============================================================
+function renderDetail(m){
+  var isCollection = m.cardType === 'collection';
+
+  // Breadcrumb
+  document.getElementById('mdBreadcrumbName').textContent = m.title;
+
+  // Header
+  document.getElementById('mdIcon').textContent = m.icon;
+  document.getElementById('mdIcon').className = 'md-header-icon'+(isCollection?' collection':'');
+  document.getElementById('mdName').textContent = m.title;
+  var badge = document.getElementById('mdBadge');
+  badge.textContent = isCollection ? '合集' : '模型';
+  badge.className = 'md-header-badge '+(isCollection?'collection':'model');
+  document.getElementById('mdDesc').textContent = m.desc || m.readme.split('\n')[0];
+  document.getElementById('mdUploader').textContent = m.uploader;
+  document.getElementById('mdOrg').textContent = m.org;
+  document.getElementById('mdUpdated').textContent = m.updated;
+  document.getElementById('mdCalls').textContent = m.calls;
+  document.getElementById('mdStars').textContent = m.stars;
+
+  // Tags
+  var tagsContainer = document.getElementById('mdTags');
+  tagsContainer.innerHTML = m.tags.map(function(t){
+    return '<span class="model-tag">'+t+'</span>';
+  }).join('');
+
+  // Show/hide files tab for collections
+  var filesTabBtn = document.getElementById('mdTabBtnFiles');
+  if (isCollection && m.models) {
+    filesTabBtn.style.display = '';
+  } else {
+    filesTabBtn.style.display = 'none';
+  }
+
+  // Render Tab: Overview
+  renderTabOverview(m);
+  // Render Tab: Files
+  if (isCollection && m.models) renderTabFiles(m);
+  // Render Tab: Deploy
+  // renderTabDeploy(m); // 暂时隐藏部署使用 tab
+
+  // Render sidebar
+  renderLineage(m);
+  renderSidebarCollections(state.detailModelIndex);
+  // renderSidebarApps(m); // 暂时隐藏关联应用
+
+  // Reset to overview tab
+  document.querySelectorAll('.md-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  var firstTab = document.querySelector('.md-tab-btn[data-tab="overview"]');
+  if (firstTab) firstTab.classList.add('active');
+  document.querySelectorAll('.md-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  var firstPanel = document.querySelector('[data-tab-panel="overview"]');
+  if (firstPanel) firstPanel.classList.add('active');
+
+  // If collection with hidden files tab, switch files tab to be visible
+  if (!isCollection) {
+    var filesPanel = document.querySelector('[data-tab-panel="files"]');
+    if (filesPanel) filesPanel.classList.remove('active');
+  }
+
+  // Update action button costs & application states
+  var nc = m.notebookCost || POINTS.COST_MODEL;
+  var ac = m.apiCost || POINTS.COST_MODEL;
+  var trialBtn = document.querySelector('.md-tab-bar-actions .md-tab-op-btn.trial');
+  var nbBtn = document.getElementById('mdApplyNotebookBtn');
+  var apiBtn = document.getElementById('mdApplyApiBtn');
+  if (trialBtn) trialBtn.textContent = '使用 🪙'+POINTS.COST_MODEL;
+  if (nbBtn) {
+    if (hasAppliedModel(m.title, 'notebook')) { nbBtn.textContent = '✓ 已申请'; nbBtn.disabled = true; nbBtn.style.opacity = '0.65'; }
+    else { nbBtn.textContent = '📝 申请Notebook 🪙'+nc; nbBtn.disabled = false; nbBtn.style.opacity = ''; }
+  }
+  if (apiBtn) {
+    if (hasAppliedModel(m.title, 'api_call')) { apiBtn.textContent = '✓ 已申请'; apiBtn.disabled = true; apiBtn.style.opacity = '0.65'; }
+    else { apiBtn.textContent = '📝 申请API 🪙'+ac; apiBtn.disabled = false; apiBtn.style.opacity = ''; }
+  }
+
+  // Sync star button state
+  updateStarButtons();
+}
+
+function renderTabOverview(m){
+  // Readme
+  var readmeHtml = m.readme.split('\n').map(function(line){
+    if (line.trim() === '') return '<br>';
+    return '<p>'+line+'</p>';
+  }).join('');
+  document.getElementById('mdReadme').innerHTML = readmeHtml;
+
+  // Info table
+  var infoRows = [
+    ['推理框架', m.framework || '--'],
+    ['开源协议', m.license || '--'],
+    ['模型大小', m.modelSize || '--'],
+    ['输入格式', m.inputFormat || '--'],
+    ['输出格式', m.outputFormat || '--'],
+    ['精度指标', m.accuracy || '--']
+  ];
+  document.getElementById('mdInfoTable').innerHTML = infoRows.map(function(r){
+    return '<tr><td class="md-info-label">'+r[0]+'</td><td class="md-info-value">'+r[1]+'</td></tr>';
+  }).join('');
+
+  // Use cases
+  var cases = m.useCases || [];
+  document.getElementById('mdUseCases').innerHTML = cases.map(function(c){
+    return '<div class="md-usecase-item"><span class="md-bullet"></span>'+c+'</div>';
+  }).join('');
+
+  // Metrics (derived from accuracy and category)
+  var metricsHtml = [];
+  if (m.accuracy && m.accuracy.indexOf(',') > -1) {
+    m.accuracy.split(',').forEach(function(part){
+      var kv = part.trim().split(': ');
+      if (kv.length === 2) {
+        metricsHtml.push('<div class="md-usecase-item"><span class="md-bullet"></span><strong>'+kv[0]+':</strong> '+kv[1]+'</div>');
+      }
+    });
+  }
+  if (metricsHtml.length === 0) {
+    metricsHtml.push('<div class="md-usecase-item"><span class="md-bullet"></span>'+m.accuracy+'</div>');
+  }
+  document.getElementById('mdMetrics').innerHTML = metricsHtml.join('');
+}
+
+function renderTabFiles(m){
+  var cards = m.models.map(function(sm){
+    return '<div class="md-file-card">'+
+      '<div class="md-file-icon">'+sm.icon+'</div>'+
+      '<div class="md-file-info">'+
+        '<div class="md-file-name">'+sm.name+'</div>'+
+        (sm.desc ? '<div class="md-file-desc">'+sm.desc+'</div>' : '')+
+        (sm.size ? '<div class="md-file-size">📦 '+sm.size+'</div>' : '')+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('mdFileGrid').innerHTML = cards;
+}
+
+function renderTabDeploy(m){
+  // Deploy steps
+  var steps = m.deploySteps || [];
+  document.getElementById('mdDeploySteps').innerHTML = steps.map(function(step, i){
+    return '<div class="md-step-item"><div class="md-step-num">'+(i+1)+'</div><div class="md-step-text">'+step+'</div></div>';
+  }).join('');
+
+  // Requirements table
+  var reqRows = [
+    ['运行环境', m.requirements || '--']
+  ];
+  document.getElementById('mdReqTable').innerHTML = reqRows.map(function(r){
+    return '<tr><td class="md-info-label">'+r[0]+'</td><td class="md-info-value">'+r[1]+'</td></tr>';
+  }).join('');
+
+  // API example
+  var modelKey = m.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+  var exampleCode = 'import requests\n\n'+
+    '# 模型: ' + m.title + '\n'+
+    '# API 端点（部署后获取实际地址）\n'+
+    'API_URL = "https://api.luoshu-platform.com/v1/infer/'+modelKey+'"\n'+
+    'API_KEY = "<your-api-key>"\n\n'+
+    '# 调用推理服务\n'+
+    'headers = {"Authorization": "Bearer " + API_KEY}\n'+
+    'files = {"image": open("input.tif", "rb")}\n'+
+    'params = {"model": "'+modelKey+'", "output_format": "geojson"}\n\n'+
+    'response = requests.post(API_URL, headers=headers, files=files, params=params)\n'+
+    'result = response.json()\n'+
+    'print("推理结果:", result["data"])';
+  document.getElementById('mdCodeExample').textContent = exampleCode;
+}
+
+// ============================================================
+// SIDEBAR RENDER FUNCTIONS
+// ============================================================
+function renderLineage(m){
+  var tree = document.getElementById('mdLineageTree');
+  var nodes = [];
+
+  // Build lineage chain from bottom up
+  if (m.lineage) {
+    // Base model node (root)
+    nodes.push({ label:'基座模型', name:m.lineage.baseModel, clickable:false, current:false });
+    // Fine-tune stage
+    nodes.push({ label:'微调阶段', name:m.lineage.finetuneStage, clickable:false, current:false });
+    // Parent model (if exists)
+    if (m.lineage.parentModel && m.lineage.parentModelIdx !== null) {
+      nodes.push({ label:'上游模型', name:m.lineage.parentModel, clickable:true, modelIdx:m.lineage.parentModelIdx, relation:'parent' });
+    }
+    // Current model
+    nodes.push({ label:'当前模型', name:m.title, clickable:false, current:true });
+    // Children models (models that evolved FROM this one)
+    var currentIdx = state.detailModelIndex;
+    MODELS.forEach(function(other, idx){
+      if (other.lineage && other.lineage.parentModelIdx === currentIdx && idx !== currentIdx) {
+        nodes.push({ label:'下游衍生', name:other.title, clickable:true, modelIdx:idx, relation:'child' });
+      }
+    });
+  } else {
+    nodes.push({ label:'独立模型', name:m.title, clickable:false, current:true });
+    nodes.push({ label:'', name:'无上游演化依赖', clickable:false, current:false });
+  }
+
+  tree.innerHTML = nodes.map(function(n){
+    var cls = 'md-lineage-node'+(n.current?' current':'')+(n.clickable?' clickable':'');
+    var onclick = n.clickable ? ' onclick="navigateToModel('+n.modelIdx+','+"'"+n.relation+"'"+')"' : '';
+    return '<div class="'+cls+'"'+onclick+'>'+
+      '<div class="md-lineage-dot"></div>'+
+      '<div class="md-lineage-info">'+
+        (n.label ? '<div class="md-lineage-label">'+n.label+'</div>' : '')+
+        '<div class="md-lineage-name">'+n.name+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderSidebarCollections(modelIdx){
+  var container = document.getElementById('mdSidebarCollList');
+  var publicColls = COLLECTIONS.filter(function(c){ return c.isPublic && c.modelIds.indexOf(modelIdx) >= 0; });
+  if (publicColls.length === 0) {
+    container.innerHTML = '<div class="md-sidebar-empty">暂未被任何公开合集收录</div>';
+    return;
+  }
+  container.innerHTML = publicColls.map(function(c){
+    // Try to match this COLLECTIONS entry to a MODELS collection
+    var matchIdx = findMatchingCollection(c);
+    var onclick = matchIdx >= 0 ? ' onclick="showDetail('+matchIdx+')"' : ' onclick="showToast(\'合集「'+c.name+'」暂无独立详情页\',\'info\')"';
+    return '<div class="md-sidebar-item"'+onclick+' style="cursor:pointer;">'+
+      '<span class="md-sidebar-item-icon">📁</span>'+
+      '<span class="md-sidebar-item-text">'+c.name+'</span>'+
+      '<span class="md-sidebar-item-count">'+c.modelIds.length+'个</span>'+
+    '</div>';
+  }).join('');
+}
+
+// Match a COLLECTIONS entry to a MODELS collection by model ID overlap
+function findMatchingCollection(coll){
+  var bestIdx = -1, bestScore = 0;
+  MODELS.forEach(function(m, idx){
+    if (m.cardType !== 'collection') return;
+    // Score = count of overlapping model IDs
+    var overlap = coll.modelIds.filter(function(id){ return id === idx || (m.models && m.models.some(function(sm, i){ return id === idx; })); }).length;
+    // Also check if any sub-model matches by lineage or name
+    if (m.models) {
+      m.models.forEach(function(sm){
+        MODELS.forEach(function(mm, mmIdx){
+          if (coll.modelIds.indexOf(mmIdx) >= 0 && mm.cardType === 'model') {
+            if (mm.lineage && mm.lineage.parentModelIdx === idx) overlap++;
+            if (mm.title.indexOf(sm.name.replace(/v\d+/,'').trim()) >= 0) overlap++;
+          }
+        });
+      });
+    }
+    if (overlap > bestScore) { bestScore = overlap; bestIdx = idx; }
+  });
+  return bestScore >= 1 ? bestIdx : -1;
+}
+
+function renderSidebarApps(m){
+  var container = document.getElementById('mdSidebarAppList');
+  var apps = m.relatedApps || [];
+  if (apps.length === 0) {
+    container.innerHTML = '<div class="md-sidebar-empty">暂未被任何应用引用</div>';
+    return;
+  }
+  container.innerHTML = apps.map(function(a){
+    return '<div class="md-sidebar-item">'+
+      '<span class="md-sidebar-item-icon">'+a.icon+'</span>'+
+      '<span class="md-sidebar-item-text" title="'+a.desc+'">'+a.name+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+var lineageJumpTargetIdx = -1;
+
+function navigateToModel(idx, relation){
+  if (idx < 0 || idx >= MODELS.length) return;
+  lineageJumpTargetIdx = idx;
+  var target = MODELS[idx];
+
+  // Determine badge from the relation passed by renderLineage
+  if (relation === 'parent') {
+    document.getElementById('ljRelationBadge').textContent = '上游模型';
+    document.getElementById('ljRelationBadge').className = 'lj-relation-badge parent';
+  } else if (relation === 'child') {
+    document.getElementById('ljRelationBadge').textContent = '下游衍生';
+    document.getElementById('ljRelationBadge').className = 'lj-relation-badge child';
+  } else {
+    document.getElementById('ljRelationBadge').textContent = '关联模型';
+    document.getElementById('ljRelationBadge').className = 'lj-relation-badge child';
+  }
+  document.getElementById('ljIcon').textContent = target.icon;
+  document.getElementById('ljName').textContent = target.title;
+  document.getElementById('ljMeta').textContent = (target.cardType==='collection'?'合集':'模型') + ' · ' + target.org + ' · ' + target.updated;
+  document.getElementById('ljDesc').textContent = target.desc || (target.readme ? target.readme.split('\n')[0] : '暂无描述');
+  document.getElementById('lineageJumpDialog').classList.add('visible');
+}
+
+function closeLineageJumpDialog(){
+  document.getElementById('lineageJumpDialog').classList.remove('visible');
+  lineageJumpTargetIdx = -1;
+}
+
+function confirmLineageJump(){
+  if (lineageJumpTargetIdx >= 0 && lineageJumpTargetIdx < MODELS.length) {
+    closeLineageJumpDialog();
+    showDetail(lineageJumpTargetIdx);
+  }
+}
+
+// Click outside to close
+document.getElementById('lineageJumpDialog').addEventListener('click', function(e){
+  if (e.target === this) closeLineageJumpDialog();
+});
+
+// Top nav: if in detail view, "模型广场" click returns to list
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (nav === 'marketplace' && (state.view === 'detail' || state.view === 'collection')) {
+      backToList();
+      return;
+    }
+  }
+});
+
+// ============================================================
+// TRIAL PLAYGROUND — 在线试用
+// ============================================================
+var trialState = {
+  fileName: '',
+  fileData: null,
+  isLLM: false,
+  isRunning: false,
+  chatMessages: []
+};
+
+function consumeModelCall(cost, label) {
+  if (!requireAuth()) return false;
+  if (useFreeCall()) {
+    showToast('success', '🎁 使用免费调用额度（剩余 '+getRemainingFreeCalls()+' 次）');
+    return true;
+  }
+  return spendPoints(cost || POINTS.COST_MODEL, label || '模型调用');
+}
+
+function openTrialDialog(){
+  if(!requireAuth())return;
+  if (!consumeModelCall(POINTS.COST_MODEL, '模型使用')) return;
+  if (state.detailModelIndex < 0) return;
+  var m = MODELS[state.detailModelIndex];
+  document.getElementById('trialDialogModelName').textContent = m.title;
+  renderTrialTab(m);
+  document.getElementById('trialDialog').classList.add('visible');
+}
+
+function closeTrialDialog(){
+  document.getElementById('trialDialog').classList.remove('visible');
+}
+
+// Click outside to close trial dialog
+document.getElementById('trialDialog').addEventListener('click', function(e){
+  if (e.target === this) closeTrialDialog();
+});
+
+function renderTrialTab(m){
+  var isLLM = m.category === '大语言模型';
+  trialState.isLLM = isLLM;
+  trialState.fileName = '';
+  trialState.fileData = null;
+  trialState.chatMessages = [];
+
+  // Show/hide upload vs chat
+  document.getElementById('trialUploadArea').style.display = isLLM ? 'none' : '';
+  document.getElementById('trialChatArea').style.display = isLLM ? '' : 'none';
+
+  // Update upload hint
+  var hintEl = document.getElementById('trialUploadHint');
+  if (m.inputFormat) {
+    hintEl.textContent = '支持格式：' + m.inputFormat.split('(')[0].trim() + '，最大 50MB';
+  }
+
+  // Reset file info
+  resetTrialFile();
+
+  // Render parameters
+  renderTrialParams(m);
+
+  // Reset results
+  resetTrialResults();
+
+  // LLM welcome message
+  if (isLLM) {
+    document.getElementById('trialChatWelcome').textContent =
+      '你好！我是「'+m.title+'」的在线试用助手。请在下方输入你的农业技术问题，我会实时给出推理结果。';
+    document.getElementById('trialChatHistory').innerHTML =
+      '<div class="md-trial-chat-msg assistant">'+
+        '<div class="msg-avatar">🤖</div>'+
+        '<div class="msg-bubble">你好！我是「'+m.title+'」的在线试用助手。请在下方输入你的农业技术问题，我会实时给出推理结果。</div>'+
+      '</div>';
+    document.getElementById('trialChatInput').value = '';
+  }
+
+  // Update run button visibility for LLM (hidden since chat sends automatically)
+  document.getElementById('trialRunBtn').style.display = isLLM ? 'none' : '';
+}
+
+function renderTrialParams(m){
+  var paramsHtml = '';
+  // Confidence threshold
+  paramsHtml += '<div class="md-trial-param-row">'+
+    '<span class="md-trial-param-label">置信度阈值</span>'+
+    '<input class="md-trial-param-input" type="number" id="trialConfidence" value="0.5" min="0" max="1" step="0.05">'+
+    '</div>';
+  // For image/remote sensing models
+  var isVision = ['作物识别','变化检测','分类','卫星遥感','分割','目标检测','无人机遥感'].indexOf(m.category) >= 0;
+  if (isVision) {
+    paramsHtml += '<div class="md-trial-param-row">'+
+      '<span class="md-trial-param-label">输出格式</span>'+
+      '<select class="md-trial-param-input" id="trialOutFormat" style="appearance:auto;-webkit-appearance:auto;padding:0 8px;">'+
+        '<option value="geojson">GeoJSON</option>'+
+        '<option value="raster">分类栅格</option>'+
+        '<option value="json">JSON 结果</option>'+
+      '</select>'+
+      '</div>';
+    paramsHtml += '<div class="md-trial-param-row">'+
+      '<span class="md-trial-param-label">NMS 阈值</span>'+
+      '<input class="md-trial-param-input" type="number" id="trialNMS" value="0.45" min="0" max="1" step="0.05">'+
+      '</div>';
+  }
+  // For LLM models
+  if (m.category === '大语言模型') {
+    paramsHtml += '<div class="md-trial-param-row">'+
+      '<span class="md-trial-param-label">Temperature</span>'+
+      '<input class="md-trial-param-input" type="number" id="trialTemp" value="0.7" min="0" max="2" step="0.1">'+
+      '</div>';
+    paramsHtml += '<div class="md-trial-param-row">'+
+      '<span class="md-trial-param-label">最大长度</span>'+
+      '<input class="md-trial-param-input" type="number" id="trialMaxLen" value="2048" min="64" max="8192" step="64">'+
+      '</div>';
+  }
+  // For timeseries/crop models
+  if (['作物生长检测','气象预警'].indexOf(m.category) >= 0) {
+    paramsHtml += '<div class="md-trial-param-row">'+
+      '<span class="md-trial-param-label">时间范围</span>'+
+      '<select class="md-trial-param-input" id="trialTimeRange" style="appearance:auto;-webkit-appearance:auto;padding:0 8px;">'+
+        '<option value="30d">近30天</option>'+
+        '<option value="90d">近90天</option>'+
+        '<option value="season">全生育期</option>'+
+      '</select>'+
+      '</div>';
+  }
+  document.getElementById('trialParams').innerHTML = paramsHtml;
+}
+
+// File handling
+function onTrialFileSelected(input){
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  trialState.fileName = file.name;
+  trialState.fileData = file;
+  document.getElementById('trialFileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+  document.getElementById('trialFileInfo').classList.add('visible');
+  document.getElementById('trialUploadZone').classList.add('has-file');
+  document.getElementById('trialUploadZone').querySelector('.md-trial-upload-text').textContent = '已选择文件';
+  document.getElementById('trialUploadZone').querySelector('.md-trial-upload-icon').textContent = '✅';
+}
+
+function removeTrialFile(){
+  resetTrialFile();
+}
+
+function resetTrialFile(){
+  trialState.fileName = '';
+  trialState.fileData = null;
+  document.getElementById('trialFileInfo').classList.remove('visible');
+  document.getElementById('trialUploadZone').classList.remove('has-file');
+  document.getElementById('trialUploadZone').querySelector('.md-trial-upload-text').textContent = '点击或拖拽文件到此处';
+  document.getElementById('trialUploadZone').querySelector('.md-trial-upload-icon').textContent = '📁';
+  document.getElementById('trialFileInput').value = '';
+}
+
+function formatFileSize(bytes){
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  if (bytes < 1073741824) return (bytes/1048576).toFixed(1) + ' MB';
+  return (bytes/1073741824).toFixed(2) + ' GB';
+}
+
+// Chat for LLM
+function sendTrialChat(){
+  var input = document.getElementById('trialChatInput');
+  var msg = input.value.trim();
+  if (!msg || trialState.isRunning) return;
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('trialChatSendBtn').disabled = true;
+  trialState.isRunning = true;
+
+  // Add user message
+  var history = document.getElementById('trialChatHistory');
+  history.innerHTML += '<div class="md-trial-chat-msg user">'+
+    '<div class="msg-avatar">👤</div>'+
+    '<div class="msg-bubble">'+escapeHTML(msg)+'</div>'+
+    '</div>';
+
+  // Add typing indicator
+  var typingEl = document.createElement('div');
+  typingEl.className = 'md-trial-chat-msg assistant';
+  typingEl.id = 'trialTyping';
+  typingEl.innerHTML = '<div class="msg-avatar">🤖</div><div class="msg-bubble" style="color:rgba(0,0,0,0.35);">推理中<span class="md-spinner" style="width:12px;height:12px;border-width:2px;border-color:rgba(0,0,0,0.15);border-top-color:rgba(0,0,0,0.45);display:inline-block;margin-left:6px;vertical-align:middle;"></span></div>';
+  history.appendChild(typingEl);
+  history.scrollTop = history.scrollHeight;
+
+  // Simulate LLM response
+  var m = MODELS[state.detailModelIndex];
+  var latency = (800 + Math.random() * 2200).toFixed(0);
+  setTimeout(function(){
+    // Remove typing
+    var typing = document.getElementById('trialTyping');
+    if (typing) typing.remove();
+
+    // Generate response
+    var responses = generateLLMResponse(msg, m);
+    history.innerHTML += '<div class="md-trial-chat-msg assistant">'+
+      '<div class="msg-avatar">🤖</div>'+
+      '<div class="msg-bubble">'+responses.text+'</div>'+
+      '</div>';
+    history.scrollTop = history.scrollHeight;
+
+    // Show result in result panel
+    showTrialResult(responses.data, latency);
+
+    trialState.isRunning = false;
+    input.disabled = false;
+    document.getElementById('trialChatSendBtn').disabled = false;
+    input.focus();
+  }, parseInt(latency));
+}
+
+function generateLLMResponse(msg, m){
+  var lowerMsg = msg.toLowerCase();
+  var text = '';
+  var data = {};
+
+  if (lowerMsg.indexOf('病虫') >= 0 || lowerMsg.indexOf('病害') >= 0 || lowerMsg.indexOf('虫') >= 0) {
+    text = '根据「'+m.title+'」的分析，该症状可能对应以下几种常见病害：\n\n'+
+      '1. **玉米大斑病** (概率 78.3%) — 叶片出现灰绿色水渍状斑点，逐渐扩展为大型梭状斑\n'+
+      '2. **玉米锈病** (概率 15.6%) — 叶片正反面出现铁锈色粉末状孢子堆\n'+
+      '3. **玉米小斑病** (概率 6.1%) — 叶脉间出现小型椭圆形褐色斑点\n\n'+
+      '**建议措施：** 立即喷施 25% 丙环唑乳油 1500 倍液，间隔 7-10 天喷施一次，连续 2-3 次。注意轮换用药以防抗药性。';
+    data = { diagnosis: '玉米大斑病', confidence: 0.783, suggestions: ['喷施丙环唑乳油','轮换用药','清除病残体'] };
+  } else if (lowerMsg.indexOf('施肥') >= 0 || lowerMsg.indexOf('肥') >= 0 || lowerMsg.indexOf('养分') >= 0) {
+    text = '根据土壤养分遥感反演结果和当前作物生育期，推荐施肥方案如下：\n\n'+
+      '- **氮肥 (尿素):** 225 kg/ha，分两次施用（基肥60% + 追肥40%）\n'+
+      '- **磷肥 (过磷酸钙):** 120 kg/ha，全部作为基肥\n'+
+      '- **钾肥 (氯化钾):** 90 kg/ha，全部作为基肥\n\n'+
+      '当前 NDVI 指数为 0.72，处于正常水平。建议在拔节期进行第二次追肥。';
+    data = { recommendation: { urea: '225 kg/ha', superphosphate: '120 kg/ha', potassium_chloride: '90 kg/ha' }, ndvi: 0.72, stage: '拔节期' };
+  } else if (lowerMsg.indexOf('产量') >= 0 || lowerMsg.indexOf('预估') >= 0 || lowerMsg.indexOf('收成') >= 0) {
+    text = '基于当前气象数据和遥感 NDVI 时序曲线，产量预估结果：\n\n'+
+      '- **预测产量:** 9,850 kg/ha (95% 置信区间: 9,320 - 10,380 kg/ha)\n'+
+      '- **同比去年:** +4.2%\n'+
+      '- **关键影响因子:** 6月积温偏高 (+2.1°C) 有利于籽粒灌浆\n\n'+
+      '当前气象条件下产量前景良好，建议密切关注未来 15 天降水预报。';
+    data = { predicted_yield: '9,850 kg/ha', confidence_interval: ['9,320 kg/ha','10,380 kg/ha'], year_over_year: '+4.2%' };
+  } else {
+    text = '感谢你的提问！基于「'+m.title+'」的知识库分析：\n\n'+
+      '该模型专注于**'+m.category+'**领域的**'+m.scene+'**场景应用，支持'+m.tags.slice(0,3).join('、')+'等能力。\n\n'+
+      '请提供更具体的农业技术问题（如病虫害诊断、施肥建议、产量预估等），我将给出详细的分析结果。';
+    data = { response: 'general_inquiry', categories: m.tags.slice(0,5) };
+  }
+  return { text: text, data: data };
+}
+
+// File-based inference
+function runTrialInference(){
+  if (trialState.isRunning) return;
+
+  var m = MODELS[state.detailModelIndex];
+  if (!trialState.isLLM && !trialState.fileData) {
+    showToast('请先上传待推理的文件', 'error');
+    return;
+  }
+  if (trialState.isLLM) return; // LLM uses chat
+
+  trialState.isRunning = true;
+  var runBtn = document.getElementById('trialRunBtn');
+  runBtn.disabled = true;
+  runBtn.innerHTML = '<span class="md-spinner"></span> 推理中…';
+
+  // Simulate inference latency
+  var latency = (1200 + Math.random() * 2800).toFixed(0);
+  setTimeout(function(){
+    var result = generateInferenceResult(m);
+    showTrialResult(result, latency);
+    trialState.isRunning = false;
+    runBtn.disabled = false;
+    runBtn.innerHTML = '🚀 运行推理';
+  }, parseInt(latency));
+}
+
+function generateInferenceResult(m){
+  var confidence = parseFloat(document.getElementById('trialConfidence')?.value || 0.5);
+  var result = {
+    status: 'success',
+    model: m.title,
+    category: m.category,
+    inference_time_ms: (800 + Math.random() * 2500).toFixed(1),
+    confidence_threshold: confidence,
+    results: []
+  };
+
+  if (m.category === '作物识别' || m.category === '分类') {
+    var classes = m.tags.filter(function(t){ return t.length <= 6; }).slice(0, 4);
+    if (classes.length === 0) classes = ['作物A','作物B','杂草','其他'];
+    result.results = classes.map(function(c, i){
+      var score = (0.65 + Math.random() * 0.33).toFixed(4);
+      return { class: c, confidence: parseFloat(score), bbox: [Math.floor(Math.random()*200), Math.floor(Math.random()*200), 100+Math.floor(Math.random()*200), 100+Math.floor(Math.random()*200)] };
+    });
+    result.summary = '检测到 ' + result.results.filter(function(r){ return r.confidence >= confidence; }).length + ' 个类别（置信度 ≥ '+confidence+'）';
+  } else if (m.category === '变化检测') {
+    result.results = [
+      { change_type: '新增耕地', area_ha: (1.2 + Math.random() * 8).toFixed(2), confidence: (0.82 + Math.random() * 0.16).toFixed(3) },
+      { change_type: '建设用地占用', area_ha: (0.3 + Math.random() * 3).toFixed(2), confidence: (0.78 + Math.random() * 0.19).toFixed(3) },
+      { change_type: '闲置撂荒', area_ha: (0.1 + Math.random() * 1.5).toFixed(2), confidence: (0.75 + Math.random() * 0.2).toFixed(3) }
+    ];
+    result.summary = '检测到 3 类变化，总面积 ' + result.results.reduce(function(s,r){ return s + parseFloat(r.area_ha); }, 0).toFixed(2) + ' ha';
+  } else if (m.category === '作物生长检测' || m.category === '气象预警') {
+    result.results = {
+      predicted_yield: (7.5 + Math.random() * 5).toFixed(2) + ' t/ha',
+      ndvi_trend: ['上升','平稳','下降'][Math.floor(Math.random()*3)],
+      risk_level: ['低','中','高'][Math.floor(Math.random()*3)],
+      confidence_interval: [(7.0 + Math.random()).toFixed(2) + ' t/ha', (11.0 + Math.random()*2).toFixed(2) + ' t/ha']
+    };
+    result.summary = '预测产量: ' + result.results.predicted_yield + '，风险等级: ' + result.results.risk_level;
+  } else {
+    result.results = [
+      { label: '推理完成', output_format: document.getElementById('trialOutFormat')?.value || 'json' },
+      { detection_count: Math.floor(5 + Math.random() * 20) },
+      { processing_time_sec: (0.8 + Math.random() * 3).toFixed(2) }
+    ];
+    result.summary = '推理成功完成';
+  }
+
+  return result;
+}
+
+function showTrialResult(result, latency){
+  document.getElementById('trialResultPlaceholder').style.display = 'none';
+  document.getElementById('trialResultContent').classList.add('visible');
+  document.getElementById('trialLatency').textContent = (parseFloat(latency)/1000).toFixed(1) + 's';
+  document.getElementById('trialRequestId').textContent = 'req_' + Math.random().toString(36).substring(2, 10);
+  document.getElementById('trialResultJson').textContent = JSON.stringify(result, null, 2);
+}
+
+function resetTrialResults(){
+  document.getElementById('trialResultPlaceholder').style.display = '';
+  document.getElementById('trialResultContent').classList.remove('visible');
+  document.getElementById('trialResultJson').textContent = '';
+}
+
+function escapeHTML(str){
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ============================================================
+// NOTEBOOK LAUNCH
+// ============================================================
+function onApplyNotebook(){
+  if(!requireAuth())return;
+  var m = MODELS[state.detailModelIndex];
+  if (!m) return;
+  if (hasAppliedModel(m.title, 'notebook')) {
+    showToast('info', '已提交过 Notebook 申请，请等待审核');
+    var btn = document.getElementById('mdApplyNotebookBtn');
+    if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+    return;
+  }
+  var apps = []; try { apps = JSON.parse(localStorage.getItem('luoshu_applications') || '[]'); } catch(e) {}
+  var appId = 'APP-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(apps.length + 1).padStart(3,'0');
+  var now = new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,8);
+  apps.unshift({id:appId, type:'notebook', targetId:m.title, targetTitle:m.title, applicantName:'当前用户', applicantUnit:'',
+    reason:'', pointsCost:m.notebookCost||50, status:'pending', appliedAt:now, reviewedAt:null, reviewComment:''});
+  try { localStorage.setItem('luoshu_applications', JSON.stringify(apps)); } catch(e) {}
+  spendPoints(m.notebookCost||50, 'Notebook 申请');
+  var btn = document.getElementById('mdApplyNotebookBtn');
+  if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+  showToast('success', 'Notebook 申请已提交，请在工作台「我的申请」中查看进度');
+}
+
+function closeNotebookDialog(){
+  document.getElementById('notebookDialog').classList.remove('visible');
+}
+
+function selectNBResource(el){
+  document.querySelectorAll('#nbResourceOptions .nb-resource-opt').forEach(function(o){ o.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function launchNotebook(){
+  var m = state.detailModelIndex >= 0 ? MODELS[state.detailModelIndex] : null;
+  if (!consumeModelCall(m ? (m.notebookCost || POINTS.COST_MODEL) : POINTS.COST_MODEL, 'Notebook')) return;
+  var name = document.getElementById('nbName').value.trim();
+  if (!name) {
+    showToast('请输入 Notebook 名称', 'error');
+    return;
+  }
+  var image = document.getElementById('nbImage').value;
+  var resource = document.querySelector('#nbResourceOptions .nb-resource-opt.active').dataset.res;
+  var workDir = document.getElementById('nbWorkDir').value.trim() || '/workspace';
+  var m = MODELS[state.detailModelIndex];
+
+  // Resource display map
+  var resMap = { cpu: 'CPU 4核8GB', t4: 'GPU T4 16GB', a10: 'GPU A10 24GB' };
+  var imageMap = {
+    'pytorch-agri': 'PyTorch 2.1 + 农业遥感工具链',
+    'tensorflow-agri': 'TensorFlow 2.15 + 遥感预处理',
+    'llm-agri': 'AgriLLM + RAG 知识库环境',
+    'basic': '基础 Python 3.10'
+  };
+
+  closeNotebookDialog();
+  showToast(
+    '📓 Notebook「'+name+'」正在启动…\n'+
+    '镜像: '+imageMap[image]+'\n'+
+    '资源: '+resMap[resource]+'\n'+
+    '预计 30-60 秒后可用，届时可在在线开发模块中访问。',
+    'success'
+  );
+}
+
+// Click outside to close notebook dialog
+document.getElementById('notebookDialog').addEventListener('click', function(e){
+  if (e.target === this) closeNotebookDialog();
+});
+
+// ============================================================
+// API DIALOG
+// ============================================================
+var apiCodeTab = 'curl';
+
+function onApplyApi(){
+  if(!requireAuth())return;
+  var m = MODELS[state.detailModelIndex];
+  if (!m) return;
+  if (hasAppliedModel(m.title, 'api_call')) {
+    showToast('info', '已提交过 API 调用申请，请等待审核');
+    var btn = document.getElementById('mdApplyApiBtn');
+    if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+    return;
+  }
+  var apps = []; try { apps = JSON.parse(localStorage.getItem('luoshu_applications') || '[]'); } catch(e) {}
+  var appId = 'APP-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(apps.length + 1).padStart(3,'0');
+  var now = new Date().toISOString().slice(0,10) + ' ' + new Date().toTimeString().slice(0,8);
+  apps.unshift({id:appId, type:'api_call', targetId:m.title, targetTitle:m.title, applicantName:'当前用户', applicantUnit:'',
+    reason:'', pointsCost:m.apiCost||50, status:'pending', appliedAt:now, reviewedAt:null, reviewComment:''});
+  try { localStorage.setItem('luoshu_applications', JSON.stringify(apps)); } catch(e) {}
+  spendPoints(m.apiCost||50, 'API 调用申请');
+  var btn = document.getElementById('mdApplyApiBtn');
+  if (btn) { btn.textContent = '✓ 已申请'; btn.disabled = true; btn.style.opacity = '0.65'; }
+  showToast('success', 'API 调用申请已提交，请在工作台「我的申请」中查看进度');
+}
+
+// Legacy: kept for backward ref — opens API dialog directly (used from workbench)
+function openApiDialog(){
+  if(!requireAuth())return;
+  if (state.detailModelIndex < 0) return;
+  var m = MODELS[state.detailModelIndex];
+  if (!consumeModelCall(m.apiCost || POINTS.COST_MODEL, 'API调用')) return;
+  apiCodeTab = 'curl';
+  document.getElementById('apiDialogModelName').textContent = m.title;
+
+  // Derive endpoint from model title
+  var modelKey = m.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+  var endpoint = '/api/v1/models/' + modelKey + '/predict';
+  document.getElementById('apiUrl').textContent = endpoint;
+
+  // Derive input params from model data
+  var inputFormat = m.inputFormat || '';
+  var inputParts = inputFormat.split(/[,;，；]/);
+  var inputRows = '';
+  if (inputFormat) {
+    inputRows += '<tr><td><code>file</code></td><td><span class="param-type">File</span></td><td><span class="param-required">是</span></td><td class="param-desc">输入数据文件，' + inputParts[0].trim() + '</td></tr>';
+    if (inputParts.length > 1) {
+      inputRows += '<tr><td><code>options</code></td><td><span class="param-type">Object</span></td><td>否</td><td class="param-desc">推理配置选项：' + inputParts.slice(1).map(function(s){return s.trim();}).join(' / ') + '</td></tr>';
+    }
+  } else {
+    inputRows = '<tr><td><code>input</code></td><td><span class="param-type">Object</span></td><td><span class="param-required">是</span></td><td class="param-desc">推理输入数据</td></tr>';
+  }
+  inputRows += '<tr><td><code>model_version</code></td><td><span class="param-type">String</span></td><td>否</td><td class="param-desc">指定模型版本，默认使用最新版本</td></tr>';
+  document.getElementById('apiInputParams').innerHTML = inputRows;
+
+  // Derive output params
+  var outputFormat = m.outputFormat || '';
+  var outputParts = outputFormat.split(/[+＋]/);
+  var outputRows = '<tr><td><code>code</code></td><td><span class="param-type">Integer</span></td><td>状态码，200 表示成功</td></tr>';
+  outputRows += '<tr><td><code>result</code></td><td><span class="param-type">Object</span></td><td>推理结果，格式：' + (outputParts[0] ? outputParts[0].trim() : 'JSON') + '</td></tr>';
+  outputRows += '<tr><td><code>request_id</code></td><td><span class="param-type">String</span></td><td>请求追踪ID</td></tr>';
+  outputRows += '<tr><td><code>latency_ms</code></td><td><span class="param-type">Number</span></td><td>推理耗时（毫秒）</td></tr>';
+  document.getElementById('apiOutputParams').innerHTML = outputRows;
+
+  // Render code example
+  renderApiCodeExample(m, endpoint);
+
+  // Reset code tabs
+  var tabs = document.querySelectorAll('#apiCodeTabs .api-code-tab');
+  tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.lang === 'curl'); });
+
+  document.getElementById('apiDialog').classList.add('visible');
+}
+
+function closeApiDialog(){
+  document.getElementById('apiDialog').classList.remove('visible');
+}
+
+function switchApiCodeTab(lang){
+  apiCodeTab = lang;
+  var tabs = document.querySelectorAll('#apiCodeTabs .api-code-tab');
+  tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.lang === lang); });
+  if (state.detailModelIndex >= 0) {
+    var m = MODELS[state.detailModelIndex];
+    var endpoint = '/api/v1/models/' + m.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() + '/predict';
+    renderApiCodeExample(m, endpoint);
+  }
+}
+
+function renderApiCodeExample(m, endpoint){
+  var apiKey = 'your_api_key_here';
+  if (apiCodeTab === 'curl') {
+    document.getElementById('apiCodeExample').textContent =
+      'curl -X POST \\\n'+
+      '  https://api.example.com' + endpoint + ' \\\n'+
+      '  -H "Authorization: Bearer ' + apiKey + '" \\\n'+
+      '  -H "Content-Type: multipart/form-data" \\\n'+
+      '  -F "file=@/path/to/your/input.tif" \\\n'+
+      '  -F "model_version=v1"';
+  } else {
+    document.getElementById('apiCodeExample').textContent =
+      'import requests\n\n'+
+      'url = "https://api.example.com' + endpoint + '"\n'+
+      'headers = {\n'+
+      '    "Authorization": "Bearer ' + apiKey + '"\n'+
+      '}\n'+
+      'files = {\n'+
+      '    "file": open("/path/to/your/input.tif", "rb")\n'+
+      '}\n'+
+      'data = {\n'+
+      '    "model_version": "v1"\n'+
+      '}\n\n'+
+      'response = requests.post(url, headers=headers, files=files, data=data)\n'+
+      'print(response.json())';
+  }
+}
+
+// Click outside to close API dialog
+document.getElementById('apiDialog').addEventListener('click', function(e){
+  if (e.target === this) closeApiDialog();
+});
+
+// ============================================================
+// COLLECTION DETAIL VIEW — simplified: header + sub-model grid
+// ============================================================
+function renderCollectionDetail(m){
+  // Breadcrumb
+  document.getElementById('cdBreadcrumbName').textContent = m.title;
+  // Header
+  document.getElementById('cdIcon').textContent = m.icon;
+  document.getElementById('cdName').textContent = m.title;
+  document.getElementById('cdDesc').textContent = m.readme ? m.readme.split('\n')[0] : (m.desc || '暂无描述');
+  document.getElementById('cdUploader').textContent = m.uploader;
+  document.getElementById('cdOrg').textContent = m.org;
+  document.getElementById('cdUpdated').textContent = m.updated;
+  document.getElementById('cdStars').textContent = m.stars;
+
+  var subModels = m.models || [];
+  document.getElementById('cdModelCount').textContent = '共 ' + subModels.length + ' 个模型';
+  document.getElementById('cdModelCountMeta').textContent = subModels.length + ' 个';
+
+  // Render sub-model cards
+  var grid = document.getElementById('cdModelGrid');
+  if (subModels.length === 0) {
+    grid.innerHTML = '<div class="empty-state visible"><div class="empty-icon">📭</div><h3>暂无收录模型</h3><p>此合集暂未收录任何模型</p></div>';
+    updateStarButtons();
+    return;
+  }
+
+  grid.innerHTML = subModels.map(function(sm, idx){
+    // Try to match sub-model to a standalone MODELS entry
+    var matchIdx = findModelIndexBySubModel(sm, m);
+    var isClickable = matchIdx >= 0;
+    var targetModel = isClickable ? MODELS[matchIdx] : null;
+
+    return '<div class="cd-model-card"'+(isClickable ? ' onclick="showDetail('+matchIdx+')"' : '')+'>'+
+      '<div class="cd-card-icon">'+sm.icon+'</div>'+
+      '<div class="cd-card-body">'+
+        '<div class="cd-card-name">'+sm.name+(isClickable ? '' : '')+'</div>'+
+        (sm.desc ? '<div class="cd-card-desc">'+sm.desc+'</div>' : '')+
+        '<div class="cd-card-meta">'+
+          (sm.size ? '<span>📦 '+sm.size+'</span>' : '')+
+          (isClickable ? '<span style="color:#2f54eb;">🔗 查看详情 →</span>' : '<span style="color:rgba(0,0,0,0.25);">—</span>')+
+        '</div>'+
+      '</div>'+
+      (isClickable ? '<span class="cd-card-arrow">›</span>' : '')+
+    '</div>';
+  }).join('');
+
+  // Sync star button state
+  updateStarButtons();
+}
+
+// Match a sub-model to a standalone model in MODELS
+function findModelIndexBySubModel(sm, parentCollection){
+  var smName = sm.name.toLowerCase().replace(/\s+/g,'').replace(/v\d+/g,'');
+  var bestIdx = -1;
+  var bestScore = 0;
+
+  MODELS.forEach(function(model, idx){
+    if (model.cardType !== 'model') return; // only match standalone models
+    var mName = model.title.toLowerCase().replace(/\s+/g,'').replace(/v\d+/g,'');
+
+    // Score by name overlap
+    var score = 0;
+    // Exact match after normalization
+    if (smName === mName) { score = 100; }
+    // Sub-model name is contained in model name
+    else if (mName.indexOf(smName) >= 0 && smName.length > 3) { score = 70; }
+    // Model name is contained in sub-model name
+    else if (smName.indexOf(mName) >= 0 && mName.length > 3) { score = 70; }
+    // Parent lineage reference
+    else if (model.lineage && model.lineage.parentModelIdx === MODELS.indexOf(parentCollection)) { score = 60; }
+    // Partial word overlap
+    else {
+      var smWords = smName.split(/[\-_]/);
+      var mWords = mName.split(/[\-_]/);
+      var matches = smWords.filter(function(w){ return w.length > 1 && mWords.indexOf(w) >= 0; }).length;
+      if (matches >= 2) score = 40 + matches * 10;
+    }
+
+    if (score > bestScore) { bestScore = score; bestIdx = idx; }
+  });
+
+  // Require minimum confidence
+  return bestScore >= 40 ? bestIdx : -1;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+// ===== AUTH STATE (must run first) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+buildFilterTags();
+renderAll();
+// ===== NOTIFICATIONS =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+renderNotifs();
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

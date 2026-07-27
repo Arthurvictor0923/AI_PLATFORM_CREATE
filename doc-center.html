@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文档中心 · 洛书模型服务平台</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[data-prefers-color="light"]{color-scheme:light}
+[data-prefers-color="dark"]{color-scheme:dark}
+html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;font-size:14px;line-height:1.5714285714285714;color:rgba(0,0,0,0.88);background-color:#F7F9FD;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden}
+[data-prefers-color="dark"] body{background-color:#1c1e21;color:rgba(255,255,255,0.85)}
+a{color:#2f54eb;text-decoration:none;transition:color 0.3s}
+a:hover{color:#597ef7}
+ul,ol{list-style:none}
+img{display:block;max-width:100%}
+input,button{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+
+/* ===== HEADER ===== */
+.app-header{position:fixed;top:0;left:0;right:0;height:60px;line-height:60px;background:transparent;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(5,5,5,0.06);z-index:19;display:flex;flex-direction:column;padding:0}
+[data-prefers-color="dark"] .app-header{background-color:rgba(28,30,33,0.88);border-bottom-color:rgba(255,255,255,0.08)}
+.top-nav-header{position:relative;width:100%;height:100%;background-color:transparent}
+.top-nav-header-main{display:flex;align-items:center;padding-inline-start:16px;margin:12px 0;height:40px}
+.top-nav-header-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-link{display:flex;align-items:center;gap:8px}
+.system-name-title{font-weight:600;font-size:20px;color:rgba(0,0,0,0.88);white-space:nowrap}
+[data-prefers-color="dark"] .system-name-title{color:rgba(255,255,255,0.85)}
+.top-nav-menu-wrap{flex:1;display:flex;align-items:center;height:40px;overflow:hidden}
+.top-nav-menu{display:flex;align-items:center;height:100%;border-bottom:1px solid rgba(5,5,5,0.06);background-color:transparent;gap:8px}
+.top-nav-item{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 16px;margin:0 0;font-size:14px;color:rgba(0,0,0,0.65);white-space:nowrap;cursor:pointer;user-select:none;transition:color 0.3s,background 0.3s}
+.top-nav-item:hover{color:rgb(47,84,235)}
+.top-nav-item.active{color:rgb(47,84,235)!important;font-weight:600;background-color:transparent!important}
+.top-nav-item.active::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:10px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat}
+[data-prefers-color="dark"] .top-nav-item{color:rgba(255,255,255,0.65)}
+[data-prefers-color="dark"] .top-nav-item.active{color:rgb(47,84,235)!important}
+.header-right{display:flex;align-items:center;gap:12px;padding-right:50px;flex-shrink:0}
+.header-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;color:rgba(0,0,0,0.65);font-size:16px;transition:all 0.2s;cursor:pointer;position:relative}
+.header-btn:hover{background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.88)}
+[data-prefers-color="dark"] .header-btn{color:rgba(255,255,255,0.65)}
+[data-prefers-color="dark"] .header-btn:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85)}
+.header-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#ff4d4f;border:1px solid #fff}
+.header-btn-login,.header-btn-register{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:4px 15px;font-size:14px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all 0.2s;text-decoration:none}
+.header-btn-login{border:1px solid #d9d9d9;background:#fff;color:rgba(0,0,0,0.88);box-shadow:0 2px 0 rgba(0,0,0,0.02)}
+.header-btn-login:hover{color:#597ef7;border-color:#597ef7}
+.header-btn-register{border:1px solid transparent;background:#2f54eb;color:#fff;box-shadow:0 2px 0 rgba(47,84,235,0.1)}
+.header-btn-register:hover{background:#597ef7}
+[data-prefers-color="dark"] .header-btn-login{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85)}
+[data-prefers-color="dark"] .header-btn-login:hover{color:#597ef7;border-color:#597ef7}
+
+/* Auth State Containers */
+#headerAuthOut,#headerAuthIn{display:inline-flex;align-items:center;gap:12px}
+
+/* Notif popover */
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+
+/* Points badge */
+.points-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;background:#f0f5ff;font-size:13px;color:#2f54eb;cursor:pointer;user-select:none;white-space:nowrap}
+.points-badge strong{font-weight:600}
+
+/* User dropdown */
+.dropdown-wrap{position:relative;display:inline-flex}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7566FF,#2F54EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
+.dropdown-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;min-width:180px;padding:4px;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.dropdown-menu.visible{display:block}
+[data-prefers-color="dark"] .dropdown-menu{background:#2b2d30;box-shadow:0 6px 16px 0 rgba(0,0,0,0.3)}
+.dropdown-item{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:6px;font-size:14px;color:rgba(0,0,0,0.88);cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.dropdown-item:hover{background:rgba(0,0,0,0.04)}
+[data-prefers-color="dark"] .dropdown-item{color:rgba(255,255,255,0.85)}
+[data-prefers-color="dark"] .dropdown-item:hover{background:rgba(255,255,255,0.08)}
+.dropdown-item.danger{color:#ff4d4f}
+.dropdown-item.danger:hover{background:#fff2f0}
+.dropdown-divider{height:1px;background:rgba(5,5,5,0.06);margin:4px 0}
+[data-prefers-color="dark"] .dropdown-divider{background:rgba(255,255,255,0.08)}
+
+/* ===== MAIN LAYOUT ===== */
+.main-layout{display:flex;height:calc(100vh - 60px);margin-top:60px}
+
+/* ===== LEFT SIDEBAR ===== */
+.doc-sidebar{width:280px;min-width:280px;background:#fff;border-right:1px solid rgba(5,5,5,0.06);display:flex;flex-direction:column;overflow:hidden}
+.doc-sidebar-search{padding:16px;border-bottom:1px solid rgba(5,5,5,0.06);flex-shrink:0}
+.doc-sidebar-search input{width:100%;height:32px;padding:0 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;color:rgba(0,0,0,0.88);outline:none;transition:border-color 0.2s,box-shadow 0.2s;background:#fafafa}
+.doc-sidebar-search input:focus{border-color:#2f54eb;box-shadow:0 0 0 2px rgba(47,84,235,0.1);background:#fff}
+.doc-sidebar-search input::placeholder{color:rgba(0,0,0,0.35)}
+.doc-nav-tree{flex:1;overflow-y:auto;padding:8px 0}
+.doc-nav-category{margin-bottom:0}
+.doc-nav-cat-title{display:flex;align-items:center;gap:6px;padding:8px 20px;font-size:13px;font-weight:600;color:rgba(0,0,0,0.65);cursor:pointer;user-select:none;transition:color 0.2s;position:relative}
+.doc-nav-cat-title:hover{color:rgba(0,0,0,0.88)}
+.doc-nav-cat-title .arrow{font-size:10px;transition:transform 0.2s;color:rgba(0,0,0,0.35)}
+.doc-nav-cat-title.collapsed .arrow{transform:rotate(-90deg)}
+.doc-nav-cat-items{overflow:hidden;transition:max-height 0.3s ease}
+.doc-nav-cat-items.collapsed{max-height:0!important}
+.doc-nav-item{display:flex;align-items:center;gap:6px;padding:6px 20px 6px 36px;font-size:13px;color:rgba(0,0,0,0.65);cursor:pointer;transition:all 0.2s;border-left:3px solid transparent;position:relative}
+.doc-nav-item:hover{color:#2f54eb;background:rgba(47,84,235,0.03)}
+.doc-nav-item.active{color:#2f54eb;background:#f0f5ff;border-left-color:#2f54eb;font-weight:500}
+.doc-nav-item .tag{font-size:10px;padding:0 5px;border-radius:3px;line-height:18px;font-weight:500;flex-shrink:0}
+.doc-nav-item .tag.dev{background:#f0f5ff;color:#2f54eb}
+.doc-nav-item .tag.consume{background:#e6fffb;color:#23ada4}
+
+/* ===== CONTENT AREA ===== */
+.doc-content-wrap{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px;display:flex;flex-direction:column;align-items:center}
+.doc-content{width:100%;max-width:860px;background:#fff;border-radius:8px;padding:40px 48px;box-shadow:0 1px 4px rgba(0,0,0,0.04);flex-shrink:0}
+.doc-content h1{font-size:28px;font-weight:700;color:rgba(0,0,0,0.88);margin-bottom:8px;line-height:1.3}
+.doc-content h2{font-size:20px;font-weight:600;color:rgba(0,0,0,0.88);margin:32px 0 12px;padding-bottom:8px;border-bottom:1px solid #f0f0f0;line-height:1.4}
+.doc-content h3{font-size:16px;font-weight:600;color:rgba(0,0,0,0.88);margin:24px 0 8px;line-height:1.4}
+.doc-content h3::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#2f54eb;margin-right:8px;vertical-align:middle}
+.doc-content p{font-size:14px;line-height:1.8;color:rgba(0,0,0,0.75);margin-bottom:12px}
+.doc-content ul,.doc-content ol{padding-left:24px;margin-bottom:12px}
+.doc-content li{font-size:14px;line-height:1.8;color:rgba(0,0,0,0.75);margin-bottom:4px}
+.doc-content a{color:#2f54eb;text-decoration:none;transition:color 0.2s}
+.doc-content a:hover{color:#597ef7;text-decoration:underline}
+.doc-content code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;padding:2px 6px;background:#f5f5f5;border-radius:4px;color:#d9363e}
+.doc-content pre{background:#f7f8fa;border:1px solid #f0f0f0;border-radius:6px;padding:16px 20px;overflow-x:auto;margin-bottom:16px;line-height:1.6}
+.doc-content pre code{background:none;padding:0;color:rgba(0,0,0,0.85);font-size:13px}
+.doc-content table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px}
+.doc-content table th{background:#fafafa;padding:10px 14px;border:1px solid #f0f0f0;text-align:left;font-weight:600;color:rgba(0,0,0,0.88)}
+.doc-content table td{padding:10px 14px;border:1px solid #f0f0f0;color:rgba(0,0,0,0.75)}
+.doc-content table tr:hover td{background:rgba(47,84,235,0.02)}
+.doc-content blockquote{margin:12px 0;padding:12px 16px;border-left:3px solid #2f54eb;background:#f0f5ff;border-radius:0 6px 6px 0;color:rgba(0,0,0,0.75);font-size:14px}
+.doc-content blockquote.tip{border-left-color:#23ada4;background:#e6fffb}
+.doc-content blockquote.warning{border-left-color:#faad14;background:#fffbe6}
+.doc-content blockquote.danger{border-left-color:#ff4d4f;background:#fff2f0}
+.doc-content .doc-meta{display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:13px;color:rgba(0,0,0,0.45)}
+.doc-content .doc-meta .tag{font-size:11px;padding:1px 8px;border-radius:10px;font-weight:500}
+.doc-content .doc-meta .tag.dev{background:#f0f5ff;color:#2f54eb}
+.doc-content .doc-meta .tag.consume{background:#e6fffb;color:#23ada4}
+.doc-content .doc-meta .tag.both{background:#f0f5ff;color:#1d39c4}
+.doc-content .step{display:flex;gap:16px;margin-bottom:20px;padding:16px;background:#fafafa;border-radius:8px;border:1px solid #f0f0f0}
+.doc-content .step-num{width:28px;height:28px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.doc-content .step-content{flex:1}
+.doc-content .step-content h4{font-size:14px;font-weight:600;margin-bottom:4px;color:rgba(0,0,0,0.88)}
+.doc-content .step-content p{font-size:13px;margin-bottom:0;color:rgba(0,0,0,0.65)}
+.doc-content .img-placeholder{width:100%;max-width:600px;height:200px;background:#fafafa;border:1px dashed #d9d9d9;border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,0.25);font-size:14px;margin:16px 0}
+
+/* ===== RIGHT TOC ===== */
+.doc-toc{width:200px;min-width:200px;padding:20px 16px;position:sticky;top:0;overflow-y:auto;max-height:calc(100vh - 60px)}
+.doc-toc-title{font-size:12px;font-weight:600;color:rgba(0,0,0,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
+.doc-toc a{display:block;font-size:12px;color:rgba(0,0,0,0.55);text-decoration:none;padding:4px 8px;border-left:2px solid transparent;transition:all 0.2s;line-height:1.5}
+.doc-toc a:hover{color:#2f54eb}
+.doc-toc a.active{color:#2f54eb;border-left-color:#2f54eb;font-weight:500}
+.doc-toc a.l2{padding-left:20px}
+
+/* ===== EMPTY STATE ===== */
+.doc-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-height:400px;color:rgba(0,0,0,0.35);text-align:center}
+.doc-empty .icon{font-size:64px;margin-bottom:16px;opacity:0.5}
+.doc-empty h3{font-size:18px;font-weight:600;color:rgba(0,0,0,0.45);margin-bottom:8px}
+.doc-empty p{font-size:14px;color:rgba(0,0,0,0.35);max-width:360px}
+
+/* ===== TOAST ===== */
+.toast-wrap{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{padding:10px 20px;background:#fff;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,0.1);font-size:14px;color:rgba(0,0,0,0.88);animation:toastIn 0.3s ease;pointer-events:auto;display:flex;align-items:center;gap:8px}
+.toast-item.success{color:#52c41a}
+.toast-item.info{color:#2f54eb}
+.toast-item.error{color:#ff4d4f}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== LOGOUT CONFIRM OVERLAY ===== */
+.logout-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center}
+.logout-overlay.on{display:flex}
+.logout-dialog{background:#fff;border-radius:8px;padding:20px 24px;min-width:320px;box-shadow:0 6px 16px rgba(0,0,0,0.15)}
+[data-prefers-color="dark"] .logout-dialog{background:#2b2d30}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.25);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.5);border:2px solid transparent;background-clip:content-box}
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.25);border:2px solid transparent;background-clip:content-box}
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.5);border:2px solid transparent;background-clip:content-box}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" data-nav="home">首页</span>
+        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
+        <span class="top-nav-item" data-nav="data">数据管理</span>
+        <span class="top-nav-item" data-nav="demand">需求市场</span>
+        <span class="top-nav-item active" data-nav="docs">文档中心</span>
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== LOGOUT CONFIRM OVERLAY ==================== -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="header-btn-login" onclick="closeLogoutConfirm()" style="height:32px;padding:4px 15px;font-size:14px;border-radius:6px;cursor:pointer">取消</button>
+      <button class="header-btn-register" onclick="doLogout()" style="height:32px;padding:4px 15px;font-size:14px;border-radius:6px;cursor:pointer">确定退出</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ==================== MAIN LAYOUT ==================== -->
+<div class="main-layout">
+
+  <!-- Left Sidebar -->
+  <aside class="doc-sidebar" id="docSidebar">
+    <div class="doc-sidebar-search">
+      <input type="text" id="docSearch" placeholder="🔍 搜索文档..." oninput="filterDocs()">
+    </div>
+    <nav class="doc-nav-tree" id="docNavTree"></nav>
+  </aside>
+
+  <!-- Content Area -->
+  <main class="doc-content-wrap" id="docContentWrap">
+    <div class="doc-empty" id="docEmpty">
+      <div class="icon">📖</div>
+      <h3>文档中心</h3>
+      <p>请从左侧导航选择文档，或使用搜索功能查找你需要的内容</p>
+    </div>
+    <article class="doc-content" id="docContent" style="display:none"></article>
+  </main>
+
+  <!-- Right TOC -->
+  <aside class="doc-toc" id="docToc">
+    <div class="doc-toc-title">页面目录</div>
+    <div id="docTocLinks"></div>
+  </aside>
+
+</div>
+
+<script>
+// ===== DATA: DOCUMENTATION TREE =====
+var DOC_CATEGORIES = [
+  {
+    id: 'quickstart', title: '🚀 快速入门', icon: '🚀', expanded: true,
+    items: [
+      { id: 'overview', title: '平台概述', tags: ['both'] },
+      { id: 'account', title: '账号与登录', tags: ['both'] },
+      { id: 'qs-dev', title: '研发侧快速上手', tags: ['dev'] },
+      { id: 'qs-consume', title: '消费侧快速上手', tags: ['consume'] }
+    ]
+  },
+  {
+    id: 'models', title: '🧠 模型广场', icon: '🧠',
+    items: [
+      { id: 'models-browse', title: '浏览与搜索模型', tags: ['both'] },
+      { id: 'models-detail', title: '模型详情与试用', tags: ['both'] },
+      { id: 'models-apply', title: '申请使用模型（审批流程）', tags: ['consume'] },
+      { id: 'models-notebook', title: 'Notebook 在线体验', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'data', title: '📊 数据管理', icon: '📊',
+    items: [
+      { id: 'data-browse', title: '数据集浏览与搜索', tags: ['both'] },
+      { id: 'data-apply', title: '申请使用数据集', tags: ['consume'] },
+      { id: 'data-upload', title: '上传与管理数据集', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'deploy', title: '🖥️ 模型部署', icon: '🖥️',
+    items: [
+      { id: 'deploy-overview', title: '部署流程概述', tags: ['dev'] },
+      { id: 'deploy-container', title: '容器部署', tags: ['dev'] },
+      { id: 'deploy-inference', title: '推理服务发布（7段抽屉）', tags: ['dev'] },
+      { id: 'deploy-monitor', title: '部署监控与日志', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'images', title: '📦 镜像管理', icon: '📦',
+    items: [
+      { id: 'images-create', title: '创建自定义镜像', tags: ['dev'] },
+      { id: 'images-build', title: '构建与发布镜像', tags: ['dev'] },
+      { id: 'images-manage', title: '镜像详情与管理', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'dev', title: '💻 在线开发', icon: '💻',
+    items: [
+      { id: 'dev-notebook', title: 'Notebook 创建与管理', tags: ['dev'] },
+      { id: 'dev-ide', title: 'IDE 编辑器使用指南', tags: ['dev'] },
+      { id: 'dev-to-image', title: '从 Notebook 到镜像封装', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'demand', title: '📋 需求市场', icon: '📋',
+    items: [
+      { id: 'demand-post', title: '发布需求', tags: ['consume'] },
+      { id: 'demand-apply', title: '申请接单', tags: ['dev'] },
+      { id: 'demand-accept', title: '验收与交付', tags: ['both'] }
+    ]
+  },
+  {
+    id: 'apps', title: '🧩 应用中心', icon: '🧩',
+    items: [
+      { id: 'apps-browse', title: '浏览应用', tags: ['both'] },
+      { id: 'apps-use', title: '申请使用应用', tags: ['consume'] }
+    ]
+  },
+  {
+    id: 'api', title: '📖 API 参考', icon: '📖',
+    items: [
+      { id: 'api-inference', title: '模型推理 API', tags: ['dev'] },
+      { id: 'api-dataset', title: '数据集 API', tags: ['dev'] },
+      { id: 'api-auth', title: '认证与鉴权', tags: ['dev'] }
+    ]
+  },
+  {
+    id: 'faq', title: '❓ 常见问题', icon: '❓',
+    items: [
+      { id: 'faq-points', title: '积分体系说明', tags: ['both'] },
+      { id: 'faq-status', title: '模型状态说明', tags: ['both'] },
+      { id: 'faq-support', title: '联系技术支持', tags: ['both'] }
+    ]
+  }
+];
+
+// ===== DATA: DOCUMENT CONTENT =====
+var DOC_CONTENT = {};
+
+// --- 快速入门 ---
+DOC_CONTENT['overview'] = {
+  title: '平台概述', category: '快速入门', tags: ['研发侧','消费侧'],
+  content: '<h1>平台概述</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><p>洛书·模型服务平台（Luoshu AI Model Service Platform）是面向<strong>智慧农业</strong>领域的一站式 AI 模型服务枢纽。平台连接科研力量与田间需求，为农业领域的研究者、开发者和业务用户提供从模型探索、数据管理到部署推理的完整链路。</p><h2>平台定位</h2><p>平台采用 <strong>B端+G端</strong> 双轨定位，核心服务于机构用户（企业、科研院所、政府部门），不涉及 C 端个人消费者市场。采用<strong>受邀注册制</strong>，新机构需申请入驻，管理员为成员创建账号。</p><h2>核心能力</h2><table><thead><tr><th>能力模块</th><th>说明</th><th>面向角色</th></tr></thead><tbody><tr><td>模型广场</td><td>21个农业 AI 模型（含4个合集），支持搜索/筛选/试用/申请</td><td>研发侧 + 消费侧</td></tr><tr><td>数据管理</td><td>15个数据集（7个类目），支持申请使用</td><td>研发侧 + 消费侧</td></tr><tr><td>模型部署</td><td>容器化部署（Pod调度→容器启动），支持推理服务发布</td><td>研发侧</td></tr><tr><td>镜像管理</td><td>自定义 Docker 镜像创建/构建/发布</td><td>研发侧</td></tr><tr><td>在线开发</td><td>Notebook + IDE 在线编程环境</td><td>研发侧</td></tr><tr><td>需求市场</td><td>需求发布/接单/验收闭环</td><td>研发侧 + 消费侧</td></tr><tr><td>应用中心</td><td>8个应用（4种交付物类型），支持申请使用</td><td>消费侧</td></tr></tbody></table><h2>平台入口</h2><p>平台访问地址：<code>http://10.11.14.211:30879/ai-model</code></p><p>首次访问建议从<strong>门户首页</strong>了解平台概况，通过<strong>登录页</strong>进入工作台。</p><h2>角色体系</h2><p>平台支持 5 种 RBAC 角色：超级管理员、机构管理员、开发者、研究员、访客。不同角色拥有不同的功能访问权限。详见「账号与登录」文档。</p>'
+};
+
+DOC_CONTENT['account'] = {
+  title: '账号与登录', category: '快速入门', tags: ['研发侧','消费侧'],
+  content: '<h1>账号与登录</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>受邀注册制</h2><p>洛书平台采用<strong>受邀注册制</strong>，不对外开放自主注册。流程如下：</p><div class="step"><div class="step-num">1</div><div class="step-content"><h4>机构申请入驻</h4><p>在门户首页点击"申请入驻"，填写机构信息并通过审核</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>管理员创建账号</h4><p>机构入驻后，机构管理员在后台为成员创建账号并分配角色</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>成员登录激活</h4><p>成员使用管理员分配的账号+初始密码登录，首次登录需修改密码</p></div></div><h2>登录流程</h2><p>访问登录页 → 输入用户名 + 密码 + 验证码 → 登录成功 → 跳转至工作台</p><blockquote class="tip">登录状态通过 sessionStorage 中的 <code>luoshu_logged_in</code> 标记维护。原型中任何用户名+密码组合均可登录成功。</blockquote><h2>角色权限</h2><table><thead><tr><th>角色</th><th>核心权限</th></tr></thead><tbody><tr><td>超级管理员</td><td>平台全局配置、所有模块管理权限</td></tr><tr><td>机构管理员</td><td>本机构成员管理、资源配额管理</td></tr><tr><td>开发者</td><td>模型开发/训练/部署、镜像管理、在线开发、接单需求</td></tr><tr><td>研究员</td><td>模型试用、数据集申请、需求发布</td></tr><tr><td>访客</td><td>浏览模型广场、数据集（只读）</td></tr></tbody></table>'
+};
+
+DOC_CONTENT['qs-dev'] = {
+  title: '研发侧快速上手', category: '快速入门', tags: ['研发侧'],
+  content: '<h1>研发侧快速上手</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>模型开发者、数据科学家、算法工程师</strong>等研发角色，帮助你在 10 分钟内了解平台核心研发流程。</p><h2>典型研发流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>在线开发（Notebook）</h4><p>在工作台「在线开发」Tab 创建 Notebook 会话，使用内置 IDE 编写和调试模型代码。支持 Python + 主流 ML 框架。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>封装镜像</h4><p>Notebook 中点击「🚀 部署」→ 跳转镜像创建页 → 编写 Dockerfile → 构建镜像。镜像支持 Tar 包上传和在线编辑。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>构建与发布</h4><p>镜像详情页执行「构建」（未构建→构建中→构建成功/失败），构建成功后「发布」至镜像广场，供推理服务使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布推理服务</h4><p>工作台「我的模型」→ 点击「发布」→ 打开 7 段发布抽屉（模型元数据→版本→镜像→服务类型→使用说明→推理配置→资源启动配置）→ 提交发布。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>部署监控</h4><p>模型部署页查看部署状态，点击「记录」查看 Pod 调度 + 容器启动进度，部署成功后下载日志或重新部署。</p></div></div><h2>接单需求（可选）</h2><p>在需求大厅浏览待接需求 → 申请接单（进入候选人池）→ 需求方选择后进入处理 → 交付 → 获得积分奖励（接单+200，完成+500）。</p><h2>关键入口</h2><table><thead><tr><th>功能</th><th>入口</th></tr></thead><tbody><tr><td>在线开发</td><td>工作台 → 在线开发 Tab / 开发中心 → 在线开发</td></tr><tr><td>镜像管理</td><td>工作台 → 镜像管理 Tab / 开发中心 → 镜像管理</td></tr><tr><td>模型部署</td><td>模型管理 → 模型部署</td></tr><tr><td>需求接单</td><td>需求市场 → 需求大厅 → 申请接单</td></tr></tbody></table>'
+};
+
+DOC_CONTENT['qs-consume'] = {
+  title: '消费侧快速上手', category: '快速入门', tags: ['消费侧'],
+  content: '<h1>消费侧快速上手</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>农业科研人员、业务分析师、机构管理者</strong>等消费角色，帮助你在 5 分钟内了解如何使用平台 AI 能力。</p><h2>典型消费流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>浏览模型广场</h4><p>进入模型广场，按作物类型/任务类型/框架筛选模型。21 个预置农业 AI 模型覆盖病虫害识别、作物分类、产量预测等场景。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>申请使用模型</h4><p>在模型详情页点击「申请使用」→ 填写申请信息 → 提交审批。审批通过后获得 API Key，可通过 API 或 Notebook 使用模型。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>使用数据集</h4><p>在数据管理中浏览数据集（15 个，7 个类目）→ 申请使用（消耗积分）→ 查看示例数据。平台不提供直接下载，数据通过模型推理间接使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布需求</h4><p>需求大厅点击「发布需求」→ 填写需求详情 + 积分悬赏（消耗 10 积分）→ 等待开发者接单 → 选择开发者 → 验收交付物。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>使用应用</h4><p>应用中心浏览已上架应用 → 查看应用详情 → 申请使用（填写用途说明）→ 获得交付物（报告/数据集/工作流/部署服务）。</p></div></div><h2>积分体系</h2><p>新用户初始积分 <strong>1000</strong>，前 3 次模型调用免费。各模块消耗/获取积分见「常见问题 → 积分体系说明」。</p>'
+};
+
+// --- 模型广场 ---
+DOC_CONTENT['models-browse'] = {
+  title: '浏览与搜索模型', category: '模型广场', tags: ['研发侧','消费侧'],
+  content: '<h1>浏览与搜索模型</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><p>模型广场是平台的核心模块，展示 21 个农业 AI 模型（含 4 个合集），支持按多种维度筛选和搜索。</p><h2>筛选维度</h2><table><thead><tr><th>筛选项</th><th>选项</th></tr></thead><tbody><tr><td>作物类型</td><td>玉米、水稻、大豆、小麦、棉花、通用</td></tr><tr><td>任务类型</td><td>图像分类、目标检测、语义分割、时序预测、自然语言处理、多模态</td></tr><tr><td>模型框架</td><td>PyTorch、TensorFlow、PaddlePaddle、ONNX</td></tr><tr><td>排序方式</td><td>默认排序、最新发布、最多使用、最高评分</td></tr></tbody></table><h2>卡片信息</h2><p>每个模型卡片展示：模型名称、简短描述、模型框架标签、任务类型标签、使用次数、收藏状态。合集卡片独立展示，包含子模型列表和跳转链接。</p><h2>搜索</h2><p>顶部搜索框支持按模型名称、标签、描述进行模糊搜索，结果实时更新。</p><h2>系谱关系</h2><p>模型详情页支持查看模型的上下游系谱关系（基础模型 → 衍生模型），点击可跳转至关联模型页面。</p>'
+};
+
+DOC_CONTENT['models-detail'] = {
+  title: '模型详情与试用', category: '模型广场', tags: ['研发侧','消费侧'],
+  content: '<h1>模型详情与试用</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><p>点击模型卡片进入详情页，包含模型的完整信息和操作入口。</p><h2>详情页结构</h2><p>详情页包含以下 Tab：</p><table><thead><tr><th>Tab</th><th>内容</th></tr></thead><tbody><tr><td>模型介绍</td><td>模型描述、应用场景、性能指标、技术论文链接</td></tr><tr><td>模型文件</td><td>模型权重文件列表（格式/大小/版本）</td></tr><tr><td>部署</td><td>部署参数配置、部署历史记录</td></tr></tbody></table><h2>操作按钮</h2><table><thead><tr><th>操作</th><th>说明</th><th>面向角色</th></tr></thead><tbody><tr><td>📡 API</td><td>申请 API 调用权限，走审批流程</td><td>消费侧</td></tr><tr><td>📓 Notebook</td><td>打开在线 IDE 体验模型（新标签页）</td><td>研发侧</td></tr><tr><td>🚀 部署</td><td>快速部署模型（跳转部署配置）</td><td>研发侧</td></tr><tr><td>⭐ 收藏</td><td>收藏/取消收藏模型</td><td>全部</td></tr></tbody></table><h2>在线试用</h2><p>点击「试用」按钮打开弹窗，支持两种模式：</p><ul><li><strong>文件上传模式</strong>：上传图片/CSV 文件，实时查看推理结果</li><li><strong>LLM 聊天模式</strong>：对话式交互（适用于 NLP/多模态模型）</li></ul>'
+};
+
+DOC_CONTENT['models-apply'] = {
+  title: '申请使用模型（审批流程）', category: '模型广场', tags: ['消费侧'],
+  content: '<h1>申请使用模型（审批流程）</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>模型广场中的模型需要<strong>申请审批</strong>后才能使用。审批流程确保模型的合理使用和资源管控。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>发起申请</h4><p>模型详情页点击「📡 API」按钮 → 填写申请信息（使用场景、预计调用量等）→ 提交申请。申请记录写入 <code>luoshu_applications</code>（localStorage）。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>等待审批</h4><p>申请提交后状态为 pending。在工作台「我的申请」Tab 可查看所有申请记录，支持撤回操作。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>审批通过</h4><p>审批通过后，状态变为 approved，系统生成 apiKey + apiEndpoint。在工作台可查看凭证并复制使用。</p></div></div><blockquote class="tip">前 3 次模型调用免费（优先消耗 <code>luoshu_free_calls</code>），之后按模型定价消耗积分。</blockquote><h2>申请记录结构</h2><pre><code>{\n  id: "APP-xxxxx",\n  type: "api_call",       // model | dataset | api_call | notebook\n  targetId: "model-xxx",\n  targetTitle: "玉米病虫害识别 v3",\n  status: "approved",      // pending | approved | rejected\n  apiKey: "ak-xxxxxxxx",\n  apiEndpoint: "https://...",\n  appliedAt: "2026-07-27"\n}</code></pre>'
+};
+
+DOC_CONTENT['models-notebook'] = {
+  title: 'Notebook 在线体验', category: '模型广场', tags: ['研发侧'],
+  content: '<h1>Notebook 在线体验</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>研发侧用户可通过 Notebook 方式在线体验和调试模型，无需本地环境配置。</p><h2>使用方式</h2><p>模型详情页点击「📓 Notebook」→ 系统自动创建 Notebook 会话（关联当前模型）→ 新标签页打开在线 IDE（<code>notebook-ide.html</code>）→ 在预配置好的环境中编写和运行代码。</p><h2>IDE 功能</h2><ul><li>完整代码编辑器（Monaco-based），支持语法高亮和自动补全</li><li>内置终端面板（180px 高）</li><li>左侧文件树管理项目文件</li><li>Ctrl+S 保存 / Ctrl+Enter 运行</li><li>会话信息面板（模型名、资源配置、运行时长）</li></ul><blockquote class="tip">Notebook 申请同样走审批流程，申请通过后可在工作台「我的申请」中查看并打开。</blockquote>'
+};
+
+// --- 数据管理 ---
+DOC_CONTENT['data-browse'] = {
+  title: '数据集浏览与搜索', category: '数据管理', tags: ['研发侧','消费侧'],
+  content: '<h1>数据集浏览与搜索</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><p>数据管理模块提供 15 个数据集（7 个类目），采用卡片网格布局，支持筛选和搜索。</p><h2>数据集类目</h2><table><thead><tr><th>类目</th><th>数量</th><th>示例</th></tr></thead><tbody><tr><td>遥感影像</td><td>4</td><td>哨兵2号作物分类数据集</td></tr><tr><td>气象数据</td><td>2</td><td>全国农业气象站观测数据</td></tr><tr><td>土壤数据</td><td>2</td><td>黑土区土壤养分数据集</td></tr><tr><td>作物表型</td><td>3</td><td>玉米叶面积指数测量数据</td></tr><tr><td>病虫害</td><td>2</td><td>水稻病害图像数据集</td></tr><tr><td>产量数据</td><td>1</td><td>全国县级作物产量统计</td></tr><tr><td>文本语料</td><td>1</td><td>农业政策与文献语料库</td></tr></tbody></table><h2>筛选面板</h2><p>左侧 238px 筛选面板支持按类目、数据格式（GeoTIFF/CSV/JSON/HDF5/NetCDF）、数据量级筛选。支持关键词搜索和排序（默认/最新/最多使用）。</p><h2>详情页</h2><p>数据集详情包含：基本信息（格式/大小/更新时间）、数据预览（示例数据 Modal，15类×5行样本）、使用说明。平台不提供直接下载。</p>'
+};
+
+DOC_CONTENT['data-apply'] = {
+  title: '申请使用数据集', category: '数据管理', tags: ['消费侧'],
+  content: '<h1>申请使用数据集</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>数据集申请使用消耗积分，审批通过后可在模型推理中引用该数据集。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>进入详情</h4><p>数据集卡片 → 点击进入详情页（全页视图，Header + 70/30 两栏）</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>查看示例数据</h4><p>点击「查看示例数据」→ Modal 弹窗显示 15 个类别 × 5 行样本数据</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>申请使用</h4><p>点击「申请使用」→ Popconfirm 确认（-30 积分）→ 提交审批 → 审批通过后可用</p></div></div><blockquote class="warning">数据集不提供直接下载功能，数据通过模型推理间接使用。申请消耗 <strong>30 积分</strong>。</blockquote>'
+};
+
+DOC_CONTENT['data-upload'] = {
+  title: '上传与管理数据集', category: '数据管理', tags: ['研发侧'],
+  content: '<h1>上传与管理数据集</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>研发侧用户可上传自有数据集到平台，支持多种格式和上传方式。</p><h2>创建数据集</h2><p>工作台 → 数据管理 → 创建数据集 → 进入 Stepper 表单：</p><div class="step"><div class="step-num">1</div><div class="step-content"><h4>基本信息</h4><p>填写数据集名称、类目、描述、标签</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>上传文件</h4><p>支持单文件/批量上传，格式：GeoTIFF(.tif)、CSV、JSON、HDF5(.h5)、NetCDF(.nc)。拖拽或点击上传区域。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>字段配置</h4><p>配置数据字段名、类型、描述信息</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>提交审核</h4><p>确认信息 → 提交 → 等待平台审核</p></div></div>'
+};
+
+// --- 模型部署 ---
+DOC_CONTENT['deploy-overview'] = {
+  title: '部署流程概述', category: '模型部署', tags: ['研发侧'],
+  content: '<h1>部署流程概述</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>模型部署模块管理所有已部署和待部署的模型服务。</p><h2>部署页面结构</h2><p>模型部署页（<code>model-deployment.html</code>）采用数据表格布局，展示以下信息：</p><table><thead><tr><th>列</th><th>说明</th></tr></thead><tbody><tr><td>服务名称</td><td>推理服务的名称标识</td></tr><tr><td>关联模型</td><td>被部署的模型名称</td></tr><tr><td>状态</td><td>未构建 / 构建中 / 构建成功 / 构建失败 / 已发布（teal）</td></tr><tr><td>镜像</td><td>关联的自定义镜像名称</td></tr><tr><td>创建时间</td><td>部署创建的时间</td></tr><tr><td>操作</td><td>部署 / 记录 / 重新部署 / 同步 / 下线</td></tr></tbody></table><h2>状态说明</h2><table><thead><tr><th>状态</th><th>颜色</th><th>说明</th></tr></thead><tbody><tr><td>未构建</td><td>gray</td><td>镜像已保存，尚未触发构建</td></tr><tr><td>构建中</td><td>blue (#2f54eb)</td><td>镜像构建进行中</td></tr><tr><td>构建成功</td><td>green (#52c41a)</td><td>镜像构建完成，可部署</td></tr><tr><td>构建失败</td><td>red (#ff4d4f)</td><td>镜像构建失败，需排查</td></tr><tr><td>已发布</td><td>teal (#23ada4)</td><td>推理服务已发布至模型广场</td></tr></tbody></table>'
+};
+
+DOC_CONTENT['deploy-container'] = {
+  title: '容器部署', category: '模型部署', tags: ['研发侧'],
+  content: '<h1>容器部署</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>洛书平台采用容器化部署方式。部署流程简化为 2 步（镜像已预先构建）：</p><h2>部署步骤</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>Pod 调度</h4><p>Kubernetes 调度器为服务分配 Pod 资源，选择合适的节点进行部署</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>容器启动</h4><p>Pod 分配到节点后，容器运行时启动容器并加载镜像（无镜像拉取步骤——镜像已预先构建）</p></div></div><blockquote class="tip">容器部署流程不包含镜像拉取步骤，因为镜像在部署前已经构建完成并存储在镜像仓库中。</blockquote><h2>操作按钮</h2><table><thead><tr><th>按钮</th><th>说明</th></tr></thead><tbody><tr><td>部署</td><td>触发部署流程（Popconfirm 确认）</td></tr><tr><td>记录</td><td>查看当前部署状态（单次请求，不轮询）</td></tr><tr><td>重新部署</td><td>重新触发部署流程</td></tr><tr><td>同步</td><td>同步最新镜像版本</td></tr><tr><td>下线</td><td>下线部署服务</td></tr></tbody></table><h2>记录抽屉</h2><p>点击「记录」→ 右侧 480px 抽屉打开：部署中显示 Refresh 按钮（手动刷新），部署成功/失败后额外显示 Download log + Redeploy 按钮。</p>'
+};
+
+DOC_CONTENT['deploy-inference'] = {
+  title: '推理服务发布（7段抽屉）', category: '模型部署', tags: ['研发侧'],
+  content: '<h1>推理服务发布（7段抽屉）</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>推理服务发布功能已从独立页面整合至工作台「我的模型」→「发布」抽屉中（680px 宽，7 段）。</p><h2>两个入口</h2><table><thead><tr><th>入口</th><th>行为</th></tr></thead><tbody><tr><td>行内「发布」按钮</td><td><code>openInfPubDrawer(rowId)</code> — 模型预填锁定</td></tr><tr><td>顶部「创建推理服务」</td><td><code>openInfPubDrawer(null)</code> — 模型下拉自选</td></tr></tbody></table><h2>7段配置</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>模型元数据</h4><p>服务名称* / 关联模型*（锁定或可选） / 服务描述</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>版本选择</h4><p>下拉选版本 + tag 列表 + 添加/删除版本</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>镜像选择</h4><p>Tab 切换「📦 自定义镜像」「🏪 镜像广场」卡片单选</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>服务类型</h4><p>⚡实时 / ⏳异步 / 📊批量 / 📡边缘</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>使用说明</h4><p>入参表格(name/type/必填/desc) + 出参表格 + 调用示例</p></div></div><div class="step"><div class="step-num">6</div><div class="step-content"><h4>推理配置</h4><p>Batch Size / 超时 / 最大并发 / 模型路径 / IO格式</p></div></div><div class="step"><div class="step-num">7</div><div class="step-content"><h4>资源启动配置</h4><p>CPU / 内存 / GPU / 副本数</p></div></div><h2>数据模型</h2><pre><code>MY_DEPLOYMENTS[i]._inference = {\n  serviceName, modelId, imageId, imageSource, serviceType,\n  apiDoc: { inputs, outputs, example },\n  inferenceConfig: { batchSize, timeout, maxConcurrency, modelPath, ioFormat },\n  resources: { cpu, memory, gpu, replicas },\n  publishedAt, inferenceStatus\n}</code></pre>'
+};
+
+DOC_CONTENT['deploy-monitor'] = {
+  title: '部署监控与日志', category: '模型部署', tags: ['研发侧'],
+  content: '<h1>部署监控与日志</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>部署监控通过「记录」按钮触发，采用手动刷新模式（无自动轮询）。</p><h2>监控方式</h2><ul><li><strong>手动刷新</strong>：点击「记录」按钮获取当前最新状态（单次请求，不轮询）</li><li><strong>记录抽屉</strong>：右侧 480px 抽屉显示部署进度、节点信息、日志</li></ul><h2>抽屉状态</h2><table><thead><tr><th>部署状态</th><th>抽屉按钮</th></tr></thead><tbody><tr><td>部署中</td><td>仅 Refresh（手动刷新进度）</td></tr><tr><td>部署成功</td><td>Download log + Redeploy</td></tr><tr><td>部署失败</td><td>Download log + Redeploy</td></tr></tbody></table><blockquote class="warning">部署触发不会自动打开记录抽屉。用户需手动点击「记录」按钮查看。</blockquote><h2>部署后流程</h2><p>部署成功 → 可发布推理服务（工作台「我的模型」→「发布」）→ 已发布模型在模型广场显示 teal「已上架」chip + API 查看入口。</p>'
+};
+
+// --- 镜像管理 ---
+DOC_CONTENT['images-create'] = {
+  title: '创建自定义镜像', category: '镜像管理', tags: ['研发侧'],
+  content: '<h1>创建自定义镜像</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>镜像管理模块支持创建自定义 Docker 镜像，是模型部署的前置步骤。</p><h2>创建方式</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>手动创建</h4><p>镜像管理页 → 点击「创建镜像」→ 进入 split-panel 编辑页 → 填写镜像名称/描述 → 编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>从 Notebook 创建</h4><p>Notebook IDE 中点击「🚀 部署」→ 自动跳转 <code>image-custom-create.html?from=notebook&name=xxx&desc=xxx</code> → 预填镜像信息 → 用户编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>从需求创建</h4><p>需求工作台点击「部署为推理服务」→ 跳转 <code>image-custom-create.html?from=demand&name=xxx</code> → 预填 → 保存</p></div></div><h2>编辑页布局</h2><p>Split-panel 分栏布局：左侧编辑面板（镜像名称/描述/Dockerfile 编辑器），右侧预览面板（Dockerfile 语法高亮渲染 + 构建提示）。</p><blockquote class="tip">上传镜像消耗 <strong>30 积分</strong>。</blockquote>'
+};
+
+DOC_CONTENT['images-build'] = {
+  title: '构建与发布镜像', category: '镜像管理', tags: ['研发侧'],
+  content: '<h1>构建与发布镜像</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>镜像生命周期</h2><p>保存 → 未构建 → 构建中 → 构建成功/构建失败 → 已发布</p><table><thead><tr><th>状态</th><th>颜色</th><th>可操作</th></tr></thead><tbody><tr><td>未构建</td><td>gray</td><td>编辑 / 构建 / 删除</td></tr><tr><td>构建中</td><td>blue</td><td>查看进度</td></tr><tr><td>构建成功</td><td>green</td><td>发布 / 重新构建 / 删除</td></tr><tr><td>构建失败</td><td>red</td><td>编辑 / 重新构建 / 删除</td></tr><tr><td>已发布</td><td>teal</td><td>查看 / 取消发布</td></tr></tbody></table><h2>构建操作</h2><p>镜像详情页（<code>image-custom-detail.html</code>）→ 点击「构建」→ Popconfirm 确认 → 状态变为「构建中」→ 构建完成显示结果。</p><h2>发布操作</h2><p>构建成功后 → 点击「发布」→ Popconfirm 确认 → 镜像发布至镜像广场 → 可在推理服务发布时选择。</p>'
+};
+
+DOC_CONTENT['images-manage'] = {
+  title: '镜像详情与管理', category: '镜像管理', tags: ['研发侧'],
+  content: '<h1>镜像详情与管理</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>镜像详情页（<code>image-custom-detail.html</code>）采用分栏布局：</p><h2>左侧面板</h2><ul><li>镜像名称 + 状态 Chip（56×20px）</li><li>镜像描述</li><li>Dockerfile 内容（只读预览，语法高亮）</li><li>创建时间 / 更新时间</li></ul><h2>右侧面板</h2><ul><li>构建进度（构建中显示）</li><li>构建日志（构建成功/失败后显示）</li><li>操作按钮：构建 / 发布 / 编辑 / 删除</li></ul><h2>镜像列表</h2><p>镜像管理列表页（<code>image-custom-list.html</code>）采用卡片网格布局，支持搜索、按状态筛选、分页。</p>'
+};
+
+// --- 在线开发 ---
+DOC_CONTENT['dev-notebook'] = {
+  title: 'Notebook 创建与管理', category: '在线开发', tags: ['研发侧'],
+  content: '<h1>Notebook 创建与管理</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>在线开发模块提供云端 Notebook 环境，无需本地配置即可进行模型开发和调试。</p><h2>创建 Notebook</h2><p>工作台「在线开发」Tab → 创建任务表单：</p><ul><li>任务名称</li><li>关联模型（可选）</li><li>资源配置（CPU/内存/GPU）</li><li>代码编辑器（Monaco）</li><li>SSH 连接开关</li></ul><h2>Notebook 列表</h2><p>在线开发页面（<code>online-dev.html</code>）展示所有 Notebook 会话，6 条 Mock 数据关联到"我的任务"。列表支持按状态筛选（运行中/已停止/已完成）。</p><h2>IDE 编辑</h2><p>点击「打开」→ 新标签页打开 <code>notebook-ide.html</code> → 深色主题全屏编辑器（44px header + 260px 侧边栏 + 代码区 + 180px 终端）</p>'
+};
+
+DOC_CONTENT['dev-ide'] = {
+  title: 'IDE 编辑器使用指南', category: '在线开发', tags: ['研发侧'],
+  content: '<h1>IDE 编辑器使用指南</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>界面布局</h2><table><thead><tr><th>区域</th><th>高度/宽度</th><th>内容</th></tr></thead><tbody><tr><td>顶部 Header</td><td>44px</td><td>Notebook 名称 + 状态指示灯 + 保存/快照/运行按钮</td></tr><tr><td>左侧侧边栏</td><td>260px</td><td>会话信息面板 + 文件树</td></tr><tr><td>代码区</td><td>flex</td><td>Monaco 风格编辑器（行号 + 语法高亮）</td></tr><tr><td>底部终端</td><td>180px</td><td>终端输出面板</td></tr></tbody></table><h2>快捷键</h2><table><thead><tr><th>快捷键</th><th>功能</th></tr></thead><tbody><tr><td>Ctrl+S</td><td>保存当前文件</td></tr><tr><td>Ctrl+Enter</td><td>运行当前代码</td></tr><tr><td>Ctrl+Shift+S</td><td>创建快照</td></tr></tbody></table><h2>URL 参数</h2><p>通过 <code>?id=NB-XXX</code> 指定 Notebook ID，页面自动读取对应的 Mock 数据。</p>'
+};
+
+DOC_CONTENT['dev-to-image'] = {
+  title: '从 Notebook 到镜像封装', category: '在线开发', tags: ['研发侧'],
+  content: '<h1>从 Notebook 到镜像封装</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>平台支持从 Notebook 直接封装修辞，形成完整的开发到部署闭环：</p><h2>闭环流程</h2><pre><code>Notebook IDE「🚀 部署」\n  → image-custom-create.html?from=notebook&name=xxx&desc=xxx\n  → 用户编写 Dockerfile → 构建镜像\n  → 工作台「我的模型」→「发布」\n  → 选择该镜像 → 发布推理服务</code></pre><h2>数据传递</h2><p>Notebook 跳转时通过 URL 参数传递：</p><ul><li><code>from</code>：来源标识（notebook / demand）</li><li><code>name</code>：预填镜像名称</li><li><code>desc</code>：预填镜像描述（Notebook 环境信息）</li></ul><blockquote class="tip">这与旧版"Notebook 直接部署推理服务"不同，新版需要先封装为镜像，再通过镜像发布推理服务。</blockquote>'
+};
+
+// --- 需求市场 ---
+DOC_CONTENT['demand-post'] = {
+  title: '发布需求', category: '需求市场', tags: ['消费侧'],
+  content: '<h1>发布需求</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>需求市场采用积分悬赏机制，消费侧用户可发布 AI 研发需求，研发侧用户接单完成。</p><h2>发布流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>打开发布抽屉</h4><p>需求大厅 → 点击「发布需求」→ 右侧抽屉打开</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>填写需求信息</h4><p>需求标题 / 需求分类（6类）/ 详细描述 / 期望交付物（报告/数据集/工作流/部署服务）/ 积分悬赏</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>提交发布</h4><p>提交 → 消耗 10 积分 → 需求上架需求大厅</p></div></div><blockquote class="warning">发布需求消耗 <strong>10 积分</strong>，请确保积分余额充足。</blockquote><h2>需求大厅</h2><p>14 条 Mock 数据覆盖 6 个分类。卡片展示：标题/分类/积分/状态/发布时间。申请接单后卡片显示「✓ 已申请」标记。</p>'
+};
+
+DOC_CONTENT['demand-apply'] = {
+  title: '申请接单', category: '需求市场', tags: ['研发侧'],
+  content: '<h1>申请接单</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>候选池机制</h2><p>需求市场采用<strong>候选池机制</strong>，非直接分配：</p><div class="step"><div class="step-num">1</div><div class="step-content"><h4>申请接单</h4><p>需求大厅/需求详情 → 点击「申请接单」→ 填写申请说明（资质/方案）→ 提交</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>进入候选池</h4><p>申请者进入该需求的候选人池，需求方可在需求详情页查看所有候选人</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>被选中</h4><p>需求方从候选人中选择开发者 → 开发者在「我的任务」中看到新任务 → 进入需求工作台处理</p></div></div><h2>我的任务</h2><p>工作台「我的任务」Tab 显示所有已接单的任务，支持按状态筛选（待处理/处理中/已完成）。点击「进入处理」→ 跳转需求工作台（<code>demand-workspace.html</code>）。</p>'
+};
+
+DOC_CONTENT['demand-accept'] = {
+  title: '验收与交付', category: '需求市场', tags: ['研发侧','消费侧'],
+  content: '<h1>验收与交付</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>研发侧：交付</h2><p>需求工作台（<code>demand-workspace.html</code>，左右 65/35 分栏）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 在线处理区 + 交付物上传</li><li><strong>右侧</strong>：操作按钮区域</li></ul><p>交付物类型：报告文档、数据集文件、工作流链接、部署服务地址。</p><h2>消费侧：验收</h2><p>需求工作台（消费视图）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 交付物预览/下载</li><li><strong>右侧</strong>：验收通过 / 退回修改 按钮</li></ul><h2>积分结算</h2><table><thead><tr><th>角色</th><th>行为</th><th>积分变动</th></tr></thead><tbody><tr><td>研发侧</td><td>申请接单</td><td>+200（被选中后）</td></tr><tr><td>研发侧</td><td>完成需求</td><td>+500（验收通过后）</td></tr><tr><td>消费侧</td><td>发布需求</td><td>-积分悬赏额</td></tr></tbody></table>'
+};
+
+// --- 应用中心 ---
+DOC_CONTENT['apps-browse'] = {
+  title: '浏览应用', category: '应用中心', tags: ['研发侧','消费侧'],
+  content: '<h1>浏览应用</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><p>应用中心（<code>app-center.html</code>）展示平台已上架的 AI 应用成果，8 条 Mock 数据覆盖 4 种交付物类型。</p><h2>筛选维度</h2><table><thead><tr><th>筛选项</th><th>选项</th></tr></thead><tbody><tr><td>分类</td><td>6 类（作物监测/病虫害识别/产量预测/气象分析/土壤评估/综合决策）</td></tr><tr><td>交付物类型</td><td>报告/数据集/工作流/部署服务</td></tr><tr><td>排序</td><td>默认/最新/最多使用</td></tr></tbody></table><h2>卡片信息</h2><p>每个应用卡片展示：图标、名称、类型 Chip、简短描述、使用次数、标签。</p><h2>详情页</h2><p>点击卡片 → 进入 <code>app-detail.html</code>（左右 70/30 分栏）。左侧：图标+名称+类型+发布方+描述+交付物展示，右侧 sticky：统计+申请使用+标签+发布方卡片。</p>'
+};
+
+DOC_CONTENT['apps-use'] = {
+  title: '申请使用应用', category: '应用中心', tags: ['消费侧'],
+  content: '<h1>申请使用应用</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><h2>申请流程</h2><p>应用详情页 → 右侧 sticky 面板 → 点击「申请使用」→ Popconfirm 确认 → 填写用途说明 → 提交</p><blockquote class="tip">应用申请无需审批，提交后可直接获取交付物（报告预览/数据集文件列表/工作流链接/部署服务地址）。</blockquote><h2>交付物类型</h2><table><thead><tr><th>类型</th><th>展示方式</th></tr></thead><tbody><tr><td>报告</td><td>HTML/Markdown 预览（内嵌 iframe）</td></tr><tr><td>数据集</td><td>文件列表（格式/大小/行数）</td></tr><tr><td>工作流</td><td>流程图示 + 执行链接</td></tr><tr><td>部署服务</td><td>API Endpoint + 调用示例</td></tr></tbody></table>'
+};
+
+// --- API 参考 ---
+DOC_CONTENT['api-inference'] = {
+  title: '模型推理 API', category: 'API 参考', tags: ['研发侧'],
+  content: '<h1>模型推理 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>审批通过后获得的 API Key 可用于调用模型推理 API。</p><h2>请求格式</h2><pre><code>POST /api/v1/inference/{model_id}\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "inputs": { "image_url": "...", "params": {...} },\n  "output_format": "json"\n}</code></pre><h2>响应格式</h2><pre><code>{\n  "request_id": "req-xxx",\n  "status": "success",\n  "outputs": { "predictions": [...], "confidence": 0.95 },\n  "latency_ms": 234,\n  "cost_points": 20\n}</code></pre><h2>调用限制</h2><ul><li>前 3 次调用免费（优先消耗 <code>luoshu_free_calls</code>）</li><li>之后按模型定价消耗积分（-20~-80）</li><li>超时时间：默认 30s，可在推理配置中调整</li></ul>'
+};
+
+DOC_CONTENT['api-dataset'] = {
+  title: '数据集 API', category: 'API 参考', tags: ['研发侧'],
+  content: '<h1>数据集 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>数据查询 API</h2><pre><code>POST /api/v1/datasets/{dataset_id}/query\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "filters": { "region": "黑龙江", "year": 2025 },\n  "limit": 1000\n}</code></pre><h2>数据统计 API</h2><pre><code>GET /api/v1/datasets/{dataset_id}/stats\nAuthorization: Bearer {api_key}</code></pre><blockquote class="warning">数据集 API 仅返回查询结果，不提供直接下载。每次查询消耗积分（-30~-50）。</blockquote>'
+};
+
+DOC_CONTENT['api-auth'] = {
+  title: '认证与鉴权', category: 'API 参考', tags: ['研发侧'],
+  content: '<h1>认证与鉴权</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>API Key 获取</h2><p>在模型广场申请使用模型 → 审批通过 → 工作台「我的申请」→ 查看 API Key</p><h2>认证方式</h2><p>所有 API 请求使用 Bearer Token 认证：</p><pre><code>Authorization: Bearer {api_key}</code></pre><h2>错误码</h2><table><thead><tr><th>HTTP 状态码</th><th>错误码</th><th>说明</th></tr></thead><tbody><tr><td>401</td><td>AUTH_INVALID</td><td>API Key 无效或已过期</td></tr><tr><td>403</td><td>QUOTA_EXCEEDED</td><td>调用配额已用尽</td></tr><tr><td>403</td><td>POINTS_INSUFFICIENT</td><td>积分余额不足</td></tr><tr><td>429</td><td>RATE_LIMITED</td><td>请求频率超限</td></tr><tr><td>500</td><td>INFERENCE_FAILED</td><td>模型推理失败</td></tr></tbody></table>'
+};
+
+// --- 常见问题 ---
+DOC_CONTENT['faq-points'] = {
+  title: '积分体系说明', category: '常见问题', tags: ['研发侧','消费侧'],
+  content: '<h1>积分体系说明</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>积分规则</h2><table><thead><tr><th>场景</th><th>变动</th><th>说明</th></tr></thead><tbody><tr><td>🎁 新用户</td><td><strong>+1000</strong></td><td>登录时自动初始化</td></tr><tr><td>🎁 前 3 次模型调用</td><td><strong>免费</strong></td><td>优先消耗 <code>luoshu_free_calls</code></td></tr><tr><td>🧠 模型调用</td><td><strong>-20~-80</strong></td><td>各模型独立定价</td></tr><tr><td>📊 数据集申请</td><td><strong>-30~-50</strong></td><td>各数据集独立定价</td></tr><tr><td>📦 上传镜像</td><td><strong>-30</strong></td><td>每次上传消耗</td></tr><tr><td>📝 发布需求</td><td><strong>-10</strong></td><td>发布时消耗</td></tr><tr><td>📝 接单需求</td><td><strong>+200</strong></td><td>被选中后获得</td></tr><tr><td>✅ 完成需求</td><td><strong>+500</strong></td><td>验收通过后获得</td></tr></tbody></table><h2>积分查看</h2><p>Header 积分 badge（🪙）显示当前余额，点击可查看积分规则弹出说明。数据存储在 <code>luoshu_points</code>（localStorage）。</p>'
+};
+
+DOC_CONTENT['faq-status'] = {
+  title: '模型状态说明', category: '常见问题', tags: ['研发侧','消费侧'],
+  content: '<h1>模型状态说明</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>镜像状态流转</h2><table><thead><tr><th>状态</th><th>颜色</th><th>含义</th></tr></thead><tbody><tr><td>未构建</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d9d9d9;margin-right:4px"></span> Gray</td><td>镜像已保存，尚未触发构建</td></tr><tr><td>构建中</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2f54eb;margin-right:4px"></span> Blue</td><td>镜像构建进行中</td></tr><tr><td>构建成功</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#52c41a;margin-right:4px"></span> Green</td><td>镜像构建成功，可部署/发布</td></tr><tr><td>构建失败</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff4d4f;margin-right:4px"></span> Red</td><td>构建失败，需排查 Dockerfile</td></tr><tr><td>已发布</td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#23ada4;margin-right:4px"></span> Teal</td><td>已发布至模型广场，可被消费侧使用</td></tr></tbody></table><h2>部署状态</h2><table><thead><tr><th>状态</th><th>含义</th></tr></thead><tbody><tr><td>Pod 调度中</td><td>Kubernetes 正在为服务分配 Pod</td></tr><tr><td>容器启动中</td><td>容器运行时正在启动容器</td></tr><tr><td>运行中</td><td>服务正常运行，可接受请求</td></tr><tr><td>异常</td><td>服务运行异常，需查看日志</td></tr><tr><td>已下线</td><td>服务已被手动下线</td></tr></tbody></table>'
+};
+
+DOC_CONTENT['faq-support'] = {
+  title: '联系技术支持', category: '常见问题', tags: ['研发侧','消费侧'],
+  content: '<h1>联系技术支持</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>常见问题</h2><h3>模型构建失败怎么办？</h3><p>检查 Dockerfile 语法是否正确，确保基础镜像可访问。查看构建日志获取详细错误信息。可在镜像详情页点击「编辑」修改 Dockerfile 后重新构建。</p><h3>部署一直处于 Pod 调度中？</h3><p>可能是集群资源不足。请联系机构管理员检查资源配额，或在资源总览页查看当前集群负载。</p><h3>积分不足怎么办？</h3><p>积分可通过以下途径获取：接单需求（+200）、完成需求（+500）。联系机构管理员申请额外积分额度。</p><h3>API 调用返回 429 错误？</h3><p>请求频率超过限制，建议增加请求间隔或联系管理员提升配额。</p><h2>联系方式</h2><blockquote class="tip">如需进一步技术支持，请联系平台运营团队。邮箱：support@luoshu.ai（示例），或在工作台通过反馈入口提交问题。</blockquote>'
+};
+
+// ===== INIT =====
+var currentDocId = null;
+var activeNavItem = null;
+
+// Render nav tree
+function renderNavTree(filter) {
+  var html = '';
+  DOC_CATEGORIES.forEach(function(cat) {
+    var visibleItems = filter
+      ? cat.items.filter(function(item) {
+          var doc = DOC_CONTENT[item.id];
+          return doc && (doc.title.toLowerCase().includes(filter) ||
+            item.title.toLowerCase().includes(filter) ||
+            cat.title.toLowerCase().includes(filter));
+        })
+      : cat.items;
+
+    var catVisible = !filter || visibleItems.length > 0;
+    if (!catVisible) return;
+
+    var collapsed = filter ? false : (cat.expanded === false);
+    html += '<div class="doc-nav-category">';
+    html += '<div class="doc-nav-cat-title' + (collapsed ? ' collapsed' : '') + '" onclick="toggleCategory(this)" data-cat="' + cat.id + '">';
+    html += '<span class="arrow">▼</span><span>' + cat.title + '</span>';
+    html += '</div>';
+    var maxH = collapsed ? '0' : (visibleItems.length * 36 + 'px');
+    html += '<div class="doc-nav-cat-items' + (collapsed ? ' collapsed' : '') + '" style="max-height:' + maxH + '">';
+    visibleItems.forEach(function(item) {
+      var activeCls = (currentDocId === item.id) ? ' active' : '';
+      html += '<div class="doc-nav-item' + activeCls + '" data-doc="' + item.id + '" onclick="loadDoc(\'' + item.id + '\', this)">';
+      html += item.title;
+      item.tags.forEach(function(t) {
+        html += '<span class="tag ' + t + '">' + (t === 'dev' ? '研发' : t === 'consume' ? '消费' : '通用') + '</span>';
+      });
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('docNavTree').innerHTML = html;
+}
+
+function toggleCategory(el) {
+  el.classList.toggle('collapsed');
+  var items = el.nextElementSibling;
+  items.classList.toggle('collapsed');
+  if (items.classList.contains('collapsed')) {
+    items.style.maxHeight = '0';
+  } else {
+    var count = items.querySelectorAll('.doc-nav-item').length;
+    items.style.maxHeight = (count * 36) + 'px';
+  }
+}
+
+function filterDocs() {
+  var q = document.getElementById('docSearch').value.trim().toLowerCase();
+  renderNavTree(q);
+}
+
+function loadDoc(docId, navEl) {
+  currentDocId = docId;
+  var doc = DOC_CONTENT[docId];
+  if (!doc) return;
+
+  // Update nav
+  if (activeNavItem) activeNavItem.classList.remove('active');
+  navEl.classList.add('active');
+  activeNavItem = navEl;
+
+  // Show content
+  document.getElementById('docEmpty').style.display = 'none';
+  var content = document.getElementById('docContent');
+  content.style.display = '';
+  content.innerHTML = doc.content;
+
+  // Generate TOC
+  generateTOC();
+
+  // Scroll to top
+  document.getElementById('docContentWrap').scrollTop = 0;
+}
+
+function generateTOC() {
+  var content = document.getElementById('docContent');
+  var headings = content.querySelectorAll('h2, h3');
+  var html = '';
+  headings.forEach(function(h, i) {
+    var id = 'section-' + i;
+    h.id = id;
+    var level = h.tagName === 'H3' ? ' l2' : '';
+    html += '<a href="#' + id + '" class="toc-link' + level + '" onclick="scrollToSection(\'' + id + '\', event)">' + h.textContent + '</a>';
+  });
+  document.getElementById('docTocLinks').innerHTML = html;
+
+  // Highlight active TOC on scroll
+  document.getElementById('docContentWrap').onscroll = function() {
+    var links = document.querySelectorAll('.toc-link');
+    var scrollPos = this.scrollTop + 80;
+    var current = null;
+    headings.forEach(function(h) {
+      if (h.offsetTop <= scrollPos) current = h.id;
+    });
+    links.forEach(function(l) {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  };
+}
+
+function scrollToSection(id, e) {
+  e.preventDefault();
+  var el = document.getElementById(id);
+  if (el) {
+    document.getElementById('docContentWrap').scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
+  }
+}
+
+// ===== NOTIFICATIONS =====
+var NOTIFS = [
+  {icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},
+  {icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},
+  {icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},
+  {icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},
+  {icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}
+];
+function renderNotifs(){
+  document.getElementById('notifList').innerHTML = NOTIFS.map(function(n){
+    return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';
+  }).join('');
+}
+function toggleNotifPopover(){ var el = document.getElementById('notifPopover'); el.classList.toggle('visible'); closeUserMenu(); }
+function markAllRead(){ NOTIFS.forEach(function(n){ n.unread = false; }); renderNotifs(); document.getElementById('notifBtn').querySelector('.badge-dot').style.display = 'none'; toast('已标记全部为已读', 'success'); }
+document.addEventListener('click', function(e){
+  var popover = document.getElementById('notifPopover'), btn = document.getElementById('notifBtn');
+  if(popover && popover.classList.contains('visible') && !popover.contains(e.target) && e.target !== btn && !btn.contains(e.target)){ popover.classList.remove('visible'); }
+});
+
+// ===== AUTH STATE =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());if(isLoggedIn()){renderNotifs();}})();
+
+// ===== USER MENU =====
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np = document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); toast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+
+// ===== TOAST =====
+function toast(msg, type){
+  var wrap = document.getElementById('toastWrap'), item = document.createElement('div');
+  item.className = 'toast-item ' + (type || '');
+  item.textContent = msg;
+  wrap.appendChild(item);
+  setTimeout(function(){ item.style.opacity = '0'; item.style.transition = 'opacity 0.3s'; setTimeout(function(){ item.remove(); }, 300); }, 2000);
+}
+
+// ===== TOP NAV =====
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', data:'dataset-management.html', demand:'demand-hall.html', appcenter:'app-center.html', apps:null, docs:null };
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  var item = e.target.closest('.top-nav-item');
+  if (!item || !item.dataset.nav) return;
+  var nav = item.dataset.nav;
+  if (nav === 'home') { window.location.href = 'portal.html'; return; }
+  if (nav === 'docs') { return; } // Stay on current page
+  if (NAV_TARGETS[nav]) { window.location.href = NAV_TARGETS[nav]; }
+  else { toast('模块「'+item.textContent.replace(/[📖\s]/g,'')+'」页面尚未开发', 'info'); }
+});
+
+// ===== POINTS =====
+function showPointsRules() {
+  toast('积分余额：' + (localStorage.getItem('luoshu_points') || 1000) + ' 🪙\n新用户初始 1000 积分 | 前3次模型调用免费 | 接单+200 完成+500', 'info');
+}
+(function(){try{var p = localStorage.getItem('luoshu_points');if(!p){localStorage.setItem('luoshu_points','1000');}document.getElementById('headerPoints').textContent=localStorage.getItem('luoshu_points')||1000;}catch(e){}})();
+
+// ===== GO TO WORKBENCH =====
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+
+// ===== INIT =====
+renderNavTree();
+// Open first doc by default
+setTimeout(function(){
+  DOC_CATEGORIES.forEach(function(cat){
+    if(cat.items.length > 0 && !currentDocId){
+      var firstItem = cat.items[0];
+      var navEl = document.querySelector('[data-doc="' + firstItem.id + '"]');
+      if(navEl) loadDoc(firstItem.id, navEl);
+    }
+  });
+}, 100);
+</script>
+
+</body>
+</html>

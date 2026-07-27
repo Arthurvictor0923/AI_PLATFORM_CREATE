@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求详情 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bdh-micro-main-base-header-height: 64px;
+  --sf-img-0: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAASwCAMAAAAt7qfEAAAA5FBMVEXy8fv58PT18fnw8fzw8/zz8vn08vv28Pfw8vnr9Pn38vj27/Xt9v357vHz8Pf47vPz9fzu8/n58Pbr8vfs9/7z7/X27PH68fX48fjy8vz06O719vv09/z06u/s9Prx8fft8vf57fD18vns8fX26O746/Dx7vT26u/v9v378PL29fr07vPu8Pbw8PXu8/v27vP68vf26/Dy+P3w7fL28vru8Pvx7vfu7/T07fLx6vD2+f306/Hu7fPx7/nu7fjq6/rw7PH77vHs7fnw+P7u7vn58/jl6vvq7fvs7vzn6/vj6fzw9P02E8Y3AARwBElEQVR42tSdT48iNxDFs+dRK4doLrmhgUVoFY2iSCSrtIYwByTy/T9Q6tWffhSFcbOw2kmVXbbLbpg9/fRsN/vTv4+zgxjCjXY8HI8SO7Z7hL1nk0SZa9vbvbZ9hD2bSeezGUbawhDR7dkXi63ZZE9PT1+erIdSDLMIJ/aKwBEsjRv287l9khKGPhLZBuR1lUaUGTYM8ly1AfXMNL9BT6Y3A9xs0zLOVNvv9who9xhqBrGY5++w4YIh2bWFGpp5hmeac3uxPL/fL3qGFXfZ6uEPr1YL8RWaD23r9foBH+Jh7fb77+t5tkT9dlu3LWZr0p5cRnu//aqGRq1OM3f/VxHAD4Lw1GZv0xeO0LHDGYmP4hhJOcCvYVdWK2wt0IPDWphv4BcETk3fRvfP6lK2Y3LMaDz17Z/0FoEFvwjbz88BYOJ3K6M5DBa7lCZ/ZV4c+JWqrfM2uxoZXPj76csnZK4j+JM40FgJ/CpUlSoOvpYFA6IB+Cp+h3MAg6EnDvwacbNjyulrz6DqI3wW3Q55CeBo0Q3EtgAs/i2Gp4J82c5SWJZtgafEFz3nEgVwmSeA8aHDMBfAj4Hz6rQL7z9BZ5euWRhii8H1Ifj3McPsEiU5AExfXnG1lInGP4lG/nYMPMTDawlSxd2ArAYp+wTGx7QLHF8Hj44USWpjdTYRS6/C9scD+MCiNUPXC4JH2o5FzeGLIimvl12M6LWCqo7pXNx+Ob4fXw7v6LwIfUdjLSyIK/bmXCZsd29RM4FHieNufA+/SwK/bQW221FaUHdE1Nox17/aCn/RUgprCly+ywy+FMDgLBFcjOglgoW6CPCnV+khpT1MzhTArmo/vaICw5YhhdmnQJ5lTtRgLHobASy6CDSmFMVdBUzDSmd0UcA+6BL2LgGsJN0MDSOBN4vJBxkAvhKBSZY8viSBG5wcAOCBSx5iq33xS4gdElznIpi97Gpd/Wtr1/R4fj5Yy7iWqEtoVClcrKa9hdK5bZwOkFvHwY6hsrxpl6nuc4rCy5zF5No62RH0M4jW/G1N9kabaxnS+hgOBUz+NmTwx1LAYHLRv9607HhEAJLpUaofd7RIEbk0J/ThRYJH0FbV7rizEhxGDpETbxJQyWA8Jn0M1d80jn0NrPVU424pgyF/3/5++4osqqRgSQFXCwBvgV9w97MZWk1t/7qTwKF/qYATbKtjjU6Fzv30DAd+CeHXLH+rAr4ogQfDLwrsZIrMvtlA1EAv3AWumOQbCngDSicb6Da03n6Y5nOHGPa4f7hROfufd90WLolBYXoSstGgAOlTb8hqtypgVDAeIEwi+HH4pS8qY/0LEWcq4OCvFQscaemgVIj7u1RZJxGNU/g7mTNqErRgG5qFONqrTvSioezlxzbx+7vSHyC1hgGFQIXTegqYHyN/vpREexIXZi0C26jT2pT27+uL4V9R1B3FHxDAB9ZDwa8Bl/qXgySBUY8o7pZlUWdPITseJrgSxgerFL+k8XgYZc3LEXEnweD7TuAiwNCSxECuBJl37YsAkkL9SjAl/GYpC+0S9lkKKAuV6ySVPjKQwECv0nms0K0EhoO33HZW26r4/QL+SupOAEugAiZrq3Hz+Rn8jQ1nIS756yyWHHyeAvYzXcPvIEXaU/ULaJ8tv4nAKnolakfHAV+aZWIVHDagKTAmXpkY3JNRAxOZDyfwIN8x0BvmG87woG/sLlP3Er5izNE4rAqYyrfPX66/ncGazt9PAK/g8wlM4CYYI/YMCw27wV5tW6ubuOXihvmKQKhqVM6hTwJ32K0URTT8hoKNzBrtZf7KmTBm8D3eRKCgZSmGrAUmUO1jnL9JAiel64OUS2kPXOLolSqha05gQLYNYHY/kAImkCfli2JNtp3G4+Rkc/LDiKJ5EFf6Lm1hGB0QzM2CxoCvbk+PGl/Qi8Ne7YxSdfSGERwTyFP6pjNgpD2+A7+IM20L/o5KWfTdv0r/qxQkPdtTwKGBNbrmPTVVvyqN71LAz6cKGN4WwGmXWloK4CdhLmq4wrdq4C9fJgVcEYw02ItWmsRfGBeKzWcxmOrUVQGM4lLYbKDDkNngGZiMzxTw6cgHnrhq++9mRl8/DG6boDTEL/GLSmd3gGfNW0YlR9T3bZ5Qztg9ieXwNwngVZ++WMU+yas+bwOa+89erN8Hd4/QAtS1RU/jm5TBpLERWAcy1RXABDGLK2B+b1MDr1yqSgNiIiiNNdXmL2WxBA6j75+FBIiZ5S/xykERwlYZvSSB3IXiMlxDWyn/KADz8BexzBh4WTN/d1YtksDHsvvMsVEYYJVlYZY5jocjutTC6aR4lCPgowQVwqpziVqjL3I2NDxjTtiLzFiuYQG/iHr+CwTP3IOGbaXjh71bqSh2AKxE/gNTGJ8p4OaJsOnedNyr64Fg8ef7DPBNZ8B9BYz6HGr3CQE1uaxIBH4igNUqNYW4Jn1hCulYc7ZprQtmy1/sbAd1XzcG2qkRTyoYUEZKSoC3yFoOBx+Qyh0EPxTDPPuVsFGPlu6m57OgMFwxzKNgcrTwl2BuK2DmBjMMZtmw7y8kfMMdnaj89vRAn8CkMGqU3O2T1PQvi4U2XdXSiro4b2Ebjacj24Avscp0U/qyAawlSDxVwIhW26aPqltYo64MwdmzMVEk8Hr6LG30+0lgIpYkrSOvZZiR3OVi8rb9eAVM/Bp6o8C1IOQdaNouKWDQNgKdUDYNPMFXu5Z1p/nAgP0uJ8DH44sKYIVqoDa2oNGgxbRVELjYqPjdaXyH+x2s0cuf1SU7cgPa4PumxbejpftVhPAfGNgWNOy3/h60KFw0VMDGYwGwSeA+YmOvuXsGnI+Aq/xFUEQ/P0l18mqbGfxKBSztxVvQr0X/DsgHe8WAZOrfWwFMG7jzbBwOIrvsTQoYWZsLcZsUcMFwVwFH/lsuXQ2zD4EHKT0Dp7P+VSo38Dvlh74CVrNHMexuRM+Zd95Wtzkl5O3vJVXNe7HbE8BBy8Lf9mOL0LQw9gvSYyWq5U7wewnExGt1yyceO4FRqXBRK4E5D0SKe7PQAM3aEcAonEvRxbNBmIfAScYSxA09zA4XcMxnW+R9PH8fD2BK4DqR4EsFXCQwr0GbZ/hOZaQWxgC6Ng6BETQdRI41hzgAfsfN5xcMX46WQnUBnEXwyAnkxkJgvngkEI5T4LkSeHQCG3RHcWuVwCgx4jZ0RwJPp7/QvMFfrFYJHMk+hpv5E+Iqgd3bd6AR5fhXLdH3N0QpfBvJm3oeXE6AgV43RbEEmzMi8wGH81wbXPFurLxOO9LSiGcFzIVDAW8Zg3zoeegAeNMDcJ0fbj0Erp7MwUoEQzxnmCKtbxAnvs5UwHzkMdZg8AJuPbV9m7XX96DpS08vb5TAJDAx3FxO+LYhzWvUsgxr0SAEeIOgxDEqB4xaKbYTx/EJ4sFQzK/bpgtNrzIae7VpErgR8YTvYweD4/vJzzZnM4unkIhd8N2E8McG8IFN5TLhXBUwEZzhm/SvlXAdjpEz+mr0s13MUQATwip+4x40VgLFztt3Y20UzYhhgKFNqwiWks6ApYijBx4jwNoMJqO3aHyX2TgM7H7FQbA2FMXpELi9BW0ANtISwFL5RtI3E5g3sGbdgkZwARzgDQlMf0VR4LoERuy+CCxJBS93obMCJn9vk8BOVUTtsHiGPiH4dY4CZhqhgeBvu4Q1fzXgCwHcUsA5rdyl2650FcBDZqmEvgJGWvorju+3Ql6v+wCpIfh2/kaMwnRM9EVwun9FBdx4iKe7QGsRwDzsrQI5s3XJg99lDDmVInuFvcp0vk6EfBu/qAbYxXTuC7NucwMaU4W+a2/0+FfhizWGX7u2TOq2dpormUlnbzjoQLF4237wFvTBStHF7TPgHVt0j14wrIEUdtCOxlZjsSXhKE7iMFv4C25AK7YxdAQbfV3r7izYKGSwkhewRVtPgAFeBDSzLBSwOOQuhK5rXb2H9beMXBRr6W5BB3L157BOASzudvcZMA30bSpgrlEP8qKeuzcgcIKvPB7di0fATl6ncFbAN/KXxrvN0uHrwBGIKCeykhTpjgJ240QbwYWajGVKsxsu7NNanf8OeYq9bBgnAl/cgoYlvPYVMBwf5Qz+fgoYzCV5Le5bAG4SOBxl6do3SWMDcA/CeERvX7FIsjxTOdueWhexTMjGRSw7iyV4ud1cUQ3DA1x6Sl/HqKav/BAHFq4Q0eqjoZipf1sE9myecz29QN66+scYMcnZIn4tVjIz5U1ei/LjN6Hv2IJupeFUvyy0HTtWjtFHYAPpmyAMVXuAnBUQT0e8Fb7al0XcstYr0MAvrjiLUwOr6g0FjAyvSFukifidLkEDvxLnsdeWhf4VEpO/");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+.bg-list { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sf-img-0) center / cover no-repeat; z-index: 0; pointer-events: none; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px; background-color: transparent; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid rgba(5,5,5,0.06); z-index: 19; display: flex; flex-direction: column; padding: 0; }
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.logo-link svg { height: 32px; width: auto; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s, border-color 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.app-body { display: flex; padding-top: 60px; min-height: 100vh; position: relative; z-index: 1; }
+.sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: 200px; background: transparent; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+.sidebar-inner { padding: 16px 8px; }
+.sidebar-menu { display: flex; flex-direction: column; }
+.sidebar-menu-group { font-size: 12px; color: rgba(0,0,0,0.45); padding: 8px 24px 4px; text-transform: uppercase; }
+.sidebar-menu-item { display: flex; align-items: center; gap: 8px; height: 40px; line-height: 40px; padding-inline: 16px; margin: 0 16px 4px; width: calc(100% - 32px); border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; white-space: nowrap; overflow: hidden; }
+.sidebar-menu-item:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.88); }
+.sidebar-menu-item.active { color: rgb(47,84,235); background: rgba(47,84,235,0.2); font-weight: 600; border-radius: 4px !important; }
+.sidebar-menu-icon { font-size: 16px; width: 16px; text-align: center; flex-shrink: 0; }
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.content-area { flex: 1; margin-left: 200px; padding: 24px 40px; min-height: calc(100vh - 60px); position: relative; z-index: 1; min-width: 0; overflow-x: hidden; }
+.page-procard { background: transparent; }
+.page-card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02); border: 1px solid rgba(5,5,5,0.06); }
+[data-prefers-color="dark"] .page-card { background: #1f1f1f; border-color: #303030; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 6px -1px rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.09); }
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 24px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-text { background: transparent; color: rgba(0,0,0,0.88); border-color: transparent; }
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+.btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+.btn-lg { height: 40px; padding: 6px 24px; font-size: 15px; }
+
+/* ============================================================
+   STATUS & TYPE CHIPS
+   ============================================================ */
+.dm-status-chip { display: inline-flex; align-items: center; height: 20px; padding: 0 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.dm-status-chip.success { color: #52c41a; background: #d9f7be; }
+.dm-status-chip.pending { color: #2f54eb; background: #d6e4ff; }
+.dm-status-chip.warning { color: #ff9113; background: #ffeabc; }
+.dm-status-chip.default { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.dm-status-chip.published { color: #23ada4; background: #e6fffb; }
+[data-prefers-color="dark"] .dm-status-chip.default { color: rgba(255,255,255,0.65); background: #303030; }
+
+.dm-type-chip { display: inline-flex; align-items: center; height: 20px; padding: 0 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+.dm-type-chip.data-analysis { color: #2f54eb; background: #f0f5ff; }
+.dm-type-chip.model-dev { color: #52c41a; background: #f6ffed; }
+.dm-type-chip.data-label { color: #d48806; background: #fff7e6; }
+.dm-type-chip.app-dev { color: #23ada4; background: #e6fffb; }
+.dm-type-chip.tech-consult { color: #722ed1; background: #f9f0ff; }
+[data-prefers-color="dark"] .dm-type-chip.data-analysis { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .dm-type-chip.model-dev { background: rgba(82,196,26,0.12); }
+[data-prefers-color="dark"] .dm-type-chip.data-label { background: rgba(255,145,19,0.12); }
+[data-prefers-color="dark"] .dm-type-chip.app-dev { background: rgba(35,173,164,0.12); }
+[data-prefers-color="dark"] .dm-type-chip.tech-consult { background: rgba(114,46,209,0.12); }
+
+/* ============================================================
+   DETAIL PAGE — Split Layout
+   ============================================================ */
+.detail-layout { display: flex; gap: 0; min-height: 400px; }
+
+.detail-left { flex: 7; min-width: 0; padding-right: 32px; }
+
+.detail-right { flex: 3; min-width: 280px; position: relative; }
+.detail-right-inner { position: sticky; top: 84px; }
+
+/* ==== Demand Header Card (left top) ==== */
+.demand-header-card { display: flex; align-items: flex-start; gap: 16px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .demand-header-card { border-bottom-color: #303030; }
+.demand-icon { width: 64px; height: 64px; border-radius: 12px; background: linear-gradient(135deg, rgba(47,84,235,0.1), rgba(117,102,255,0.1)); display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; }
+.demand-icon.urgent { background: linear-gradient(135deg, rgba(255,77,79,0.12), rgba(255,77,79,0.06)); }
+.demand-header-info { flex: 1; min-width: 0; }
+.demand-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.demand-name { font-size: 20px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .demand-name { color: rgba(255,255,255,0.85); }
+.demand-meta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.demand-meta-item { font-size: 13px; color: rgba(0,0,0,0.45); display: flex; align-items: center; gap: 4px; }
+[data-prefers-color="dark"] .demand-meta-item { color: rgba(255,255,255,0.45); }
+
+/* Description */
+.demand-desc { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.8; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .demand-desc { color: rgba(255,255,255,0.65); border-bottom-color: #303030; }
+
+/* Section */
+.detail-section { margin-bottom: 24px; }
+.detail-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .detail-section-title { color: rgba(255,255,255,0.85); }
+.detail-section-title::before { content: ''; width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; flex-shrink: 0; }
+
+/* Info Grid */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+.info-item { display: flex; flex-direction: column; gap: 2px; }
+.info-label { font-size: 12px; color: rgba(0,0,0,0.45); }
+.info-value { font-size: 14px; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .info-label { color: rgba(255,255,255,0.35); }
+[data-prefers-color="dark"] .info-value { color: rgba(255,255,255,0.85); }
+
+/* Deliverables List */
+.deliverable-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid #f0f0f0; border-radius: 6px; margin-bottom: 8px; transition: all 0.2s; background: #ffffff; }
+.deliverable-item:hover { border-color: #d9d9d9; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+[data-prefers-color="dark"] .deliverable-item { background: transparent; border-color: #303030; }
+[data-prefers-color="dark"] .deliverable-item:hover { border-color: #434343; }
+.deliverable-icon { width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, rgba(47,84,235,0.08), rgba(117,102,255,0.08)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.deliverable-info { flex: 1; min-width: 0; }
+.deliverable-name { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); margin-bottom: 2px; }
+[data-prefers-color="dark"] .deliverable-name { color: rgba(255,255,255,0.85); }
+.deliverable-meta { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .deliverable-meta { color: rgba(255,255,255,0.45); }
+
+/* Processing notes */
+.processing-note { padding: 12px 16px; background: #fafbff; border: 1px solid #f0f0f0; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .processing-note { background: rgba(47,84,235,0.04); border-color: #303030; color: rgba(255,255,255,0.65); }
+
+/* Tags */
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag-item { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; font-size: 12px; color: rgba(0,0,0,0.65); background: #f0f0f0; border-radius: 4px; }
+[data-prefers-color="dark"] .tag-item { background: #303030; color: rgba(255,255,255,0.65); }
+
+/* Source app-center link */
+.source-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 13px; color: #23ada4; background: #e6fffb; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.source-link:hover { background: #b6f3e8; }
+[data-prefers-color="dark"] .source-link { background: rgba(35,173,164,0.1); }
+[data-prefers-color="dark"] .source-link:hover { background: rgba(35,173,164,0.18); }
+
+/* ==== Right Panel ==== */
+.stat-card { background: #fafbff; border: 1px solid #f0f0f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+[data-prefers-color="dark"] .stat-card { background: rgba(47,84,235,0.04); border-color: #303030; }
+.stat-value { font-size: 28px; font-weight: 700; color: #2f54eb; line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 13px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .stat-label { color: rgba(255,255,255,0.45); }
+
+/* Overview card */
+.overview-card { border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+[data-prefers-color="dark"] .overview-card { border-color: #303030; }
+.overview-card-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .overview-card-title { color: rgba(255,255,255,0.85); }
+.overview-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
+.overview-label { color: rgba(0,0,0,0.45); }
+.overview-value { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .overview-label { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .overview-value { color: rgba(255,255,255,0.85); }
+
+/* Action area */
+.action-section { margin-bottom: 16px; }
+.action-btn { width: 100%; height: 40px; font-size: 15px; font-weight: 500; }
+
+/* Submit/consumer card */
+.submitter-card { border: 1px solid #f0f0f0; border-radius: 8px; padding: 16px; }
+[data-prefers-color="dark"] .submitter-card { border-color: #303030; }
+.submitter-card-title { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; }
+[data-prefers-color="dark"] .submitter-card-title { color: rgba(255,255,255,0.85); }
+.submitter-row { display: flex; align-items: center; gap: 10px; }
+.submitter-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #2f54eb, #7566ff); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; flex-shrink: 0; }
+.submitter-info { flex: 1; }
+.submitter-name { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .submitter-name { color: rgba(255,255,255,0.85); }
+.submitter-unit { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+[data-prefers-color="dark"] .submitter-unit { color: rgba(255,255,255,0.45); }
+
+/* Feedback block */
+.feedback-block { padding: 12px 16px; background: #f6ffed; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); line-height: 1.7; margin-top: 8px; }
+[data-prefers-color="dark"] .feedback-block { background: rgba(82,196,26,0.08); color: rgba(255,255,255,0.85); }
+
+/* Empty section placeholder */
+.empty-section { padding: 20px; text-align: center; color: rgba(0,0,0,0.25); font-size: 13px; }
+[data-prefers-color="dark"] .empty-section { color: rgba(255,255,255,0.2); }
+
+/* ============================================================
+   POPCONFIRM
+   ============================================================ */
+.popconfirm-shield { display: none; position: fixed; inset: 0; z-index: 1059; }
+.popconfirm-shield.visible { display: block; }
+.popconfirm-wrap { display: none; position: fixed; z-index: 1060; }
+.popconfirm-wrap.visible { display: block; }
+.popconfirm-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); padding: 12px; min-width: 240px; max-width: 300px; }
+[data-prefers-color="dark"] .popconfirm-box { background: #1f1f1f; }
+.popconfirm-body { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 2px; }
+.popconfirm-icon { font-size: 16px; color: #faad14; flex-shrink: 0; margin-top: 2px; }
+.popconfirm-text { flex: 1; min-width: 0; }
+.popconfirm-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.5714285714285714; }
+[data-prefers-color="dark"] .popconfirm-title { color: rgba(255,255,255,0.85); }
+.popconfirm-desc { font-size: 11px; color: rgba(0,0,0,0.35); line-height: 1.4; margin-top: 2px; }
+[data-prefers-color="dark"] .popconfirm-desc { color: rgba(255,255,255,0.35); }
+.popconfirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.popconfirm-btn { display: inline-flex; align-items: center; justify-content: center; height: 24px; padding: 0 7px; font-size: 14px; border-radius: 6px; cursor: pointer; user-select: none; transition: all 0.2s; border: 1px solid #d9d9d9; background: #ffffff; color: rgba(0,0,0,0.88); }
+.popconfirm-btn:hover { color: #597ef7; border-color: #597ef7; }
+.popconfirm-btn.primary { background: #2f54eb; color: #fff; border-color: #2f54eb; }
+.popconfirm-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
+[data-prefers-color="dark"] .popconfirm-btn { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+.popconfirm-arrow { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #ffffff; }
+[data-prefers-color="dark"] .popconfirm-arrow { border-top-color: #1f1f1f; }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 2000; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .detail-layout { flex-direction: column; }
+  .detail-left { padding-right: 0; margin-bottom: 24px; }
+  .detail-right { min-width: 0; }
+  .detail-right-inner { position: static; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 16px; }
+  .sidebar { display: none; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs>
+              <linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
+        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item active" onclick="location.href='demand-hall.html'">需求市场</span>
+        <!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('info','功能开发中')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+
+  <!-- Sidebar — 需求市场 -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-menu">
+        <div class="sidebar-menu-group">需求市场</div>
+        <a class="sidebar-menu-item active" href="demand-hall.html">
+          <span class="sidebar-menu-icon">📋</span>需求大厅
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content-area">
+    <div class="page-procard">
+      <div class="page-card">
+
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title" id="cardTitle">需求详情</span>
+          <button class="btn btn-default btn-sm" onclick="location.href='demand-hall.html'" style="margin-left:auto;">← 返回需求大厅</button>
+        </div>
+
+        <div class="card-body" id="cardBody"><!-- JS rendered --></div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== POPCONFIRM ===== -->
+<div class="popconfirm-shield" id="popconfirmShield" onclick="closePopconfirm()"></div>
+<div class="popconfirm-wrap" id="popconfirmWrap">
+  <div class="popconfirm-box">
+    <div class="popconfirm-body">
+      <span class="popconfirm-icon">⚠️</span>
+      <div class="popconfirm-text">
+        <div class="popconfirm-title" id="popconfirmTitle">确认接单？</div>
+        <div class="popconfirm-desc" id="popconfirmDesc">接单后可在「个人中心 → 我的任务」中跟踪处理</div>
+      </div>
+    </div>
+    <div class="popconfirm-actions">
+      <button class="popconfirm-btn" onclick="closePopconfirm()">取消</button>
+      <button class="popconfirm-btn primary" id="popconfirmOkBtn">确定</button>
+    </div>
+    <div class="popconfirm-arrow"></div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+// ============================================================
+// MOCK DATA — identical to demand-hall.html
+// ============================================================
+var demands = [
+  { id:"DM-20260726-001", title:"东安农场2026年水稻产量预估", type:"数据分析", description:"基于2026年卫星遥感影像和多光谱数据，对东安农场辖区12万亩水稻进行产量预估分析。需要产出分地块的产量预测结果，精度要求90%以上。", consumerName:"张农场", consumerUnit:"东安农场", deliverables:"产量预估报告（PDF）+ 空间分布图（GeoTIFF）+ 统计分析表（Excel）", tags:["产量预估","水稻","遥感","多光谱"], status:"待接单", priority:"紧急", claimedBy:null, claimedAt:null, submittedAt:"2026-07-26", deadline:"2026-08-15", processingNotes:"", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260722-002", title:"友谊农场第三管理区病虫害监测", type:"数据分析", description:"针对友谊农场第三管理区玉米和大豆地块，利用无人机多光谱影像进行病虫害早期识别与监测。", consumerName:"李技术", consumerUnit:"友谊农场", deliverables:"病虫害监测周报 + 风险热力图 + 防治建议", tags:["病虫害","无人机","多光谱"], status:"处理中", priority:"紧急", claimedBy:"王科研", claimedAt:"2026-07-23", submittedAt:"2026-07-22", deadline:"2026-08-05", processingNotes:"已完成第一轮影像采集，正在标注训练样本", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:250 },
+  { id:"DM-20260718-003", title:"洪河农场大豆种植面积核查", type:"模型开发", description:"基于哨兵二号卫星影像，开发大豆种植面积自动提取模型。要求精度不低于92%。", consumerName:"赵核查", consumerUnit:"洪河农场", deliverables:"大豆面积提取模型 + 核查报告 + 精度评估", tags:["面积核查","大豆","哨兵二号"], status:"待验收", priority:"普通", claimedBy:"陈算法", claimedAt:"2026-07-19", submittedAt:"2026-07-18", deadline:"2026-07-30", processingNotes:"模型已训练完成，mIoU 94.2%，交付物已上传", actualDeliverables:[{type:"数据集",name:"soybean_area_model.h5",url:"#",size:"856 MB"},{type:"报告",name:"大豆面积核查报告.pdf",url:"#",size:"3.2 MB"}], completedAt:null, feedback:"", publishedToAppCenter:false, reward:300 },
+  { id:"DM-20260710-004", title:"青龙山农场土地利用变化检测", type:"数据分析", description:"对比2025年和2026年高分辨率影像，检测青龙山农场土地利用变化情况。", consumerName:"孙管理", consumerUnit:"青龙山农场", deliverables:"变化检测报告 + 变化图斑矢量数据", tags:["变化检测","土地利用","高分辨率"], status:"已完成", priority:"普通", claimedBy:"刘遥感", claimedAt:"2026-07-11", submittedAt:"2026-07-10", deadline:"2026-07-25", processingNotes:"", actualDeliverables:[{type:"报告",name:"青龙山土地利用变化检测报告.pdf",url:"#",size:"8.5 MB"},{type:"数据集",name:"变化图斑矢量数据.geojson",url:"#",size:"12 MB"}], completedAt:"2026-07-20", feedback:"交付物质量很好，已通过验收", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260705-005", title:"前锋农场玉米估产模型优化", type:"技术咨询", description:"现有玉米估产模型误差偏大（MAPE ~18%），需要优化模型参数和特征工程。", consumerName:"周数据", consumerUnit:"前锋农场", deliverables:"优化后的估产模型 + 技术报告 + 参数说明文档", tags:["估产","玉米","模型优化"], status:"待接单", priority:"普通", claimedBy:null, claimedAt:null, submittedAt:"2026-07-05", deadline:"2026-08-20", processingNotes:"", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:180 },
+  { id:"DM-20260725-002", title:"友谊农场小麦病虫害遥感监测模型", type:"模型开发", description:"开发基于无人机多光谱影像的小麦条锈病、赤霉病早期识别模型。需要标注样本数据约5000张，模型需支持在线推理API部署。", consumerName:"李技术", consumerUnit:"友谊农场", deliverables:"病虫害识别模型（.h5/.pt）+ 推理API + 模型使用文档", tags:["病虫害","小麦","遥感","无人机"], status:"待接单", priority:"普通", claimedBy:null, claimedAt:null, submittedAt:"2026-07-25", deadline:"2026-09-01", processingNotes:"", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260724-003", title:"卫星影像地块边界自动化标注", type:"数据标注", description:"对2026年黑龙江垦区高分辨率卫星影像进行地块边界标注，总面积约50万亩。标注结果需用于后续作物分类模型训练。", consumerName:"王科研", consumerUnit:"农垦科学院", deliverables:"地块边界标注数据集（COCO格式）+ 标注质量报告", tags:["数据标注","地块边界","卫星影像","COCO"], status:"处理中", priority:"紧急", claimedBy:"赵开发", claimedAt:"2026-07-25 09:30:00", submittedAt:"2026-07-24", deadline:"2026-08-10", processingNotes:"已完成约60%的标注工作，预计3天内完成初版", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260723-004", title:"玉米长势监测与施肥建议应用", type:"应用开发", description:"开发一个移动端应用（支持Android/iOS），集成玉米长势监测模型，根据NDVI等植被指数自动生成分地块施肥建议。需要集成地图服务和推送通知。", consumerName:"刘场长", consumerUnit:"红星农场", deliverables:"移动端App（Android/iOS）+ 后台管理端 + 部署文档", tags:["应用开发","玉米","施肥建议","NDVI"], status:"处理中", priority:"普通", claimedBy:"孙全栈", claimedAt:"2026-07-24 14:00:00", submittedAt:"2026-07-23", deadline:"2026-09-30", processingNotes:"已完成UI设计和后端API框架搭建", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260722-005", title:"大豆品种识别模型精度优化", type:"模型开发", description:"现有大豆品种识别模型在田间实际场景下精度仅78%，需要优化至90%以上。提供现有模型权重和训练数据，需改进数据增强策略和模型架构。", consumerName:"陈专家", consumerUnit:"九三管理局", deliverables:"优化后模型 + 精度对比报告 + 改进方案文档", tags:["模型优化","大豆","品种识别"], status:"待验收", priority:"普通", claimedBy:"周算法", claimedAt:"2026-07-23 10:00:00", submittedAt:"2026-07-22", deadline:"2026-08-05", processingNotes:"已采用ViT替换ResNet，验证集精度达到92.3%", actualDeliverables:[{type:"数据集",name:"soybean_variety_v3.h5",url:"#",size:"2.3 GB"},{type:"报告",name:"精度对比报告_v2.pdf",url:"#",size:"4.8 MB"}], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260721-006", title:"水稻倒伏面积无人机巡检分析", type:"数据分析", description:"台风过境后需对辖区内水稻倒伏情况进行快速评估，使用无人机航拍影像，分析倒伏面积和严重程度分级。", consumerName:"马调度", consumerUnit:"建三江管理局", deliverables:"倒伏分析报告 + 倒伏分级图 + 受灾面积统计", tags:["倒伏分析","水稻","无人机","灾害评估"], status:"待验收", priority:"紧急", claimedBy:"吴遥感", claimedAt:"2026-07-22 08:00:00", submittedAt:"2026-07-21", deadline:"2026-07-28", processingNotes:"已完成全部航拍数据处理和倒伏检测，准确率约94%", actualDeliverables:[{type:"报告",name:"台风后倒伏分析报告.pdf",url:"#",size:"12.5 MB"},{type:"数据集",name:"倒伏分级结果.geojson",url:"#",size:"45 MB"}], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260720-007", title:"垦区土地利用分类年度更新", type:"数据分析", description:"基于2026年Sentinel-2时序影像，对北大荒全垦区进行土地利用分类更新。分类体系包含12个一级类，35个二级类。", consumerName:"赵规划", consumerUnit:"北大荒集团总部", deliverables:"土地利用分类图 + 面积统计报表 + 年度变化分析报告", tags:["土地利用","分类","Sentinel-2","年度更新"], status:"已完成", priority:"普通", claimedBy:"钱数据", claimedAt:"2026-07-21 11:00:00", submittedAt:"2026-07-20", deadline:"2026-08-20", processingNotes:"已完成全垦区分类，总体精度91.5%，Kappa系数0.88", actualDeliverables:[{type:"报告",name:"2026年度土地利用分类报告.pdf",url:"#",size:"28 MB"},{type:"数据集",name:"landcover_2026.tif",url:"#",size:"3.8 GB"}], completedAt:"2026-08-18", feedback:"交付质量高，分类精度超出预期", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260719-008", title:"作物识别模型跨区域迁移适配", type:"技术咨询", description:"现有作物识别模型在A区效果好（95%），但在B区水土不服（仅72%）。需要技术咨询指导如何进行领域自适应迁移，以及需要补充多少B区标注数据。", consumerName:"孙信息", consumerUnit:"宝泉岭管理局", deliverables:"技术咨询报告 + 迁移方案 + 数据需求评估", tags:["技术咨询","领域自适应","迁移学习"], status:"已完成", priority:"普通", claimedBy:"冯算法", claimedAt:"2026-07-20 09:00:00", submittedAt:"2026-07-19", deadline:"2026-08-05", processingNotes:"已提供基于ADDA的迁移方案，建议补充300-500张B区标注样本", actualDeliverables:[{type:"报告",name:"跨区域迁移适配方案.pdf",url:"#",size:"6.5 MB"}], completedAt:"2026-08-02", feedback:"方案可操作性强，已按建议开展数据采集", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260718-009", title:"水稻杂草智能识别与精准施药决策系统", type:"应用开发", description:"开发基于深度学习的稻田杂草实时识别系统，集成到无人机/地面机器人平台，实现杂草种类识别→密度评估→精准施药决策→处方图生成的全流程。", consumerName:"周农艺", consumerUnit:"牡丹江管理局", deliverables:"杂草识别模型 + 施药决策算法 + 处方图生成模块 + 集成测试报告", tags:["杂草识别","精准施药","水稻","深度学习"], status:"已完成", priority:"普通", claimedBy:"郑视觉", claimedAt:"2026-07-19 13:00:00", submittedAt:"2026-07-18", deadline:"2026-09-15", processingNotes:"已完成所有模块开发和集成测试，田间验证准确率93.7%", actualDeliverables:[{type:"工作流",name:"杂草识别→施药决策工作流",url:"#",size:"--"},{type:"报告",name:"系统集成测试报告.pdf",url:"#",size:"8.2 MB"}], completedAt:"2026-09-10", feedback:"系统稳定可靠，已投入实际使用", publishedToAppCenter:true },
+  { id:"DM-20260717-010", title:"农业知识库构建与智能问答系统", type:"应用开发", description:"构建北大荒农业专业知识库（涵盖种植、植保、土肥、农机四大领域），基于LLM开发智能问答系统，支持自然语言检索和技术方案推荐。", consumerName:"吴推广", consumerUnit:"农技推广中心", deliverables:"知识库系统 + 智能问答API + 管理后台 + 使用培训", tags:["知识库","智能问答","LLM","RAG"], status:"已发布", priority:"普通", claimedBy:"褚NLP", claimedAt:"2026-07-18 10:00:00", submittedAt:"2026-07-17", deadline:"2026-10-01", processingNotes:"已完成知识库构建（12万条知识条目）和问答系统开发，RAG准确率89%", actualDeliverables:[{type:"工作流",name:"农业智能问答API",url:"#",size:"--"},{type:"部署服务",name:"agri-qa-service",url:"#",size:"--"},{type:"报告",name:"系统部署与使用手册.pdf",url:"#",size:"15 MB"}], completedAt:"2026-09-28", feedback:"已投入使用，日均问答量2000+", publishedToAppCenter:true },
+  { id:"DM-20260716-011", title:"地块级别玉米估产模型开发", type:"模型开发", description:"利用历史产量数据+当年气象数据+遥感植被指数，开发地块级别的玉米估产模型，需支持在收获前30天、15天、7天三个时间节点给出产量预测。", consumerName:"李核算", consumerUnit:"北安管理局", deliverables:"玉米估产模型 + 预测API + 模型精度验证报告", tags:["估产模型","玉米","时序预测","气象数据"], status:"处理中", priority:"紧急", claimedBy:"蒋建模", claimedAt:"2026-07-17 09:00:00", submittedAt:"2026-07-16", deadline:"2026-08-20", processingNotes:"已完成数据整合和特征工程，正在训练LSTM+Attention模型", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260715-012", title:"黑龙江垦区土壤有机质遥感反演", type:"数据分析", description:"基于多源遥感数据（Sentinel-2 + Landsat-8）和地面采样数据，建立土壤有机质含量的遥感反演模型，输出全垦区表层土壤有机质分布图。", consumerName:"韩土肥", consumerUnit:"农垦科学院", deliverables:"土壤有机质分布图 + 反演模型 + 精度验证报告 + 数据处理脚本", tags:["土壤","有机质","遥感反演","多源数据"], status:"处理中", priority:"普通", claimedBy:"沈遥感", claimedAt:"2026-07-16 14:00:00", submittedAt:"2026-07-15", deadline:"2026-09-10", processingNotes:"已完成数据预处理和采样点匹配，正在训练随机森林反演模型", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260714-013", title:"遥感影像云检测与去云算法优化", type:"技术咨询", description:"现有云检测算法对薄云和碎云识别效果差（漏检率35%），影响后续作物分析精度。需要技术咨询指导如何改进云检测算法，或推荐适合东北地区的成熟方案。", consumerName:"杨影像", consumerUnit:"绥化管理局", deliverables:"云检测优化方案 + 算法对比评估报告 + 推荐方案实现代码", tags:["云检测","遥感","算法优化","东北地区"], status:"待接单", priority:"普通", claimedBy:null, claimedAt:null, submittedAt:"2026-07-14", deadline:"2026-08-10", processingNotes:"", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 },
+  { id:"DM-20260713-014", title:"农业保险遥感定损模型", type:"模型开发", description:"开发基于灾前灾后遥感影像的农作物定损模型，支持洪涝、干旱、冰雹三种灾害类型。模型需输出受灾面积、损失程度分级、理赔金额估算。", consumerName:"蔡保险", consumerUnit:"阳光农业保险", deliverables:"定损模型（三种灾害）+ API接口 + 定损报告模板 + 精度评估报告", tags:["遥感定损","农业保险","灾害评估","洪涝","干旱"], status:"待接单", priority:"紧急", claimedBy:null, claimedAt:null, submittedAt:"2026-07-13", deadline:"2026-08-30", processingNotes:"", actualDeliverables:[], completedAt:null, feedback:"", publishedToAppCenter:false, reward:200 }
+];
+// Load saved demands from localStorage (for cross-page candidate sync)
+try { var saved = localStorage.getItem('luoshu_demands'); if (saved) { var savedArr = JSON.parse(saved); savedArr.forEach(function(sd){ var idx = demands.findIndex(function(d){ return d.id === sd.id; }); if (idx >= 0) { demands[idx].candidates = sd.candidates || []; demands[idx].status = sd.status; demands[idx].claimedBy = sd.claimedBy; demands[idx].claimedAt = sd.claimedAt; } }); } } catch(e) {}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function statusChip(s) {
+  var map = { '待接单':{cls:'default',text:'待接单'}, '处理中':{cls:'pending',text:'处理中'}, '待验收':{cls:'warning',text:'待验收'}, '已完成':{cls:'success',text:'已完成'}, '已发布':{cls:'published',text:'已发布'} };
+  var m = map[s] || map['待接单'];
+  return '<span class="dm-status-chip '+m.cls+'">'+m.text+'</span>';
+}
+
+function typeChip(t) {
+  var clsMap = { '数据分析':'data-analysis', '模型开发':'model-dev', '数据标注':'data-label', '应用开发':'app-dev', '技术咨询':'tech-consult' };
+  return '<span class="dm-type-chip '+(clsMap[t]||'')+'">'+t+'</span>';
+}
+
+function demandIcon(d) {
+  var icons = { '数据分析':'📊', '模型开发':'🧠', '数据标注':'🏷️', '应用开发':'📱', '技术咨询':'💡' };
+  return icons[d.type] || '📋';
+}
+
+function deliverableIcon(type) {
+  var im = { '报告':'📊', '数据集':'📁', '工作流':'⚙️', '部署服务':'🚀' };
+  return im[type] || '📄';
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  var id = new URLSearchParams(window.location.search).get('id');
+  var d = demands.find(function(x){ return x.id === id; });
+  if (!d) {
+    document.getElementById('cardBody').innerHTML = '<div class="empty-section"><p style="font-size:48px;margin-bottom:16px">🔍</p><p>未找到该需求</p><p style="font-size:13px;margin-top:4px">需求可能已被删除或链接无效</p></div>';
+    document.getElementById('cardTitle').textContent = '需求不存在';
+    return;
+  }
+
+  document.title = d.title + ' — 需求详情';
+  document.getElementById('cardTitle').textContent = '需求详情';
+
+  var html = '<div class="detail-layout">';
+
+  // ═══ LEFT: 70% ═══
+  html += '<div class="detail-left">';
+
+  // Header card: icon + title + chips + meta
+  html += '<div class="demand-header-card">';
+  html += '<div class="demand-icon'+(d.priority==='紧急'?' urgent':'')+'">'+demandIcon(d)+'</div>';
+  html += '<div class="demand-header-info">';
+  html += '<div class="demand-name-row"><span class="demand-name">'+d.title+'</span>'+typeChip(d.type)+statusChip(d.status)+'</div>';
+  html += '<div class="demand-meta-row">';
+  html += '<span class="demand-meta-item">📌 '+d.id+'</span>';
+  html += '<span class="demand-meta-item">'+d.type+'</span>';
+  html += '<span class="demand-meta-item">'+(d.priority==='紧急'?'🔴 ':'')+d.priority+'优先级</span>';
+  html += '<span class="demand-meta-item">📅 '+d.submittedAt+'</span>';
+  html += '</div></div></div>';
+
+  // Tags
+  if (d.tags && d.tags.length > 0) {
+    html += '<div class="tag-list">'+d.tags.map(function(t){return '<span class="tag-item">'+t+'</span>';}).join('')+'</div>';
+  }
+
+  // Description
+  html += '<div class="demand-desc">'+d.description+'</div>';
+
+  // ── Basic info ──
+  html += '<div class="detail-section"><div class="detail-section-title">基础信息</div>';
+  html += '<div class="info-grid">';
+  html += '<div class="info-item"><span class="info-label">提交方</span><span class="info-value">'+d.consumerName+'（'+d.consumerUnit+'）</span></div>';
+  html += '<div class="info-item"><span class="info-label">提交时间</span><span class="info-value">'+d.submittedAt+'</span></div>';
+  html += '<div class="info-item"><span class="info-label">截止日期</span><span class="info-value">'+d.deadline+'</span></div>';
+  html += '<div class="info-item"><span class="info-label">期望交付物</span><span class="info-value">'+d.deliverables+'</span></div>';
+  html += '</div></div>';
+
+  // ── Processing progress (if claimed) ──
+  if (d.claimedBy) {
+    html += '<div class="detail-section"><div class="detail-section-title">处理进展</div>';
+    html += '<div class="info-grid">';
+    html += '<div class="info-item"><span class="info-label">接单方</span><span class="info-value">'+d.claimedBy+'</span></div>';
+    html += '<div class="info-item"><span class="info-label">接单时间</span><span class="info-value">'+d.claimedAt+'</span></div>';
+    html += '</div>';
+    if (d.processingNotes) {
+      html += '<div style="margin-top:12px;"><span class="info-label" style="display:block;margin-bottom:4px;">处理备注</span>';
+      html += '<div class="processing-note">'+d.processingNotes+'</div></div>';
+    }
+    html += '</div>';
+  }
+
+  // ── Deliverables (if any) ──
+  if (d.actualDeliverables && d.actualDeliverables.length > 0) {
+    html += '<div class="detail-section"><div class="detail-section-title">交付物</div>';
+    d.actualDeliverables.forEach(function(dv){
+      html += '<div class="deliverable-item">';
+      html += '<div class="deliverable-icon">'+deliverableIcon(dv.type)+'</div>';
+      html += '<div class="deliverable-info"><div class="deliverable-name">'+dv.name+'</div>';
+      html += '<div class="deliverable-meta">'+dv.type+' · '+dv.size+'</div></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // ── Completion & feedback ──
+  if (d.completedAt) {
+    html += '<div class="detail-section"><div class="detail-section-title">完成信息</div>';
+    html += '<div class="info-item" style="margin-bottom:8px;"><span class="info-label">完成时间</span><span class="info-value">'+d.completedAt+'</span></div>';
+    if (d.feedback) html += '<div class="feedback-block">💬 '+d.feedback+'</div>';
+    if (d.publishedToAppCenter) {
+      html += '<div style="margin-top:12px;"><a class="source-link" href="app-center.html">📤 已发布至应用中心 — 查看应用 →</a></div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div>'; // /detail-left
+
+  // ═══ RIGHT: 30% sticky ═══
+  html += '<div class="detail-right"><div class="detail-right-inner">';
+
+  // Status overview
+  html += '<div class="stat-card">';
+  html += '<div class="stat-value">'+statusChip(d.status)+'</div>';
+  html += '<div class="stat-label" style="margin-top:8px;">'+(d.priority==='紧急'?'🔴 ':'')+d.priority+'优先级 · '+d.type+'</div>';
+  html += '</div>';
+
+  // Action — "申请接单" for 待接单 (candidate pool)
+  if (d.status === '待接单') {
+    var alreadyApplied = d.candidates && d.candidates.some(function(c){ return c.name === '当前用户'; });
+    if (alreadyApplied) {
+      html += '<div class="action-section"><span class="chip chip-pending" style="font-size:13px;padding:6px 16px">✓ 已申请，等待需求方确认</span></div>';
+    } else {
+      html += '<div class="action-section"><button class="btn btn-primary btn-lg action-btn" onclick="claimDemand(\''+d.id+'\',this)">📝 申请接单</button></div>';
+    }
+  }
+
+  // Candidate list (for demand owner — shows who applied)
+  if (d.status === '待接单' && d.candidates && d.candidates.length > 0) {
+    html += '<div class="overview-card" style="margin-bottom:12px">';
+    html += '<div class="overview-card-title">👥 候选人列表（' + d.candidates.length + '人）</div>';
+    d.candidates.forEach(function(c, ci){
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0">';
+      html += '<div><strong>'+c.name+'</strong><span style="font-size:12px;color:rgba(0,0,0,0.45);margin-left:8px">'+c.appliedAt+'</span></div>';
+      html += '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();selectCandidate(\''+d.id+'\','+ci+')">选择</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Overview card
+  html += '<div class="overview-card">';
+  html += '<div class="overview-card-title">📋 需求概览</div>';
+  html += '<div class="overview-row"><span class="overview-label">需求编号</span><span class="overview-value">'+d.id+'</span></div>';
+  html += '<div class="overview-row"><span class="overview-label">提交方</span><span class="overview-value">'+d.consumerName+'</span></div>';
+  html += '<div class="overview-row"><span class="overview-label">机构</span><span class="overview-value">'+d.consumerUnit+'</span></div>';
+  html += '<div class="overview-row"><span class="overview-label">提交日期</span><span class="overview-value">'+d.submittedAt+'</span></div>';
+  html += '<div class="overview-row"><span class="overview-label">截止日期</span><span class="overview-value">'+d.deadline+'</span></div>';
+  html += '<div class="overview-row"><span class="overview-label">🪙 积分悬赏</span><span class="overview-value" style="color:#2f54eb;font-weight:600">'+(d.reward||200)+'</span></div>';
+  if (d.claimedBy) html += '<div class="overview-row"><span class="overview-label">接单方</span><span class="overview-value">'+d.claimedBy+'</span></div>';
+  html += '</div>';
+
+  // Submitter card
+  html += '<div class="submitter-card">';
+  html += '<div class="submitter-card-title">👤 提交方信息</div>';
+  html += '<div class="submitter-row">';
+  html += '<div class="submitter-avatar">'+(d.consumerName||'?')[0]+'</div>';
+  html += '<div class="submitter-info">';
+  html += '<div class="submitter-name">'+d.consumerName+'</div>';
+  html += '<div class="submitter-unit">'+d.consumerUnit+'</div>';
+  html += '</div></div></div>';
+
+  html += '</div></div>'; // /detail-right + /detail-right-inner
+
+  html += '</div>'; // /detail-layout
+
+  document.getElementById('cardBody').innerHTML = html;
+}
+
+// ============================================================
+// POPCONFIRM
+// ============================================================
+function openPopconfirm(title, desc, onOk, triggerEl) {
+  document.getElementById('popconfirmTitle').textContent = title;
+  var descEl = document.getElementById('popconfirmDesc');
+  if (desc) { descEl.textContent = desc; descEl.style.display = ''; } else { descEl.style.display = 'none'; }
+  document.getElementById('popconfirmOkBtn').onclick = function(){ closePopconfirm(); if(onOk) onOk(); };
+  var wrap = document.getElementById('popconfirmWrap');
+  if (triggerEl) {
+    var rect = triggerEl.getBoundingClientRect();
+    var wrapW = 300;
+    var left = rect.left + rect.width/2 - wrapW/2;
+    if (left < 8) left = 8;
+    if (left + wrapW > window.innerWidth - 8) left = window.innerWidth - wrapW - 8;
+    wrap.style.left = left + 'px';
+    wrap.style.top = (rect.top - 12) + 'px';
+    wrap.style.transform = 'translateY(-100%)';
+    wrap.style.width = wrapW + 'px';
+  }
+  wrap.classList.add('visible');
+  document.getElementById('popconfirmShield').classList.add('visible');
+}
+
+function closePopconfirm() {
+  document.getElementById('popconfirmWrap').classList.remove('visible');
+  document.getElementById('popconfirmShield').classList.remove('visible');
+}
+
+// ============================================================
+// CLAIM
+// ============================================================
+function claimDemand(id, triggerEl) {
+  if(!requireAuth())return;
+  var d = demands.find(function(x){return x.id===id;});
+  if (!d || d.status !== '待接单') return;
+  openPopconfirm('申请接单？', '确认申请接单「'+d.title+'」？申请后将进入候选人池，由需求方选择后才会开始处理。', function(){
+    if (!d.candidates) d.candidates = [];
+    if (d.candidates.some(function(c){ return c.name === '当前用户'; })) {
+      showToast('info', '您已在候选人池中，请等待需求方确认');
+      return;
+    }
+    d.candidates.push({name:'当前用户', unit:'', appliedAt: new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,8)});
+    try { localStorage.setItem('luoshu_demands', JSON.stringify(demands)); } catch(e) {}
+    render();
+    showToast('success', '已提交接单申请！请等待需求方确认');
+  }, triggerEl);
+}
+
+// Select a candidate from the pool (requester action)
+function selectCandidate(demandId, candidateIndex) {
+  if(!requireAuth())return;
+  var d = demands.find(function(x){return x.id===demandId;});
+  if (!d || !d.candidates) return;
+  var c = d.candidates[candidateIndex];
+  if (!c) return;
+  openPopconfirm('选择开发者？', '确认选择「'+c.name+'」作为「'+d.title+'」的开发者？选择后其他候选人将自动移除。', function(){
+    d.status = '处理中';
+    d.claimedBy = c.name;
+    d.claimedAt = new Date().toISOString().slice(0,10)+' '+new Date().toTimeString().slice(0,8);
+    d.candidates = []; // Clear candidate pool after selection
+    addPoints(d.reward || 200, '接单需求（悬赏 '+ (d.reward || 200) +'）');
+    try { localStorage.setItem('luoshu_demands', JSON.stringify(demands)); } catch(e) {}
+    render();
+    showToast('success', '已选择「'+c.name+'」作为开发者，需求进入处理状态');
+  }, null);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(type, msg) {
+  var toast = document.getElementById('toast');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<span>'+(type==='success'?'✅':type==='error'?'❌':'ℹ️')+'</span> ' + msg;
+  toast.style.display = 'flex';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ toast.style.display = 'none'; }, 4000);
+}
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+// ============================================================
+// USER DROPDOWN / LOGOUT
+// ============================================================
+function toggleUserMenu(){ var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click',function(e){var w=document.getElementById('userDropdownWrap');if(w&&!w.contains(e.target))closeUserMenu();});
+function goToWorkbench(){closeUserMenu();window.location.href='workbench.html';}
+function confirmLogout(e){e.stopPropagation();closeUserMenu();document.getElementById('logoutOverlay').classList.add('on');}
+function closeLogoutConfirm(){document.getElementById('logoutOverlay').classList.remove('on');}
+function doLogout(){closeLogoutConfirm();try{sessionStorage.removeItem('luoshu_logged_in');}catch(e){}switchAuthState(false);showToast('success','已退出登录');setTimeout(function(){window.location.href='portal.html';},600);}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'info\',\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+// ============================================================
+// INIT
+// ============================================================
+var NAV_TARGETS = { docs:'doc-center.html' };
+render();
+renderNotifs();
+</script>
+
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

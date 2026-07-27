@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+a { color: #2f54eb; text-decoration: none; transition: color 0.3s; }
+a:hover { color: #597ef7; }
+input, button { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   HEADER — matches approved prototypes exactly
+   ============================================================ */
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px; line-height: 60px;
+  background: transparent;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19; display: flex; flex-direction: column; padding: 0;
+}
+[data-prefers-color="dark"] .app-header { background-color: rgba(28,30,33,0.88); border-bottom-color: rgba(255,255,255,0.08); }
+
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.header-btn-login {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  border: 1px solid #d9d9d9; cursor: pointer; white-space: nowrap;
+  background: #fff; color: rgba(0,0,0,0.88);
+  transition: all 0.2s; box-shadow: 0 2px 0 rgba(0,0,0,0.02);
+}
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+  background: #2f54eb; color: #fff;
+  transition: all 0.2s; box-shadow: 0 2px 0 rgba(47,84,235,0.1);
+}
+.header-btn-register:hover { background: #597ef7; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400;
+  border-radius: 6px; border: 1px solid transparent; cursor: pointer;
+  white-space: nowrap; transition: all 0.2s cubic-bezier(0.645,0.045,0.355,1);
+}
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #fff; color: rgba(0,0,0,0.88); border: 1px solid #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+
+/* Loading button */
+.btn.loading { pointer-events: none; opacity: 0.65; }
+.btn-spinner {
+  display: none; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: btnSpin 0.6s linear infinite;
+}
+.btn.loading .btn-spinner { display: inline-block; }
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+.login-page { display: flex; min-height: 100vh; padding-top: 60px; }
+.login-left {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 80px 60px; position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #f0f5ff 0%, #e6f0ff 40%, rgba(35,173,164,0.04) 100%);
+}
+.login-left::before {
+  content: ''; position: absolute; top: -200px; right: -100px; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(47,84,235,0.07) 0%, transparent 70%); border-radius: 50%;
+}
+.login-left::after {
+  content: ''; position: absolute; bottom: -150px; left: -80px; width: 450px; height: 450px;
+  background: radial-gradient(circle, rgba(35,173,164,0.05) 0%, transparent 70%); border-radius: 50%;
+}
+.login-hero { position: relative; z-index: 1; max-width: 560px; }
+.login-hero .lh-badge { display: inline-block; padding: 4px 14px; border-radius: 99px; background: rgba(47,84,235,0.1); color: #2f54eb; font-size: 13px; font-weight: 500; margin-bottom: 24px; }
+.login-hero h1 { font-size: 36px; font-weight: 700; color: rgba(0,0,0,0.88); line-height: 1.35; margin-bottom: 20px; }
+.login-hero h1 span { color: #2f54eb; }
+.login-hero p { font-size: 15px; color: rgba(0,0,0,0.55); line-height: 1.8; margin-bottom: 32px; }
+.login-features { display: flex; flex-direction: column; gap: 14px; }
+.login-feat { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: rgba(0,0,0,0.65); }
+.login-feat .lf-icon {
+  width: 24px; height: 24px; border-radius: 6px; background: rgba(47,84,235,0.1);
+  color: #2f54eb; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; margin-top: 1px;
+}
+.login-right {
+  width: 480px; display: flex; align-items: center; justify-content: center;
+  padding: 60px 40px; background: #fff; box-shadow: -2px 0 24px rgba(0,0,0,0.04);
+}
+.login-card { width: 100%; max-width: 380px; }
+.login-card h2 { text-align: center; font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.login-card .lc-sub { text-align: center; font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 32px; }
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 14px; color: rgba(0,0,0,0.88); margin-bottom: 6px; font-weight: 500; }
+.form-label .required { color: #ff4d4f; margin-inline-end: 4px; font-family: SimSun, sans-serif; }
+.form-input {
+  width: 100%; height: 40px; padding: 0 12px; font-size: 14px;
+  border: 1px solid #d9d9d9; border-radius: 6px; background: #fff;
+  color: rgba(0,0,0,0.88); transition: all 0.2s; outline: none;
+}
+.form-input:hover { border-color: #597ef7; }
+.form-input:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.form-input::placeholder { color: rgba(0,0,0,0.25); }
+
+/* Error state */
+.form-group.has-error .form-input {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 0 2px rgba(255,77,79,0.1) !important;
+}
+.field-error-msg {
+  display: none; align-items: center; gap: 4px;
+  font-size: 12px; color: #ff4d4f; margin-top: 4px; line-height: 1.4;
+}
+.field-error-msg.visible { display: flex; }
+
+/* Success state */
+.form-group.has-success .form-input { border-color: #52c41a; }
+.form-group.has-success .form-input:focus { box-shadow: 0 0 0 2px rgba(82,196,26,0.1); }
+
+/* Captcha */
+.captcha-row { display: flex; gap: 12px; }
+.captcha-row .form-input { flex: 1; }
+.captcha-box {
+  width: 110px; height: 40px; border-radius: 6px;
+  background: linear-gradient(135deg, #f0f5ff, #e6fffb);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: rgba(0,0,0,0.55); letter-spacing: 3px;
+  font-style: italic; user-select: none; flex-shrink: 0;
+  font-family: "SF Mono", "Consolas", monospace; font-weight: 600;
+  transition: transform 0.3s; position: relative;
+}
+.captcha-box:hover { background: linear-gradient(135deg, #d6e4ff, #b5f5ec); }
+.captcha-box.spin { animation: captchaSpin 0.4s ease-in-out; }
+@keyframes captchaSpin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+
+.login-opts { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 13px; }
+.login-opts label { display: flex; align-items: center; gap: 6px; color: rgba(0,0,0,0.65); cursor: pointer; }
+.login-opts label input[type="checkbox"] { accent-color: #2f54eb; }
+.login-submit { width: 100%; height: 44px; font-size: 15px; font-weight: 500; }
+.login-note { text-align: center; margin-top: 24px; font-size: 13px; color: rgba(0,0,0,0.45); line-height: 1.8; }
+.login-back { text-align: center; margin-top: 16px; }
+.login-back a { font-size: 13px; color: rgba(0,0,0,0.45); }
+.login-back a:hover { color: #2f54eb; }
+
+/* Shake animation for error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+.shake { animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; top: 76px; right: 24px; z-index: 2000;
+  padding: 10px 16px; border-radius: 6px; font-size: 14px;
+  display: none; align-items: center; gap: 8px;
+  animation: toastIn 0.3s cubic-bezier(0.78,0.14,0.15,0.86);
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12);
+}
+.toast.visible { display: flex; }
+.toast-success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast-error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast-info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .top-nav-menu-wrap { display: none; }
+  .header-right { padding-right: 16px; }
+  .login-page { flex-direction: column; }
+  .login-left { padding: 40px 20px; min-height: auto; }
+  .login-left h1 { font-size: 26px; }
+  .login-right { width: 100%; padding: 32px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <a class="top-nav-item" href="portal.html">首页</a>
+        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
+        <span class="top-nav-item" data-nav="data">数据管理</span>
+        <!-- <span class="top-nav-item" data-nav="dev">开发中心</span> -->
+        <span class="top-nav-item" data-nav="demand">需求市场</span>
+        <!-- <span class="top-nav-item" data-nav="appcenter">应用中心</span> -->
+        <!-- <span class="top-nav-item" data-nav="apps">智能应用</span> -->
+      </div></div>
+      <div class="header-right">
+        <a class="header-btn-login" href="portal.html">← 返回首页</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== LOGIN FORM ==================== -->
+<div class="login-page">
+  <div class="login-left">
+    <div class="login-hero">
+      <div class="lh-badge">智慧农业 · 协同创新</div>
+      <h1>北大荒<span>智慧农业</span><br>协同创新平台</h1>
+      <p>面向全重实验室及合作科研团队，提供模型全生命周期纳管、多模型协同编排与农业数据安全共享的一站式服务。</p>
+      <div class="login-features">
+        <div class="login-feat"><span class="lf-icon">🧠</span><span><strong>100+</strong> 农业算法模型统一纳管，支持在线推理与部署</span></div>
+        <div class="login-feat"><span class="lf-icon">📊</span><span><strong>5 大类</strong> 高质量农业数据集，覆盖作物长势、土壤、产量等核心场景</span></div>
+        <div class="login-feat"><span class="lf-icon">💻</span><span>在线 Notebook 开发环境，可调用平台数据 API 与 GPU 算力资源</span></div>
+        <div class="login-feat"><span class="lf-icon">🤝</span><span>需求发布与认领，打通「需求 → 协作 → 成果沉淀」的内部协同闭环</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-card" id="loginCard">
+      <h2>欢迎登录</h2>
+      <p class="lc-sub">平台采用受邀注册制，账号由管理员统一分配</p>
+
+      <!-- Username -->
+      <div class="form-group" id="fg-user">
+        <label class="form-label" for="loginUser"><span class="required">*</span>用户名</label>
+        <input class="form-input" type="text" id="loginUser" placeholder="请输入用户名" autocomplete="username">
+        <div class="field-error-msg" id="err-user">⚠️ 请输入用户名</div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" id="fg-pass">
+        <label class="form-label" for="loginPass"><span class="required">*</span>密码</label>
+        <input class="form-input" type="password" id="loginPass" placeholder="请输入密码（至少 6 位）" autocomplete="current-password">
+        <div class="field-error-msg" id="err-pass">⚠️ 密码不能少于 6 个字符</div>
+      </div>
+
+      <!-- Captcha -->
+      <div class="form-group" id="fg-captcha">
+        <label class="form-label" for="loginCaptcha"><span class="required">*</span>验证码</label>
+        <div class="captcha-row">
+          <input class="form-input" type="text" id="loginCaptcha" placeholder="请输入验证码" maxlength="4" autocomplete="off">
+          <div class="captcha-box" id="captchaBox" onclick="refreshCaptcha()" title="点击刷新验证码">A3x9</div>
+        </div>
+        <div class="field-error-msg" id="err-captcha">⚠️ 验证码错误，请重新输入</div>
+      </div>
+
+      <div class="login-opts">
+        <label><input type="checkbox" id="rememberMe" checked> 记住账号</label>
+        <a href="javascript:void(0)" onclick="toast('请联系单位管理员重置密码','info')">忘记密码？</a>
+      </div>
+
+      <button class="btn btn-primary login-submit" id="submitBtn" onclick="doLogin()">
+        <span class="btn-spinner"></span> 登 录
+      </button>
+
+      <p class="login-note">
+        还没有账号？平台采用<strong>受邀注册制</strong><br>
+        请先通过机构入驻申请，由管理员分配账号
+      </p>
+      <p class="login-back"><a href="javascript:void(0)" onclick="goToPortalAbout()">了解入驻流程 →</a></p>
+      <p class="login-back"><a href="portal.html">← 返回首页</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+
+// ===== CAPTCHA =====
+var captchaCode = 'A3x9';
+function refreshCaptcha(){
+  var cs = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var code = '';
+  for(var i=0;i<4;i++) code += cs[Math.floor(Math.random()*cs.length)];
+  captchaCode = code;
+  var el = document.getElementById('captchaBox');
+  el.classList.add('spin');
+  setTimeout(function(){ el.textContent = code; }, 200);
+  setTimeout(function(){ el.classList.remove('spin'); }, 400);
+  // Clear captcha error
+  clearError('fg-captcha');
+}
+
+// ===== FORM VALIDATION =====
+function showError(fieldId, msg) {
+  var fg = document.getElementById('fg-' + fieldId);
+  var err = document.getElementById('err-' + fieldId);
+  fg.classList.add('has-error');
+  fg.classList.remove('has-success');
+  if (err) { err.textContent = '⚠️ ' + msg; err.classList.add('visible'); }
+}
+function clearError(fgId) {
+  var fg = document.getElementById(fgId);
+  if (!fg) return;
+  fg.classList.remove('has-error', 'has-success');
+  var err = fg.querySelector('.field-error-msg');
+  if (err) err.classList.remove('visible');
+}
+
+function validateField(fieldId) {
+  var val = document.getElementById('login' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1)).value.trim();
+  if (fieldId === 'user') {
+    if (!val) { showError('user', '请输入用户名'); return false; }
+    clearError('fg-user'); return true;
+  }
+  if (fieldId === 'pass') {
+    if (!val) { showError('pass', '请输入密码'); return false; }
+    if (val.length < 6) { showError('pass', '密码不能少于 6 个字符'); return false; }
+    clearError('fg-pass'); return true;
+  }
+  if (fieldId === 'captcha') {
+    if (!val) { showError('captcha', '请输入验证码'); return false; }
+    if (val.toUpperCase() !== captchaCode.toUpperCase()) { showError('captcha', '验证码错误，请重新输入'); return false; }
+    clearError('fg-captcha'); return true;
+  }
+  return true;
+}
+
+// Blur validation
+document.getElementById('loginUser').addEventListener('blur', function(){ validateField('user'); });
+document.getElementById('loginPass').addEventListener('blur', function(){ validateField('pass'); });
+document.getElementById('loginCaptcha').addEventListener('blur', function(){ validateField('captcha'); });
+
+// Clear error on input (but don't validate — errors clear on blur)
+document.getElementById('loginUser').addEventListener('input', function(){ clearError('fg-user'); });
+document.getElementById('loginPass').addEventListener('input', function(){ clearError('fg-pass'); });
+document.getElementById('loginCaptcha').addEventListener('input', function(){ clearError('fg-captcha'); });
+
+// Enter key to submit
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.closest('.login-right')) {
+    doLogin();
+  }
+});
+
+// ===== LOGIN =====
+function doLogin(){
+  // Validate all fields
+  var valid = true;
+  if (!validateField('user')) valid = false;
+  if (!validateField('pass')) valid = false;
+  if (!validateField('captcha')) valid = false;
+
+  if (!valid) {
+    // Scroll to first error
+    var firstErr = document.querySelector('.form-group.has-error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Shake card
+    var card = document.getElementById('loginCard');
+    card.classList.add('shake');
+    setTimeout(function(){ card.classList.remove('shake'); }, 500);
+    toast('请修正表单中的错误后再提交', 'error');
+    return;
+  }
+
+  // Loading state
+  var btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="btn-spinner"></span> 登录中...';
+
+  // Simulate API call (1.2s, 90% success)
+  setTimeout(function(){
+    var success = Math.random() < 0.9;
+    if (success) {
+      // Store login state
+      try { sessionStorage.setItem('luoshu_logged_in', '1'); } catch(e) {}
+      try { if (!localStorage.getItem('luoshu_points')) localStorage.setItem('luoshu_points', '1000'); if (!localStorage.getItem('luoshu_free_calls')) localStorage.setItem('luoshu_free_calls', '3'); } catch(e) {}
+      toast('登录成功，正在跳转…', 'success');
+      var params = new URLSearchParams(window.location.search);
+      var redirect = params.get('redirect');
+      setTimeout(function(){
+        window.location.href = redirect || 'portal.html';
+      }, 800);
+    } else {
+      // Failure
+      btn.classList.remove('loading');
+      btn.innerHTML = '<span class="btn-spinner"></span> 登 录';
+      toast('用户名或密码错误，请重试', 'error');
+      // Shake + highlight password
+      showError('pass', '用户名或密码错误');
+      showError('captcha', '验证码已失效，请刷新');
+      refreshCaptcha();
+      var card = document.getElementById('loginCard');
+      card.classList.add('shake');
+      setTimeout(function(){ card.classList.remove('shake'); }, 500);
+    }
+  }, 1200);
+}
+
+// ===== NAVIGATION =====
+var LOGIN_NAV_TARGETS = {
+  marketplace: 'model-marketplace.html',
+  dev: 'image-custom-list.html',
+  demand: 'demand-hall.html',
+  appcenter: 'app-center.html',
+  data: 'dataset-management.html'
+};
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (LOGIN_NAV_TARGETS[nav]) {
+      window.location.href = LOGIN_NAV_TARGETS[nav];
+    } else {
+      toast('模块「'+e.target.textContent+'」页面尚未开发', 'info');
+    }
+  }
+});
+
+function goToPortalAbout(){
+  window.location.href = 'portal.html?open=about';
+}
+
+// ===== TOAST =====
+function toast(msg, type){
+  var el = document.getElementById('toast');
+  el.textContent = (type==='error'?'⚠ ':'') + msg;
+  el.className = 'toast visible toast-'+(type||'info');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('visible'); }, 4000);
+}
+</script>
+</body>
+</html>

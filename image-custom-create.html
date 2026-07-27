@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创建自定义镜像 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base — matches live XXXX platform
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bdh-micro-main-base-header-height: 64px;
+  --bdh-micro-main-base-top-nav-height: 64px;
+  --bdh-micro-main-pro-global-header-right-content-width: 326px;
+  --sf-img-0: url("data:image/png;base64,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");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 14px;
+  line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88);
+  background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+[data-prefers-color="dark"] body {
+  background-color: #1c1e21;
+  color: rgba(255,255,255,0.85);
+}
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* ============================================================
+   BG-LIST (decorative background image, matches live system)
+   ============================================================ */
+.bg-list {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--sf-img-0) center / cover no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   HEADER — matches live bdh-micro-main-layout-header
+   ============================================================ */
+.app-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  line-height: 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  z-index: 19;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+[data-prefers-color="dark"] .app-header {
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+
+/* top-nav-header — inner 40px bar inside 60px header */
+.top-nav-header {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.top-nav-header-main {
+  display: flex;
+  align-items: center;
+  padding-inline-start: 16px;
+  margin: 12px 0;
+  height: 40px;
+}
+
+.top-nav-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-link img {
+  height: 32px !important;
+  width: auto;
+}
+
+.system-name-title {
+  font-weight: 600;
+  font-size: 20px;
+  color: rgba(0,0,0,0.88);
+  white-space: nowrap;
+}
+
+[data-prefers-color="dark"] .system-name-title {
+  color: rgba(255,255,255,0.85);
+}
+
+/* top-nav-menu — horizontal menu bar */
+.top-nav-menu-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  overflow: hidden;
+}
+
+.top-nav-menu {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: 1px solid rgba(5,5,5,0.06);
+  background-color: transparent;
+  gap: 8px;
+}
+
+.top-nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  margin: 0 0;
+  font-size: 14px;
+  color: rgba(0,0,0,0.65);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+}
+
+.top-nav-item:hover {
+  color: rgb(47,84,235);
+}
+
+.top-nav-item.active {
+  color: rgb(47,84,235) !important;
+  font-weight: 600;
+  background-color: transparent !important;
+}
+
+.top-nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 10px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat;
+}
+
+[data-prefers-color="dark"] .top-nav-item {
+  color: rgba(255,255,255,0.65);
+}
+
+[data-prefers-color="dark"] .top-nav-item.active {
+  color: rgb(47,84,235) !important;
+  border-bottom-color: rgb(47,84,235);
+}
+
+/* header right */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 50px;
+  flex-shrink: 0;
+}
+
+.header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  color: rgba(0,0,0,0.65);
+  font-size: 16px;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.header-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.88);
+}
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(47,84,235,0.2);
+  color: rgb(47,84,235);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   SIDEBAR — matches live bdh-micro-main-layout-sider
+   ============================================================ */
+.app-body {
+  display: flex;
+  padding-top: 60px;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  bottom: 0;
+  width: 200px;
+  background: transparent;
+  z-index: 10;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-inner {
+  padding: 16px 8px;
+}
+
+/* inline menu — matches bdh-micro-main-menu-inline */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu-group {
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+  padding: 8px 24px 4px;
+  text-transform: uppercase;
+}
+
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  line-height: 40px;
+  padding-inline: 16px;
+  margin: 0 16px 4px;
+  width: calc(100% - 32px);
+  border-radius: 4px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.65);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-menu-item:hover {
+  background: rgba(0,0,0,0.03);
+  color: rgba(0,0,0,0.88);
+}
+
+.sidebar-menu-item.active {
+  color: rgb(47,84,235);
+  background: rgba(47,84,235,0.2);
+  font-weight: 600;
+  border-radius: 4px !important;
+}
+
+.sidebar-menu-icon {
+  font-size: 16px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+.content-area {
+  flex: 1;
+  margin-left: 0;
+  padding: 24px 40px;
+  min-height: calc(100vh - 60px);
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   PAGE CONTENT — ProCard + white card nesting
+   ============================================================ */
+.page-procard {
+  background: transparent;
+}
+
+.page-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 6px -1px rgba(0,0,0,0.02), 0 2px 4px 0 rgba(0,0,0,0.02);
+  border: 1px solid rgba(5,5,5,0.06);
+}
+
+[data-prefers-color="dark"] .page-card {
+  background: #1f1f1f;
+  border-color: #303030;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16), 0 1px 6px -1px rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.09);
+}
+
+/* Card header with accent bar — matches live ant-card-head */
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+[data-prefers-color="dark"] .card-header {
+  border-bottom-color: #303030;
+}
+
+.card-accent-bar {
+  width: 2px; height: 14px;
+  background-color: rgb(47,84,235);
+  border-radius: 1px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.88);
+  flex: 1;
+}
+
+[data-prefers-color="dark"] .card-title {
+  color: rgba(255,255,255,0.85);
+}
+
+.card-body {
+  padding: 24px;
+}
+
+/* ============================================================
+   FORM STYLES
+   ============================================================ */
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.88);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px; height: 14px;
+  background: rgb(47,84,235);
+  border-radius: 2px;
+}
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 24px; }
+
+.form-item {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.88);
+}
+
+[data-prefers-color="dark"] .form-label {
+  color: rgba(255,255,255,0.85);
+}
+
+.form-label .required {
+  color: #ff4d4f;
+  margin-right: 4px;
+  font-family: SimSun, sans-serif;
+}
+
+.form-label .optional {
+  color: rgba(0,0,0,0.45);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  height: 32px;
+  padding: 4px 11px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.88);
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  outline: none;
+}
+
+.form-input::placeholder { color: rgba(0,0,0,0.25); }
+.form-input:hover, .form-select:hover { border-color: #597ef7; }
+.form-input:focus, .form-select:focus {
+  border-color: #2f54eb;
+  box-shadow: 0 0 0 2px rgba(47,84,235,0.1);
+}
+
+[data-prefers-color="dark"] .form-input,
+[data-prefers-color="dark"] .form-select {
+  background: #1f1f1f;
+  border-color: #434343;
+  color: rgba(255,255,255,0.85);
+}
+
+.form-select-wrap { position: relative; }
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+  cursor: pointer;
+}
+.form-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 11px; top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid rgba(0,0,0,0.45);
+  pointer-events: none;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 11px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.88);
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  resize: vertical;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  outline: none;
+  font-family: inherit;
+  line-height: 1.5715;
+}
+.form-textarea:hover { border-color: #597ef7; }
+.form-textarea:focus {
+  border-color: #2f54eb;
+  box-shadow: 0 0 0 2px rgba(47,84,235,0.1);
+}
+.form-textarea::placeholder { color: rgba(0,0,0,0.25); }
+
+[data-prefers-color="dark"] .form-textarea {
+  background: #1f1f1f;
+  border-color: #434343;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Toggle Switch */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px; height: 22px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  flex-shrink: 0;
+}
+.toggle-switch.on { background: #2f54eb; }
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { left: 24px; }
+.toggle-label {
+  font-size: 14px;
+  color: rgba(0,0,0,0.65);
+}
+
+/* Version */
+.version-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+.version-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.version-sep {
+  line-height: 32px;
+  color: rgba(0,0,0,0.65);
+  font-weight: 500;
+  padding: 0 4px;
+}
+.version-input {
+  width: 80px;
+  text-align: center;
+}
+.version-label-mini {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  text-align: center;
+  margin-top: 3px;
+}
+
+/* Address Preview */
+.addr-preview {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #f0f5ff;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, monospace;
+  color: #2f54eb;
+  word-break: break-all;
+  display: flex;
+  gap: 8px;
+}
+[data-prefers-color="dark"] .addr-preview {
+  background: rgba(47,84,235,0.15);
+}
+.addr-preview .preview-label {
+  font-family: inherit;
+  color: rgba(0,0,0,0.45);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   PRD FIELD DESCRIPTION PANEL (toggleable)
+   Default: hidden. Toggle via "字段说明" button.
+   ============================================================ */
+.prd-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 8px;
+  font-size: 13px;
+  color: rgba(0,0,0,0.45);
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  margin-left: 8px;
+  font-weight: 400;
+}
+.prd-toggle-btn:hover {
+  color: #2f54eb;
+  background: rgba(47,84,235,0.06);
+}
+.prd-toggle-btn.active {
+  color: #2f54eb;
+  background: rgba(47,84,235,0.1);
+}
+.prd-toggle-icon {
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+.prd-toggle-btn.active .prd-toggle-icon {
+  transform: rotate(180deg);
+}
+
+[data-prefers-color="dark"] .prd-toggle-btn {
+  color: rgba(255,255,255,0.45);
+}
+[data-prefers-color="dark"] .prd-toggle-btn:hover,
+[data-prefers-color="dark"] .prd-toggle-btn.active {
+  color: #597ef7;
+  background: rgba(47,84,235,0.15);
+}
+
+/* PRD description panel — hidden by default */
+.prd-panel {
+  display: none;
+  margin-top: 6px;
+  padding: 10px 14px;
+  background: #fafbff;
+  border-left: 3px solid #2f54eb;
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+  color: rgba(0,0,0,0.65);
+  line-height: 1.7;
+}
+.prd-panel.visible { display: block; }
+
+.prd-panel .prd-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2f54eb;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.prd-panel code {
+  background: rgba(47,84,235,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: #2f54eb;
+}
+
+[data-prefers-color="dark"] .prd-panel {
+  background: rgba(47,84,235,0.06);
+  border-left-color: #597ef7;
+  color: rgba(255,255,255,0.65);
+}
+[data-prefers-color="dark"] .prd-panel .prd-label {
+  color: #597ef7;
+}
+[data-prefers-color="dark"] .prd-panel code {
+  background: rgba(47,84,235,0.15);
+  color: #91a9ff;
+}
+
+/* Format hint — always-visible field-level format guide, NOT a PRD panel */
+.field-format-hint {
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+[data-prefers-color="dark"] .field-format-hint {
+  color: rgba(255,255,255,0.45);
+}
+
+/* ============================================================
+   FORM VALIDATION ERROR STATES
+   ============================================================ */
+.form-input.has-error,
+.form-select.has-error,
+.form-textarea.has-error {
+  border-color: #ff4d4f !important;
+}
+.form-input.has-error:focus,
+.form-select.has-error:focus,
+.form-textarea.has-error:focus {
+  box-shadow: 0 0 0 2px rgba(255,77,79,0.1) !important;
+}
+
+.field-error-msg {
+  display: none;
+  align-items: center; gap: 4px;
+  font-size: 12px; color: #ff4d4f;
+  margin-top: 4px; line-height: 1.4;
+}
+.field-error-msg.visible { display: flex; }
+
+[data-prefers-color="dark"] .field-error-msg {
+  color: #ff7875;
+}
+
+/* ============================================================
+   LOADING STATE on submit button
+   ============================================================ */
+.btn.loading {
+  pointer-events: none; opacity: 0.65;
+}
+.btn .btn-spinner {
+  display: none; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btnSpin 0.6s linear infinite;
+}
+.btn.loading .btn-spinner { display: inline-block; }
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   INTERACTION GUIDE — floating trigger + overlay drawer
+   ============================================================ */
+.guide-trigger {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  display: flex; align-items: center; gap: 6px;
+  height: 40px; padding: 0 16px;
+  background: #2f54eb; color: #fff;
+  border-radius: 20px; font-size: 14px; font-weight: 500;
+  cursor: pointer; user-select: none;
+  box-shadow: 0 4px 12px rgba(47,84,235,0.35);
+  transition: all 0.2s;
+}
+.guide-trigger:hover { background: #597ef7; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(47,84,235,0.4); }
+
+.guide-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 2000;
+  align-items: center; justify-content: center;
+}
+.guide-overlay.visible { display: flex; }
+
+.guide-drawer {
+  background: #ffffff; border-radius: 12px;
+  width: 680px; max-width: 90vw; max-height: 80vh;
+  overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+[data-prefers-color="dark"] .guide-drawer { background: #1f1f1f; }
+
+.guide-drawer-header {
+  display: flex; align-items: center; padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0; position: sticky; top: 0;
+  background: #ffffff; z-index: 1; border-radius: 12px 12px 0 0;
+}
+[data-prefers-color="dark"] .guide-drawer-header { background: #1f1f1f; border-bottom-color: #303030; }
+
+.guide-drawer-title { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .guide-drawer-title { color: rgba(255,255,255,0.85); }
+
+.guide-drawer-close { font-size: 18px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.guide-drawer-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+
+.guide-drawer-body { padding: 24px; }
+
+.guide-section { margin-bottom: 24px; }
+.guide-section-title { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .guide-section-title { color: rgba(255,255,255,0.85); }
+
+.guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.guide-table th, .guide-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+.guide-table th { background: rgba(0,0,0,0.02); font-weight: 600; color: rgba(0,0,0,0.65); white-space: nowrap; }
+.guide-table td { color: rgba(0,0,0,0.65); line-height: 1.5; }
+.guide-table td:first-child { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .guide-table th { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td { border-bottom-color: #303030; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .guide-table td:first-child { color: rgba(255,255,255,0.85); }
+
+.guide-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.guide-tag.do { background: #d9f7be; color: #52c41a; }
+.guide-tag.error { background: #fff2f0; color: #ff4d4f; }
+.guide-tag.modal { background: #d6e4ff; color: #2f54eb; }
+
+/* ============================================================
+   MODAL / DIALOG (confirmation dialogs)
+   ============================================================ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+
+.modal-box {
+  background: #ffffff; border-radius: 8px;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+  width: 420px; max-width: 90vw; overflow: hidden;
+}
+[data-prefers-color="dark"] .modal-box { background: #1f1f1f; }
+
+.modal-header {
+  display: flex; align-items: center; padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .modal-header { border-bottom-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close {
+  font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer;
+  padding: 4px; border-radius: 4px; transition: all 0.2s;
+}
+.modal-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+
+.modal-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .modal-body { color: rgba(255,255,255,0.65); }
+
+.modal-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 12px 24px; border-top: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .modal-footer { border-top-color: #303030; }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST / NOTIFICATION
+   ============================================================ */
+.toast {
+  position: fixed; top: 76px; right: 24px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 6px;
+  font-size: 14px; z-index: 2000;
+  box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12);
+  animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================================
+   BUTTONS — matches ant-btn
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 4px 15px;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.btn:focus-visible {
+  outline: 4px solid #adc6ff;
+  outline-offset: 1px;
+}
+
+.btn-primary {
+  background: #2f54eb;
+  color: #fff;
+  border-color: #2f54eb;
+  box-shadow: 0 2px 0 rgba(47,84,235,0.1);
+}
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+
+.btn-default {
+  background: #ffffff;
+  color: rgba(0,0,0,0.88);
+  border-color: #d9d9d9;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.02);
+}
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+
+[data-prefers-color="dark"] .btn-default {
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  border-color: #434343;
+}
+
+.btn-text {
+  background: transparent;
+  color: rgba(0,0,0,0.88);
+  border-color: transparent;
+}
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+.btn-text:active { background: rgba(0,0,0,0.15); }
+
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .btn-text:hover { background: rgba(255,255,255,0.08); }
+
+.btn-lg { height: 40px; padding: 6px 23px; }
+
+/* ============================================================
+   RADIO BUTTON GROUP (solid)
+   ============================================================ */
+.radio-solid-group {
+  display: inline-flex;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #d9d9d9;
+}
+[data-prefers-color="dark"] .radio-solid-group { border-color: #434343; }
+
+.radio-solid-item {
+  height: 32px;
+  padding: 0 16px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.65);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid #d9d9d9;
+}
+.radio-solid-item:last-child { border-right: none; }
+.radio-solid-item:hover { color: #2f54eb; }
+.radio-solid-item.active {
+  background: #2f54eb;
+  color: #fff;
+  border-color: #2f54eb;
+}
+
+[data-prefers-color="dark"] .radio-solid-item {
+  background: transparent;
+  color: rgba(255,255,255,0.65);
+  border-color: #434343;
+}
+
+/* ============================================================
+   TWO-COLUMN CREATE BODY
+   ============================================================ */
+.create-body {
+  display: flex;
+  gap: 0;
+}
+
+.create-left {
+  width: 460px;
+  flex-shrink: 0;
+  border-right: 1px solid #f0f0f0;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+[data-prefers-color="dark"] .create-left {
+  border-right-color: #303030;
+}
+
+.create-right {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ============================================================
+   DOCKERFILE FILE UPLOAD ROW
+   ============================================================ */
+.df-upload-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; margin-bottom: 12px;
+  background: rgba(0,0,0,0.02); border-radius: 6px;
+  border: 1px solid #f0f0f0; flex-wrap: wrap;
+}
+[data-prefers-color="dark"] .df-upload-row {
+  background: rgba(255,255,255,0.02); border-color: #303030;
+}
+
+.df-upload-label { font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.65); white-space: nowrap; }
+[data-prefers-color="dark"] .df-upload-label { color: rgba(255,255,255,0.65); }
+
+.df-upload-hint { font-size: 12px; color: rgba(0,0,0,0.45); }
+[data-prefers-color="dark"] .df-upload-hint { color: rgba(255,255,255,0.45); }
+
+.df-upload-name {
+  font-size: 12px; color: #2f54eb; font-weight: 500;
+  max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.df-upload-remove {
+  font-size: 13px; color: rgba(0,0,0,0.45); cursor: pointer;
+  padding: 2px 4px; border-radius: 3px; transition: all 0.2s;
+}
+.df-upload-remove:hover { color: #ff4d4f; background: #fff2f0; }
+
+/* ============================================================
+   LOCKED / READONLY FIELD STYLE (edit mode)
+   ============================================================ */
+.form-input[readonly],
+.form-select[disabled] {
+  background: #f5f5f5 !important; color: rgba(0,0,0,0.45) !important;
+  cursor: not-allowed !important; pointer-events: none !important;
+  border-color: #f0f0f0 !important;
+}
+[data-prefers-color="dark"] .form-input[readonly],
+[data-prefers-color="dark"] .form-select[disabled] {
+  background: #2a2a2a !important; color: rgba(255,255,255,0.45) !important;
+  border-color: #303030 !important;
+}
+
+.toggle-switch.locked {
+  pointer-events: none !important; opacity: 0.5;
+}
+
+.edit-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; background: #fffbe6; border: 1px solid #ffe58f;
+  border-radius: 4px; font-size: 12px; color: #d48806; margin-left: 8px;
+}
+[data-prefers-color="dark"] .edit-badge {
+  background: rgba(250,173,20,0.1); border-color: rgba(250,173,20,0.3); color: #ffc53d;
+}
+
+/* ============================================================
+   CODE EDITOR (Dockerfile)
+   ============================================================ */
+.code-editor-wrap {
+  display: flex;
+  flex: 1;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1e1e2e;
+  min-height: 350px;
+}
+
+[data-prefers-color="dark"] .code-editor-wrap {
+  border-color: #434343;
+}
+
+.line-numbers {
+  width: 48px;
+  flex-shrink: 0;
+  background: #252535;
+  padding: 12px 0;
+  user-select: none;
+  overflow: hidden;
+  text-align: right;
+}
+
+.line-num {
+  height: 22px;
+  line-height: 22px;
+  padding-right: 10px;
+  font-size: 12px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace;
+  color: #636380;
+}
+
+.code-area {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, "Courier New", monospace;
+  line-height: 22px;
+  color: #cdd6f4;
+  width: 100%;
+  tab-size: 2;
+}
+
+.code-area::placeholder { color: #45475a; }
+
+/* ============================================================
+   UPLOAD ZONE
+   ============================================================ */
+.upload-zone {
+  border: 1.5px dashed #d9d9d9;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  background: rgba(0,0,0,0.01);
+}
+.upload-zone:hover {
+  border-color: #2f54eb;
+  background: #f0f5ff;
+}
+
+[data-prefers-color="dark"] .upload-zone {
+  border-color: #434343;
+  background: rgba(255,255,255,0.02);
+}
+[data-prefers-color="dark"] .upload-zone:hover {
+  background: rgba(47,84,235,0.1);
+}
+
+.upload-icon { font-size: 40px; color: rgba(0,0,0,0.45); margin-bottom: 12px; }
+.upload-text { font-size: 14px; color: rgba(0,0,0,0.65); margin-bottom: 4px; }
+.upload-hint { font-size: 12px; color: rgba(0,0,0,0.45); line-height: 1.8; }
+.upload-hint code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 11px; color: #c7254e; }
+
+/* Upload file card */
+.upload-file-card {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,0.01);
+  margin-top: 12px;
+}
+.upload-file-card.done { border-color: #b7eb8f; background: #f6ffed; }
+.upload-file-card.failed { border-color: #ffccc7; background: #fff2f0; }
+
+[data-prefers-color="dark"] .upload-file-card { border-color: #434343; background: rgba(255,255,255,0.02); }
+
+.upload-file-row { display: flex; align-items: center; gap: 8px; }
+.upload-file-name {
+  font-size: 13px; font-weight: 500;
+  color: rgba(0,0,0,0.88);
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+[data-prefers-color="dark"] .upload-file-name { color: rgba(255,255,255,0.85); }
+
+.upload-file-size { font-size: 12px; color: rgba(0,0,0,0.45); white-space: nowrap; }
+.upload-file-remove {
+  color: rgba(0,0,0,0.45); font-size: 14px; cursor: pointer;
+  padding: 2px; border-radius: 4px; transition: all 0.2s; flex-shrink: 0;
+}
+.upload-file-remove:hover { color: #ff4d4f; background: #fff2f0; }
+
+.upload-progress { margin-top: 8px; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+.upload-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #2f54eb, #597ef7);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+.upload-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent, transparent 8px,
+    rgba(255,255,255,0.25) 8px, rgba(255,255,255,0.25) 16px
+  );
+  animation: progressStripe 0.8s linear infinite;
+}
+@keyframes progressStripe {
+  0% { background-position: 0 0; }
+  100% { background-position: 22px 0; }
+}
+
+/* ============================================================
+   GUIDE BOX
+   ============================================================ */
+.guide-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+[data-prefers-color="dark"] .guide-box {
+  background: rgba(255,255,255,0.03);
+  border-color: #303030;
+}
+
+.guide-step { display: flex; gap: 14px; align-items: flex-start; }
+.guide-step-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #2f54eb;
+  color: #fff;
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.guide-step-title { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
+.guide-step-desc { font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+.guide-step-desc code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #c7254e; }
+
+.guide-note {
+  padding: 10px 14px;
+  background: #f0f5ff;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #2f54eb;
+  display: flex; align-items: flex-start; gap: 6px; line-height: 1.5;
+}
+[data-prefers-color="dark"] .guide-note { background: rgba(47,84,235,0.15); }
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 14px; color: rgba(0,0,0,0.45);
+  margin-bottom: 16px;
+}
+.breadcrumb a { color: rgba(0,0,0,0.45); transition: color 0.2s; }
+.breadcrumb a:hover { color: #2f54eb; }
+.breadcrumb .sep { margin: 0 4px; }
+.breadcrumb .current { color: rgba(0,0,0,0.88); font-weight: 500; }
+
+[data-prefers-color="dark"] .breadcrumb a { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+/* Form Actions */
+.form-actions {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+[data-prefers-color="dark"] .form-actions { border-top-color: #303030; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .create-body { flex-direction: column; }
+  .create-left { width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; }
+}
+@media (max-width: 768px) {
+  .content-area { margin-left: 0; padding: 16px; }
+  .sidebar { display: none; }
+  .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative BG Image (matches live system) -->
+<div class="bg-list"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <!-- Logo -->
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs>
+              <linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+
+      <!-- Top Nav Menu -->
+      <div class="top-nav-menu-wrap">
+        <div class="top-nav-menu" id="topNavMenu">
+          <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
+          <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
+          <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
+          <!-- <span class="top-nav-item active" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+          <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
+        <!-- <span class="top-nav-item" onclick="location.href='app-center.html'">应用中心</span> -->
+        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
+          <span class="top-nav-item" data-nav="docs">文档中心</span>
+        </div>
+      </div>
+
+      <!-- Header Right -->
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="搜索">
+            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg>
+          </button>
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
+            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <!-- User dropdown -->
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">A</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">A研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="app-body">
+
+  <!-- Content (no sidebar — page accessed from workbench) -->
+  <main class="content-area">
+
+    <!-- Main Card -->
+    <div class="page-procard">
+      <div class="page-card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title">创建自定义镜像</span>
+          <button class="btn btn-sm btn-default" onclick="location.href='workbench.html'" style="margin-left:auto;margin-right:8px;">🏠 返回工作台</button>
+        </div>
+
+        <div class="card-body" style="padding:0;gap:0;display:flex;flex-direction:column;">
+
+          <!-- Two-Column Body -->
+          <div class="create-body">
+
+            <!-- LEFT: Form -->
+            <div class="create-left">
+              <!-- Mode Toggle — first decision, before basic info -->
+              <div class="section-title">创建方式</div>
+              <div class="radio-solid-group" id="modeToggle" style="margin-bottom:24px;">
+                <div class="radio-solid-item active" data-mode="dockerfile" onclick="switchMode('dockerfile')">
+                  📄 Dockerfile 在线编辑
+                </div>
+                <div class="radio-solid-item" data-mode="tarball" onclick="switchMode('tarball')">
+                  📦 上传 .tar.gz 压缩包
+                </div>
+              </div>
+
+              <div class="section-title">
+                基础信息
+                <span class="prd-toggle-btn" id="prdToggle" onclick="togglePRD()" title="查看字段说明">
+                  <span class="prd-toggle-icon">📋</span> 字段说明
+                </span>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label"><span class="required">*</span> 镜像名称</label>
+                <input class="form-input" type="text" id="imageName" placeholder="请输入镜像名称" maxlength="20" oninput="updateAddr()" onblur="validateField('imageName')">
+                <div class="field-error-msg" id="err-imageName"><span>⚠️</span><span></span></div>
+                <div class="prd-panel" data-prd="imageName">
+                  <div class="prd-label">镜像名称</div>
+                  镜像名称是镜像在平台中的唯一标识，创建后不可修改。命名需使用小写字母、数字及连字符 <code>-</code> 组成，长度限制 20 个字符。建议使用能直观反映镜像用途的简短名称，如 <code>pytorch-train</code>、<code>model-infer</code>。名称不可与平台已有镜像重复。
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-item">
+                  <label class="form-label"><span class="required">*</span> 镜像分类</label>
+                  <div class="form-select-wrap">
+                    <select class="form-select" id="category" onchange="updateAddr();validateField('category')" onblur="validateField('category')">
+                      <option value="">请选择镜像分类</option>
+                      <option value="sensing">sensing（感知）</option>
+                      <option value="decision">decision（决策）</option>
+                      <option value="simulation">simulation（仿真）</option>
+                      <option value="llm">llm（大模型）</option>
+                    </select>
+                  </div>
+                  <div class="field-error-msg" id="err-category"><span>⚠️</span><span></span></div>
+                  <div class="prd-panel" data-prd="category">
+                    <div class="prd-label">镜像分类</div>
+                    镜像分类用于将镜像归入不同的业务领域，方便在镜像市场中按分类检索和筛选。请根据镜像的实际 AI 能力类型选择最匹配的分类：<b>sensing</b>（感知类，如图像识别、语音识别）、<b>decision</b>（决策类，如路径规划、策略优化）、<b>simulation</b>（仿真类，如环境模拟、数据仿真）、<b>llm</b>（大模型类，如语言模型、多模态模型）。
+                  </div>
+                </div>
+                <div class="form-item">
+                  <label class="form-label"><span class="required">*</span> 功能名称</label>
+                  <input class="form-input" type="text" id="funcName" placeholder="如：object-detector" maxlength="30" oninput="updateAddr()" onblur="validateField('funcName')">
+                  <div class="field-format-hint">小写字母开头，支持字母、数字、短横线（-），语义化描述算子功能</div>
+                  <div class="field-error-msg" id="err-funcName"><span>⚠️</span><span></span></div>
+                  <div class="prd-panel" data-prd="funcName">
+                    <div class="prd-label">功能标识</div>
+                    功能标识用于描述该镜像所提供的核心 AI 能力，将作为标签展示在镜像市场卡片中，帮助使用者快速理解镜像用途。命名规则：小写字母、数字及连字符 <code>-</code>，长度限制 30 字符。建议使用"动词-对象"的命名方式，例如：<code>object-detector</code>（目标检测）、<code>text-classifier</code>（文本分类）、<code>image-segmenter</code>（图像分割）、<code>speech-recognizer</code>（语音识别）。
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">是否需要 GPU</label>
+                <div class="toggle-row">
+                  <div class="toggle-switch" id="gpuToggle" onclick="toggleGPU()"></div>
+                  <span class="toggle-label" id="gpuLabel">不需要 GPU 资源</span>
+                </div>
+                <div class="prd-panel" data-prd="gpu">
+                  <div class="prd-label">GPU 资源说明</div>
+                  此选项作为镜像的环境标签，用于标识该镜像是否需要 GPU 资源。开启后镜像标记为「需要 GPU」，在申请资源时系统将根据此环境标签判断是否需要申请 GPU 算力资源（而非直接分配 GPU）。默认关闭，请根据镜像实际运行需求设置。
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label"><span class="required">*</span> 版本号</label>
+                <div class="version-group">
+                  <div class="version-item">
+                    <input class="form-input version-input" type="text" id="verMajor" value="1" maxlength="10" placeholder="1" oninput="updateAddr()" onblur="validateField('version')">
+                    <span class="version-label-mini">主版本</span>
+                  </div>
+                  <span class="version-sep">.</span>
+                  <div class="version-item">
+                    <input class="form-input version-input" type="text" id="verMinor" value="0" maxlength="10" placeholder="0" oninput="updateAddr()" onblur="validateField('version')">
+                    <span class="version-label-mini">次版本</span>
+                  </div>
+                  <span class="version-sep">.</span>
+                  <div class="version-item">
+                    <input class="form-input version-input" type="text" id="verPatch" value="0" maxlength="10" placeholder="0" oninput="updateAddr()" onblur="validateField('version')">
+                    <span class="version-label-mini">修订版本</span>
+                  </div>
+                </div>
+                <div class="field-error-msg" id="err-version"><span>⚠️</span><span></span></div>
+                <div class="prd-panel" data-prd="version">
+                  <div class="prd-label">版本号命名规范</div>
+                  版本号遵循语义化版本规范（<b>Semantic Versioning</b>）。<b>主版本号</b>（Major）：当进行不兼容的 API 修改时递增；<b>次版本号</b>（Minor）：当新增向下兼容的功能名称时递增；<b>修订版本号</b>（Patch）：当进行向下兼容的问题修复时递增。每段支持字母、数字组合（如 <code>1</code>、<code>0</code>、<code>3-beta</code>），生成的完整版本格式为 <code>Major.Minor.Patch</code>，例如 <code>1.0.0</code>。
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">镜像地址预览</label>
+                <div class="addr-preview">
+                  <span class="preview-label">地址：</span>
+                  <span id="addrText">registry.example.com/&lt;category&gt;/&lt;name&gt;:1.0.0</span>
+                </div>
+                <div class="prd-panel" data-prd="address">
+                  <div class="prd-label">镜像地址规则</div>
+                  镜像地址由系统根据已填写的<b>镜像分类</b>、<b>镜像名称</b>和<b>版本号</b>自动拼接生成，格式为 <code>registry.example.com/&lt;分类&gt;/&lt;名称&gt;:&lt;版本&gt;</code>。此地址为只读预览，不可手动编辑。镜像创建成功后，其他用户可通过该地址从镜像仓库中拉取使用。
+                </div>
+              </div>
+
+              <!-- Dockerfile text file upload (styled like tarball upload zone) -->
+              <div class="form-item" id="dfUploadFormItem">
+                <label class="form-label">上传 Dockerfile <span class="optional">（可选）</span></label>
+                <input type="file" id="dfFileInput" accept=".dockerfile,.txt,.text,Dockerfile,*.Dockerfile" style="display:none" onchange="handleDfFile(event)">
+                <div class="upload-zone" id="dfUploadZone" onclick="document.getElementById('dfFileInput').click()" style="padding:28px;">
+                  <div class="upload-icon">📄</div>
+                  <div class="upload-text">点击上传 Dockerfile 文本文件</div>
+                  <div class="upload-hint">
+                    <div>上传后内容填入右侧编辑区，仍可手动修改（≤10M）</div>
+                  </div>
+                </div>
+                <!-- File card after upload -->
+                <div class="upload-file-card" id="dfFileCard" style="display:none;">
+                  <div class="upload-file-row">
+                    <span style="font-size:18px;">📄</span>
+                    <span class="upload-file-name" id="dfFileName">--</span>
+                    <span class="upload-file-remove" onclick="clearDfFile()" title="清除文件">✕</span>
+                  </div>
+                  <div id="dfUploadDone" style="display:none;margin-top:8px;">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#52c41a;">
+                      <span>✓</span><span>上传完成 — 内容已填入右侧编辑区</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="prd-panel" data-prd="dfUpload">
+                  <div class="prd-label">Dockerfile 文件上传</div>
+                  如需从已有项目导入 Dockerfile，可直接上传 <code>.dockerfile</code> 或 <code>.txt</code> 格式的文本文件（≤10MB）。上传后文件内容将自动填入右侧编辑区，您仍可对内容进行手动修改和调整。
+                </div>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">描述 <span class="optional">（可选）</span></label>
+                <textarea class="form-textarea" id="desc" placeholder="请输入镜像描述，如基础环境、依赖库、适用场景等" maxlength="500"></textarea>
+                <div class="prd-panel" data-prd="desc">
+                  <div class="prd-label">镜像描述</div>
+                  描述信息用于补充说明镜像的详细情况，帮助其他用户了解该镜像的用途与使用方式。建议填写以下内容：<b>基础环境</b>（如操作系统、CUDA 版本）、<b>核心依赖库</b>及版本号、<b>适用业务场景</b>、<b>特殊配置说明</b>（如环境变量、挂载路径）。选填，限制 500 字符。
+                </div>
+              </div>
+
+              <!-- Points cost fields -->
+              <div class="section-title" style="margin-top:8px;">
+                🪙 积分消耗设置
+                <span class="prd-toggle-btn" id="prdTogglePt" onclick="togglePRD()" title="查看字段说明">
+                  <span class="prd-toggle-icon">📋</span> 字段说明
+                </span>
+              </div>
+              <div class="form-item">
+                <label class="form-label">Notebook 使用消耗</label>
+                <input class="form-input" type="number" id="nbCost" placeholder="其他用户使用 Notebook 调用此镜像消耗的积分" min="0" max="200" value="50" style="width:200px">
+                <div class="prd-panel" data-prd="nbCost">
+                  <div class="prd-label">Notebook 积分消耗</div>
+                  设置其他用户在模型广场中使用「📓 Notebook」功能调用此镜像时需要消耗的积分数。范围 0-200，设为 0 表示免费。建议根据镜像计算资源消耗（GPU/CPU/内存）合理定价。
+                </div>
+              </div>
+              <div class="form-item">
+                <label class="form-label">API 调用消耗</label>
+                <input class="form-input" type="number" id="apiCost" placeholder="其他用户通过 API 调用此镜像消耗的积分" min="0" max="200" value="30" style="width:200px">
+                <div class="prd-panel" data-prd="apiCost">
+                  <div class="prd-label">API 积分消耗</div>
+                  设置其他用户在模型广场中使用「📡 API调用」功能调用此镜像时需要消耗的积分数。范围 0-200，设为 0 表示免费。通常 API 调用消耗低于 Notebook（不含交互式环境开销）。
+                </div>
+              </div>
+
+              <!-- Tarball Upload (hidden by default) -->
+              <div id="tarballSection" style="display:none;">
+                <div class="section-title" style="margin-top:8px;">
+                  文件上传
+                  <span class="prd-toggle-btn" id="prdToggle2" onclick="togglePRD()" title="查看字段说明">
+                    <span class="prd-toggle-icon">📋</span> 字段说明
+                  </span>
+                </div>
+                <div class="form-item">
+                  <!-- Upload Zone (before file selected) -->
+                  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">点击上传或拖拽镜像压缩包到此处</div>
+                    <div class="upload-hint">
+                      <div>支持格式：<code>.tar.gz</code>、<code>.tgz</code></div>
+                      <div>单个文件不超过 10GB，文件名支持中文、字母、数字及常用特殊字符</div>
+                    </div>
+                  </div>
+                  <input type="file" id="fileInput" accept=".tar.gz,.tgz" style="display:none" onchange="handleFile(event)">
+                  <div class="prd-panel" data-prd="upload">
+                    <div class="prd-label">文件上传说明</div>
+                    上传的压缩包需为完整的 Docker 镜像导出文件。在本地通过 <code>docker save &lt;image&gt; | gzip &gt; image.tar.gz</code> 命令生成压缩包后上传。支持 <code>.tar.gz</code> 和 <code>.tgz</code> 格式，单个文件不超过 10GB。上传过程中会展示实时进度，上传完成后镜像将自动进入安全扫描流程，构建状态可在「镜像管理」页面查看。
+                  </div>
+
+                  <!-- Upload File Card (shown after file selected) -->
+                  <div class="upload-file-card" id="fileCard" style="display:none;">
+                    <div class="upload-file-row">
+                      <span style="font-size:18px;">📦</span>
+                      <span class="upload-file-name" id="fileName">--</span>
+                      <span class="upload-file-size" id="fileSize">--</span>
+                      <span class="upload-file-remove" onclick="removeFile()" title="移除文件">✕</span>
+                    </div>
+
+                    <!-- Progress Bar Area -->
+                    <div id="progressArea" style="display:none;margin-top:10px;">
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-size:12px;color:rgba(0,0,0,0.65);" id="progressLabel">上传中...</span>
+                        <span style="font-size:12px;color:#2f54eb;font-weight:600;" id="progressPercent">0%</span>
+                      </div>
+                      <div class="upload-progress">
+                        <div class="upload-progress-bar" id="progressFill" style="width:0%;"></div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+                        <span style="font-size:11px;color:rgba(0,0,0,0.45);" id="progressSpeed">--</span>
+                        <span style="font-size:11px;color:rgba(0,0,0,0.45);cursor:pointer;" id="cancelUpload" onclick="cancelUpload()">取消上传</span>
+                      </div>
+                    </div>
+
+                    <!-- Upload Complete -->
+                    <div id="uploadDone" style="display:none;margin-top:10px;">
+                      <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#52c41a;">
+                        <span>✓</span>
+                        <span>上传完成</span>
+                      </div>
+                      <div style="font-size:11px;color:rgba(0,0,0,0.45);margin-top:2px;">文件已就绪，点击"创建镜像"按钮提交</div>
+                    </div>
+
+                    <!-- Upload Failed -->
+                    <div id="uploadFailed" style="display:none;margin-top:10px;">
+                      <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#ff4d4f;">
+                        <span>✕</span>
+                        <span>上传失败</span>
+                      </div>
+                      <div style="font-size:11px;color:rgba(0,0,0,0.45);margin-top:2px;">请检查网络连接后重新上传，或切换至 Dockerfile 在线编辑方式创建</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Editor / Guide -->
+            <div class="create-right">
+              <div id="dockerfilePanel">
+                <div class="section-title">Dockerfile 编辑</div>
+                <div class="code-editor-wrap">
+                  <div class="line-numbers" id="lineNums"></div>
+                  <textarea class="code-area" id="codeEditor"
+                    placeholder="# 在此编写 Dockerfile&#10;# 示例：&#10;FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime&#10;WORKDIR /workspace&#10;COPY requirements.txt .&#10;RUN pip install -r requirements.txt&#10;COPY . .&#10;CMD [&quot;python&quot;, &quot;main.py&quot;]"
+                    oninput="updateLines()"
+                    onkeydown="handleTab(event)"
+                    spellcheck="false"></textarea>
+                </div>
+              </div>
+
+              <div id="tarballPanel" style="display:none;flex:1;">
+                <div class="section-title">上传说明</div>
+                <div class="guide-box">
+                  <div class="guide-step">
+                    <div class="guide-step-num">1</div>
+                    <div>
+                      <div class="guide-step-title">准备镜像文件</div>
+                      <div class="guide-step-desc">在本地通过 <code>docker save &lt;image&gt; | gzip &gt; image.tar.gz</code> 导出镜像压缩包。</div>
+                    </div>
+                  </div>
+                  <div class="guide-step">
+                    <div class="guide-step-num">2</div>
+                    <div>
+                      <div class="guide-step-title">填写基础信息</div>
+                      <div class="guide-step-desc">在左侧表单中填写镜像名称、分类、功能标识、版本号和描述信息。</div>
+                    </div>
+                  </div>
+                  <div class="guide-step">
+                    <div class="guide-step-num">3</div>
+                    <div>
+                      <div class="guide-step-title">上传压缩包</div>
+                      <div class="guide-step-desc">点击左侧上传区域或将 <code>.tar.gz</code> 文件拖拽到上传区域，等待上传完成。</div>
+                    </div>
+                  </div>
+                  <div class="guide-step">
+                    <div class="guide-step-num">4</div>
+                    <div>
+                      <div class="guide-step-title">保存镜像</div>
+                      <div class="guide-step-desc">确认信息无误后点击"保存镜像"按钮，镜像将保存为「未构建」状态。之后可在镜像管理页面进入详情页触发构建。</div>
+                    </div>
+                  </div>
+                  <div class="guide-note">
+                    <span>💡</span>
+                    <span>保存后镜像不会自动构建。请前往「镜像管理」→ 点击镜像卡片「详情」→ 点击「构建镜像」按钮触发构建。</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn-primary btn-lg" id="submitBtn" onclick="submit()">💾 保存镜像</button>
+                <button class="btn btn-default btn-lg" onclick="history.back()">取消</button>
+              </div>
+            </div>
+
+          </div><!-- /create-body -->
+        </div><!-- /card-body -->
+      </div><!-- /page-card -->
+    </div><!-- /page-procard -->
+  </main>
+</div><!-- /app-body -->
+
+<!-- ===== SUBMIT CONFIRMATION MODAL ===== -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">确认保存镜像</span>
+      <span class="modal-close" onclick="closeSubmitModal()">✕</span>
+    </div>
+    <div class="modal-body" id="submitModalBody">
+      确认信息无误后将保存镜像信息。保存后镜像状态为「未构建」，您可在镜像管理页面进入详情页触发构建。
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeSubmitModal()">返回修改</button>
+      <button class="btn btn-primary" id="confirmSubmitBtn" onclick="confirmSubmit()">确认保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== UNSAVED CHANGES WARNING MODAL ===== -->
+<div class="modal-overlay" id="unsavedModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">未保存的更改</span>
+      <span class="modal-close" onclick="closeUnsavedModal(false)">✕</span>
+    </div>
+    <div class="modal-body">
+      当前表单有未提交的内容，离开后数据将丢失。确定要离开此页面吗？
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeUnsavedModal(false)">继续编辑</button>
+      <button class="btn btn-primary" style="background:#ff4d4f;border-color:#ff4d4f;" onclick="closeUnsavedModal(true)">放弃并离开</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== INTERACTION GUIDE TRIGGER ===== -->
+<button class="guide-trigger" id="guideTrigger" onclick="toggleGuide()" title="查看交互演示指引">
+  🧪 交互演示指引
+</button>
+
+<!-- ===== INTERACTION GUIDE OVERLAY ===== -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-drawer">
+    <div class="guide-drawer-header">
+      <span class="guide-drawer-title">🧪 交互演示指引 — 创建自定义镜像</span>
+      <span class="guide-drawer-close" onclick="toggleGuide()">✕</span>
+    </div>
+    <div class="guide-drawer-body">
+
+      <div class="guide-section">
+        <div class="guide-section-title">📋 一、PRD 字段说明</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>查看 PRD 说明 <span class="guide-tag modal">面板</span></td><td>点击「基础信息」旁的 <b>📋 字段说明</b> 按钮</td><td>所有字段下方展开蓝色左边框 PRD 业务说明面板，再次点击收起</td></tr>
+            <tr><td>格式提示（常驻）</td><td>查看「功能名称」字段下方灰字</td><td>始终显示：<i>小写字母开头，支持字母、数字、短横线（-），语义化描述算子功能</i></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">⚠️ 二、字段校验与错误状态</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>必填校验 <span class="guide-tag error">blur</span></td><td>点击「镜像名称」输入框 → 不填 → 点其他地方（失焦）</td><td>红色边框 + ⚠️「镜像名称为必填项，请输入镜像名称」</td></tr>
+            <tr><td>格式校验</td><td>镜像名称输入 <code>My Image!</code> 后失焦</td><td>红色边框 + ⚠️「仅支持小写字母开头，由小写字母、数字及连字符"-"组成」</td></tr>
+            <tr><td>重复名称校验</td><td>镜像名称输入 <code>pytorch-training</code> 后失焦</td><td>红色边框 + ⚠️「镜像名称已被占用，请使用其他名称」</td></tr>
+            <tr><td>长度校验</td><td>输入超过 20 字符的名称后失焦</td><td>红色边框 + ⚠️「镜像名称限制 20 个字符，当前已输入 XX 个字符」</td></tr>
+            <tr><td>版本号格式</td><td>某段版本号输入 <code>@#$</code> 特殊字符后失焦</td><td>红色边框 + ⚠️「版本号格式不正确，仅支持字母、数字及"._-"」</td></tr>
+            <tr><td>版本号空值</td><td>清空某段版本号后失焦</td><td>红色边框 + ⚠️「请填写完整的主版本、次版本和修订版本号」</td></tr>
+            <tr><td>分类必选</td><td>不选择镜像分类直接点「创建镜像」</td><td>红色边框 + ⚠️「请选择镜像所属的业务分类」</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🪟 三、Modal 弹窗场景</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>提交确认 <span class="guide-tag modal">Modal</span></td><td>完整填写表单 → 点击「💾 保存镜像」</td><td>弹出确认 Modal，展示所有填写信息 + 💡 构建提示</td></tr>
+            <tr><td>返回修改</td><td>确认 Modal 中点击「返回修改」或右上角 ✕</td><td>Modal 关闭，回到表单可继续编辑</td></tr>
+            <tr><td>未保存离开 <span class="guide-tag modal">Modal</span></td><td>修改任意字段 → 点击底部「取消」按钮</td><td>弹出「未保存的更改」警告 — 「继续编辑」或「放弃并离开」</td></tr>
+            <tr><td>关闭页面离开</td><td>修改字段后 → 关闭浏览器标签页</td><td>浏览器原生 <code>beforeunload</code> 确认对话框</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🔔 四、Toast 反馈 & 加载态</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>提交成功 <span class="guide-tag do">Toast</span></td><td>确认 Modal → 点击「确认保存」（90%概率）</td><td>按钮 spinner 1.5s → 右上角绿色 Toast「镜像保存成功」</td></tr>
+            <tr><td>网络错误 <span class="guide-tag error">Toast</span></td><td>确认 Modal → 点击「确认保存」（10%概率触发）</td><td>右上角红色 Toast「网络请求失败，请检查网络连接后重试」</td></tr>
+            <tr><td>提交校验失败</td><td>有空字段时直接点击「创建镜像」</td><td>自动滚动到第一个错误字段 + 红色 Toast「请修正表单中的错误后再提交」</td></tr>
+            <tr><td>表单校验清除</td><td>错误字段中重新输入正确内容 → 失焦</td><td>红色边框自动消失，错误提示隐藏</td></tr>
+            <tr><td>保存后流程 <span class="guide-tag do">新</span></td><td>保存成功 → 镜像列表 → 点击「📋 详情」</td><td>进入详情页 → 点击「🔨 构建镜像」→ 构建成功后「📤 发布」</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🔄 五、模式切换 & 上传</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>切换到压缩包模式</td><td>点击「📦 上传 .tar.gz 压缩包」</td><td>右侧变为上传说明引导（4步骤），左侧出现文件上传区域</td></tr>
+            <tr><td>切回 Dockerfile 模式</td><td>点击「📄 Dockerfile 在线编辑」</td><td>恢复代码编辑器，上传状态被清除</td></tr>
+            <tr><td>上传 Dockerfile 文本 <span class="guide-tag do">新</span></td><td>在左侧表单「上传 Dockerfile」区域点击上传 → 选择 .txt/.dockerfile 文件（≤10MB）</td><td>上传区切换为文件卡片 + 内容自动填入右侧编辑区 + 可手动修改</td></tr>
+            <tr><td>上传进度模拟</td><td>压缩包模式 → 点击上传区或拖拽文件</td><td>条纹动画进度条 + 百分比 + 实时速度 + 取消按钮</td></tr>
+            <tr><td>上传完成</td><td>进度条到 100%（约3-5秒模拟）</td><td>绿色边框 + ✅「上传完成」+ 提示创建镜像</td></tr>
+            <tr><td>取消上传</td><td>上传过程中点击「取消上传」</td><td>红色边框 + ❌「上传失败」+ 重试提示</td></tr>
+            <tr><td>GPU 开关</td><td>点击 GPU 滑动开关</td><td>蓝色填充 + 文字切换「需要/不需要 GPU 资源」</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">✏️ 六、编辑模式（从列表页跳转）</div>
+        <table class="guide-table">
+          <thead><tr><th>交互场景</th><th>触发方式</th><th>预期效果</th></tr></thead>
+          <tbody>
+            <tr><td>进入编辑模式 <span class="guide-tag modal">跳转</span></td><td>在列表页点击「未发布」或「构建失败」卡片的 <b>✏️ 编辑</b> 按钮</td><td>跳转到创建页，URL 带 <code>?edit=&lt;id&gt;</code>，标题显示编辑模式标签</td></tr>
+            <tr><td>锁定字段</td><td>进入编辑模式后查看左侧表单</td><td>分类、功能名称、版本号、GPU 开关均灰色锁定（readonly/disabled）</td></tr>
+            <tr><td>可编辑字段</td><td>进入编辑模式后</td><td>仅「镜像名称」和「Dockerfile 编辑区」可修改，描述字段保持可选</td></tr>
+            <tr><td>编辑模式提交</td><td>修改镜像名称或 Dockerfile → 点击「💾 保存镜像」</td><td>确认 Modal 显示锁定字段标注"（不可修改）"，保存后需在详情页手动构建</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+/* ============================================================
+   MOCK IMAGE DATA — used for edit mode lookup
+   ============================================================ */
+var MOCK_IMAGES = [
+  { id: 1, name: 'pytorch-training', category: 'sensing', function: 'object-detector', version: '1.0.0', status: 'published', statusText: '已发布', gpu: true, description: '基于 PyTorch 2.0 的训练镜像，包含 CUDA 11.7', createdAt: '2026-07-08 14:30:00', size: '3.2 GB' },
+  { id: 2, name: 'llm-inference', category: 'llm', function: 'text-generator', version: '2.1.0', status: 'building', statusText: '构建中', gpu: true, description: '大模型推理镜像，支持 LLaMA、ChatGLM', createdAt: '2026-07-07 09:15:00', size: '8.7 GB' },
+  { id: 3, name: 'sim-env-v2', category: 'simulation', function: 'env-simulator', version: '1.0.3-beta', status: 'unbuilt', statusText: '未构建', gpu: false, description: '自动驾驶仿真环境镜像，基于 CARLA 0.9.14', createdAt: '2026-07-06 16:45:00', size: '12.1 GB' },
+  { id: 4, name: 'decision-planner', category: 'decision', function: 'path-planner', version: '0.9.0', status: 'failed', statusText: '构建失败', gpu: false, description: '路径规划决策镜像，基于 ROS 2 Humble', createdAt: '2026-07-05 11:20:00', size: '--' }
+];
+
+/* ============================================================
+   EDIT MODE — parse ?edit=<id> from URL, pre-fill + lock fields
+   ============================================================ */
+var _editModeId = null;
+var _editModeImg = null;
+
+function initEditMode() {
+  var params = new URLSearchParams(window.location.search);
+  var editId = parseInt(params.get('edit'), 10);
+  if (!editId || isNaN(editId)) return;
+
+  _editModeId = editId;
+  _editModeImg = MOCK_IMAGES.find(function(img) { return img.id === editId; });
+  if (!_editModeImg) return;
+
+  // Update card title to indicate edit mode
+  var titleEl = document.querySelector('.card-title');
+  if (titleEl) {
+    titleEl.innerHTML = '编辑自定义镜像 <span class="edit-badge">✏️ 编辑模式 — 仅可修改镜像名称与 Dockerfile</span>';
+  }
+
+  // Update submit button and modal title
+  var submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) submitBtn.innerHTML = '💾 保存镜像';
+  var modalTitle = document.querySelector('#submitModal .modal-title');
+  if (modalTitle) modalTitle.textContent = '确认保存镜像';
+
+  // Pre-fill editable fields
+  document.getElementById('imageName').value = _editModeImg.name;
+  document.getElementById('funcName').value = _editModeImg.function;
+  document.getElementById('desc').value = _editModeImg.description || '';
+
+  // Pre-fill category (locked)
+  var catSelect = document.getElementById('category');
+  catSelect.value = _editModeImg.category;
+  catSelect.setAttribute('disabled', 'disabled');
+
+  // Pre-fill version (locked)
+  var parts = (_editModeImg.version || '1.0.0').split('.');
+  document.getElementById('verMajor').value = parts[0] || '1';
+  document.getElementById('verMinor').value = parts[1] || '0';
+  document.getElementById('verPatch').value = parts[2] || '0';
+  // Lock version inputs
+  ['verMajor', 'verMinor', 'verPatch'].forEach(function(fid) {
+    document.getElementById(fid).setAttribute('readonly', 'readonly');
+  });
+
+  // Pre-fill GPU (locked)
+  var gpuToggle = document.getElementById('gpuToggle');
+  if (_editModeImg.gpu) {
+    gpuToggle.classList.add('on');
+    document.getElementById('gpuLabel').textContent = '需要 GPU 资源';
+  }
+  gpuToggle.classList.add('locked');
+
+  // Lock function name field
+  document.getElementById('funcName').setAttribute('readonly', 'readonly');
+
+  // Pre-fill Dockerfile with sample content
+  var sampleDf = 'FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime\nWORKDIR /workspace\n# Image: ' + _editModeImg.name + '\n# Description: ' + _editModeImg.description + '\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD ["python", "main.py"]';
+  document.getElementById('codeEditor').value = sampleDf;
+
+  // Update address preview
+  updateAddr();
+  updateLines();
+
+  // Capture initial state AFTER pre-fill
+  captureInitialState();
+}
+
+/* ============================================================
+   PRD TOGGLE — show/hide field descriptions
+   ============================================================ */
+var _prdVisible = false;
+
+function togglePRD() {
+  _prdVisible = !_prdVisible;
+  // Toggle all panels
+  document.querySelectorAll('.prd-panel').forEach(function(p) {
+    p.classList.toggle('visible', _prdVisible);
+  });
+  // Toggle all buttons (active state)
+  document.querySelectorAll('.prd-toggle-btn').forEach(function(b) {
+    b.classList.toggle('active', _prdVisible);
+  });
+}
+
+function switchMode(mode) {
+  document.querySelectorAll('#modeToggle .radio-solid-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.mode === mode));
+  document.getElementById('dockerfilePanel').style.display = mode === 'dockerfile' ? '' : 'none';
+  document.getElementById('tarballPanel').style.display = mode === 'tarball' ? '' : 'none';
+  document.getElementById('tarballSection').style.display = mode === 'tarball' ? '' : 'none';
+  // Dockerfile text upload: show in dockerfile mode, hide in tarball mode
+  document.getElementById('dfUploadFormItem').style.display = mode === 'dockerfile' ? '' : 'none';
+  if (mode === 'dockerfile') {
+    clearInterval(_uploadTimer);
+    document.getElementById('fileCard').style.display = 'none';
+    document.getElementById('fileCard').className = 'upload-file-card';
+    document.getElementById('uploadZone').style.display = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('progressArea').style.display = 'none';
+    document.getElementById('uploadDone').style.display = 'none';
+    document.getElementById('uploadFailed').style.display = 'none';
+  }
+}
+
+function toggleGPU() {
+  var t = document.getElementById('gpuToggle');
+  t.classList.toggle('on');
+  document.getElementById('gpuLabel').textContent = t.classList.contains('on') ? '需要 GPU 资源' : '不需要 GPU 资源';
+}
+
+function updateAddr() {
+  var n = document.getElementById('imageName').value || '<name>';
+  var c = document.getElementById('category').value || '<category>';
+  var f = document.getElementById('funcName').value || '<function>';
+  var M = document.getElementById('verMajor').value || '0';
+  var m = document.getElementById('verMinor').value || '0';
+  var p = document.getElementById('verPatch').value || '0';
+  document.getElementById('addrText').textContent = 'registry.example.com/' + c + '/' + n + ':' + M + '.' + m + '.' + p;
+}
+
+function formatSize(b) {
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
+  return (b / 1073741824).toFixed(2) + ' GB';
+}
+
+var _uploadTimer = null;
+
+function handleFile(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (!file.name.endsWith('.tar.gz') && !file.name.endsWith('.tgz')) { alert('仅支持 .tar.gz 和 .tgz 格式'); e.target.value = ''; return; }
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatSize(file.size);
+  document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('fileCard').style.display = '';
+  document.getElementById('fileCard').className = 'upload-file-card done';
+  // Show progress area, hide done/failed
+  document.getElementById('progressArea').style.display = '';
+  document.getElementById('uploadDone').style.display = 'none';
+  document.getElementById('uploadFailed').style.display = 'none';
+  document.getElementById('progressPercent').textContent = '0%';
+  document.getElementById('progressLabel').textContent = '上传中...';
+  document.getElementById('progressSpeed').textContent = '--';
+  document.getElementById('progressFill').style.width = '0%';
+  startUploadSimulation(file.size);
+}
+
+function startUploadSimulation(totalSize) {
+  clearInterval(_uploadTimer);
+  var startTime = Date.now();
+  var bar = document.getElementById('progressFill');
+  var pct = 0;
+  _uploadTimer = setInterval(function() {
+    var elapsed = (Date.now() - startTime) / 1000;
+    var speed = totalSize * (pct / 100) / elapsed;
+    pct += Math.random() * 12 + 2;
+    if (pct >= 100) {
+      pct = 100;
+      clearInterval(_uploadTimer);
+      document.getElementById('progressPercent').textContent = '100%';
+      document.getElementById('progressLabel').textContent = '上传完成';
+      document.getElementById('progressSpeed').textContent = formatSize(totalSize);
+      bar.style.width = '100%';
+      // Show done
+      document.getElementById('progressArea').style.display = 'none';
+      document.getElementById('uploadDone').style.display = '';
+      document.getElementById('fileCard').className = 'upload-file-card done';
+      return;
+    }
+    bar.style.width = pct + '%';
+    document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+    document.getElementById('progressSpeed').textContent = formatSize(speed) + '/s';
+  }, 200);
+}
+
+function cancelUpload() {
+  clearInterval(_uploadTimer);
+  document.getElementById('progressArea').style.display = 'none';
+  document.getElementById('uploadFailed').style.display = '';
+  document.getElementById('fileCard').className = 'upload-file-card failed';
+}
+
+function removeFile() {
+  clearInterval(_uploadTimer);
+  document.getElementById('fileCard').style.display = 'none';
+  document.getElementById('fileCard').className = 'upload-file-card';
+  document.getElementById('uploadZone').style.display = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('progressArea').style.display = 'none';
+  document.getElementById('uploadDone').style.display = 'none';
+  document.getElementById('uploadFailed').style.display = 'none';
+}
+
+/* ============================================================
+   DOCKERFILE FILE UPLOAD — read text file into code editor
+   ============================================================ */
+function handleDfFile(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  // Validate size ≤ 10MB
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('error', '文件大小超过 10MB 限制，请选择更小的文件');
+    e.target.value = '';
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    document.getElementById('codeEditor').value = ev.target.result;
+    updateLines();
+    // Hide upload zone, show file card
+    document.getElementById('dfUploadZone').style.display = 'none';
+    document.getElementById('dfFileCard').style.display = '';
+    document.getElementById('dfFileCard').className = 'upload-file-card done';
+    document.getElementById('dfFileName').textContent = file.name;
+    document.getElementById('dfUploadDone').style.display = '';
+    showToast('success', '文件「' + file.name + '」已上传，内容已填入编辑区，可继续手动修改');
+  };
+  reader.onerror = function() {
+    showToast('error', '文件读取失败，请重试');
+  };
+  reader.readAsText(file);
+}
+
+function clearDfFile() {
+  document.getElementById('dfFileInput').value = '';
+  document.getElementById('dfUploadZone').style.display = '';
+  document.getElementById('dfFileCard').style.display = 'none';
+  document.getElementById('dfFileCard').className = 'upload-file-card';
+  document.getElementById('dfUploadDone').style.display = 'none';
+  document.getElementById('codeEditor').value = '';
+  updateLines();
+  showToast('info', '已清除上传的文件内容');
+}
+
+function updateLines() {
+  var lines = document.getElementById('codeEditor').value.split('\n');
+  var html = '';
+  for (var i = 1; i <= Math.max(lines.length, 15); i++) html += '<div class="line-num">' + i + '</div>';
+  document.getElementById('lineNums').innerHTML = html;
+}
+
+function handleTab(e) {
+  if (e.key === 'Tab') { e.preventDefault(); var s = e.target, a = s.selectionStart, b = s.selectionEnd; s.value = s.value.substring(0, a) + '  ' + s.value.substring(b); s.selectionStart = s.selectionEnd = a + 2; updateLines(); }
+}
+
+/* ============================================================
+   FIELD VALIDATION RULES
+   Each rule returns '' (valid) or an error message string.
+   ============================================================ */
+var VALIDATION = {
+  imageName: {
+    required: true,
+    validate: function(v) {
+      if (!v) return '镜像名称为必填项，请输入镜像名称';
+      if (!/^[a-z][a-z0-9-]*$/.test(v)) return '仅支持小写字母开头，由小写字母、数字及连字符"-"组成';
+      if (v.length > 20) return '镜像名称限制 20 个字符，当前已输入 ' + v.length + ' 个字符';
+      // Simulate duplicate check (PRD: async validation)
+      if (v === 'pytorch-training' || v === 'existing-image') return '镜像名称「' + v + '」已被占用，请使用其他名称';
+      return '';
+    }
+  },
+  category: {
+    required: true,
+    validate: function(v) { return v ? '' : '请选择镜像所属的业务分类'; }
+  },
+  funcName: {
+    required: true,
+    validate: function(v) {
+      if (!v) return '功能名称为必填项，请输入镜像的核心功能';
+      if (!/^[a-z0-9][a-z0-9-]*$/.test(v)) return '仅支持小写字母开头，由小写字母、数字及连字符"-"组成';
+      if (v.length > 30) return '功能名称限制 30 个字符，当前已输入 ' + v.length + ' 个字符';
+      return '';
+    }
+  },
+  version: {
+    required: true,
+    validate: function() {
+      var M = document.getElementById('verMajor').value.trim();
+      var m = document.getElementById('verMinor').value.trim();
+      var p = document.getElementById('verPatch').value.trim();
+      if (!M || !m || !p) return '版本号为必填项，请填写完整的主版本、次版本和修订版本号';
+      var seg = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/;
+      if (!seg.test(M)) return '主版本号格式不正确，仅支持字母、数字及"._-"';
+      if (!seg.test(m)) return '次版本号格式不正确，仅支持字母、数字及"._-"';
+      if (!seg.test(p)) return '修订版本号格式不正确，仅支持字母、数字及"._-"';
+      return '';
+    }
+  }
+};
+
+/* Validate a single field and show/hide error */
+function validateField(fieldId) {
+  var rule = VALIDATION[fieldId];
+  if (!rule) return true;
+
+  var input = document.getElementById(fieldId);
+  var errEl = document.getElementById('err-' + fieldId);
+  if (!errEl) return true;
+
+  var value = input ? input.value.trim() : '';
+  var msg = rule.validate(value);
+
+  if (msg) {
+    if (input) input.classList.add('has-error');
+    errEl.querySelector('span:last-child').textContent = msg;
+    errEl.classList.add('visible');
+    return false;
+  } else {
+    if (input) input.classList.remove('has-error');
+    errEl.classList.remove('visible');
+    return true;
+  }
+}
+
+/* Clear all validation errors */
+function clearAllErrors() {
+  document.querySelectorAll('.has-error').forEach(function(el) { el.classList.remove('has-error'); });
+  document.querySelectorAll('.field-error-msg').forEach(function(el) { el.classList.remove('visible'); });
+}
+
+/* Validate entire form. Returns first error field or null. */
+function validateForm() {
+  // Validate standalone fields
+  var fields = ['imageName', 'category', 'funcName', 'version'];
+  for (var i = 0; i < fields.length; i++) {
+    if (!validateField(fields[i])) return fields[i];
+  }
+
+  // Check tarball mode requirements
+  var isDf = document.querySelector('#modeToggle .radio-solid-item.active').dataset.mode === 'dockerfile';
+  if (!isDf) {
+    var fi = document.getElementById('fileInput');
+    if (!fi.files.length) {
+      showToast('error', '请上传 .tar.gz 压缩包文件');
+      return 'tarball';
+    }
+  } else {
+    if (!document.getElementById('codeEditor').value.trim()) {
+      showToast('error', '请在右侧编辑区编写 Dockerfile');
+      return 'dockerfile';
+    }
+  }
+
+  return null; // all valid
+}
+
+/* ============================================================
+   SUBMIT FLOW — Validate → Confirm Modal → Submit
+   ============================================================ */
+var _isSubmitting = false;
+
+function submit() {
+  if(!requireAuth())return;
+  clearAllErrors();
+
+  var firstError = validateForm();
+  if (firstError) {
+    // Scroll to the first error field
+    if (firstError === 'tarball') {
+      document.getElementById('tarballSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (firstError === 'dockerfile') {
+      document.getElementById('codeEditor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      var el = document.getElementById(firstError);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    showToast('error', '请修正表单中的错误后再提交');
+    return;
+  }
+
+  // Show confirmation modal
+  var n = document.getElementById('imageName').value.trim();
+  var c = document.getElementById('category').value;
+  var f = document.getElementById('funcName').value.trim();
+  var M = document.getElementById('verMajor').value.trim();
+  var m = document.getElementById('verMinor').value.trim();
+  var p = document.getElementById('verPatch').value.trim();
+  var isDf = document.querySelector('#modeToggle .radio-solid-item.active').dataset.mode === 'dockerfile';
+  var hasGpu = document.getElementById('gpuToggle').classList.contains('on');
+  var descText = document.getElementById('desc').value.trim() || '（未填写）';
+
+  var isEdit = !!_editModeId;
+  var summaryHtml = '<div style="line-height:2;">' +
+    '<div><b>镜像名称：</b>' + escapeHTML(n) + '</div>' +
+    '<div><b>镜像分类：</b>' + escapeHTML(c) + (isEdit ? ' <span style="font-size:11px;color:rgba(0,0,0,0.45);">（不可修改）</span>' : '') + '</div>' +
+    '<div><b>功能标识：</b>' + escapeHTML(f) + (isEdit ? ' <span style="font-size:11px;color:rgba(0,0,0,0.45);">（不可修改）</span>' : '') + '</div>' +
+    '<div><b>版本号：</b>' + escapeHTML(M) + '.' + escapeHTML(m) + '.' + escapeHTML(p) + (isEdit ? ' <span style="font-size:11px;color:rgba(0,0,0,0.45);">（不可修改）</span>' : '') + '</div>' +
+    '<div><b>GPU 资源：</b>' + (hasGpu ? '需要' : '不需要') + (isEdit ? ' <span style="font-size:11px;color:rgba(0,0,0,0.45);">（不可修改）</span>' : '') + '</div>' +
+    '<div><b>描述：</b>' + escapeHTML(descText) + '</div>' +
+    '<div><b>创建方式：</b>' + (isDf ? 'Dockerfile 在线编辑' : '.tar.gz 压缩包上传') + '</div>' +
+    '<div style="margin-top:8px;padding:8px 12px;background:#f0f5ff;border-radius:6px;font-size:13px;">' +
+      '<b>🪙 积分消耗：</b>上传消耗 <b style="color:#ff4d4f">30</b> | Notebook 使用定价 <b style="color:#2f54eb">' + (document.getElementById('nbCost')?document.getElementById('nbCost').value:50) + '</b> | API 调用定价 <b style="color:#2f54eb">' + (document.getElementById('apiCost')?document.getElementById('apiCost').value:30) + '</b>' +
+    '</div>' +
+    '</div>' +
+    '<div style="margin-top:12px;padding:10px 14px;background:#fffbe6;border-radius:6px;font-size:13px;color:rgba(0,0,0,0.65);">' +
+    (isEdit ? '💡 编辑模式仅更新镜像名称和 Dockerfile，其他字段不可修改。保存后需在详情页手动触发构建。' : '💡 保存后镜像状态为「未构建」，请前往镜像管理页面进入详情页点击「构建镜像」按钮触发构建，构建完成后可发布到镜像市场。') +
+    '</div>';
+
+  document.getElementById('submitModalBody').innerHTML = summaryHtml;
+  document.getElementById('submitModal').classList.add('visible');
+}
+
+function closeSubmitModal() {
+  document.getElementById('submitModal').classList.remove('visible');
+}
+
+function confirmSubmit() {
+  closeSubmitModal();
+
+  // Charge upload fee
+  var uploadCost = 30;
+  if (!spendPoints(uploadCost, '上传镜像')) {
+    showToast('error', '积分不足，无法上传镜像。当前积分：'+getPoints()+'，需要：'+uploadCost);
+    return;
+  }
+
+  var btn = document.getElementById('confirmSubmitBtn');
+  // Show loading on the main submit button
+  var submitBtn = document.querySelector('.form-actions .btn-primary');
+  submitBtn.classList.add('loading');
+  submitBtn.innerHTML = '<span class="btn-spinner"></span> 提交中...';
+
+  // Simulate async API call
+  setTimeout(function() {
+    submitBtn.classList.remove('loading');
+    submitBtn.innerHTML = _editModeId ? '💾 保存镜像' : '💾 保存镜像';
+
+    // Simulate success (90%) vs network error (10%)
+    if (Math.random() > 0.1) {
+      var n = document.getElementById('imageName').value.trim();
+      var nbCost = document.getElementById('nbCost') ? parseInt(document.getElementById('nbCost').value)||50 : 50;
+      var apiCost = document.getElementById('apiCost') ? parseInt(document.getElementById('apiCost').value)||30 : 30;
+      showToast('success', '镜像「' + n + '」保存成功！消耗 🪙'+uploadCost+'（Notebook:'+nbCost+'/API:'+apiCost+'）。请在镜像管理中进入详情页触发构建。');
+      // Mark form as submitted (suppress unsaved warning)
+      _formSubmitted = true;
+    } else {
+      showToast('error', '网络请求失败，请检查网络连接后重试。如问题持续，请联系系统管理员。');
+    }
+  }, 1500);
+}
+
+/* ============================================================
+   UNSAVED CHANGES DETECTION
+   ============================================================ */
+var _formSubmitted = false;
+var _initialState = '';
+var _unsavedCallback = null;
+
+function captureInitialState() {
+  // Capture initial form values after page load
+  _initialState = getFormState();
+}
+function getFormState() {
+  return [
+    document.getElementById('imageName').value,
+    document.getElementById('category').value,
+    document.getElementById('funcName').value,
+    document.getElementById('verMajor').value,
+    document.getElementById('verMinor').value,
+    document.getElementById('verPatch').value,
+    document.getElementById('desc').value,
+    document.getElementById('codeEditor').value,
+    document.getElementById('gpuToggle').classList.contains('on') ? '1' : '0',
+    document.querySelector('#modeToggle .radio-solid-item.active').dataset.mode
+  ].join('|');
+}
+function hasUnsavedChanges() {
+  return !_formSubmitted && getFormState() !== _initialState;
+}
+
+/* Intercept "取消" button */
+document.addEventListener('DOMContentLoaded', function() {
+  captureInitialState();
+
+  // Override the cancel button behavior
+  var cancelBtns = document.querySelectorAll('.form-actions .btn-default');
+  cancelBtns.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (hasUnsavedChanges()) {
+        _unsavedCallback = function() { window.location.href = 'workbench.html'; };
+        document.getElementById('unsavedModal').classList.add('visible');
+      } else {
+        window.location.href = 'workbench.html';
+      }
+    });
+  });
+});
+
+function closeUnsavedModal(leave) {
+  document.getElementById('unsavedModal').classList.remove('visible');
+  if (leave && _unsavedCallback) {
+    _unsavedCallback();
+    _unsavedCallback = null;
+  }
+}
+
+/* Also intercept beforeunload */
+window.addEventListener('beforeunload', function(e) {
+  if (hasUnsavedChanges()) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+/* ============================================================
+   TOAST NOTIFICATION
+   ============================================================ */
+var _toastTimer = null;
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' visible';
+  t.textContent = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : 'ℹ️ ') + msg;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('visible'); }, 4000);
+}
+
+/* ============================================================
+   MODAL OVERLAY CLICK TO CLOSE
+   ============================================================ */
+document.getElementById('submitModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSubmitModal();
+});
+document.getElementById('unsavedModal').addEventListener('click', function(e) {
+  if (e.target === this) closeUnsavedModal(false);
+});
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function escapeHTML(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/* ============================================================
+   INTERACTION GUIDE TOGGLE
+   ============================================================ */
+function toggleGuide() {
+  document.getElementById('guideOverlay').classList.toggle('visible');
+}
+document.getElementById('guideOverlay').addEventListener('click', function(e) {
+  if (e.target === this) toggleGuide();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+// ===== AUTH STATE (must run first) =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){switchAuthState(isLoggedIn());})();
+initEditMode();
+updateLines();
+updateAddr();
+captureInitialState();
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+renderNotifs();
+// ===== TOP NAV =====
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', data:'dataset-management.html', demand:'demand-hall.html', appcenter:'app-center.html', apps:null, docs:'doc-center.html' };
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if(e.target.classList.contains('top-nav-item') && e.target.dataset.nav){
+    var nav = e.target.dataset.nav;
+    if(nav === 'docs'){ window.location.href = NAV_TARGETS[nav]; return; }
+    if(NAV_TARGETS[nav]){ window.location.href = NAV_TARGETS[nav]; }
+    else { showToast('info','模块「'+e.target.textContent+'」页面尚未开发'); }
+  }
+});
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('success', '已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+// ===== NOTIFICATIONS =====
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

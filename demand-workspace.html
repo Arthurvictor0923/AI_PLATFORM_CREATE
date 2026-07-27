@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求处理工作台 — 北大荒智慧农业协同创新平台</title>
+<style>
+/* ============================================================
+   CSS Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bdh-micro-main-base-header-height: 64px;
+  --sf-img-0: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAASwCAMAAAAt7qfEAAAA5FBMVEXy8fv58PT18fnw8fzw8/zz8vn08vv28Pfw8vnr9Pn38vj27/Xt9v357vHz8Pf47vPz9fzu8/n58Pbr8vfs9/7z7/X27PH68fX48fjy8vz06O719vv09/z06u/s9Prx8fft8vf57fD18vns8fX26O746/Dx7vT26u/v9v378PL29fr07vPu8Pbw8PXu8/v27vP68vf26/Dy+P3w7fL28vru8Pvx7vfu7/T07fLx6vD2+f306/Hu7fPx7/nu7fjq6/rw7PH77vHs7fnw+P7u7vn58/jl6vvq7fvs7vzn6/vj6fzw9P02E8Y3AARwBElEQVR42tSdT48iNxDFs+dRK4doLrmhgUVoFY2iSCSrtIYwByTy/T9Q6tWffhSFcbOw2kmVXbbLbpg9/fRsN/vTv4+zgxjCjXY8HI8SO7Z7hL1nk0SZa9vbvbZ9hD2bSeezGUbawhDR7dkXi63ZZE9PT1+erIdSDLMIJ/aKwBEsjRv287l9khKGPhLZBuR1lUaUGTYM8ly1AfXMNL9BT6Y3A9xs0zLOVNvv9who9xhqBrGY5++w4YIh2bWFGpp5hmeac3uxPL/fL3qGFXfZ6uEPr1YL8RWaD23r9foBH+Jh7fb77+t5tkT9dlu3LWZr0p5cRnu//aqGRq1OM3f/VxHAD4Lw1GZv0xeO0LHDGYmP4hhJOcCvYVdWK2wt0IPDWphv4BcETk3fRvfP6lK2Y3LMaDz17Z/0FoEFvwjbz88BYOJ3K6M5DBa7lCZ/ZV4c+JWqrfM2uxoZXPj76csnZK4j+JM40FgJ/CpUlSoOvpYFA6IB+Cp+h3MAg6EnDvwacbNjyulrz6DqI3wW3Q55CeBo0Q3EtgAs/i2Gp4J82c5SWJZtgafEFz3nEgVwmSeA8aHDMBfAj4Hz6rQL7z9BZ5euWRhii8H1Ifj3McPsEiU5AExfXnG1lInGP4lG/nYMPMTDawlSxd2ArAYp+wTGx7QLHF8Hj44USWpjdTYRS6/C9scD+MCiNUPXC4JH2o5FzeGLIimvl12M6LWCqo7pXNx+Ob4fXw7v6LwIfUdjLSyIK/bmXCZsd29RM4FHieNufA+/SwK/bQW221FaUHdE1Nox17/aCn/RUgprCly+ywy+FMDgLBFcjOglgoW6CPCnV+khpT1MzhTArmo/vaICw5YhhdmnQJ5lTtRgLHobASy6CDSmFMVdBUzDSmd0UcA+6BL2LgGsJN0MDSOBN4vJBxkAvhKBSZY8viSBG5wcAOCBSx5iq33xS4gdElznIpi97Gpd/Wtr1/R4fj5Yy7iWqEtoVClcrKa9hdK5bZwOkFvHwY6hsrxpl6nuc4rCy5zF5No62RH0M4jW/G1N9kabaxnS+hgOBUz+NmTwx1LAYHLRv9607HhEAJLpUaofd7RIEbk0J/ThRYJH0FbV7rizEhxGDpETbxJQyWA8Jn0M1d80jn0NrPVU424pgyF/3/5++4osqqRgSQFXCwBvgV9w97MZWk1t/7qTwKF/qYATbKtjjU6Fzv30DAd+CeHXLH+rAr4ogQfDLwrsZIrMvtlA1EAv3AWumOQbCngDSicb6Da03n6Y5nOHGPa4f7hROfufd90WLolBYXoSstGgAOlTb8hqtypgVDAeIEwi+HH4pS8qY/0LEWcq4OCvFQscaemgVIj7u1RZJxGNU/g7mTNqErRgG5qFONqrTvSioezlxzbx+7vSHyC1hgGFQIXTegqYHyN/vpREexIXZi0C26jT2pT27+uL4V9R1B3FHxDAB9ZDwa8Bl/qXgySBUY8o7pZlUWdPITseJrgSxgerFL+k8XgYZc3LEXEnweD7TuAiwNCSxECuBJl37YsAkkL9SjAl/GYpC+0S9lkKKAuV6ySVPjKQwECv0nms0K0EhoO33HZW26r4/QL+SupOAEugAiZrq3Hz+Rn8jQ1nIS756yyWHHyeAvYzXcPvIEXaU/ULaJ8tv4nAKnolakfHAV+aZWIVHDagKTAmXpkY3JNRAxOZDyfwIN8x0BvmG87woG/sLlP3Er5izNE4rAqYyrfPX66/ncGazt9PAK/g8wlM4CYYI/YMCw27wV5tW6ubuOXihvmKQKhqVM6hTwJ32K0URTT8hoKNzBrtZf7KmTBm8D3eRKCgZSmGrAUmUO1jnL9JAiel64OUS2kPXOLolSqha05gQLYNYHY/kAImkCfli2JNtp3G4+Rkc/LDiKJ5EFf6Lm1hGB0QzM2CxoCvbk+PGl/Qi8Ne7YxSdfSGERwTyFP6pjNgpD2+A7+IM20L/o5KWfTdv0r/qxQkPdtTwKGBNbrmPTVVvyqN71LAz6cKGN4WwGmXWloK4CdhLmq4wrdq4C9fJgVcEYw02ItWmsRfGBeKzWcxmOrUVQGM4lLYbKDDkNngGZiMzxTw6cgHnrhq++9mRl8/DG6boDTEL/GLSmd3gGfNW0YlR9T3bZ5Qztg9ieXwNwngVZ++WMU+yas+bwOa+89erN8Hd4/QAtS1RU/jm5TBpLERWAcy1RXABDGLK2B+b1MDr1yqSgNiIiiNNdXmL2WxBA6j75+FBIiZ5S/xykERwlYZvSSB3IXiMlxDWyn/KADz8BexzBh4WTN/d1YtksDHsvvMsVEYYJVlYZY5jocjutTC6aR4lCPgowQVwqpziVqjL3I2NDxjTtiLzFiuYQG/iHr+CwTP3IOGbaXjh71bqSh2AKxE/gNTGJ8p4OaJsOnedNyr64Fg8ef7DPBNZ8B9BYz6HGr3CQE1uaxIBH4igNUqNYW4Jn1hCulYc7ZprQtmy1/sbAd1XzcG2qkRTyoYUEZKSoC3yFoOBx+Qyh0EPxTDPPuVsFGPlu6m57OgMFwxzKNgcrTwl2BuK2DmBjMMZtmw7y8kfMMdnaj89vRAn8CkMGqU3O2T1PQvi4U2XdXSiro4b2Ebjacj24Avscp0U/qyAawlSDxVwIhW26aPqltYo64MwdmzMVEk8Hr6LG30+0lgIpYkrSOvZZiR3OVi8rb9eAVM/Bp6o8C1IOQdaNouKWDQNgKdUDYNPMFXu5Z1p/nAgP0uJ8DH44sKYIVqoDa2oNGgxbRVELjYqPjdaXyH+x2s0cuf1SU7cgPa4PumxbejpftVhPAfGNgWNOy3/h60KFw0VMDGYwGwSeA+YmOvuXsGnI+Aq/xFUEQ/P0l18mqbGfxKBSztxVvQr0X/DsgHe8WAZOrfWwFMG7jzbBwOIrvsTQoYWZsLcZsUcMFwVwFH/lsuXQ2zD4EHKT0Dp7P+VSo38Dvlh74CVrNHMexuRM+Zd95Wtzkl5O3vJVXNe7HbE8BBy8Lf9mOL0LQw9gvSYyWq5U7wewnExGt1yyceO4FRqXBRK4E5D0SKe7PQAM3aEcAonEvRxbNBmIfAScYSxA09zA4XcMxnW+R9PH8fD2BK4DqR4EsFXCQwr0GbZ/hOZaQWxgC6Ng6BETQdRI41hzgAfsfN5xcMX46WQnUBnEXwyAnkxkJgvngkEI5T4LkSeHQCG3RHcWuVwCgx4jZ0RwJPp7/QvMFfrFYJHMk+hpv5E+Iqgd3bd6AR5fhXLdH3N0QpfBvJm3oeXE6AgV43RbEEmzMi8wGH81wbXPFurLxOO9LSiGcFzIVDAW8Zg3zoeegAeNMDcJ0fbj0Erp7MwUoEQzxnmCKtbxAnvs5UwHzkMdZg8AJuPbV9m7XX96DpS08vb5TAJDAx3FxO+LYhzWvUsgxr0SAEeIOgxDEqB4xaKbYTx/EJ4sFQzK/bpgtNrzIae7VpErgR8YTvYweD4/vJzzZnM4unkIhd8N2E8McG8IFN5TLhXBUwEZzhm/SvlXAdjpEz+mr0s13MUQATwip+4x40VgLFztt3Y20UzYhhgKFNqwiWks6ApYijBx4jwNoMJqO3aHyX2TgM7H7FQbA2FMXpELi9BW0ANtISwFL5RtI3E5g3sGbdgkZwARzgDQlMf0VR4LoERuy+CCxJBS93obMCJn9vk8BOVUTtsHiGPiH4dY4CZhqhgeBvu4Q1fzXgCwHcUsA5rdyl2650FcBDZqmEvgJGWvorju+3Ql6v+wCpIfh2/kaMwnRM9EVwun9FBdx4iKe7QGsRwDzsrQI5s3XJg99lDDmVInuFvcp0vk6EfBu/qAbYxXTuC7NucwMaU4W+a2/0+FfhizWGX7u2TOq2dpormUlnbzjoQLF4237wFvTBStHF7TPgHVt0j14wrIEUdtCOxlZjsSXhKE7iMFv4C25AK7YxdAQbfV3r7izYKGSwkhewRVtPgAFeBDSzLBSwOOQuhK5rXb2H9beMXBRr6W5BB3L157BOASzudvcZMA30bSpgrlEP8qKeuzcgcIKvPB7di0fATl6ncFbAN/KXxrvN0uHrwBGIKCeykhTpjgJ240QbwYWajGVKsxsu7NNanf8OeYq9bBgnAl/cgoYlvPYVMBwf5Qz+fgoYzCV5Le5bAG4SOBxl6do3SWMDcA/CeERvX7FIsjxTOdueWhexTMjGRSw7iyV4ud1cUQ3DA1x6Sl/HqKav/BAHFq4Q0eqjoZipf1sE9myecz29QN66+scYMcnZIn4tVjIz5U1ei/LjN6Hv2IJupeFUvyy0HTtWjtFHYAPpmyAMVXuAnBUQT0e8Fb7al0XcstYr0MAvrjiLUwOr6g0FjAyvSFukifidLkEDvxLnsdeWhf4VEpO/");
+}
+
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714285714285714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.5); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border: 2px solid transparent; background-clip: content-box; }
+[data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); border: 2px solid transparent; background-clip: content-box; }
+
+/* BG-LIST */
+.bg-list { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--sf-img-0) center / cover no-repeat; z-index: 0; pointer-events: none; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.app-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px; background-color: transparent; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid rgba(5,5,5,0.06); z-index: 19; display: flex; flex-direction: column; padding: 0; }
+[data-prefers-color="dark"] .app-header { border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.logo-link img { height: 32px !important; width: auto; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s, border-color 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+.header-btn-login, .header-btn-register {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+}
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+/* User Dropdown */
+.dropdown-wrap { position: relative; display: inline-flex; }
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* #headerAuthIn initially hidden via inline style, JS removes it on login */
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.3); }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+[data-prefers-color="dark"] .dropdown-item { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .dropdown-item:hover { background: rgba(255,255,255,0.08); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+[data-prefers-color="dark"] .dropdown-divider { background: rgba(255,255,255,0.08); }
+/* Logout Confirm Overlay */
+.logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.logout-overlay.on { display: flex; }
+.logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .logout-dialog { background: #2b2d30; }
+
+/* ============================================================
+   WORKBENCH LAYOUT
+   ============================================================ */
+.workbench { padding-top: 60px; background: #F7F9FD; min-height: 100vh; }
+[data-prefers-color="dark"] .workbench { background: #1c1e21; }
+
+/* Top Bar */
+.wb-topbar {
+  background: #FFFFFF; border-bottom: 1px solid rgba(5,5,5,0.05);
+  padding: 14px 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+[data-prefers-color="dark"] .wb-topbar { background: #1f1f1f; border-bottom-color: #303030; }
+.wb-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(0,0,0,0.45); }
+.wb-breadcrumb a { color: rgba(0,0,0,0.45); transition: color 0.2s; }
+.wb-breadcrumb a:hover { color: #2f54eb; }
+.wb-breadcrumb .sep { color: rgba(0,0,0,0.25); }
+.wb-breadcrumb .current { color: rgba(0,0,0,0.88); font-weight: 500; }
+[data-prefers-color="dark"] .wb-breadcrumb { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .wb-breadcrumb a { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .wb-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+/* Two-Column Layout */
+.wb-layout { display: flex; gap: 0; max-width: 1380px; margin: 0 auto; padding: 24px 40px; }
+.wb-sidebar { width: 240px; flex-shrink: 0; }
+.wb-main { flex: 1; min-width: 0; padding-left: 28px; }
+
+/* Sidebar Cards */
+.wb-sidebar-card {
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 10px; padding: 20px; margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+[data-prefers-color="dark"] .wb-sidebar-card { background: #1f1f1f; border-color: #303030; }
+.wb-sidebar-card h4 { font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.45); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+[data-prefers-color="dark"] .wb-sidebar-card h4 { color: rgba(255,255,255,0.45); }
+.wb-sb-user { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.wb-sb-avatar {
+  width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 600; flex-shrink: 0;
+}
+.wb-sb-uname { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .wb-sb-uname { color: rgba(255,255,255,0.85); }
+.wb-sb-urole { font-size: 12px; color: rgba(0,0,0,0.45); }
+.wb-sb-stat { display: flex; gap: 16px; }
+.wb-sb-stat-item { text-align: center; flex: 1; }
+.wb-sb-stat-val { font-size: 18px; font-weight: 700; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .wb-sb-stat-val { color: rgba(255,255,255,0.85); }
+.wb-sb-stat-lbl { font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+.wb-sb-link {
+  display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px;
+  border-radius: 6px; font-size: 13px; color: rgba(0,0,0,0.65); cursor: pointer;
+  transition: all 0.2s; margin-bottom: 2px; text-decoration: none;
+}
+.wb-sb-link:hover { background: rgba(47,84,235,0.06); color: #2f54eb; }
+.wb-sb-link.active { background: rgba(47,84,235,0.1); color: #2f54eb; font-weight: 500; }
+.wb-sb-link .si { font-size: 15px; width: 18px; text-align: center; }
+
+/* ============================================================
+   MAIN CONTENT — Card
+   ============================================================ */
+.wb-content-card {
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+[data-prefers-color="dark"] .wb-content-card { background: #1f1f1f; border-color: #303030; }
+.card-header { display: flex; align-items: center; padding: 0 24px; height: 56px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .card-header { border-bottom-color: #303030; }
+.card-accent-bar { width: 2px; height: 14px; background-color: rgb(47,84,235); border-radius: 1px; margin-right: 8px; flex-shrink: 0; }
+.card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .card-title { color: rgba(255,255,255,0.85); }
+.card-body { padding: 0; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
+.btn:focus-visible { outline: 4px solid #adc6ff; outline-offset: 1px; }
+.btn-primary { background: #2f54eb; color: #fff; border-color: #2f54eb; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.btn-primary:hover { background: #597ef7; border-color: #597ef7; }
+.btn-primary:active { background: #1d39c4; border-color: #1d39c4; }
+.btn-default { background: #ffffff; color: rgba(0,0,0,0.88); border-color: #d9d9d9; box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-default:active { color: #1d39c4; border-color: #1d39c4; }
+.btn-text { background: transparent; color: rgba(0,0,0,0.88); border-color: transparent; }
+.btn-text:hover { background: rgba(0,0,0,0.06); }
+.btn-danger-text { background: transparent; color: rgba(0,0,0,0.65); border-color: transparent; }
+.btn-danger-text:hover { color: #ff4d4f; background: #fff2f0; }
+.btn-success { background: #52c41a; color: #fff; border-color: #52c41a; }
+.btn-success:hover { background: #73d13d; border-color: #73d13d; }
+.btn-warning { background: #faad14; color: #fff; border-color: #faad14; }
+.btn-warning:hover { background: #ffc53d; border-color: #ffc53d; }
+.btn-teal { background: #23ada4; color: #fff; border-color: #23ada4; }
+.btn-teal:hover { background: #36cfc5; border-color: #36cfc5; }
+[data-prefers-color="dark"] .btn-default { background: transparent; color: rgba(255,255,255,0.85); border-color: #434343; }
+[data-prefers-color="dark"] .btn-text { color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .btn-text:hover { background: rgba(255,255,255,0.08); }
+.btn-sm { height: 24px; padding: 0 8px; font-size: 12px; }
+.btn-lg { height: 40px; padding: 6px 23px; font-size: 16px; }
+.btn:disabled, .btn.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+
+/* ============================================================
+   STATUS CHIPS
+   ============================================================ */
+.status-chip { display: inline-flex; align-items: center; justify-content: center; height: 20px; padding: 0 6px; font-size: 11px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.status-chip.success { color: #52c41a; background: #d9f7be; }
+.status-chip.pending { color: #2f54eb; background: #d6e4ff; }
+.status-chip.warning { color: #ff9113; background: #ffeabc; }
+.status-chip.error { color: #ff4d4f; background: #fff2f0; }
+.status-chip.default { color: rgba(0,0,0,0.65); background: #f0f0f0; }
+.status-chip.published { color: #23ada4; background: #e6fffb; }
+[data-prefers-color="dark"] .status-chip.default { color: rgba(255,255,255,0.65); background: #303030; }
+[data-prefers-color="dark"] .status-chip.published { background: rgba(35,173,164,0.15); }
+
+/* ============================================================
+   POINTS BADGE
+   ============================================================ */
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast { position: fixed; top: 76px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 2000; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); animation: toastIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.toast.visible { opacity: 1; pointer-events: auto; }
+.toast.success { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+.toast.error { background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; }
+.toast.info { background: #f0f5ff; border: 1px solid #d6e4ff; color: #2f54eb; }
+[data-prefers-color="dark"] .toast.success { background: rgba(82,196,26,0.1); border-color: rgba(82,196,26,0.3); }
+[data-prefers-color="dark"] .toast.error { background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); }
+[data-prefers-color="dark"] .toast.info { background: rgba(47,84,235,0.1); border-color: rgba(47,84,235,0.3); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.visible { display: flex; }
+.modal-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); width: 480px; max-width: 90vw; overflow: hidden; }
+[data-prefers-color="dark"] .modal-box { background: #1f1f1f; }
+.modal-header { display: flex; align-items: center; padding: 16px 24px; border-bottom: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-header { border-bottom-color: #303030; }
+.modal-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); flex: 1; }
+[data-prefers-color="dark"] .modal-title { color: rgba(255,255,255,0.85); }
+.modal-close { font-size: 16px; color: rgba(0,0,0,0.45); cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+.modal-close:hover { color: rgba(0,0,0,0.88); background: rgba(0,0,0,0.06); }
+.modal-body { padding: 24px; font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; }
+[data-prefers-color="dark"] .modal-body { color: rgba(255,255,255,0.65); }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 24px; border-top: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .modal-footer { border-top-color: #303030; }
+
+/* ============================================================
+   POPCONFIRM
+   ============================================================ */
+.popconfirm-wrap { position: relative; display: inline-flex; }
+.popconfirm-bubble { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.12), 0 3px 6px -4px rgba(0,0,0,0.12); padding: 12px 16px; z-index: 500; white-space: nowrap; min-width: 220px; }
+.popconfirm-bubble.visible { display: block; }
+.popconfirm-bubble::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #ffffff; }
+[data-prefers-color="dark"] .popconfirm-bubble { background: #1f1f1f; }
+[data-prefers-color="dark"] .popconfirm-bubble::after { border-top-color: #1f1f1f; }
+.popconfirm-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
+[data-prefers-color="dark"] .popconfirm-title { color: rgba(255,255,255,0.85); }
+.popconfirm-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 10px; }
+[data-prefers-color="dark"] .popconfirm-desc { color: rgba(255,255,255,0.45); }
+.popconfirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ============================================================
+   WORKSPACE SPLIT LAYOUT
+   ============================================================ */
+.workspace-body { display: flex; gap: 0; min-height: calc(100vh - 160px); }
+.workspace-left { flex: 0 0 65%; width: 65%; padding: 24px; overflow-y: auto; border-right: 1px solid #f0f0f0; }
+[data-prefers-color="dark"] .workspace-left { border-right-color: #303030; }
+.workspace-right { flex: 0 0 35%; width: 35%; padding: 24px; position: sticky; top: 84px; align-self: flex-start; max-height: calc(100vh - 160px); overflow-y: auto; }
+.workspace-section { margin-bottom: 24px; }
+.workspace-section:last-child { margin-bottom: 0; }
+.section-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: rgb(47,84,235); border-radius: 2px; flex-shrink: 0; }
+[data-prefers-color="dark"] .section-title { color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   INFO CARD
+   ============================================================ */
+.info-card { background: rgba(0,0,0,0.02); border: 1px solid #f0f0f0; border-radius: 6px; padding: 16px; }
+[data-prefers-color="dark"] .info-card { background: rgba(255,255,255,0.03); border-color: #303030; }
+.info-card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.info-card-icon { width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, rgba(47,84,235,0.1), rgba(117,102,255,0.1)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.info-card-title-row { flex: 1; min-width: 0; }
+.info-card-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+[data-prefers-color="dark"] .info-card-title { color: rgba(255,255,255,0.85); }
+.info-card-meta { font-size: 12px; color: rgba(0,0,0,0.45); }
+.info-card-desc { font-size: 14px; color: rgba(0,0,0,0.65); line-height: 1.6; margin-bottom: 12px; }
+[data-prefers-color="dark"] .info-card-desc { color: rgba(255,255,255,0.65); }
+.info-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.info-tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; font-size: 12px; border-radius: 4px; background: rgba(47,84,235,0.06); color: #2f54eb; border: 1px solid rgba(47,84,235,0.15); }
+[data-prefers-color="dark"] .info-tag { background: rgba(47,84,235,0.12); border-color: rgba(47,84,235,0.2); }
+.info-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+.info-card-item { display: flex; flex-direction: column; gap: 2px; }
+.info-card-label { font-size: 12px; color: rgba(0,0,0,0.45); }
+.info-card-value { font-size: 14px; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .info-card-value { color: rgba(255,255,255,0.85); }
+
+/* Additional file list inside info card */
+.attachment-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.attachment-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #ffffff; border: 1px solid #f0f0f0; border-radius: 4px; font-size: 13px; }
+[data-prefers-color="dark"] .attachment-item { background: #2a2a2a; border-color: #303030; }
+.attachment-item .att-icon { font-size: 16px; flex-shrink: 0; }
+.attachment-item .att-name { flex: 1; color: rgba(0,0,0,0.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-prefers-color="dark"] .attachment-item .att-name { color: rgba(255,255,255,0.85); }
+.attachment-item .att-size { font-size: 12px; color: rgba(0,0,0,0.45); flex-shrink: 0; }
+
+/* ============================================================
+   QUICK ACTION BUTTONS (dev processing)
+   ============================================================ */
+.quick-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.quick-action-btn { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; font-size: 13px; color: rgba(0,0,0,0.65); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.quick-action-btn:hover { color: #2f54eb; border-color: #2f54eb; background: #f0f5ff; }
+.quick-action-btn .qa-icon { font-size: 16px; }
+[data-prefers-color="dark"] .quick-action-btn { background: transparent; border-color: #434343; color: rgba(255,255,255,0.65); }
+[data-prefers-color="dark"] .quick-action-btn:hover { background: rgba(47,84,235,0.12); }
+
+/* ============================================================
+   PROCESSING NOTE TEXTAREA
+   ============================================================ */
+.proc-textarea { width: 100%; min-height: 100px; padding: 8px 11px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; resize: vertical; outline: none; transition: all 0.2s; font-family: inherit; line-height: 1.5715; }
+.proc-textarea:hover { border-color: #597ef7; }
+.proc-textarea:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.proc-textarea::placeholder { color: rgba(0,0,0,0.25); }
+.proc-textarea[readonly] { background: #f5f5f5; color: rgba(0,0,0,0.65); cursor: default; border-color: #f0f0f0; }
+.proc-textarea[readonly]:hover { border-color: #f0f0f0; }
+.proc-textarea[readonly]:focus { border-color: #f0f0f0; box-shadow: none; }
+[data-prefers-color="dark"] .proc-textarea { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+[data-prefers-color="dark"] .proc-textarea[readonly] { background: #2a2a2a; border-color: #303030; }
+
+/* ============================================================
+   UPLOAD ZONE
+   ============================================================ */
+.upload-zone { border: 1.5px dashed #d9d9d9; border-radius: 8px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.01); }
+.upload-zone:hover { border-color: #2f54eb; background: #f0f5ff; }
+[data-prefers-color="dark"] .upload-zone { border-color: #434343; background: rgba(255,255,255,0.02); }
+[data-prefers-color="dark"] .upload-zone:hover { background: rgba(47,84,235,0.1); }
+.upload-zone-icon { font-size: 32px; color: rgba(0,0,0,0.45); margin-bottom: 8px; }
+.upload-zone-text { font-size: 14px; color: rgba(0,0,0,0.65); margin-bottom: 4px; }
+.upload-zone-hint { font-size: 12px; color: rgba(0,0,0,0.45); }
+
+/* Upload deliverable type selector */
+.upload-type-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.upload-type-chip { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; font-size: 13px; border-radius: 6px; border: 1px solid #d9d9d9; background: #ffffff; color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.2s; }
+.upload-type-chip:hover { border-color: #2f54eb; color: #2f54eb; }
+.upload-type-chip.active { background: #2f54eb; border-color: #2f54eb; color: #fff; }
+[data-prefers-color="dark"] .upload-type-chip { background: transparent; border-color: #434343; color: rgba(255,255,255,0.65); }
+
+/* ============================================================
+   DELIVERABLE CARDS
+   ============================================================ */
+.deliverable-list { display: flex; flex-direction: column; gap: 8px; }
+.deliverable-card { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #f0f0f0; border-radius: 6px; transition: all 0.2s; }
+.deliverable-card:hover { border-color: #d9d9d9; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+[data-prefers-color="dark"] .deliverable-card { background: #2a2a2a; border-color: #303030; }
+.deliverable-card .dl-icon { font-size: 24px; flex-shrink: 0; }
+.deliverable-card .dl-info { flex: 1; min-width: 0; }
+.deliverable-card .dl-name { font-size: 14px; font-weight: 500; color: rgba(0,0,0,0.88); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-prefers-color="dark"] .deliverable-card .dl-name { color: rgba(255,255,255,0.85); }
+.deliverable-card .dl-meta { font-size: 12px; color: rgba(0,0,0,0.45); display: flex; gap: 12px; }
+.deliverable-card .dl-type-chip { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; font-size: 11px; border-radius: 3px; background: #f0f0f0; color: rgba(0,0,0,0.65); }
+[data-prefers-color="dark"] .deliverable-card .dl-type-chip { background: #303030; color: rgba(255,255,255,0.65); }
+.deliverable-card .dl-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.dl-action-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 4px; font-size: 14px; color: rgba(0,0,0,0.45); cursor: pointer; transition: all 0.2s; }
+.dl-action-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+.dl-action-btn.danger:hover { background: #fff2f0; color: #ff4d4f; }
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 4px; bottom: 4px; width: 2px; background: #f0f0f0; }
+[data-prefers-color="dark"] .timeline::before { background: #303030; }
+.timeline-item { position: relative; margin-bottom: 16px; }
+.timeline-item:last-child { margin-bottom: 0; }
+.timeline-dot { position: absolute; left: -20px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #d9d9d9; border: 2px solid #ffffff; z-index: 1; }
+[data-prefers-color="dark"] .timeline-dot { border-color: #1f1f1f; background: #434343; }
+.timeline-dot.primary { background: #2f54eb; }
+.timeline-dot.success { background: #52c41a; }
+.timeline-dot.warning { background: #faad14; }
+.timeline-dot.error { background: #ff4d4f; }
+.timeline-time { font-size: 12px; color: rgba(0,0,0,0.45); margin-bottom: 2px; }
+.timeline-content { font-size: 13px; color: rgba(0,0,0,0.65); line-height: 1.5; }
+[data-prefers-color="dark"] .timeline-content { color: rgba(255,255,255,0.65); }
+.timeline-content .tl-user { font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .timeline-content .tl-user { color: rgba(255,255,255,0.85); }
+.timeline-content .tl-action { color: #2f54eb; }
+
+/* ============================================================
+   RIGHT PANEL
+   ============================================================ */
+.right-panel-card { background: #ffffff; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+[data-prefers-color="dark"] .right-panel-card { background: #1f1f1f; border-color: #303030; }
+.right-panel-header { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.88); display: flex; align-items: center; gap: 6px; }
+[data-prefers-color="dark"] .right-panel-header { border-bottom-color: #303030; color: rgba(255,255,255,0.85); }
+.right-panel-body { padding: 16px; }
+
+/* Right panel info rows */
+.rp-info-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
+.rp-info-row + .rp-info-row { border-top: 1px solid #fafafa; }
+[data-prefers-color="dark"] .rp-info-row + .rp-info-row { border-top-color: #2a2a2a; }
+.rp-info-label { color: rgba(0,0,0,0.45); flex-shrink: 0; }
+.rp-info-value { color: rgba(0,0,0,0.88); font-weight: 500; text-align: right; }
+[data-prefers-color="dark"] .rp-info-value { color: rgba(255,255,255,0.85); }
+.rp-info-value.priority-urgent { color: #ff4d4f; }
+
+/* Right panel actions */
+.rp-actions { display: flex; flex-direction: column; gap: 8px; }
+.rp-actions .btn { width: 100%; justify-content: center; }
+
+/* Role badge */
+.role-badge { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-left: 8px; }
+.role-badge.dev { background: #d6e4ff; color: #2f54eb; }
+.role-badge.consumer { background: #e6fffb; color: #23ada4; }
+
+/* ============================================================
+   PREVIEW PANEL (consumer deliverable preview)
+   ============================================================ */
+.preview-frame { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 6px; padding: 20px; text-align: center; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+[data-prefers-color="dark"] .preview-frame { background: #2a2a2a; border-color: #303030; }
+.preview-frame .preview-icon { font-size: 48px; opacity: 0.6; }
+.preview-frame .preview-name { font-size: 15px; font-weight: 500; color: rgba(0,0,0,0.88); }
+[data-prefers-color="dark"] .preview-frame .preview-name { color: rgba(255,255,255,0.85); }
+.preview-frame .preview-meta { font-size: 13px; color: rgba(0,0,0,0.45); }
+.preview-frame .preview-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* ============================================================
+   ACCEPT / REJECT FORM
+   ============================================================ */
+.feedback-textarea { width: 100%; min-height: 80px; padding: 8px 11px; font-size: 14px; color: rgba(0,0,0,0.88); background: #ffffff; border: 1px solid #d9d9d9; border-radius: 6px; resize: vertical; outline: none; transition: all 0.2s; font-family: inherit; line-height: 1.5715; }
+.feedback-textarea:hover { border-color: #597ef7; }
+.feedback-textarea:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.feedback-textarea::placeholder { color: rgba(0,0,0,0.25); }
+[data-prefers-color="dark"] .feedback-textarea { background: #1f1f1f; border-color: #434343; color: rgba(255,255,255,0.85); }
+
+/* ============================================================
+   EDITED NOTE HIGHLIGHT
+   ============================================================ */
+.note-saved-indicator { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #52c41a; margin-top: 6px; opacity: 0; transition: opacity 0.3s; }
+.note-saved-indicator.visible { opacity: 1; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1200px) {
+  .workspace-body { flex-direction: column; }
+  .workspace-left { flex: 1 1 auto; width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; }
+  .workspace-right { flex: 1 1 auto; width: 100%; position: static; max-height: none; }
+}
+@media (max-width: 768px) {
+  .wb-layout { flex-direction: column; padding: 16px; }
+  .wb-sidebar { width: 100%; }
+  .wb-main { padding-left: 0; padding-top: 16px; }
+  .wb-topbar { padding: 12px 16px; }
+  .info-card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative BG -->
+<div class="bg-list"></div>
+
+<!-- ===== HEADER (8-item nav, 首页 active) ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs>
+              <linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+              <linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient>
+            </defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item active" data-nav="home" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" data-nav="marketplace" onclick="location.href='model-marketplace.html'">模型广场</span>
+        <span class="top-nav-item" data-nav="data" onclick="location.href='dataset-management.html'">数据管理</span>
+        <!-- <span class="top-nav-item" data-nav="dev" onclick="location.href='image-custom-list.html'">开发中心</span> -->
+        <span class="top-nav-item" data-nav="demand" onclick="location.href='demand-hall.html'">需求市场</span>
+        <span class="top-nav-item" data-nav="docs">文档中心</span>
+        <!-- appcenter hidden -->
+        <!-- apps hidden -->
+      </div></div>
+      <div class="header-right">
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="showToast('功能开发中')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <!-- User dropdown -->
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== WORKBENCH CONTENT ==================== -->
+<div class="workbench">
+
+  <!-- Top Bar with back link -->
+  <div class="wb-topbar">
+    <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:4px;font-size:14px;color:#2f54eb;cursor:pointer;text-decoration:none;padding:4px 8px;border-radius:4px;transition:all 0.2s;" onmouseover="this.style.background='rgba(47,84,235,0.06)'" onmouseout="this.style.background='transparent'">← 返回上级</a>
+    <span style="font-size:16px;font-weight:600;color:rgba(0,0,0,0.88);margin-left:8px;" id="breadcrumbDemand">需求处理工作台</span>
+  </div>
+
+  <!-- Two-Column Layout -->
+  <div class="wb-layout">
+
+    <!-- LEFT SIDEBAR — matches workbench.html -->
+    <aside class="wb-sidebar">
+      <div class="wb-sidebar-card">
+        <div class="wb-sb-user">
+          <div class="wb-sb-avatar">张</div>
+          <div><div class="wb-sb-uname">张研究员</div><div class="wb-sb-urole">开发者</div></div>
+        </div>
+        <div class="wb-sb-stat">
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">12</div><div class="wb-sb-stat-lbl">我的模型</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">5</div><div class="wb-sb-stat-lbl">数据集</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">3</div><div class="wb-sb-stat-lbl">进行中</div></div>
+        </div>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>快速导航</h4>
+        <a class="wb-sb-link" href="workbench.html"><span class="si">🧠</span> 我的模型</a>
+        <a class="wb-sb-link" href="resource-overview.html"><span class="si">📈</span> 资源总览</a>
+        <a class="wb-sb-link" href="workbench.html#my-data"><span class="si">📊</span> 我的数据集</a>
+        <a class="wb-sb-link" href="workbench.html#my-demands"><span class="si">📝</span> 我的需求</a>
+        <a class="wb-sb-link active" href="workbench.html#my-tasks"><span class="si">📌</span> 我的任务</a>
+        <a class="wb-sb-link" href="workbench.html#my-apps"><span class="si">🤖</span> 我的应用</a>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>开发中心</h4>
+        <a class="wb-sb-link" href="image-custom-list.html"><span class="si">📦</span> 镜像管理</a>
+        <a class="wb-sb-link" href="workbench.html#my-notebooks"><span class="si">💻</span> 在线开发</a>
+      </div>
+      <div class="wb-sidebar-card">
+        <h4>平台概况</h4>
+        <div class="wb-sb-stat">
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">187</div><div class="wb-sb-stat-lbl">模型</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">42</div><div class="wb-sb-stat-lbl">数据集</div></div>
+          <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">23</div><div class="wb-sb-stat-lbl">需求</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="wb-main">
+      <div class="wb-content-card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-accent-bar"></span>
+          <span class="card-title" id="workspaceTitle">需求处理工作台</span>
+          <span class="role-badge dev" id="roleBadge" style="display:none;"></span>
+        </div>
+
+        <div class="card-body">
+          <div class="workspace-body" id="workspaceBody">
+            <!-- Left panel (65%) rendered by JS -->
+            <!-- Right panel (35% sticky) rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div><!-- /wb-layout -->
+</div><!-- /workbench -->
+
+<!-- ===== MODAL: Submit Deliverable Confirmation ===== -->
+<div class="modal-overlay" id="submitDeliverableModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">提交交付物</span>
+      <span class="modal-close" onclick="closeModal('submitDeliverableModal')">✕</span>
+    </div>
+    <div class="modal-body" id="submitModalBody">
+      确认将所有交付物提交给需求方验收？提交后需求状态将变更为「待验收」。
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('submitDeliverableModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmSubmitDeliverables()">确认提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Cancel Claim Confirmation ===== -->
+<div class="modal-overlay" id="cancelClaimModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">取消接单</span>
+      <span class="modal-close" onclick="closeModal('cancelClaimModal')">✕</span>
+    </div>
+    <div class="modal-body">
+      确定要取消此需求的接单吗？已上传的交付物和处理备注将被保留，需求将退回「待接单」状态。
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('cancelClaimModal')">我再想想</button>
+      <button class="btn btn-primary" style="background:#ff4d4f;border-color:#ff4d4f;" onclick="confirmCancelClaim()">确认取消接单</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Accept Deliverable Confirmation ===== -->
+<div class="modal-overlay" id="acceptModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">确认验收</span>
+      <span class="modal-close" onclick="closeModal('acceptModal')">✕</span>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;">确认验收所有交付物？验收后需求状态将变更为「已完成」。</p>
+      <textarea class="feedback-textarea" id="acceptFeedback" placeholder="验收备注（可选）"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('acceptModal')">取消</button>
+      <button class="btn btn-success" onclick="confirmAccept()">确认验收</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Reject Deliverable ===== -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">退回修改</span>
+      <span class="modal-close" onclick="closeModal('rejectModal')">✕</span>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;">请说明退回原因，需求将退回「处理中」状态。</p>
+      <textarea class="feedback-textarea" id="rejectFeedback" placeholder="请填写退回原因及修改要求（必填）"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('rejectModal')">取消</button>
+      <button class="btn btn-warning" onclick="confirmReject()">确认退回</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== POPCONFIRM ===== -->
+<div class="popconfirm-bubble" id="popconfirmBubble">
+  <div class="popconfirm-title" id="popconfirmTitle"></div>
+  <div class="popconfirm-desc" id="popconfirmDesc"></div>
+  <div class="popconfirm-actions">
+    <button class="btn btn-default btn-sm" onclick="closePopconfirm()">取消</button>
+    <button class="btn btn-primary btn-sm" id="popconfirmOkBtn" onclick="execPopconfirm()">确认</button>
+  </div>
+</div>
+
+<script>
+// ===== 积分系统 =====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', data:'dataset-management.html', demand:'demand-hall.html', docs:'doc-center.html' };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
+function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+/* ============================================================
+   MOCK DATA — 3 demands covering different statuses
+   ============================================================ */
+var MOCK_DEMANDS = {
+  "DM-20260726-001": {
+    id: "DM-20260726-001",
+    title: "东安农场2026年水稻产量预估",
+    type: "数据分析",
+    description: "利用卫星遥感影像与历史气象数据，对东安农场2026年度水稻种植区域进行产量预估分析。需综合考虑土壤墒情、播种时间、施肥记录及历年产量基线数据，输出分地块产量预估报告及空间分布图。",
+    consumerName: "张农场",
+    consumerUnit: "东安农场",
+    contactPerson: "张农场",
+    contactPhone: "138xxxx1234",
+    contactEmail: "zhangnc@dongan.cn",
+    deliverables: "产量预估报告（PDF + 在线预览）+ 空间分布图（GeoTIFF + PNG）",
+    attachments: [
+      { name: "东安农场2025年产量基线数据.xlsx", size: "2.3 MB", icon: "📊" },
+      { name: "地块矢量边界_2026.shp.zip", size: "8.7 MB", icon: "🗺️" },
+      { name: "2026年施肥记录表.pdf", size: "1.1 MB", icon: "📄" }
+    ],
+    tags: ["产量预估", "水稻", "遥感", "数据分析"],
+    status: "处理中",
+    priority: "普通",
+    claimedBy: "李研发",
+    claimedAt: "2026-07-27 09:15:00",
+    submittedAt: "2026-07-26 14:30:00",
+    deadline: "2026-08-15",
+    processingNotes: "已获取2025年产量基线数据，正在进行遥感影像预处理。初步选择了 Sentinel-2 和 Landsat 9 两个数据源，计划使用随机森林回归模型。需要确认客户是否有关键生育期的田间实测数据。",
+    actualDeliverables: [],
+    feedback: "",
+    notebookId: "NB-005", publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-27 09:15:00", user: "李研发", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-26 14:30:00", user: "张农场", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260720-002": {
+    id: "DM-20260720-002",
+    title: "建三江农场大豆病虫害遥感监测",
+    type: "数据分析",
+    description: "利用多光谱无人机影像结合地面调查数据，对建三江农场大豆种植区域进行病虫害遥感监测，识别受灾地块并评估灾害等级，输出监测报告与防治建议。",
+    consumerName: "刘场长",
+    consumerUnit: "建三江农场",
+    contactPerson: "刘场长",
+    contactPhone: "139xxxx5678",
+    contactEmail: "liuchang@jiansanjiang.cn",
+    deliverables: "病虫害监测报告 + 灾害等级分布图 + 防治建议方案",
+    attachments: [
+      { name: "建三江农场大豆种植分布图.pdf", size: "4.2 MB", icon: "🗺️" },
+      { name: "2026年地面虫情调查记录.xlsx", size: "1.5 MB", icon: "📊" }
+    ],
+    tags: ["病虫害监测", "大豆", "遥感", "无人机"],
+    status: "待验收",
+    priority: "紧急",
+    claimedBy: "王研发",
+    claimedAt: "2026-07-21 10:00:00",
+    submittedAt: "2026-07-20 08:45:00",
+    deadline: "2026-07-30",
+    processingNotes: "已完成多光谱影像拼接与NDVI计算，基于地面调查数据进行了虫害等级标定。采用深度学习模型对受灾区域进行语义分割，识别准确率达到92.3%。防治建议已结合农场历史防治方案进行优化。",
+    actualDeliverables: [
+      { type: "报告", name: "建三江大豆病虫害监测报告_v2.pdf", size: "12.5 MB", icon: "📊", uploadedAt: "2026-07-25 16:20:00" },
+      { type: "数据集", name: "病虫害等级分布图_GeoTIFF.zip", size: "45.8 MB", icon: "📁", uploadedAt: "2026-07-25 16:25:00" },
+      { type: "报告", name: "防治建议方案_v1.docx", size: "3.2 MB", icon: "📄", uploadedAt: "2026-07-25 16:30:00" }
+    ],
+    feedback: "",
+    publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-25 16:30:00", user: "王研发", action: "上传交付物", detail: "上传防治建议方案_v1.docx", dot: "primary" },
+      { time: "2026-07-25 16:25:00", user: "王研发", action: "上传交付物", detail: "上传病虫害等级分布图数据包", dot: "primary" },
+      { time: "2026-07-25 16:20:00", user: "王研发", action: "上传交付物", detail: "上传监测报告_v2.pdf", dot: "primary" },
+      { time: "2026-07-25 16:15:00", user: "王研发", action: "提交交付物", detail: "提交交付物，状态变更为「待验收」", dot: "success" },
+      { time: "2026-07-21 10:00:00", user: "王研发", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-20 08:45:00", user: "刘场长", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260715-003": {
+    id: "DM-20260715-003",
+    title: "查哈阳农场玉米补贴核查分析",
+    type: "数据分析",
+    description: "基于卫星遥感影像与地块矢量数据，对查哈阳农场玉米种植面积与补贴申报数据进行交叉核查，识别申报面积与实际种植面积不符的地块，输出核查报告。",
+    consumerName: "赵科长",
+    consumerUnit: "查哈阳农场",
+    contactPerson: "赵科长",
+    contactPhone: "136xxxx9012",
+    deliverables: "玉米补贴核查报告 + 差异地块清单 + 空间对比图",
+    attachments: [
+      { name: "2026年玉米补贴申报汇总.xlsx", size: "1.8 MB", icon: "📊" }
+    ],
+    tags: ["补贴核查", "玉米", "遥感", "合规"],
+    status: "已完成",
+    priority: "普通",
+    claimedBy: "李研发",
+    claimedAt: "2026-07-16 08:30:00",
+    submittedAt: "2026-07-15 11:00:00",
+    deadline: "2026-07-25",
+    processingNotes: "已完成全部核查分析，识别出3个地块存在申报面积差异（差异率2.1%-5.8%），已附详细对比图与坐标信息。报告已经农场确认。",
+    actualDeliverables: [
+      { type: "报告", name: "查哈阳玉米补贴核查报告_final.pdf", size: "8.3 MB", icon: "📊", uploadedAt: "2026-07-22 14:00:00" },
+      { type: "数据集", name: "差异地块清单与对比图.zip", size: "22.6 MB", icon: "📁", uploadedAt: "2026-07-22 14:05:00" }
+    ],
+    feedback: "核查数据准确，报告详实，符合验收标准。",
+    publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-23 15:00:00", user: "赵科长", action: "确认验收", detail: "验收通过「核查数据准确，报告详实」", dot: "success" },
+      { time: "2026-07-22 14:10:00", user: "李研发", action: "提交交付物", detail: "提交交付物，状态变更为「待验收」", dot: "success" },
+      { time: "2026-07-22 14:05:00", user: "李研发", action: "上传交付物", detail: "上传差异地块清单与对比图", dot: "primary" },
+      { time: "2026-07-22 14:00:00", user: "李研发", action: "上传交付物", detail: "上传核查报告_final.pdf", dot: "primary" },
+      { time: "2026-07-16 08:30:00", user: "李研发", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-15 11:00:00", user: "赵科长", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260722-002": {
+    id: "DM-20260722-002",
+    title: "友谊农场第三管理区病虫害监测",
+    type: "数据分析",
+    description: "针对友谊农场第三管理区玉米和大豆地块，利用无人机多光谱影像进行病虫害早期识别与监测。覆盖面积约3200亩，需区分健康/轻度/中度/重度四个等级。",
+    consumerName: "李技术",
+    consumerUnit: "友谊农场",
+    contactPerson: "李技术",
+    contactPhone: "137xxxx2345",
+    contactEmail: "lijishu@youyi.cn",
+    deliverables: "病虫害监测周报 + 风险热力图 + 防治建议",
+    attachments: [
+      { name: "友谊农场第三管理区地块图.pdf", size: "3.6 MB", icon: "🗺️" },
+      { name: "2025年同期病虫害历史记录.xlsx", size: "1.2 MB", icon: "📊" }
+    ],
+    tags: ["病虫害", "无人机", "多光谱"],
+    status: "处理中",
+    priority: "紧急",
+    claimedBy: "王科研",
+    claimedAt: "2026-07-23 08:00:00",
+    submittedAt: "2026-07-22 15:30:00",
+    deadline: "2026-08-05",
+    processingNotes: "已完成第一轮影像采集，正在标注训练样本",
+    actualDeliverables: [],
+    feedback: "",
+    notebookId: "NB-001", publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-23 08:00:00", user: "王科研", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-22 15:30:00", user: "李技术", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260715-006": {
+    id: "DM-20260715-006",
+    title: "大兴农场水稻纹枯病预警模型",
+    type: "模型开发",
+    description: "开发基于气象+遥感的水稻纹枯病风险预警模型，覆盖大兴农场全域约12000亩水田。需整合历史气象数据、土壤湿度、品种抗性等多源数据，输出逐日风险等级预报。",
+    consumerName: "吴农艺",
+    consumerUnit: "大兴农场",
+    contactPerson: "吴农艺",
+    contactPhone: "135xxxx7890",
+    contactEmail: "wunongyi@daxing.cn",
+    deliverables: "预警模型 + 部署服务 + API文档 + 操作手册",
+    attachments: [
+      { name: "大兴农场水田分布图_2026.pdf", size: "5.1 MB", icon: "🗺️" },
+      { name: "2019-2025年纹枯病发生记录.xlsx", size: "2.8 MB", icon: "📊" },
+      { name: "水稻品种抗性数据库.csv", size: "0.8 MB", icon: "📋" }
+    ],
+    tags: ["纹枯病", "预警", "水稻", "气象"],
+    status: "处理中",
+    priority: "紧急",
+    claimedBy: "王科研",
+    claimedAt: "2026-07-16 09:30:00",
+    submittedAt: "2026-07-15 10:00:00",
+    deadline: "2026-08-10",
+    processingNotes: "气象数据已对接，正在训练LSTM预警模型",
+    actualDeliverables: [],
+    feedback: "",
+    notebookId: "NB-003", publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-16 09:30:00", user: "王科研", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-15 10:00:00", user: "吴农艺", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260718-003": {
+    id: "DM-20260718-003",
+    title: "洪河农场大豆种植面积核查",
+    type: "模型开发",
+    description: "基于哨兵二号卫星影像，开发大豆种植面积自动提取模型。要求精度不低于92%，需输出分地块面积统计表与空间分布图，支持年度对比。",
+    consumerName: "赵核查",
+    consumerUnit: "洪河农场",
+    contactPerson: "赵核查",
+    contactPhone: "133xxxx3456",
+    contactEmail: "zhaohecha@honghe.cn",
+    deliverables: "大豆面积提取模型 + 核查报告 + 精度评估",
+    attachments: [
+      { name: "洪河农场2026年种植计划表.xlsx", size: "1.6 MB", icon: "📊" },
+      { name: "2025年大豆面积核查基准数据.zip", size: "18.3 MB", icon: "📁" }
+    ],
+    tags: ["面积核查", "大豆", "哨兵二号"],
+    status: "待验收",
+    priority: "普通",
+    claimedBy: "陈算法",
+    claimedAt: "2026-07-19 14:00:00",
+    submittedAt: "2026-07-18 10:30:00",
+    deadline: "2026-07-30",
+    processingNotes: "模型已训练完成，mIoU 94.2%，交付物已上传",
+    actualDeliverables: [
+      { type: "模型", name: "大豆面积提取模型_ResNet50_v3.pth", size: "256 MB", icon: "🧠", uploadedAt: "2026-07-28 10:00:00" },
+      { type: "报告", name: "洪河农场大豆面积核查报告_v1.pdf", size: "15.2 MB", icon: "📊", uploadedAt: "2026-07-28 10:15:00" },
+      { type: "报告", name: "模型精度评估报告.pdf", size: "6.8 MB", icon: "📄", uploadedAt: "2026-07-28 10:20:00" }
+    ],
+    feedback: "",
+    notebookId: "NB-002", publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-28 10:20:00", user: "陈算法", action: "上传交付物", detail: "上传精度评估报告", dot: "primary" },
+      { time: "2026-07-28 10:15:00", user: "陈算法", action: "上传交付物", detail: "上传面积核查报告", dot: "primary" },
+      { time: "2026-07-28 10:00:00", user: "陈算法", action: "上传交付物", detail: "上传大豆面积提取模型", dot: "primary" },
+      { time: "2026-07-19 14:00:00", user: "陈算法", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-18 10:30:00", user: "赵核查", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  },
+  "DM-20260710-004": {
+    id: "DM-20260710-004",
+    title: "青龙山农场土地利用变化检测",
+    type: "数据分析",
+    description: "对比2025年和2026年高分辨率影像，检测青龙山农场土地利用变化情况。重点检测耕地与非耕地转换、建设用地扩张、水体面积变化等六类变化类型。",
+    consumerName: "孙管理",
+    consumerUnit: "青龙山农场",
+    contactPerson: "孙管理",
+    contactPhone: "131xxxx7890",
+    contactEmail: "sunganli@qinglongshan.cn",
+    deliverables: "变化检测报告 + 变化图斑矢量数据",
+    attachments: [
+      { name: "青龙山农场2025年土地利用图.tif", size: "32.5 MB", icon: "🗺️" },
+      { name: "青龙山农场2026年高分辨率影像.tif", size: "45.1 MB", icon: "🛰️" }
+    ],
+    tags: ["变化检测", "土地利用", "高分辨率"],
+    status: "已完成",
+    priority: "普通",
+    claimedBy: "刘遥感",
+    claimedAt: "2026-07-11 10:00:00",
+    submittedAt: "2026-07-10 09:00:00",
+    deadline: "2026-07-25",
+    processingNotes: "",
+    actualDeliverables: [
+      { type: "报告", name: "青龙山农场土地利用变化检测报告_v2.pdf", size: "18.7 MB", icon: "📊", uploadedAt: "2026-07-19 16:00:00" },
+      { type: "数据集", name: "变化图斑矢量数据.gpkg", size: "28.4 MB", icon: "📁", uploadedAt: "2026-07-19 16:30:00" }
+    ],
+    feedback: "交付物质量很好，已通过验收",
+    notebookId: "NB-004", publishedToAppCenter: false, reward: 200,
+    operationLog: [
+      { time: "2026-07-20 16:00:00", user: "孙管理", action: "确认验收", detail: "验收通过「交付物质量很好，已通过验收」", dot: "success" },
+      { time: "2026-07-19 16:30:00", user: "刘遥感", action: "上传交付物", detail: "上传变化图斑矢量数据", dot: "primary" },
+      { time: "2026-07-19 16:00:00", user: "刘遥感", action: "上传交付物", detail: "上传变化检测报告_v2.pdf", dot: "primary" },
+      { time: "2026-07-19 15:45:00", user: "刘遥感", action: "提交交付物", detail: "提交交付物，状态变更为「待验收」", dot: "success" },
+      { time: "2026-07-11 10:00:00", user: "刘遥感", action: "接单", detail: "接单并开始处理", dot: "primary" },
+      { time: "2026-07-10 09:00:00", user: "孙管理", action: "提交需求", detail: "提交需求到需求大厅", dot: "default" }
+    ]
+  }
+};
+
+/* ============================================================
+   UTILITY: Toast, Modal, Popconfirm
+   ============================================================ */
+var _toastTimer;
+function showToast(type, msg) {
+  var t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' visible';
+  t.textContent = (type === 'success' ? '✅ ' : type === 'error' ? '❌ ' : 'ℹ️ ') + msg;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.classList.remove('visible'); }, 3000);
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('visible');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('visible');
+}
+
+var _popconfirmCallback = null;
+function openPopconfirm(title, desc, cb, triggerEl) {
+  var bubble = document.getElementById('popconfirmBubble');
+  document.getElementById('popconfirmTitle').textContent = title;
+  document.getElementById('popconfirmDesc').textContent = desc || '';
+  _popconfirmCallback = cb;
+  bubble.classList.add('visible');
+}
+function closePopconfirm() {
+  document.getElementById('popconfirmBubble').classList.remove('visible');
+  _popconfirmCallback = null;
+}
+function execPopconfirm() {
+  if (_popconfirmCallback) _popconfirmCallback();
+  closePopconfirm();
+}
+
+/* ============================================================
+   URL PARSING
+   ============================================================ */
+function getURLParams() {
+  var params = new URLSearchParams(window.location.search);
+  return {
+    id: params.get('id') || 'DM-20260726-001',
+    role: params.get('role') || 'dev'  // dev | consumer
+  };
+}
+
+function launchNotebook(){
+  if(!_currentDemand) return;
+  var d = _currentDemand;
+  // Already has a notebook → open IDE in new tab
+  if(d.notebookId){
+    window.open('notebook-ide.html?id=' + d.notebookId, '_blank');
+    return;
+  }
+  // No notebook yet → show "申请启动 Notebook" modal
+  openWorkspaceNotebookModal();
+}
+// ===== WORKSPACE NOTEBOOK START MODAL =====
+function openWorkspaceNotebookModal(){
+  var d = _currentDemand; if(!d) return;
+  document.getElementById('wnbTaskTitle').textContent = d.title;
+  document.getElementById('wnbTaskType').textContent = d.type;
+  document.getElementById('wnbName').value = d.title + ' — 开发环境';
+  // Populate image options (from parent opener's MY_IMAGES or fallback)
+  var sel = document.getElementById('wnbImage');
+  var imgOptions = [
+    {id:1,name:'pytorch-training',version:'1.0.0',gpu:true},
+    {id:2,name:'tensorflow-serving',version:'2.1.0',gpu:false},
+    {id:7,name:'crop-yield-model',version:'1.5.0',gpu:true},
+    {id:8,name:'drone-image-stitch',version:'1.3.0',gpu:true}
+  ];
+  sel.innerHTML = '<option value="">请选择镜像</option>' + imgOptions.map(function(img){
+    return '<option value="'+img.id+'">'+img.name+' ('+img.version+')'+(img.gpu?' · GPU':'')+'</option>';
+  }).join('');
+  if(imgOptions.length > 0) sel.value = imgOptions[0].id;
+  document.getElementById('wnbDataset').innerHTML = '<option value="">不使用数据集</option>';
+  document.getElementById('wnbCpu').value = '8';
+  document.getElementById('wnbMemory').value = '16';
+  document.getElementById('wnbGpu').value = 'a100-1';
+  document.getElementById('wnbSshToggle').checked = false;
+  document.getElementById('workspaceNotebookModal').classList.add('visible');
+}
+function closeWorkspaceNotebookModal(){ document.getElementById('workspaceNotebookModal').classList.remove('visible'); }
+function submitWorkspaceNotebook(){
+  var d = _currentDemand; if(!d) return;
+  var name = document.getElementById('wnbName').value.trim();
+  var imgId = document.getElementById('wnbImage').value;
+  var cpu = document.getElementById('wnbCpu').value;
+  var mem = document.getElementById('wnbMemory').value;
+  var gpu = document.getElementById('wnbGpu').value;
+  if(!name){ showToast('info','请输入 Notebook 名称'); return; }
+  if(!imgId){ showToast('info','请选择镜像'); return; }
+  var gpuLabelMap = {'none':'—','t4-1':'T4 × 1','t4-2':'T4 × 2','a100-1':'A100 × 1','a100-2':'A100 × 2'};
+  var gpuLabel = gpuLabelMap[gpu] || '—';
+  var nbId = 'NB-' + String(Date.now()).slice(-7);
+  // Link notebook to current demand
+  d.notebookId = nbId;
+  closeWorkspaceNotebookModal();
+  showToast('success', 'Notebook「'+name+'」启动成功！正在打开开发环境…');
+  // Open IDE in new tab
+  setTimeout(function(){ window.open('notebook-ide.html?id=' + nbId + '&name=' + encodeURIComponent(name) + '&taskId=' + encodeURIComponent(d.id) + '&taskTitle=' + encodeURIComponent(d.title), '_blank'); }, 800);
+}
+
+/* ============================================================
+   STATUS HELPERS
+   ============================================================ */
+function statusClass(status) {
+  switch(status) {
+    case '待接单': return 'default';
+    case '处理中': return 'pending';
+    case '待验收': return 'warning';
+    case '已完成': return 'success';
+    case '已发布': return 'published';
+    default: return 'default';
+  }
+}
+
+function deliverableTypeIcon(type) {
+  switch(type) {
+    case '报告': return '📊';
+    case '数据集': return '📁';
+    case '工作流': return '⚙️';
+    case '部署服务': return '🚀';
+    default: return '📦';
+  }
+}
+
+function demandTypeIcon(type) {
+  switch(type) {
+    case '数据分析': return '📊';
+    case '模型开发': return '🧠';
+    case '数据标注': return '🏷️';
+    case '应用开发': return '💻';
+    case '技术咨询': return '💡';
+    default: return '📋';
+  }
+}
+
+/* ============================================================
+   MAIN RENDER
+   ============================================================ */
+var _currentDemand = null;
+var _currentRole = 'dev';
+var _selectedUploadType = '报告';
+var _uploadedFiles = [];
+
+function init() {
+  var params = getURLParams();
+  _currentDemand = MOCK_DEMANDS[params.id];
+  _currentRole = params.role;
+
+  if (!_currentDemand) {
+    document.getElementById('workspaceBody').innerHTML =
+      '<div class="empty-state" style="padding:60px;"><div class="empty-icon">🔍</div><div class="empty-title">需求不存在</div><div class="empty-desc">未找到需求 <b>' + params.id + '</b>，请检查链接是否正确。</div><a class="btn btn-primary" href="demand-hall.html">返回需求大厅</a></div>';
+    return;
+  }
+
+  document.getElementById('breadcrumbDemand').textContent = _currentDemand.title;
+  document.getElementById('workspaceTitle').textContent = _currentDemand.title;
+  document.getElementById('roleBadge').style.display = 'inline-flex';
+  document.getElementById('roleBadge').textContent = _currentRole === 'dev' ? '🔧 研发侧' : '👤 消费侧';
+  document.getElementById('roleBadge').className = 'role-badge ' + (_currentRole === 'dev' ? 'dev' : 'consumer');
+
+  renderWorkspace();
+}
+
+function renderWorkspace() {
+  var d = _currentDemand;
+  var isDev = _currentRole === 'dev';
+  var isProcessing = d.status === '处理中';
+  var isPendingAccept = d.status === '待验收';
+  var isDone = d.status === '已完成';
+
+  var leftHTML = renderLeftPanel(d, isDev, isProcessing, isPendingAccept, isDone);
+  var rightHTML = renderRightPanel(d, isDev, isProcessing, isPendingAccept, isDone);
+
+  document.getElementById('workspaceBody').innerHTML =
+    '<div class="workspace-left">' + leftHTML + '</div>' +
+    '<div class="workspace-right">' + rightHTML + '</div>';
+
+  // Attach event handlers for uploaded files
+  if (isDev && isProcessing) {
+    attachUploadEvents();
+  }
+}
+
+/* ============================================================
+   LEFT PANEL
+   ============================================================ */
+function renderLeftPanel(d, isDev, isProcessing, isPendingAccept, isDone) {
+  var html = '';
+
+  // 1. Demand Info Card (read-only)
+  html += '<div class="workspace-section">';
+  html += '<div class="section-title">需求信息</div>';
+  html += '<div class="info-card">';
+  html += '<div class="info-card-header">';
+  html += '<div class="info-card-icon">' + demandTypeIcon(d.type) + '</div>';
+  html += '<div class="info-card-title-row">';
+  html += '<div class="info-card-title">' + d.title + '<span class="status-chip ' + statusClass(d.status) + '">' + d.status + '</span></div>';
+  html += '<div class="info-card-meta">' + d.id + ' · ' + d.type + ' · ' + (d.priority === '紧急' ? '🔴 ' : '') + d.priority + '优先级</div>';
+  html += '</div></div>';
+  html += '<div class="info-card-desc">' + d.description + '</div>';
+  html += '<div class="info-card-tags">';
+  d.tags.forEach(function(tag) {
+    html += '<span class="info-tag">' + tag + '</span>';
+  });
+  html += '</div>';
+  html += '<div class="info-card-grid">';
+  html += '<div class="info-card-item"><span class="info-card-label">提交方</span><span class="info-card-value">' + d.consumerName + '（' + d.consumerUnit + '）</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">联系人</span><span class="info-card-value">' + d.contactPerson + ' · ' + d.contactPhone + '</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">提交时间</span><span class="info-card-value">' + d.submittedAt + '</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">截止日期</span><span class="info-card-value">' + d.deadline + '</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">接单方</span><span class="info-card-value">' + (d.claimedBy || '—') + '</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">接单时间</span><span class="info-card-value">' + (d.claimedAt || '—') + '</span></div>';
+  html += '<div class="info-card-item"><span class="info-card-label">期望交付物</span><span class="info-card-value">' + d.deliverables + '</span></div>';
+  html += '</div>';
+
+  // Attachments
+  if (d.attachments && d.attachments.length > 0) {
+    html += '<div style="margin-top:12px;"><span class="info-card-label">客户上传附件</span>';
+    html += '<div class="attachment-list">';
+    d.attachments.forEach(function(att) {
+      html += '<div class="attachment-item"><span class="att-icon">' + att.icon + '</span><span class="att-name">' + att.name + '</span><span class="att-size">' + att.size + '</span><button class="btn btn-text btn-sm" onclick="showToast(\'info\',\'模拟下载: ' + att.name + '\')">⬇️ 下载</button></div>';
+    });
+    html += '</div></div>';
+  }
+  html += '</div></div>';
+
+  // 2. Online Processing Area (dev only, processing status)
+  if (isDev && (isProcessing || isPendingAccept)) {
+    html += '<div class="workspace-section">';
+    html += '<div class="section-title">在线处理</div>';
+
+    // Quick action buttons
+    html += '<div class="quick-actions" style="margin-bottom:14px;">';
+    // html += '<button class="quick-action-btn" onclick="window.location.href=\'online-dev.html\'"><span class="qa-icon">💻</span> 打开在线开发</button>';
+    html += '<button class="quick-action-btn" onclick="launchNotebook()"><span class="qa-icon">📓</span> 启动 Notebook</button>';
+    // html += '<button class="quick-action-btn" onclick="showToast(\'info\',\'即将打开工作流编排\')"><span class="qa-icon">⚙️</span> 编排工作流</button>';
+    // html += '<button class="quick-action-btn" onclick="showToast(\'info\',\'即将跳转模型广场\')"><span class="qa-icon">🧠</span> 调用模型</button>';
+    html += '</div>';
+
+    // Processing notes
+    html += '<div class="info-card-label" style="margin-bottom:6px;">处理备注</div>';
+    html += '<textarea class="proc-textarea" id="processingNotes" placeholder="记录处理思路、技术方案、遇到的问题等...">' + (d.processingNotes || '') + '</textarea>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">';
+    html += '<span class="note-saved-indicator" id="noteSavedIndicator">✅ 已保存</span>';
+    html += '<button class="btn btn-text btn-sm" onclick="saveProcessingNotes()">💾 保存备注</button>';
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // 3. Deliverables Area
+  html += '<div class="workspace-section">';
+  html += '<div class="section-title">交付物</div>';
+
+  if (isDev && isProcessing) {
+    // Dev: Upload zone + deliverable list
+    html += '<div style="margin-bottom:12px;">';
+    html += '<div class="info-card-label" style="margin-bottom:6px;">上传交付物</div>';
+    html += '<div class="upload-type-row">';
+    ['报告', '数据集'].forEach(function(t) {
+      html += '<span class="upload-type-chip' + (_selectedUploadType === t ? ' active' : '') + '" data-type="' + t + '" onclick="selectUploadType(\'' + t + '\')">' + deliverableTypeIcon(t) + ' ' + t + '</span>';
+    });
+    html += '</div>';
+    html += '<div class="upload-zone" id="uploadZone" onclick="simulateUpload()">';
+    html += '<div class="upload-zone-icon">📤</div>';
+    html += '<div class="upload-zone-text">点击上传或拖拽文件到此区域</div>';
+    html += '<div class="upload-zone-hint">支持 PDF、DOCX、XLSX、ZIP、GeoTIFF 等格式，单文件不超过 500MB</div>';
+    html += '</div>';
+    html += '<div style="margin-top:8px;font-size:12px;color:rgba(0,0,0,0.45);">当前选择类型：<b id="uploadTypeLabel">报告</b></div>';
+    html += '</div>';
+
+    // Current deliverable list
+    html += '<div class="deliverable-list" id="deliverableList">';
+    if (d.actualDeliverables.length === 0) {
+      html += '<div style="text-align:center;padding:20px;color:rgba(0,0,0,0.25);font-size:13px;">暂无交付物，请上传</div>';
+    } else {
+      d.actualDeliverables.forEach(function(dl, idx) {
+        html += renderDeliverableCard(dl, idx, true);
+      });
+    }
+    html += '</div>';
+
+  } else if (isDev && (isPendingAccept || isDone)) {
+    // Dev read-only view of deliverables
+    html += '<div class="deliverable-list">';
+    if (d.actualDeliverables.length === 0) {
+      html += '<div style="text-align:center;padding:20px;color:rgba(0,0,0,0.25);font-size:13px;">暂无交付物</div>';
+    } else {
+      d.actualDeliverables.forEach(function(dl, idx) {
+        html += renderDeliverableCard(dl, idx, false);
+      });
+    }
+    html += '</div>';
+
+  } else if (!isDev) {
+    // Consumer: Preview & download
+    if (d.actualDeliverables.length === 0) {
+      html += '<div style="text-align:center;padding:30px;color:rgba(0,0,0,0.25);font-size:13px;">研发方尚未上传交付物</div>';
+    } else {
+      // Preview area for first deliverable
+      html += '<div class="preview-frame" id="previewFrame" style="margin-bottom:12px;">';
+      var firstDl = d.actualDeliverables[0];
+      html += '<div class="preview-icon">' + deliverableTypeIcon(firstDl.type) + '</div>';
+      html += '<div class="preview-name">' + firstDl.name + '</div>';
+      html += '<div class="preview-meta">类型：' + firstDl.type + ' · 大小：' + firstDl.size + ' · 上传时间：' + firstDl.uploadedAt + '</div>';
+      html += '<div class="preview-actions">';
+      html += '<button class="btn btn-primary btn-sm" onclick="showToast(\'info\',\'模拟在线预览: ' + firstDl.name + '\')">👁️ 在线预览</button>';
+      html += '<button class="btn btn-default btn-sm" onclick="showToast(\'success\',\'模拟下载: ' + firstDl.name + '\')">⬇️ 下载文件</button>';
+      html += '</div>';
+      html += '</div>';
+
+      // Deliverable list
+      html += '<div class="deliverable-list">';
+      d.actualDeliverables.forEach(function(dl, idx) {
+        html += '<div class="deliverable-card" onclick="previewDeliverable(\'' + dl.name + '\',\'' + dl.type + '\',\'' + dl.size + '\',\'' + dl.uploadedAt + '\')" style="cursor:pointer;">';
+        html += '<span class="dl-icon">' + deliverableTypeIcon(dl.type) + '</span>';
+        html += '<div class="dl-info"><div class="dl-name">' + dl.name + '</div><div class="dl-meta"><span class="dl-type-chip">' + dl.type + '</span>' + dl.size + ' · ' + dl.uploadedAt + '</div></div>';
+        html += '<div class="dl-actions">';
+        html += '<span class="dl-action-btn" title="预览" onclick="event.stopPropagation();previewDeliverable(\'' + dl.name + '\',\'' + dl.type + '\',\'' + dl.size + '\',\'' + dl.uploadedAt + '\')">👁️</span>';
+        html += '<span class="dl-action-btn" title="下载" onclick="event.stopPropagation();showToast(\'success\',\'模拟下载: ' + dl.name + '\')">⬇️</span>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  html += '</div>';
+
+  // 4. Communication / Operation Log Timeline
+  html += '<div class="workspace-section">';
+  html += '<div class="section-title">操作记录</div>';
+  html += renderTimeline(d);
+  html += '</div>';
+
+  return html;
+}
+
+function renderDeliverableCard(dl, idx, editable) {
+  var html = '<div class="deliverable-card">';
+  html += '<span class="dl-icon">' + deliverableTypeIcon(dl.type) + '</span>';
+  html += '<div class="dl-info">';
+  html += '<div class="dl-name">' + dl.name + '</div>';
+  html += '<div class="dl-meta">';
+  html += '<span class="dl-type-chip">' + dl.type + '</span>';
+  html += dl.size + ' · ' + dl.uploadedAt;
+  html += '</div></div>';
+  if (editable) {
+    html += '<div class="dl-actions">';
+    html += '<span class="dl-action-btn" title="下载" onclick="showToast(\'success\',\'模拟下载: ' + dl.name + '\')">⬇️</span>';
+    html += '<span class="dl-action-btn danger" title="删除" onclick="removeDeliverable(' + idx + ')">🗑️</span>';
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderTimeline(d) {
+  var html = '<div class="timeline">';
+  var logs = d.operationLog || [];
+  // Show most recent first
+  logs.forEach(function(log) {
+    html += '<div class="timeline-item">';
+    html += '<div class="timeline-dot ' + (log.dot || 'default') + '"></div>';
+    html += '<div class="timeline-time">' + log.time + '</div>';
+    html += '<div class="timeline-content"><span class="tl-user">' + log.user + '</span> · <span class="tl-action">' + log.action + '</span> — ' + log.detail + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ============================================================
+   RIGHT PANEL
+   ============================================================ */
+function renderRightPanel(d, isDev, isProcessing, isPendingAccept, isDone) {
+  var html = '';
+
+  // Status Info Card
+  html += '<div class="right-panel-card">';
+  html += '<div class="right-panel-header">📋 需求概览</div>';
+  html += '<div class="right-panel-body">';
+  html += '<div class="rp-info-row"><span class="rp-info-label">当前状态</span><span class="rp-info-value"><span class="status-chip ' + statusClass(d.status) + '">' + d.status + '</span></span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">优先级</span><span class="rp-info-value' + (d.priority === '紧急' ? ' priority-urgent' : '') + '">' + d.priority + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">提交方</span><span class="rp-info-value">' + d.consumerUnit + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">联系人</span><span class="rp-info-value">' + d.contactPerson + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">联系电话</span><span class="rp-info-value">' + d.contactPhone + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">邮箱</span><span class="rp-info-value">' + d.contactEmail + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">接单方</span><span class="rp-info-value">' + (d.claimedBy || '待接单') + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">截止日期</span><span class="rp-info-value">' + d.deadline + '</span></div>';
+  html += '<div class="rp-info-row"><span class="rp-info-label">需求编号</span><span class="rp-info-value" style="font-family:monospace;font-size:12px;">' + d.id + '</span></div>';
+  if (d.feedback) {
+    html += '<div class="rp-info-row"><span class="rp-info-label">验收反馈</span><span class="rp-info-value" style="color:#52c41a;">已验收</span></div>';
+  }
+  html += '</div></div>';
+
+  // Action Buttons
+  html += '<div class="right-panel-card">';
+  html += '<div class="right-panel-header">⚡ 操作</div>';
+  html += '<div class="right-panel-body"><div class="rp-actions">';
+
+  if (isDev && isProcessing) {
+    // Dev in processing status
+    html += '<button class="btn btn-default" onclick="saveProcessingNotes()">💾 保存处理进度</button>';
+    html += '<button class="btn btn-primary btn-lg" onclick="openSubmitDeliverableModal()">📦 提交交付物 → 待验收</button>';
+    html += '<button class="btn btn-danger-text" onclick="openModal(\'cancelClaimModal\')">↩️ 取消接单</button>';
+  } else if (isDev && isPendingAccept) {
+    // Dev waiting for acceptance
+    html += '<button class="btn btn-default" onclick="saveProcessingNotes()">💾 保存处理备注</button>';
+    html += '<div style="font-size:13px;color:rgba(0,0,0,0.45);text-align:center;padding:8px 0;">⏳ 已提交，等待需求方验收中...</div>';
+  } else if (isDev && isDone) {
+    html += '<div style="font-size:13px;color:#52c41a;text-align:center;padding:8px 0;">✅ 需求已完成验收</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">';
+    html += '<button class="btn btn-teal btn-sm" onclick="deployAsInference()">🚀 部署为推理服务</button>';
+    html += '<button class="btn btn-sm btn-default" onclick="showToast(\'info\',\'即将发布到应用中心\')">📱 发布到应用中心</button>';
+    html += '</div>';
+  } else if (isDev) {
+    // Dev but not processing (e.g., 待接单)
+    html += '<div style="font-size:13px;color:rgba(0,0,0,0.45);text-align:center;padding:8px 0;">当前状态不支持处理操作</div>';
+  }
+
+  if (!isDev && isPendingAccept) {
+    // Consumer accepting
+    html += '<button class="btn btn-success btn-lg" onclick="openModal(\'acceptModal\')">✅ 确认验收</button>';
+    html += '<button class="btn btn-warning" onclick="openModal(\'rejectModal\')">↩️ 退回修改</button>';
+  } else if (!isDev && isProcessing) {
+    html += '<div style="font-size:13px;color:rgba(0,0,0,0.45);text-align:center;padding:8px 0;">⏳ 研发方处理中，请耐心等待...</div>';
+  } else if (!isDev && isDone) {
+    html += '<div style="font-size:13px;color:#52c41a;text-align:center;padding:8px 0;">✅ 已验收完成</div>';
+  } else if (!isDev) {
+    html += '<div style="font-size:13px;color:rgba(0,0,0,0.45);text-align:center;padding:8px 0;">当前状态暂无可执行操作</div>';
+  }
+
+  html += '</div></div></div>';
+
+  // Operation Log Mini Timeline
+  html += '<div class="right-panel-card">';
+  html += '<div class="right-panel-header">📜 操作日志</div>';
+  html += '<div class="right-panel-body">';
+  html += renderTimeline(d);
+  html += '</div></div>';
+
+  // Navigation
+  html += '<div class="right-panel-card">';
+  html += '<div class="right-panel-header">🔗 快捷导航</div>';
+  html += '<div class="right-panel-body"><div class="rp-actions">';
+  html += '<button class="btn btn-default btn-sm" onclick="location.href=\'demand-hall.html\'">📋 返回需求大厅</button>';
+  html += '<button class="btn btn-default btn-sm" onclick="location.href=\'demand-my.html\'">📌 我的任务列表</button>';
+  html += '</div></div></div>';
+
+  return html;
+}
+
+/* ============================================================
+   UPLOAD HANDLING
+   ============================================================ */
+function selectUploadType(type) {
+  _selectedUploadType = type;
+  document.getElementById('uploadTypeLabel').textContent = type;
+  // Update chip active states
+  var chips = document.querySelectorAll('.upload-type-chip');
+  chips.forEach(function(c) {
+    if (c.getAttribute('data-type') === type) {
+      c.classList.add('active');
+    } else {
+      c.classList.remove('active');
+    }
+  });
+}
+
+function simulateUpload() {
+  var type = _selectedUploadType;
+  var mockNames = {
+    '报告': ['分析报告_v1.pdf', '监测报告_final.docx', '核查结果报告.pdf'],
+    '数据集': ['遥感影像_NDVI.zip', '地块数据包.tar.gz', '统计结果.xlsx'],
+    '工作流': ['水稻产量预估工作流.json', '病虫害检测流程.yaml'],
+    '部署服务': ['yield-prediction-api', 'pest-monitor-service']
+  };
+  var mockSizes = ['1.2 MB', '5.7 MB', '23.4 MB', '8.9 MB', '15.3 MB', '42.1 MB'];
+  var names = mockNames[type] || mockNames['报告'];
+  var name = names[Math.floor(Math.random() * names.length)];
+  var size = mockSizes[Math.floor(Math.random() * mockSizes.length)];
+
+  var newDl = {
+    type: type,
+    name: name,
+    size: size,
+    icon: deliverableTypeIcon(type),
+    uploadedAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
+  };
+
+  _currentDemand.actualDeliverables.push(newDl);
+  _currentDemand.operationLog.unshift({
+    time: newDl.uploadedAt,
+    user: _currentDemand.claimedBy,
+    action: '上传交付物',
+    detail: '上传' + type + '「' + name + '」',
+    dot: 'primary'
+  });
+
+  showToast('success', '交付物「' + name + '」上传成功');
+  renderWorkspace();
+}
+
+function removeDeliverable(idx) {
+  var dl = _currentDemand.actualDeliverables[idx];
+  _currentDemand.actualDeliverables.splice(idx, 1);
+  _currentDemand.operationLog.unshift({
+    time: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    user: _currentDemand.claimedBy,
+    action: '删除交付物',
+    detail: '删除「' + dl.name + '」',
+    dot: 'error'
+  });
+  showToast('info', '交付物「' + dl.name + '」已删除');
+  renderWorkspace();
+}
+
+function attachUploadEvents() {
+  // Re-select upload type chip
+  var chips = document.querySelectorAll('.upload-type-chip');
+  chips.forEach(function(c) {
+    c.onclick = function() { selectUploadType(c.getAttribute('data-type')); };
+  });
+}
+
+/* ============================================================
+   PROCESSING NOTES
+   ============================================================ */
+function saveProcessingNotes() {
+  var textarea = document.getElementById('processingNotes');
+  if (!textarea) return;
+  _currentDemand.processingNotes = textarea.value;
+  _currentDemand.operationLog.unshift({
+    time: new Date().toISOString().replace('T', ' ').substring(0, 19),
+    user: _currentDemand.claimedBy,
+    action: '保存备注',
+    detail: '更新处理备注',
+    dot: 'default'
+  });
+
+  var indicator = document.getElementById('noteSavedIndicator');
+  if (indicator) {
+    indicator.classList.add('visible');
+    setTimeout(function(){ indicator.classList.remove('visible'); }, 2000);
+  }
+  showToast('success', '处理备注已保存');
+  renderWorkspace();
+}
+
+/* ============================================================
+   STATUS TRANSITIONS
+   ============================================================ */
+function openSubmitDeliverableModal() {
+  var d = _currentDemand;
+  if (d.actualDeliverables.length === 0) {
+    showToast('error', '请先上传至少一个交付物');
+    return;
+  }
+  var body = '确认提交以下 <b>' + d.actualDeliverables.length + '</b> 个交付物？提交后需求状态将变更为「待验收」，等待需求方确认。<br><br>';
+  body += '<div style="font-size:13px;max-height:120px;overflow-y:auto;">';
+  d.actualDeliverables.forEach(function(dl) {
+    body += '<div style="margin-bottom:4px;">' + deliverableTypeIcon(dl.type) + ' <b>' + dl.name + '</b> (' + dl.size + ')</div>';
+  });
+  body += '</div>';
+  document.getElementById('submitModalBody').innerHTML = body;
+  openModal('submitDeliverableModal');
+}
+
+function confirmSubmitDeliverables() {
+  var now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  _currentDemand.status = '待验收';
+  _currentDemand.operationLog.unshift({
+    time: now,
+    user: _currentDemand.claimedBy,
+    action: '提交交付物',
+    detail: '提交' + _currentDemand.actualDeliverables.length + '个交付物，状态变更为「待验收」',
+    dot: 'success'
+  });
+  closeModal('submitDeliverableModal');
+  showToast('success', '交付物已提交，等待需求方验收');
+  renderWorkspace();
+}
+
+function confirmCancelClaim() {
+  var now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  _currentDemand.status = '待接单';
+  _currentDemand.claimedBy = null;
+  _currentDemand.claimedAt = null;
+  _currentDemand.operationLog.unshift({
+    time: now,
+    user: '李研发',
+    action: '取消接单',
+    detail: '取消接单，需求退回「待接单」状态',
+    dot: 'error'
+  });
+  closeModal('cancelClaimModal');
+  showToast('info', '已取消接单，需求退回待接单状态');
+  // Redirect back to demand hall since workspace is no longer applicable
+  setTimeout(function() { location.href = 'demand-hall.html'; }, 1500);
+}
+
+function confirmAccept() {
+  var feedback = document.getElementById('acceptFeedback').value || '验收通过';
+  var now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  _currentDemand.status = '已完成';
+  _currentDemand.feedback = feedback;
+  _currentDemand.completedAt = now;
+  addPoints(_currentDemand.reward || POINTS.EARN_COMPLETE, '完成需求（悬赏 '+ (_currentDemand.reward || POINTS.EARN_COMPLETE) +'）');
+  _currentDemand.operationLog.unshift({
+    time: now,
+    user: _currentDemand.consumerName,
+    action: '确认验收',
+    detail: '验收通过「' + feedback + '」',
+    dot: 'success'
+  });
+  document.getElementById('acceptFeedback').value = '';
+  closeModal('acceptModal');
+  showToast('success', '验收完成！需求已标记为「已完成」');
+  renderWorkspace();
+}
+
+function confirmReject() {
+  var feedback = document.getElementById('rejectFeedback').value;
+  if (!feedback.trim()) {
+    showToast('error', '请填写退回原因及修改要求');
+    return;
+  }
+  var now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  _currentDemand.status = '处理中';
+  _currentDemand.feedback = feedback;
+  _currentDemand.operationLog.unshift({
+    time: now,
+    user: _currentDemand.consumerName,
+    action: '退回修改',
+    detail: '退回修改「' + feedback + '」，状态变更为「处理中」',
+    dot: 'warning'
+  });
+  document.getElementById('rejectFeedback').value = '';
+  closeModal('rejectModal');
+  showToast('info', '已退回修改，研发方将收到通知');
+  renderWorkspace();
+}
+
+/* ============================================================
+   CONSUMER PREVIEW
+   ============================================================ */
+function previewDeliverable(name, type, size, uploadedAt) {
+  var frame = document.getElementById('previewFrame');
+  if (!frame) return;
+  frame.innerHTML =
+    '<div class="preview-icon">' + deliverableTypeIcon(type) + '</div>' +
+    '<div class="preview-name">' + name + '</div>' +
+    '<div class="preview-meta">类型：' + type + ' · 大小：' + size + ' · 上传时间：' + uploadedAt + '</div>' +
+    '<div class="preview-actions">' +
+    '<button class="btn btn-primary btn-sm" onclick="showToast(\'info\',\'模拟在线预览: ' + name + '\')">👁️ 在线预览</button>' +
+    '<button class="btn btn-default btn-sm" onclick="showToast(\'success\',\'模拟下载: ' + name + '\')">⬇️ 下载文件</button>' +
+    '</div>';
+  showToast('info', '已切换到：' + name);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  init();
+});
+
+// Close modals on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('visible');
+  }
+});
+// ===== NOTIFICATIONS =====
+var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
+function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
+document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
+// ===== AUTH STATE =====
+function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function deployAsInference(){var d=_currentDemand;var qs='?from=demand&name='+encodeURIComponent((d.title||'demand').replace(/[^a-zA-Z0-9一-鿿]/g,'-').toLowerCase()+'-image');if(d.title)qs+='&desc='+encodeURIComponent('从需求「'+d.title+'」产出的推理镜像');window.open('image-custom-create.html'+qs,'_blank');}
+function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
+function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
+(function(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return;}switchAuthState(true);renderNotifs();})();
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ var np=document.getElementById('notifPopover');if(np)np.classList.remove('visible'); document.getElementById('userDropdown').classList.toggle('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
+// ===== LOGOUT =====
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+// ===== TOAST =====
+function showToast(msg){ var t = document.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2000;padding:10px 20px;border-radius:6px;font-size:14px;background:#2f54eb;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity 0.3s;'; document.body.appendChild(t); setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2000); }
+</script>
+<!-- Logout Confirm Overlay -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE NOTEBOOK START MODAL -->
+<div class="modal-overlay" id="workspaceNotebookModal" onclick="if(event.target===this)closeWorkspaceNotebookModal()">
+  <div class="modal-box" style="width:640px;">
+    <div class="modal-header"><span class="modal-title">🚀 申请启动 Notebook</span><span class="modal-close" onclick="closeWorkspaceNotebookModal()">✕</span></div>
+    <div class="modal-body" style="padding:20px 24px;">
+      <div style="background:#f0f5ff;border-radius:8px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:24px;">📋</span>
+        <div>
+          <div style="font-weight:600;font-size:14px;color:rgba(0,0,0,0.88);" id="wnbTaskTitle">任务标题</div>
+          <div style="font-size:12px;color:rgba(0,0,0,0.45);margin-top:2px;" id="wnbTaskType">类型</div>
+        </div>
+      </div>
+      <div class="detail-row"><span class="detail-label">Notebook 名称 <span style="color:#ff4d4f">*</span></span><span class="detail-value"><input type="text" id="wnbName" placeholder="请输入 Notebook 名称" style="width:100%;height:32px;padding:0 11px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;" onfocus="this.style.borderColor='#2f54eb';this.style.boxShadow='0 0 0 2px rgba(47,84,235,0.08)'" onblur="this.style.borderColor='#d9d9d9';this.style.boxShadow='none'"></span></div>
+      <div class="detail-row"><span class="detail-label">选择镜像 <span style="color:#ff4d4f">*</span></span><span class="detail-value"><select id="wnbImage" style="width:100%;height:32px;padding:0 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;background:#fff;"><option value="">请选择镜像</option></select></span></div>
+      <div class="detail-row"><span class="detail-label">挂载数据集</span><span class="detail-value"><select id="wnbDataset" style="width:100%;height:32px;padding:0 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;background:#fff;"><option value="">不使用数据集</option></select></span></div>
+      <div class="detail-row"><span class="detail-label">CPU</span><span class="detail-value"><select id="wnbCpu" style="width:100%;height:32px;padding:0 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;background:#fff;"><option value="2">2 核</option><option value="4">4 核</option><option value="8" selected>8 核</option><option value="16">16 核</option><option value="32">32 核</option></select></span></div>
+      <div class="detail-row"><span class="detail-label">内存</span><span class="detail-value"><select id="wnbMemory" style="width:100%;height:32px;padding:0 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;background:#fff;"><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="32">32 GB</option><option value="64">64 GB</option><option value="128">128 GB</option></select></span></div>
+      <div class="detail-row"><span class="detail-label">GPU</span><span class="detail-value"><select id="wnbGpu" style="width:100%;height:32px;padding:0 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;background:#fff;"><option value="none">不使用 GPU</option><option value="t4-1">NVIDIA T4 × 1 (16GB)</option><option value="t4-2">NVIDIA T4 × 2 (32GB)</option><option value="a100-1" selected>NVIDIA A100 × 1 (40GB)</option><option value="a100-2">NVIDIA A100 × 2 (80GB)</option></select></span></div>
+      <div class="detail-row"><span class="detail-label">SSH 连接</span><span class="detail-value"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="wnbSshToggle" style="width:16px;height:16px;accent-color:#2f54eb;"><span style="font-size:13px;color:rgba(0,0,0,0.65);">开启 SSH 远程连接（端口 2222）</span></label></span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeWorkspaceNotebookModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitWorkspaceNotebook()">🚀 启动 Notebook</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

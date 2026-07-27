@@ -1,0 +1,46 @@
+# === 轮播图备份（仅保留当前 5 张在用图） ===
+assets/carousel/v1-backup/
+assets/carousel/v2-backup/
+assets/carousel/v3-backup/
+
+# === 工具/IDE 产物 ===
+.workbuddy/
+
+# === 旧版原型副本 ===
+PlatformforAI/
+
+# === 参考快照（魔搭社区等第三方页面，非本项目原型） ===
+规范文件/design_role/
+
+# === 规范文件：仅保留 DESIGN_SYSTEM.md 和 USER_PERSONAS.md ===
+规范文件/Untitled.md
+规范文件/_modal_ref.txt
+规范文件/handoff-*.md
+规范文件/产品化*.md
+规范文件/产品迭代*.md
+规范文件/功能清单/
+规范文件/协同创新平台*.md
+规范文件/整合分析*.md
+规范文件/需求市场*.md
+规范文件/项目优先级*.md
+规范文件/*.pptx
+
+# === 设计规范（非原型） ===
+deploy-design-spec.html
+
+# === 压缩包、Office 文档 & 临时文件 ===
+*.zip
+*.tar.gz
+*.xlsx
+*.pptx
+_pc_all.txt
+package-lock.json
+underline.png
+
+# === Claude 会话文件（仅保留 prototypes.json） ===
+.claude/settings.local.json
+.claude/skills/
+.claude/handoff-*.md
+
+# === 空目录占位 ===
+预设原型/
