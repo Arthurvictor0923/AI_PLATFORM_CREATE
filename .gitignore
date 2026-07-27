@@ -44,3 +44,6 @@ underline.png
 
 # === 空目录占位 ===
 预设原型/
+
+# === 旧 PNG 轮播图（已替换为 WebP） ===
+assets/carousel/*.png

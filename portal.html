@@ -627,11 +627,11 @@ button { cursor: pointer; border: none; background: none; }
   <section class="hero" id="section-hero">
     <!-- Carousel slide backgrounds（5 平台优势主题图） -->
     <div class="hc-slides" id="hcSlides">
-      <div class="hc-slide active" style="background-image:url('assets/carousel/slide-1.png')"></div>
-      <div class="hc-slide" style="background-image:url('assets/carousel/slide-2.png')"></div>
-      <div class="hc-slide" style="background-image:url('assets/carousel/slide-3.png')"></div>
-      <div class="hc-slide" style="background-image:url('assets/carousel/slide-4.png')"></div>
-      <div class="hc-slide" style="background-image:url('assets/carousel/slide-5.png')"></div>
+      <div class="hc-slide active" data-bg="assets/carousel/slide-1.webp" style="background-image:url('assets/carousel/slide-1.webp')"></div>
+      <div class="hc-slide" data-bg="assets/carousel/slide-2.webp"></div>
+      <div class="hc-slide" data-bg="assets/carousel/slide-3.webp"></div>
+      <div class="hc-slide" data-bg="assets/carousel/slide-4.webp"></div>
+      <div class="hc-slide" data-bg="assets/carousel/slide-5.webp"></div>
     </div>
     <div class="hc-mask"></div>
 
@@ -1040,16 +1040,25 @@ function toast(msg, type){
   var items = document.querySelectorAll('.hc-adv-item');
   var hero = document.getElementById('section-hero');
   if (!slides.length || !items.length) return;
-  var current = 0, timer = null, DELAY = 5000;
+  var current = 0, timer = null, DELAY = 5000, loaded = {};
+  function loadSlide(idx){
+    if (loaded[idx]) return;
+    var s = slides[idx], bg = s.getAttribute('data-bg');
+    if (bg) { s.style.backgroundImage = "url('"+bg+"')"; loaded[idx] = true; }
+  }
   function go(i){
     current = (i + slides.length) % slides.length;
     slides.forEach(function(s, idx){ s.classList.toggle('active', idx === current); });
+    loadSlide(current);
+    loadSlide((current + 1) % slides.length); // preload next
     items.forEach(function(it, idx){
       var on = idx === current;
       if (on) { it.classList.remove('active'); void it.offsetWidth; } // restart progress-bar animation
       it.classList.toggle('active', on);
     });
   }
+  // initial: slide-0 already has inline bg, preload slide-1
+  loaded[0] = true; loadSlide(1);
   function play(){ stop(); timer = setInterval(function(){ go(current + 1); }, DELAY); }
   function stop(){ if (timer) { clearInterval(timer); timer = null; } }
   items.forEach(function(it){
