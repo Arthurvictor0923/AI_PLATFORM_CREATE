@@ -229,15 +229,22 @@ button { cursor: pointer; border: none; background: none; }
 .model-card-large:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(47,84,235,0.15); }
 
 .model-card-visual {
-  height: 100px; position: relative; display: flex;
-  align-items: center; justify-content: center;
+  height: 148px; position: relative; display: flex;
+  align-items: center; justify-content: center; overflow: hidden;
 }
 .model-card-visual.model-bg { background: linear-gradient(135deg, #eef2ff 0%, #d6e4ff 100%); }
 .model-card-visual.collection-bg { background: linear-gradient(135deg, #e6fffb 0%, #b5f5ec 100%); }
 .model-card-visual .mcv-icon { font-size: 48px; position: relative; z-index: 1; }
+.model-card-visual .mcv-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 45%;
+  transition: transform 0.5s ease;
+}
+.model-card-large:hover .model-card-visual .mcv-img { transform: scale(1.05); }
 .model-card-visual .mcv-badge {
   position: absolute; top: 12px; right: 14px;
-  padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; z-index: 1;
+  padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; z-index: 2;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
 .mcv-badge.model-tag { color: #2f54eb; background: rgba(255,255,255,0.85); }
 .mcv-badge.collection-tag { color: #23ada4; background: rgba(255,255,255,0.85); }
@@ -311,21 +318,29 @@ button { cursor: pointer; border: none; background: none; }
 .dataset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .dataset-card {
   background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
-  border-radius: 16px; padding: 28px 24px; cursor: pointer;
+  border-radius: 16px; padding: 0; cursor: pointer; overflow: hidden;
   transition: all 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column;
 }
 .dataset-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(35,173,164,0.2); }
-.dataset-card .ds-header { display: flex; align-items: center; gap: 10px; }
-.dataset-card .ds-icon { font-size: 28px; flex-shrink: 0; }
-.dataset-card .ds-type-badge {
-  padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500;
-  background: rgba(35,173,164,0.08); color: #23ada4;
-  border: 1px solid rgba(35,173,164,0.12);
+.dataset-card .ds-visual { height: 112px; position: relative; overflow: hidden; flex-shrink: 0; background: linear-gradient(135deg, #e6fffb, #b5f5ec); }
+.dataset-card .ds-visual .ds-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 45%;
+  transition: transform 0.5s ease;
 }
+.dataset-card:hover .ds-visual .ds-img { transform: scale(1.06); }
+.dataset-card .ds-icon { font-size: 34px; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.dataset-card .ds-type-badge {
+  position: absolute; top: 10px; right: 12px; z-index: 2;
+  padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  background: rgba(255,255,255,0.9); color: #23ada4;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.dataset-card .ds-body { padding: 18px 22px 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .dataset-card h4 { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.4; }
 .dataset-card p { font-size: 13px; color: rgba(0,0,0,0.45); line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.dataset-card .ds-meta { display: flex; gap: 16px; font-size: 12px; color: rgba(0,0,0,0.45); padding-top: 10px; border-top: 1px solid rgba(5,5,5,0.04); }
+.dataset-card .ds-meta { display: flex; gap: 16px; font-size: 12px; color: rgba(0,0,0,0.45); padding-top: 10px; margin-top: auto; border-top: 1px solid rgba(5,5,5,0.04); }
 .dataset-card .ds-meta span { display: inline-flex; align-items: center; gap: 4px; }
 
 /* ============================================================
@@ -346,7 +361,14 @@ button { cursor: pointer; border: none; background: none; }
 .demand-card.status-open::before { background: linear-gradient(90deg, #23ada4, #5cdbd3); }
 .demand-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(47,84,235,0.15); }
 .demand-card .dm-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.demand-card .dm-icon { font-size: 28px; flex-shrink: 0; }
+.demand-card .dm-icon {
+  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+}
+.demand-card.status-matching .dm-icon { background: linear-gradient(135deg, #eef2ff, #d6e4ff); }
+.demand-card.status-open .dm-icon { background: linear-gradient(135deg, #e6fffb, #b5f5ec); }
+.demand-card .dm-icon-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
 .demand-card .dm-status {
   padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; white-space: nowrap;
 }
@@ -370,23 +392,98 @@ button { cursor: pointer; border: none; background: none; }
 .demand-more-link:hover .dm-arrow { transform: translateX(3px); }
 
 /* ============================================================
+   CASE SHOWCASE CARDS — portal preview of case center
+   ============================================================ */
+.case-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.case-card {
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  display: flex; flex-direction: column;
+}
+.case-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(47,84,235,0.15); }
+.case-card .cs-visual {
+  height: 120px; position: relative; display: flex;
+  align-items: center; justify-content: center; overflow: hidden;
+}
+.case-card .cs-visual.cs-bg-a { background: linear-gradient(135deg, #eef2ff 0%, #d6e4ff 100%); }
+.case-card .cs-visual.cs-bg-b { background: linear-gradient(135deg, #e6fffb 0%, #b5f5ec 100%); }
+.case-card .cs-visual.cs-bg-c { background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%); }
+.case-card .cs-visual.cs-bg-d { background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); }
+.case-card .cs-visual .cs-icon { font-size: 42px; position: relative; z-index: 1; }
+.case-card .cs-visual .cs-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 40%;
+  transition: transform 0.5s ease;
+}
+.case-card:hover .cs-visual .cs-img { transform: scale(1.05); }
+.case-card .cs-visual .cs-badge {
+  position: absolute; top: 10px; right: 12px; z-index: 1;
+  padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;
+  background: rgba(255,255,255,0.88); backdrop-filter: blur(4px);
+}
+.cs-badge.industry-tag { color: #2f54eb; }
+.cs-badge.industry-tag-b { color: #23ada4; }
+.case-card .cs-body {
+  padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; gap: 8px;
+}
+.case-card .cs-body h4 { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.case-card .cs-body .cs-desc { font-size: 13px; color: rgba(0,0,0,0.45); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.case-card .cs-body .cs-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(5,5,5,0.04); }
+.case-card .cs-body .cs-meta .cs-tag { padding: 1px 8px; border-radius: 3px; font-size: 11px; background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.5); }
+.case-card .cs-body .cs-org { font-size: 12px; color: rgba(0,0,0,0.45); display: flex; align-items: center; gap: 4px; }
+.case-more { display: flex; align-items: center; justify-content: center; margin-top: 36px; }
+.case-more-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 32px; color: rgba(0,0,0,0.55); font-size: 15px;
+  background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 38px; cursor: pointer; transition: all 0.2s; text-decoration: none;
+}
+.case-more-link:hover { border-color: #2f54eb; color: #2f54eb; background: rgba(47,84,235,0.04); }
+.case-more-link .cs-arrow { font-size: 14px; transition: transform 0.2s; }
+.case-more-link:hover .cs-arrow { transform: translateX(3px); }
+
+/* ============================================================
    PARTNERS — with role/ expertise tags
    ============================================================ */
 .partner-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1080px; margin: 0 auto; }
 .partner-card {
-  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.04);
-  border-radius: 14px; padding: 22px 18px; text-align: center;
+  position: relative; overflow: hidden;
+  background: #FFFFFF; border: 1px solid rgba(5,5,5,0.05);
+  border-radius: 14px; padding: 22px 18px 18px; text-align: center;
   transition: all 0.25s; cursor: default;
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
-.partner-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: rgba(47,84,235,0.1); }
-.partner-card .pc-mark {
-  width: 52px; height: 52px; border-radius: 14px; margin: 0 auto 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: #2f54eb;
-  background: linear-gradient(135deg, rgba(47,84,235,0.08), rgba(117,102,255,0.04));
+.partner-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  opacity: 0; transition: opacity 0.25s;
 }
-.partner-card .pc-name { font-size: 15px; font-weight: 500; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
+.partner-card.pt-national::before { background: linear-gradient(90deg, #722ed1, #2f54eb); }
+.partner-card.pt-academy::before { background: linear-gradient(90deg, #13c2c2, #36cfc9); }
+.partner-card.pt-univ::before { background: linear-gradient(90deg, #2f54eb, #597ef7); }
+.partner-card.pt-ent::before { background: linear-gradient(90deg, #fa8c16, #ffc53d); }
+.partner-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.07); border-color: rgba(47,84,235,0.12); }
+.partner-card:hover::before { opacity: 1; }
+.partner-card .pc-mark {
+  width: 54px; height: 54px; border-radius: 15px; margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(47,84,235,0.18);
+  transition: transform 0.25s;
+}
+.partner-card:hover .pc-mark { transform: scale(1.06) rotate(-3deg); }
+.partner-card.pt-national .pc-mark { background: linear-gradient(135deg, #722ed1, #2f54eb); box-shadow: 0 4px 12px rgba(114,46,209,0.22); }
+.partner-card.pt-academy .pc-mark { background: linear-gradient(135deg, #13c2c2, #08979c); box-shadow: 0 4px 12px rgba(19,194,194,0.22); }
+.partner-card.pt-univ .pc-mark { background: linear-gradient(135deg, #597ef7, #2f54eb); }
+.partner-card.pt-ent .pc-mark { background: linear-gradient(135deg, #ffa940, #fa8c16); box-shadow: 0 4px 12px rgba(250,140,22,0.22); }
+.partner-card .pc-type {
+  display: inline-block; padding: 1px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; margin-bottom: 8px;
+}
+.partner-card.pt-national .pc-type { background: rgba(114,46,209,0.07); color: #722ed1; }
+.partner-card.pt-academy .pc-type { background: rgba(19,194,194,0.08); color: #08979c; }
+.partner-card.pt-univ .pc-type { background: rgba(47,84,235,0.07); color: #2f54eb; }
+.partner-card.pt-ent .pc-type { background: rgba(250,140,22,0.08); color: #d46b08; }
+.partner-card .pc-name { font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 4px; }
 .partner-card .pc-role { font-size: 12px; color: rgba(0,0,0,0.4); line-height: 1.4; }
 
 .partner-more { display: flex; align-items: center; justify-content: center; margin-top: 40px; }
@@ -491,6 +588,7 @@ button { cursor: pointer; border: none; background: none; }
   .dataset-grid { grid-template-columns: repeat(2, 1fr); }
   .service-grid { grid-template-columns: repeat(2, 1fr); }
   .demand-grid { grid-template-columns: repeat(2, 1fr); }
+  .case-grid { grid-template-columns: repeat(2, 1fr); }
   .partner-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 900px) {
@@ -506,6 +604,7 @@ button { cursor: pointer; border: none; background: none; }
   .dataset-grid { grid-template-columns: repeat(2, 1fr); }
   .service-grid { grid-template-columns: repeat(2, 1fr); }
   .demand-grid { grid-template-columns: repeat(2, 1fr); }
+  .case-grid { grid-template-columns: repeat(2, 1fr); }
   .partner-grid { grid-template-columns: repeat(3, 1fr); }
   .section { padding: 56px 24px; }
   .sec-head h2 { font-size: 26px; }
@@ -529,6 +628,7 @@ button { cursor: pointer; border: none; background: none; }
   .dataset-grid { grid-template-columns: 1fr; }
   .service-grid { grid-template-columns: 1fr; }
   .demand-grid { grid-template-columns: 1fr; }
+  .case-grid { grid-template-columns: 1fr; }
   .partner-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
   .scenario-card-large { flex-direction: column; padding: 28px 24px; }
@@ -561,23 +661,21 @@ button { cursor: pointer; border: none; background: none; }
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
-        <span class="top-nav-item active" data-nav="home">首页</span>
-        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
-        <span class="top-nav-item" data-nav="data">数据管理</span>
-        <!-- <span class="top-nav-item" data-nav="dev">开发中心</span> -->
-        <span class="top-nav-item" data-nav="demand">需求市场</span>
-        <!-- <span class="top-nav-item" data-nav="appcenter">应用中心</span> -->
-        <!-- <span class="top-nav-item" data-nav="apps">智能应用</span> -->
-        <span class="top-nav-item" data-nav="docs">文档中心</span>
-      </div></div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item active" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
 
       <div class="header-right">
-        <button class="header-btn" onclick="window.location.href='login.html'" title="搜索"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
+        
         <!-- Logged-out: login/register buttons -->
         <span id="headerAuthOut">
           <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
-          <a class="header-btn-register" href="javascript:void(0)" onclick="openAbout()">申请入驻</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
         </span>
         <!-- Logged-in: user dropdown -->
         <span id="headerAuthIn" style="display:none">
@@ -601,6 +699,7 @@ button { cursor: pointer; border: none; background: none; }
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
               <div class="dropdown-divider"></div>
               <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
             </div>
@@ -618,6 +717,7 @@ button { cursor: pointer; border: none; background: none; }
   <nav class="anchor-nav" id="anchorNav">
     <a class="anchor-link active" data-target="section-hero"><span class="anchor-dot"></span><span class="anchor-label">平台概览</span></a>
     <a class="anchor-link" data-target="section-models"><span class="anchor-dot"></span><span class="anchor-label">热门模型</span></a>
+    <a class="anchor-link" data-target="section-cases"><span class="anchor-dot"></span><span class="anchor-label">精选案例</span></a>
     <a class="anchor-link" data-target="section-datasets"><span class="anchor-dot"></span><span class="anchor-label">数据资源</span></a>
     <a class="anchor-link" data-target="section-demands"><span class="anchor-dot"></span><span class="anchor-label">需求大厅</span></a>
     <a class="anchor-link" data-target="section-partners"><span class="anchor-dot"></span><span class="anchor-label">合作机构</span></a>
@@ -702,8 +802,8 @@ button { cursor: pointer; border: none; background: none; }
     <div class="section-inner">
       <div class="sec-head">
         <div class="sec-head-label">🧠 热门模型</div>
-        <h2>精选农业AI模型</h2>
-        <p>覆盖遥感识别、产量预测、变化检测、智能应用等核心农业场景，点击即可查看详情</p>
+        <h2>热门农业AI模型</h2>
+        <p>覆盖遥感识别、产量预测、变化检测、智能应用等核心农业场景，汇聚全重实验室、985高校与领军企业的 187+ 优质模型</p>
       </div>
       <div class="model-tabs" id="modelTabs">
         <button class="model-tab active" data-type="all">全部</button>
@@ -716,13 +816,28 @@ button { cursor: pointer; border: none; background: none; }
     </div>
   </section>
 
+  <!-- ===== 精选案例 ===== -->
+  <section class="section white" id="section-cases">
+    <div class="section-inner">
+      <div class="sec-head">
+        <div class="sec-head-label">🏆 精选案例</div>
+        <h2>AI 落地田间 — 真实场景解决方案</h2>
+        <p>模型与数据结合的真实应用成果，覆盖遥感识别、产量预测、病虫害检测等核心农业场景</p>
+      </div>
+      <div class="case-grid" id="caseGrid"></div>
+      <div class="case-more">
+        <a class="case-more-link" href="case-center.html">浏览全部案例，发现更多解决方案<span class="cs-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== 数据集专区 ===== -->
   <section class="section white" id="section-datasets">
     <div class="section-inner">
       <div class="sec-head">
         <div class="sec-head-label">📊 数据资源</div>
-        <h2>北大荒独家高质量数据集</h2>
-        <p>平台独有的垦区卫星遥感、气象、土壤、作物等专有数据资源，是AI模型训练与验证的核心壁垒</p>
+        <h2>热门高质量数据集</h2>
+        <p>汇聚垦区卫星遥感、气象、土壤、作物等优质数据资源，覆盖 50+ 高质量数据集，为 AI 模型训练与验证提供坚实的数据底座</p>
       </div>
       <div class="dataset-grid" id="datasetGrid"></div>
       <div class="demand-more">
@@ -736,8 +851,8 @@ button { cursor: pointer; border: none; background: none; }
     <div class="section-inner">
       <div class="sec-head">
         <div class="sec-head-label">📋 需求大厅</div>
-        <h2>真实业务需求 · 正在对接中</h2>
-        <p>来自农场与企业的实际AI需求，平台正在匹配科研团队——你的难题，也能在这里找到答案</p>
+        <h2>需求驱动，让AI从实验室走向田间</h2>
+        <p>农场与企业在此发布真实业务需求，科研团队接单攻关、交付成果——从遥感识别到产量预测，每一个难题都能找到解法</p>
       </div>
       <div class="demand-grid" id="demandGrid"></div>
       <div class="demand-more">
@@ -756,7 +871,7 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="partner-grid" id="partnerGrid"></div>
       <div class="partner-more">
-        <a class="partner-more-link" href="javascript:void(0)" onclick="openAbout()">更多合作机构入驻<span class="pm-arrow">→</span></a>
+        <a class="partner-more-link" href="apply-settlement.html">更多合作机构入驻<span class="pm-arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -773,9 +888,9 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
     </div>
-    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="dataset-management.html">数据中心</a><a href="model-marketplace.html">应用场景</a><a href="workbench.html">开发空间</a></div>
-    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="openAbout()">平台介绍</a><a href="javascript:void(0)" onclick="openAbout()">入驻申请</a><a href="javascript:void(0)" onclick="openAbout()">联系方式</a></div>
-    <div class="footer-col"><h4>帮助支持</h4><a href="javascript:void(0)">使用文档</a><a href="javascript:void(0)">API 参考</a><a href="javascript:void(0)">常见问题</a></div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
+    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="openAbout()">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="openAbout()">联系方式</a></div>
+    <div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div>
   </div>
   <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
 </footer>
@@ -829,18 +944,18 @@ if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
 
 // ===== DATA =====
 var MODELS = [
-  {cardType:'collection', icon:'🌽', title:'玉米病虫害遥感识别模型集', tags:['遥感识别','作物识别','分类','分割','无人机遥感','规模应用'], models:[
+  {cardType:'collection', icon:'🌽', img:'assets/models/model-corn.webp', title:'玉米病虫害遥感识别模型集', tags:['遥感识别','作物识别','分类','分割','无人机遥感','规模应用'], models:[
     {icon:'🌽', name:'玉米病虫害识别 v1'},{icon:'🛰️', name:'病虫害遥感检测 v2'},{icon:'📷', name:'多光谱影像分析模型'}
   ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-20', calls:'1.2k', stars:'89'},
-  {cardType:'model', icon:'🌾', title:'水稻产量预估模型 v2', tags:['产量预测','作物模型','规模应用','气象预警','遥感识别'], desc:'结合气象与 Sentinel-2 遥感数据的端到端产量预测', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-18', calls:'856', stars:'67'},
-  {cardType:'collection', icon:'🫘', title:'大豆补贴核查工具集', tags:['遥感识别','作物识别','分类','卫星遥感'], models:[
+  {cardType:'model', icon:'🌾', img:'assets/models/model-rice.webp', title:'水稻产量预估模型 v2', tags:['产量预测','作物模型','规模应用','气象预警','遥感识别'], desc:'结合气象与 Sentinel-2 遥感数据的端到端产量预测', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-18', calls:'856', stars:'67'},
+  {cardType:'collection', icon:'🫘', img:'assets/models/model-soybean.webp', title:'大豆补贴核查工具集', tags:['遥感识别','作物识别','分类','卫星遥感'], models:[
     {icon:'🫘', name:'大豆种植面积提取'},{icon:'📋', name:'补贴申报数据核查'}
   ], uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-15', calls:'634', stars:'45'},
-  {cardType:'model', icon:'🌲', title:'林草湿地变化监测模型', tags:['变化检测','卫星遥感','分类','分割','作物生育检测'], desc:'2018–2025 年多期变化图斑自动检测算法', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-12', calls:'412', stars:'31'},
-  {cardType:'collection', icon:'🗺️', title:'土壤养分遥感反演模型集', tags:['遥感识别','作物生长检测','分类','规模应用'], models:[
+  {cardType:'model', icon:'🌲', img:'assets/models/model-wetland.webp', title:'林草湿地变化监测模型', tags:['变化检测','卫星遥感','分类','分割','作物生育检测'], desc:'2018–2025 年多期变化图斑自动检测算法', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-12', calls:'412', stars:'31'},
+  {cardType:'collection', icon:'🗺️', img:'assets/models/model-soil.webp', title:'土壤养分遥感反演模型集', tags:['遥感识别','作物生长检测','分类','规模应用'], models:[
     {icon:'🗺️', name:'有机质含量反演'},{icon:'🧪', name:'氮磷钾空间分布'},{icon:'📊', name:'土壤肥力评估'}
   ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-10', calls:'520', stars:'38'},
-  {cardType:'model', icon:'🤖', title:'智慧农场智能决策助手', tags:['智能应用','大语言模型','规模应用','种','管','收'], desc:'集成长势监测+产量预测+病虫害识别的综合性智能应用', uploader:'陈教授', org:'中国农业大学', updated:'2026-07-08', calls:'1.8k', stars:'156'},
+  {cardType:'model', icon:'🤖', img:'assets/models/model-smartfarm.webp', title:'智慧农场智能决策助手', tags:['智能应用','大语言模型','规模应用','种','管','收'], desc:'集成长势监测+产量预测+病虫害识别的综合性智能应用', uploader:'陈教授', org:'中国农业大学', updated:'2026-07-08', calls:'1.8k', stars:'156'},
 ];
 
 var SCENARIOS = [
@@ -852,12 +967,12 @@ var SCENARIOS = [
 
 // Datasets — unique data assets as platform moat
 var DATASETS = [
-  {icon:'🛰️', type:'卫星遥感', title:'北大荒垦区卫星遥感影像库', volume:'12TB', period:'2018–2025', desc:'覆盖北大荒全垦区的高分辨率多光谱卫星影像时序数据，支持 Sentinel-2、Landsat 8/9、高分系列等多源遥感数据。'},
-  {icon:'🌤️', type:'气象数据', title:'垦区气象观测数据集', volume:'3.2TB', period:'2010–2025', desc:'北大荒垦区 113 个农场的逐日气象观测记录，包含温度、降水、日照、风速、蒸散发等关键农业气象指标。'},
-  {icon:'🧪', type:'土壤数据', title:'黑土地土壤养分调查数据', volume:'850GB', period:'2015–2025', desc:'覆盖垦区主要耕地的土壤有机质、氮磷钾、pH值等理化性质数据，支撑精准施肥与地力评价模型。'},
-  {icon:'🌾', type:'作物数据', title:'主要作物物候观测记录', volume:'420GB', period:'2012–2025', desc:'玉米、水稻、大豆的播种期、出苗期、抽穗期、成熟期等关键物候节点记录，结合田间管理措施标注。'},
-  {icon:'📷', type:'无人机遥感', title:'无人机多光谱影像样本库', volume:'6.8TB', period:'2020–2025', desc:'垦区主要作物全生育期的无人机多光谱影像，含病虫害、杂草、倒伏等典型场景标注样本 50 万+。'},
-  {icon:'🗺️', type:'地理信息', title:'垦区土地利用与耕地图谱', volume:'1.5TB', period:'2000–2025', desc:'北大荒垦区 1:10000 土地利用现状图、耕地质量等级图、基本农田保护图等基础地理信息数据集。'},
+  {icon:'🛰️', img:'assets/datasets/ds-satellite.webp', type:'卫星遥感', title:'北大荒垦区卫星遥感影像库', volume:'12TB', period:'2018–2025', desc:'覆盖北大荒全垦区的高分辨率多光谱卫星影像时序数据，支持 Sentinel-2、Landsat 8/9、高分系列等多源遥感数据。'},
+  {icon:'🌤️', img:'assets/datasets/ds-weather.webp', type:'气象数据', title:'垦区气象观测数据集', volume:'3.2TB', period:'2010–2025', desc:'北大荒垦区 113 个农场的逐日气象观测记录，包含温度、降水、日照、风速、蒸散发等关键农业气象指标。'},
+  {icon:'🧪', img:'assets/datasets/ds-soil.webp', type:'土壤数据', title:'黑土地土壤养分调查数据', volume:'850GB', period:'2015–2025', desc:'覆盖垦区主要耕地的土壤有机质、氮磷钾、pH值等理化性质数据，支撑精准施肥与地力评价模型。'},
+  {icon:'🌾', img:'assets/datasets/ds-crop.webp', type:'作物数据', title:'主要作物物候观测记录', volume:'420GB', period:'2012–2025', desc:'玉米、水稻、大豆的播种期、出苗期、抽穗期、成熟期等关键物候节点记录，结合田间管理措施标注。'},
+  {icon:'📷', img:'assets/datasets/ds-drone.webp', type:'无人机遥感', title:'无人机多光谱影像样本库', volume:'6.8TB', period:'2020–2025', desc:'垦区主要作物全生育期的无人机多光谱影像，含病虫害、杂草、倒伏等典型场景标注样本 50 万+。'},
+  {icon:'🗺️', img:'assets/datasets/ds-gis.webp', type:'地理信息', title:'垦区土地利用与耕地图谱', volume:'1.5TB', period:'2000–2025', desc:'北大荒垦区 1:10000 土地利用现状图、耕地质量等级图、基本农田保护图等基础地理信息数据集。'},
 ];
 
 // Services — reframed as consumer-facing capability showcase
@@ -871,30 +986,48 @@ var SERVICES = [
 ];
 
 // Demands preview — active demands as proof of platform vitality
+// Cases preview — real application stories as portal draw
+var CASES_PREVIEW = [
+  {icon:'🚁',cls:'a',industry:'精准农业',title:'新疆"超级棉田"：AI+无人机管理3000亩',desc:'极飞科技在新疆尉犁县落地"超级棉田"项目，遥感无人机高频巡田+AI病虫草害识别+智能水肥管理，2人管理3000亩棉田，亩产达529公斤，农药成本降17%，人工成本降64%，已推广至2500+农场。',org:'极飞科技',tags:['无人机','AI视觉','精准灌溉','已规模化'],bg:'a',img:'assets/cases/case-13.webp'},
+  {icon:'🌾',cls:'c',industry:'AI大模型',title:'北大荒×哈工大：水稻种植AI大模型落地',desc:'北大荒信息公司与哈工大联合发布"天工开悟"农业大模型（国内首个备案农业大模型），在建三江推广水稻三维变量施肥2万亩，AI处方图驱动插秧机精准作业，亩节肥10%、增产5%–10%，入选省级优秀案例。',org:'北大荒信息有限公司',tags:['种植大模型','变量施肥','寒地水稻','2万亩推广'],bg:'c',img:'assets/cases/case-14.webp'},
+  {icon:'🧠',cls:'b',industry:'AI决策',title:'中化MAP：AI种植大模型覆盖百万亩粮田',desc:'先正达集团中国发布iMAP农业大模型，首创"作物机理×大模型×智能体"三体融合AI，在内蒙古、东北玉米主产区试点100万亩，农事决策缩短75%，节水节肥10%–20%，增产8%–10%，入选国务院国资委央企AI高价值场景。',org:'先正达集团中国',tags:['种植大模型','遥感决策','央企AI','100万亩'],bg:'b',img:'assets/cases/case-15.webp'},
+  {icon:'🤖',cls:'d',industry:'智能植保',title:'浙江江山未来农场：AI植保驱动高产纪录',desc:'托普云农在浙江江山打造"天空地一体化"未来农场，AI病虫害识别覆盖2063种害虫与76种病害症状，防治效率提升30%，双季稻最高亩产达1585.54公斤，连创4项"浙江农业之最"，已在多地复制推广。',org:'托普云农',tags:['病虫害AI','高产攻关','天空地一体','上市公司'],bg:'d',img:'assets/cases/case-16.webp'},
+];
+
 var DEMANDS_PREVIEW = [
-  {icon:'🌽', title:'玉米倒伏面积遥感智能提取', org:'建三江分公司', points:'5000', deadline:'2026-09-30', tags:['遥感识别','语义分割'], status:'matching', statusText:'匹配中'},
-  {icon:'📊', title:'水稻产量关键期预估模型开发', org:'宝泉岭农场', points:'3000', deadline:'2026-08-15', tags:['产量预测','时序分析'], status:'open', statusText:'待接单'},
-  {icon:'🛰️', title:'高标准农田建设遥感监测体系', org:'红兴隆分公司', points:'8000', deadline:'2026-10-31', tags:['变化检测','卫星遥感'], status:'open', statusText:'待接单'},
-  {icon:'🐛', title:'大豆病虫害早期预警系统', org:'九三管局', points:'4500', deadline:'2026-08-30', tags:['目标检测','预警模型'], status:'matching', statusText:'匹配中'},
+  {icon:'corn', title:'玉米倒伏面积遥感智能提取', org:'建三江分公司', points:'5000', deadline:'2026-09-30', tags:['遥感识别','语义分割'], status:'matching', statusText:'匹配中'},
+  {icon:'bar-chart-3', title:'水稻产量关键期预估模型开发', org:'宝泉岭农场', points:'3000', deadline:'2026-08-15', tags:['产量预测','时序分析'], status:'open', statusText:'待接单'},
+  {icon:'satellite', title:'高标准农田建设遥感监测体系', org:'红兴隆分公司', points:'8000', deadline:'2026-10-31', tags:['变化检测','卫星遥感'], status:'open', statusText:'待接单'},
+  {icon:'bug', title:'大豆病虫害早期预警系统', org:'九三管局', points:'4500', deadline:'2026-08-30', tags:['目标检测','预警模型'], status:'matching', statusText:'匹配中'},
 ];
 
 var PARTNERS = [
-  {name:'智慧农场全国重点实验室',role:'国家级重点实验室·农业AI核心研发'},
-  {name:'中国农业科学院',role:'国家级科研机构·作物科学权威'},
-  {name:'中国科学院东北地理所',role:'中国科学院直属·遥感与地理信息'},
-  {name:'黑龙江省农业科学院',role:'省级科研机构·寒地农业研究'},
-  {name:'哈尔滨工业大学',role:'双一流/985·AI与遥感算法'},
-  {name:'东北农业大学',role:'双一流/211·作物育种与栽培'},
-  {name:'中国农业大学',role:'双一流/985·智慧农业领域权威'},
-  {name:'吉林大学',role:'双一流/985·农业信息化'},
-  {name:'北大荒研究院',role:'企业研究院·垦区技术转化'},
-  {name:'北大荒信息有限公司',role:'平台运营方·信息化建设'},
-  {name:'航天宏图信息技术',role:'遥感数据处理·PIE平台'},
-  {name:'中科曙光',role:'高性能计算·算力基础设施'},
+  {name:'智慧农场全国重点实验室',role:'国家级重点实验室·农业AI核心研发',type:'national',typeText:'国家级平台'},
+  {name:'中国农业科学院',role:'国家级科研机构·作物科学权威',type:'national',typeText:'国家级平台'},
+  {name:'中国科学院东北地理所',role:'中国科学院直属·遥感与地理信息',type:'national',typeText:'国家级平台'},
+  {name:'黑龙江省农业科学院',role:'省级科研机构·寒地农业研究',type:'academy',typeText:'科研院所'},
+  {name:'哈尔滨工业大学',role:'双一流/985·AI与遥感算法',type:'univ',typeText:'高校'},
+  {name:'东北农业大学',role:'双一流/211·作物育种与栽培',type:'univ',typeText:'高校'},
+  {name:'中国农业大学',role:'双一流/985·智慧农业领域权威',type:'univ',typeText:'高校'},
+  {name:'吉林大学',role:'双一流/985·农业信息化',type:'univ',typeText:'高校'},
+  {name:'北大荒研究院',role:'企业研究院·垦区技术转化',type:'academy',typeText:'科研院所'},
+  {name:'北大荒信息有限公司',role:'平台运营方·信息化建设',type:'ent',typeText:'企业'},
+  {name:'航天宏图信息技术',role:'遥感数据处理·PIE平台',type:'ent',typeText:'企业'},
+  {name:'中科曙光',role:'高性能计算·算力基础设施',type:'ent',typeText:'企业'},
 ];
 
 // ===== HELPERS =====
 function abbrev(name){ if(name.length<=4)return name.slice(0,2);if(name.includes('大学'))return name.replace('大学','').slice(0,2);if(name.includes('实验室'))return name.slice(0,2);if(name.includes('中国'))return name.slice(2,4);return name.slice(0,2); }
+
+// 需求卡片图标：key -> 写实图片（具象 key 复用门户 WebP，其余用 card-img PNG）
+var DM_IMG_OVR = {
+  'corn':'assets/models/model-corn.webp',
+  'satellite':'assets/datasets/ds-satellite.webp'
+};
+function dmIconImg(k){
+  var src = DM_IMG_OVR[k] || ('assets/card-img/'+k+'.webp');
+  return '<img class="dm-icon-img" src="'+src+'" alt="" onerror="this.style.display=\'none\'">';
+}
 
 // ===== RENDER: Models (2-column large cards) =====
 function renderModels(filterType){
@@ -906,7 +1039,7 @@ function renderModels(filterType){
     var tagText = isCollection ? '模型合集' : '单模型';
 
     var visual = '<div class="model-card-visual ' + visualBg + '">' +
-      '<div class="mcv-icon">' + m.icon + '</div>' +
+      (m.img ? '<img class="mcv-img" src="' + m.img + '" alt="' + m.title + '" loading="lazy">' : '<div class="mcv-icon">' + m.icon + '</div>') +
       '<span class="mcv-badge ' + tagClass + '">' + tagText + '</span></div>';
 
     var body = '<div class="model-card-body"><h4>' + m.title + '</h4>';
@@ -953,11 +1086,29 @@ function renderServices(){
 function renderDatasets(){
   document.getElementById('datasetGrid').innerHTML = DATASETS.map(function(d){
     return '<div class="dataset-card" onclick="window.location.href=\'dataset-management.html\'">' +
-      '<div class="ds-header"><span class="ds-icon">' + d.icon + '</span><span class="ds-type-badge">' + d.type + '</span></div>' +
+      '<div class="ds-visual">' +
+        (d.img ? '<img class="ds-img" src="' + d.img + '" alt="' + d.title + '" loading="lazy">' : '<span class="ds-icon">' + d.icon + '</span>') +
+        '<span class="ds-type-badge">' + d.type + '</span></div>' +
+      '<div class="ds-body">' +
       '<h4>' + d.title + '</h4>' +
       '<p>' + d.desc + '</p>' +
       '<div class="ds-meta"><span>📦 ' + d.volume + '</span><span>📅 ' + d.period + '</span></div>' +
-      '</div>';
+      '</div></div>';
+  }).join('');
+}
+
+// ===== RENDER: Cases preview (4-column cards with visual header) =====
+function renderCases(){
+  document.getElementById('caseGrid').innerHTML = CASES_PREVIEW.map(function(c){
+    var visual = '<div class="cs-visual cs-bg-' + c.bg + '">' +
+      (c.img ? '<img class="cs-img" src="' + c.img + '" alt="' + c.title + '" loading="lazy">' : '<span class="cs-icon">' + c.icon + '</span>') +
+      '<span class="cs-badge industry-tag' + (c.bg === 'b' || c.bg === 'c' ? ' industry-tag-b' : '') + '">' + c.industry + '</span></div>';
+    return '<div class="case-card" onclick="window.location.href=\'case-center.html\'">' + visual +
+      '<div class="cs-body"><h4>' + c.title + '</h4>' +
+      '<p class="cs-desc">' + c.desc + '</p>' +
+      '<div class="cs-org">🏢 ' + c.org + '</div>' +
+      '<div class="cs-meta">' + c.tags.map(function(t){ return '<span class="cs-tag">' + t + '</span>'; }).join('') + '</div>' +
+      '</div></div>';
   }).join('');
 }
 
@@ -965,7 +1116,7 @@ function renderDatasets(){
 function renderDemands(){
   document.getElementById('demandGrid').innerHTML = DEMANDS_PREVIEW.map(function(d){
     return '<div class="demand-card status-' + d.status + '" onclick="window.location.href=\'demand-hall.html\'">' +
-      '<div class="dm-header"><span class="dm-icon">' + d.icon + '</span><span class="dm-status ' + d.status + '">' + d.statusText + '</span></div>' +
+      '<div class="dm-header"><span class="dm-icon">' + dmIconImg(d.icon) + '</span><span class="dm-status ' + d.status + '">' + d.statusText + '</span></div>' +
       '<h4>' + d.title + '</h4>' +
       '<div class="dm-org">🏢 ' + d.org + '</div>' +
       '<div class="dm-tags">' + d.tags.map(function(t){ return '<span class="dmtag">' + t + '</span>'; }).join('') + '</div>' +
@@ -977,8 +1128,9 @@ function renderDemands(){
 // ===== RENDER: Partners (with role tags) =====
 function renderPartners(){
   document.getElementById('partnerGrid').innerHTML = PARTNERS.map(function(p){
-    return '<div class="partner-card">' +
+    return '<div class="partner-card pt-' + p.type + '">' +
       '<div class="pc-mark">' + abbrev(p.name) + '</div>' +
+      '<div><span class="pc-type">' + p.typeText + '</span></div>' +
       '<div class="pc-name">' + p.name + '</div>' +
       '<div class="pc-role">' + p.role + '</div>' +
       '</div>';
@@ -1011,6 +1163,8 @@ document.getElementById('topNavMenu').addEventListener('click', function(e){
       window.location.href = 'demand-hall.html';
     } else if (nav === 'appcenter') {
       window.location.href = 'app-center.html';
+    } else if (nav === 'cases') {
+      window.location.href = 'case-center.html';
     } else if (nav === 'docs') {
       window.location.href = 'doc-center.html';
     } else {
@@ -1119,7 +1273,7 @@ if (window.location.search.indexOf('open=about') > -1) {
 
 // ===== AUTH STATE (must run first) =====
 function isLoggedIn(){
-  try { return sessionStorage.getItem('luoshu_logged_in') === '1'; } catch(e) { return false; }
+  try { return localStorage.getItem('luoshu_logged_in') === '1'; } catch(e) { return false; }
 }
 function requireAuth(){
   if (!isLoggedIn()) {
@@ -1136,6 +1290,7 @@ function switchAuthState(loggedIn){
   switchAuthState(isLoggedIn());
 })();
 renderModels();
+renderCases();
 renderDatasets();
 renderDemands();
 renderPartners();
@@ -1156,7 +1311,7 @@ function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.htm
 // ===== LOGOUT =====
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
 function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
-function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); toast('已退出登录','info'); }
+function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); toast('已退出登录','info'); }
 </script>
 <!-- Logout Confirm Overlay -->
 <div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">

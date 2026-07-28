@@ -57,14 +57,15 @@ These are the highest-frequency rules. For full details, load the relevant spec 
 - **Status chips:** `56px × 20px`, `border-radius: 4px`, `font-size: 12px`. Green `#52c41a`/`#d9f7be` (success/built), Blue `#2f54eb`/`#d6e4ff` (building), Gray `rgba(0,0,0,0.65)`/`#f0f0f0` (unbuilt), Red `#ff4d4f`/`#fff2f0` (failed), Teal `#23ada4`/`#e6fffb` (published).
 - **Image lifecycle:** 保存 → 未构建 → 构建中 → 构建成功/构建失败 → 已发布. Build & publish happen on detail page, NOT on create page.
 
-### Page Modules (7)
+### Page Modules (8)
 1. **模型广场** (Model Marketplace) — model cards in responsive grid, category tabs, search filters
-2. **数据管理** (Data Management) — stepper form, file upload, tree selects
-3. **资源总览** (Resource Overview) — dashboard cards, no-bordered tables, node status badges
-4. **模型部署** (Model Deployment) — data table with status chips, action buttons, floating help
-5. **在线开发** (Online Development) — task creation form, code editor (Monaco), SSH toggle
-6. **知识库** (Knowledge Base) — document management, rich text editor (WangEditor)
-7. **镜像管理** (Image Management) — image list (card grid), create/edit (split-panel), detail (split-panel with build/publish)
+2. **案例中心** (Case Center) — industry vertical menu, filter tags, case card grid with pagination, 16 real enterprise agricultural AI cases
+3. **数据管理** (Data Management) — stepper form, file upload, tree selects
+4. **资源总览** (Resource Overview) — dashboard cards, no-bordered tables, node status badges
+5. **模型部署** (Model Deployment) — data table with status chips, action buttons, floating help
+6. **在线开发** (Online Development) — task creation form, code editor (Monaco), SSH toggle
+7. **知识库** (Knowledge Base) — document management, rich text editor (WangEditor)
+8. **镜像管理** (Image Management) — image list (card grid), create/edit (split-panel), detail (split-panel with build/publish)
 
 ### Architecture Rules
 - All components use `bdh-micro-main-*` prefix in shell, `ant-*` inside Qiankun sub-apps.
@@ -129,7 +130,7 @@ The project maintains interactive HTML prototypes for each module.
 
 **Registry file:** [`.claude/prototypes.json`](.claude/prototypes.json) — single source of truth for all prototype metadata.
 
-**Current prototypes (20):**
+**Current prototypes (22):**
 
 | Prototype | File | Module |
 |-----------|------|--------|
@@ -137,6 +138,8 @@ The project maintains interactive HTML prototypes for each module.
 | 登录 | `login.html` | 首页 |
 | 工作台 | `workbench.html` | 首页 |
 | 模型广场 | `model-marketplace.html` | 模型广场 |
+| 案例中心 | `case-center.html` | 案例中心 |
+| 案例详情 | `case-detail.html` | 案例中心 |
 | 数据管理 | `dataset-management.html` | 数据管理 |
 | 资源总览 | `resource-overview.html` | 首页 |
 | 模型部署 | `model-deployment.html` | 模型管理 |

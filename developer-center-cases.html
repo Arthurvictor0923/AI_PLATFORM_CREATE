@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发者中心 · 功能案例库 · 洛书模型服务平台</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;font-size:15px;line-height:1.6;color:rgba(0,0,0,0.88);background-color:#F7F9FD;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+a{color:#2f54eb;text-decoration:none;transition:color .3s}
+ul,ol{list-style:none}
+img{display:block;max-width:100%}
+
+/* ===== HEADER ===== */
+.app-header{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(255,255,255,0.88);backdrop-filter:blur(8px);border-bottom:1px solid rgba(5,5,5,0.06);z-index:50;display:flex;align-items:center;padding:0 50px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:rgba(0,0,0,0.88)}
+.brand .logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7566FF,#2F54EB);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700}
+.brand .sub{font-size:12px;font-weight:500;color:rgba(0,0,0,0.45);margin-left:4px}
+.top-nav{margin-left:40px;display:flex;gap:6px}
+.top-nav a{padding:6px 14px;font-size:14px;color:rgba(0,0,0,0.65);border-radius:6px;cursor:pointer}
+.top-nav a:hover{color:#2f54eb;background:rgba(47,84,235,0.04)}
+.top-nav a.active{color:#2f54eb;font-weight:600;background:rgba(47,84,235,0.06)}
+
+/* ===== HERO ===== */
+.hero{padding:140px 50px 80px;background:linear-gradient(180deg,#EEF2FF 0%,#F7F9FD 60%);text-align:center}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 18px;border-radius:99px;background:rgba(47,84,235,0.08);color:#2f54eb;font-size:13px;font-weight:500;margin-bottom:20px}
+.hero h1{font-size:42px;font-weight:800;letter-spacing:-.5px;margin-bottom:16px;color:rgba(0,0,0,0.9)}
+.hero p{font-size:17px;color:rgba(0,0,0,0.5);max-width:760px;margin:0 auto;line-height:1.8}
+.hero .stats{display:flex;justify-content:center;gap:48px;margin-top:48px;flex-wrap:wrap}
+.hero .stat{text-align:center}
+.hero .stat b{display:block;font-size:30px;font-weight:800;color:#2f54eb}
+.hero .stat span{font-size:13px;color:rgba(0,0,0,0.5)}
+
+/* ===== SECTION ===== */
+.section{padding:80px 50px}
+.section-inner{max-width:1200px;margin:0 auto}
+.sec-head{margin-bottom:44px}
+.sec-head .label{display:inline-block;padding:4px 14px;border-radius:99px;background:rgba(35,173,164,0.1);color:#23ada4;font-size:12px;font-weight:600;margin-bottom:14px}
+.sec-head h2{font-size:30px;font-weight:700;margin-bottom:10px}
+.sec-head p{font-size:15px;color:rgba(0,0,0,0.5);max-width:680px;line-height:1.7}
+
+/* ===== CASE CARDS ===== */
+.case-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.case-card{background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:12px;padding:28px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.case-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(47,84,235,0.1);border-color:rgba(47,84,235,0.25)}
+.case-card .ch{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.case-card .cico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700;flex-shrink:0}
+.case-card h3{font-size:18px;font-weight:700}
+.case-card .cpos{font-size:12px;color:rgba(0,0,0,0.45);margin-bottom:16px}
+.case-card .block{margin-bottom:14px}
+.case-card .bt{font-size:12px;font-weight:600;color:#2f54eb;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.case-card .bt::before{content:'';width:6px;height:6px;border-radius:2px;background:#2f54eb}
+.case-card ul li{font-size:13px;color:rgba(0,0,0,0.7);line-height:1.7;padding-left:14px;position:relative}
+.case-card ul li::before{content:'·';position:absolute;left:2px;color:#2f54eb;font-weight:700}
+.case-card .takeaway{background:rgba(35,173,164,0.06);border-left:3px solid #23ada4;border-radius:0 6px 6px 0;padding:10px 12px;font-size:13px;color:rgba(0,0,0,0.72);line-height:1.6;margin-top:6px}
+.case-card .takeaway b{color:#1d8a82}
+
+/* ===== COMPARE TABLE ===== */
+.table-wrap{background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:14px 16px;text-align:center;border-bottom:1px solid #f0f0f0}
+thead th{background:#fafafa;font-weight:600;color:rgba(0,0,0,0.85);position:sticky;top:0}
+tbody th{text-align:left;font-weight:600;color:rgba(0,0,0,0.8);background:#fcfcfd;white-space:nowrap}
+td .yes{color:#52c41a;font-weight:600}
+td .no{color:rgba(0,0,0,0.3)}
+td .part{color:#faad14;font-weight:600}
+tbody tr:hover td,tbody tr:hover th{background:rgba(47,84,235,0.02)}
+.col-feature{font-weight:600;color:#2f54eb}
+
+/* ===== ROLE MATRIX ===== */
+.matrix-wrap{display:grid;grid-template-columns:200px 1fr;gap:0;background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:12px;overflow:hidden}
+.matrix-role{background:#fafafa;border-right:1px solid #f0f0f0;padding:18px 20px;font-weight:600;display:flex;flex-direction:column;justify-content:center}
+.matrix-role small{font-weight:400;color:rgba(0,0,0,0.45);font-size:12px;margin-top:3px}
+.matrix-func{padding:18px 22px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font-size:12px;padding:4px 12px;border-radius:99px;background:rgba(47,84,235,0.07);color:#2f54eb;font-weight:500}
+.chip.weak{background:rgba(0,0,0,0.04);color:rgba(0,0,0,0.4)}
+
+/* ===== LANDING ===== */
+.land-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.land-card{background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:12px;padding:24px;position:relative;overflow:hidden}
+.land-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#2f54eb}
+.land-card .ln{font-size:12px;font-weight:600;color:#23ada4;margin-bottom:8px}
+.land-card h4{font-size:16px;font-weight:700;margin-bottom:8px}
+.land-card p{font-size:13px;color:rgba(0,0,0,0.65);line-height:1.7}
+.land-card .map{margin-top:12px;font-size:12px;color:rgba(0,0,0,0.5);background:#f7f9fd;border-radius:6px;padding:8px 10px}
+.land-card .map b{color:#2f54eb;font-weight:600}
+
+/* ===== CALLOUT ===== */
+.callout{background:linear-gradient(135deg,#2F54EB,#5B49E0);border-radius:16px;padding:40px 48px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.callout h3{font-size:22px;font-weight:700;margin-bottom:8px}
+.callout p{font-size:14px;opacity:.9;line-height:1.7;max-width:640px}
+.callout .cta{background:#fff;color:#2f54eb;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;white-space:nowrap;cursor:pointer;transition:transform .2s}
+.callout .cta:hover{transform:translateY(-2px)}
+
+footer{padding:40px 50px;text-align:center;color:rgba(0,0,0,0.4);font-size:13px;border-top:1px solid rgba(5,5,5,0.06)}
+
+@media(max-width:768px){.hero h1{font-size:30px}.matrix-wrap{grid-template-columns:1fr}.matrix-role{border-right:none;border-bottom:1px solid #f0f0f0}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="brand">
+    <div class="logo">洛</div>
+    洛书 · 模型服务平台
+    <span class="sub">开发者中心 · 功能案例库</span>
+  </div>
+  <nav class="top-nav">
+    <a href="#cases" class="active">标杆案例</a>
+    <a href="#compare">功能对比</a>
+    <a href="#roles">角色矩阵</a>
+    <a href="#landing">落地建议</a>
+    <a href="#refs">参考地址</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">DESIGN RESEARCH · 开发者中心</div>
+  <h1>开发者中心应该长什么样？</h1>
+  <p>从全球最成熟的 AI 模型社区与云开发者门户中，提炼 5 个标杆案例，拆解它们「有什么功能、服务什么角色」，并映射到洛书现有模块，为你的设计提供可借鉴的蓝图。</p>
+  <div class="stats">
+    <div class="stat"><b>5</b><span>标杆案例</span></div>
+    <div class="stat"><b>9</b><span>功能维度</span></div>
+    <div class="stat"><b>5</b><span>核心角色</span></div>
+    <div class="stat"><b>12</b><span>洛书现有模块可复用</span></div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section class="section" id="cases">
+  <div class="section-inner">
+    <div class="sec-head">
+      <span class="label">标杆案例 · CASE STUDIES</span>
+      <h2>五个最值得参考的开发者中心</h2>
+      <p>覆盖「开源模型社区」「深度学习框架生态」「云厂商门户」三类形态，均与洛书（模型服务平台）高度相关。</p>
+    </div>
+    <div class="case-grid">
+
+      <!-- Case 1 ModelScope -->
+      <div class="case-card">
+        <div class="ch">
+          <div class="cico" style="background:linear-gradient(135deg,#FF6A00,#FF9D00)">模</div>
+          <div><h3>魔搭社区 ModelScope</h3></div>
+        </div>
+        <div class="cpos">阿里达摩院 · 中国最大开源模型社区（MaaS）</div>
+        <div class="block"><div class="bt">核心功能</div>
+          <ul>
+            <li>模型库 3000+：分类 / 下载 / 一键推理 API</li>
+            <li>创空间 Studio：可视化 AI 应用托管</li>
+            <li>Notebook 在线开发（集成 PAI 算力）</li>
+            <li>SDK / CLI（modelscope 库）+ 数据集广场</li>
+            <li>模型微调训练、开发者认证与积分体系</li>
+            <li>技术文档 / 教程 / 直播 / 比赛</li>
+          </ul>
+        </div>
+        <div class="block"><div class="bt">服务对象</div>
+          <ul><li>算法工程师、应用开发者、企业、研究者</li></ul>
+        </div>
+        <div class="takeaway"><b>对洛书启发：</b>「模型广场 + 创空间 + Notebook」的组合，叠加社区运营（积分 / 认证 / 榜单），最贴合洛书现状。</div>
+      </div>
+
+      <!-- Case 2 Hugging Face -->
+      <div class="case-card">
+        <div class="ch">
+          <div class="cico" style="background:linear-gradient(135deg,#FF9D00,#FFD000)">🤗</div>
+          <div><h3>Hugging Face</h3></div>
+        </div>
+        <div class="cpos">全球最大 AI 开源社区 / Model Hub</div>
+        <div class="block"><div class="bt">核心功能</div>
+          <ul>
+            <li>Models Hub：版本 / 分支 / 推理端点 Endpoints</li>
+            <li>Datasets Hub + Spaces（Gradio/Streamlit 应用托管）</li>
+            <li>Hub API 与客户端库（transformers/datasets）</li>
+            <li>标准化模型卡片：README / 评估指标 / 许可证</li>
+            <li>社区协作：Discussions / PR / 论文联动</li>
+            <li>免费课程 HF Course + 付费推理部署</li>
+          </ul>
+        </div>
+        <div class="block"><div class="bt">服务对象</div>
+          <ul><li>全球 ML 研究者、工程师、企业</li></ul>
+        </div>
+        <div class="takeaway"><b>对洛书启发：</b>模型卡片（卡片元信息）标准化 + Spaces 应用托管 + 社区 PR/Discussion 协作机制。</div>
+      </div>
+
+      <!-- Case 3 PaddlePaddle -->
+      <div class="case-card">
+        <div class="ch">
+          <div class="cico" style="background:linear-gradient(135deg,#1E50FF,#3B7BFF)">桨</div>
+          <div><h3>百度飞桨 PaddlePaddle</h3></div>
+        </div>
+        <div class="cpos">中国自主深度学习平台 + 开发者生态</div>
+        <div class="block"><div class="bt">核心功能</div>
+          <ul>
+            <li>AI Studio 学习实训：免费算力 + 项目 + 比赛</li>
+            <li>星河社区：模型库 / 数据集 / 预训练模型</li>
+            <li>PaddleNLP / PaddleCV 工具套件</li>
+            <li>星河大模型平台（ERNIE 系列）</li>
+            <li>开发者认证（初级 / 高级）+ 产业落地案例</li>
+            <li>文档 / 教程 / 直播 / 竞赛</li>
+          </ul>
+        </div>
+        <div class="block"><div class="bt">服务对象</div>
+          <ul><li>高校师生、企业开发者、产业落地方</li></ul>
+        </div>
+        <div class="takeaway"><b>对洛书启发：</b>「产业案例 + 实训沙箱 + 认证体系」非常适合农业产业落地场景。</div>
+      </div>
+
+      <!-- Case 4 阿里云 -->
+      <div class="case-card">
+        <div class="ch">
+          <div class="cico" style="background:linear-gradient(135deg,#FF6A00,#FF4D4F)">云</div>
+          <div><h3>阿里云开发者中心</h3></div>
+        </div>
+        <div class="cpos">云厂商通用开发者门户 / 开放平台</div>
+        <div class="block"><div class="bt">核心功能</div>
+          <ul>
+            <li>API 市场 / OpenAPI Explorer：在线调试</li>
+            <li>SDK 中心：多语言客户端</li>
+            <li>动手实验 / 沙箱：免费试用环境</li>
+            <li>云栖社区 + 开发者认证（ACE）</li>
+            <li>文档中心 + 最佳实践 + 控制台资源管理</li>
+          </ul>
+        </div>
+        <div class="block"><div class="bt">服务对象</div>
+          <ul><li>云应用开发者、ISV、运维工程师</li></ul>
+        </div>
+        <div class="takeaway"><b>对洛书启发：</b>「API 调试控制台 + SDK + 动手实验」适合平台对外开放模型能力。</div>
+      </div>
+
+      <!-- Case 5 腾讯云大模型 -->
+      <div class="case-card">
+        <div class="ch">
+          <div class="cico" style="background:linear-gradient(135deg,#0052D9,#2F54EB)">腾</div>
+          <div><h3>腾讯云 AI / 大模型开发者中心</h3></div>
+        </div>
+        <div class="cpos">大模型 + 应用开发平台</div>
+        <div class="block"><div class="bt">核心功能</div>
+          <ul>
+            <li>TI 平台：模型训练 / 部署</li>
+            <li>混元大模型 API + 知识引擎</li>
+            <li>应用开发：Agent / 插件编排</li>
+            <li>快速入门 + SDK + 文档</li>
+            <li>开发者社区 + 活动赛事</li>
+          </ul>
+        </div>
+        <div class="block"><div class="bt">服务对象</div>
+          <ul><li>企业应用开发者、ISV、业务集成方</li></ul>
+        </div>
+        <div class="takeaway"><b>对洛书启发：</b>「知识引擎 + Agent 开发」呼应洛书知识库 / 智能应用模块，可作为上层能力。</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="section" id="compare" style="background:#fff;border-top:1px solid rgba(5,5,5,0.05)">
+  <div class="section-inner">
+    <div class="sec-head">
+      <span class="label">功能对比 · FEATURE MATRIX</span>
+      <h2>九大功能维度横向对比</h2>
+      <p>开发者中心通常包含这些能力。绿色 = 强具备，黄色 = 部分具备，灰色 = 较弱 / 缺失。</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">功能维度</th>
+            <th>魔搭</th><th>Hugging Face</th><th>飞桨</th><th>阿里云</th><th>腾讯云大模型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>模型 / 算法托管</th><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td><td class="yes">●</td></tr>
+          <tr><th>在线开发环境（Notebook）</th><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td><td class="yes">●</td></tr>
+          <tr><th>数据集管理</th><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td><td class="part">◐</td></tr>
+          <tr><th>API / SDK 开放</th><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td></tr>
+          <tr><th>应用 / 创空间托管</th><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td><td class="no">○</td><td class="yes">●</td></tr>
+          <tr><th>文档 / 教程</th><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td><td class="yes">●</td></tr>
+          <tr><th>社区 / 协作</th><td class="part">◐</td><td class="yes">●</td><td class="part">◐</td><td class="part">◐</td><td class="part">◐</td></tr>
+          <tr><th>认证 / 激励体系</th><td class="yes">●</td><td class="part">◐</td><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td></tr>
+          <tr><th>免费算力 / 沙箱</th><td class="yes">●</td><td class="part">◐</td><td class="yes">●</td><td class="yes">●</td><td class="part">◐</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:rgba(0,0,0,0.45);margin-top:14px">注：洛书已具备模型广场、数据管理、在线开发、镜像、部署、知识库、文档中心等，最缺的是 <b style="color:#2f54eb">API/SDK 开放、应用创空间托管、认证激励、社区协作</b> 这四个开发者中心标志性能力。</p>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="section" id="roles">
+  <div class="section-inner">
+    <div class="sec-head">
+      <span class="label">角色矩阵 · WHO IT SERVES</span>
+      <h2>核心角色 × 功能需求</h2>
+      <p>开发者中心不是给一类人用的，它要同时满足研究者、应用开发者、运营方、农户和师生的诉求。</p>
+    </div>
+    <div class="matrix-wrap">
+      <div class="matrix-role">算法 / 研究员<small>Algorithm Researcher</small></div>
+      <div class="matrix-func"><span class="chip">模型上传/版本</span><span class="chip">在线微调/训练</span><span class="chip">Notebook</span><span class="chip">数据集</span><span class="chip">论文/评估</span></div>
+
+      <div class="matrix-role">应用开发者<small>App Developer</small></div>
+      <div class="matrix-func"><span class="chip">模型调用 API</span><span class="chip">SDK</span><span class="chip">应用创空间</span><span class="chip">在线调试</span><span class="chip">文档/示例</span></div>
+
+      <div class="matrix-role">平台运营 / 管理员<small>Platform Operator</small></div>
+      <div class="matrix-func"><span class="chip">认证审核</span><span class="chip">积分/榜单</span><span class="chip">需求对接</span><span class="chip">资源配额</span><span class="chip">案例运营</span></div>
+
+      <div class="matrix-role">农户 / 农企<small>End User</small></div>
+      <div class="matrix-func"><span class="chip weak">开箱即用应用</span><span class="chip weak">案例参考</span><span class="chip weak">需求发布</span><span class="chip weak">培训教程</span></div>
+
+      <div class="matrix-role">高校 / 师生<small>Academia</small></div>
+      <div class="matrix-func"><span class="chip">实训沙箱</span><span class="chip">课程</span><span class="chip">竞赛</span><span class="chip">认证</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- LANDING -->
+<section class="section" id="landing" style="background:#fff;border-top:1px solid rgba(5,5,5,0.05)">
+  <div class="section-inner">
+    <div class="sec-head">
+      <span class="label">落地建议 · FOR LUOSHU</span>
+      <h2>洛书开发者中心怎么建？</h2>
+      <p>不必从零造轮子。开发者中心是「开发者体验层」，把现有 12 个模块串起来，并补齐 4 块缺失能力。</p>
+    </div>
+    <div class="land-grid">
+      <div class="land-card">
+        <div class="ln">统一入口 / 控制台</div>
+        <h4>开发者门户</h4>
+        <p>聚合 API 密钥管理、我的模型、我的应用、资源配额、成长等级的一站式控制台。</p>
+        <div class="map">复用：<b>工作台</b> + <b>资源总览</b></div>
+      </div>
+      <div class="land-card">
+        <div class="ln">能力开放</div>
+        <h4>API & SDK 中心</h4>
+        <p>模型推理 API、在线调试（OpenAPI Explorer）、多语言 SDK 与调用示例。</p>
+        <div class="map">新建：<b>API 调试台</b>（轻量）</div>
+      </div>
+      <div class="land-card">
+        <div class="ln">应用托管</div>
+        <h4>应用创空间</h4>
+        <p>一键托管基于模型 / 知识库的 Demo 应用（类 Spaces），可分享、可嵌入门户。</p>
+        <div class="map">复用：<b>应用中心</b> + <b>知识库</b></div>
+      </div>
+      <div class="land-card">
+        <div class="ln">社区协作</div>
+        <h4>开发者社区</h4>
+        <p>模型评论、需求对接、PR/Discussion、技术问答，沉淀农业 AI 最佳实践。</p>
+        <div class="map">复用：<b>需求市场</b> + <b>案例中心</b></div>
+      </div>
+      <div class="land-card">
+        <div class="ln">成长体系</div>
+        <h4>认证与激励</h4>
+        <p>开发者认证、积分、贡献榜单、模型/应用评选，激活生态自增长。</p>
+        <div class="map">新建：<b>积分/认证</b>（轻量）</div>
+      </div>
+      <div class="land-card">
+        <div class="ln">实训沙箱</div>
+        <h4>动手实验室</h4>
+        <p>农业场景的免费算力沙箱 + 教程 + 竞赛，服务高校与农技人员。</p>
+        <div class="map">复用：<b>在线开发</b> + <b>Notebook</b></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:40px">
+      <div>
+        <h3>下一步：把这份蓝图变成可点开的原型</h3>
+        <p>选定 1–2 个最高优先模块（建议先做「开发者门户 + API 中心」），我可以直接基于洛书设计系统产出高保真 HTML 原型。</p>
+      </div>
+      <div class="cta" onclick="alert('告诉我优先做哪个模块，我直接出原型 👇')">我来选模块 →</div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENCES -->
+<section class="section" id="refs" style="background:#fff;border-top:1px solid rgba(5,5,5,0.05)">
+  <div class="section-inner">
+    <div class="sec-head">
+      <span class="label">可访问地址 · GO LOOK</span>
+      <h2>直接点进去参考的地址</h2>
+      <p>都是公开可访问的开发者中心 / 模型社区。重点看它们如何把「模型、数据、开发、应用、社区、文档」拆成独立入口，而不是全部堆进一个工作台。</p>
+    </div>
+    <div class="case-grid">
+      <div class="case-card" style="border-color:rgba(255,106,0,0.25)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#FF6A00,#FF9D00)">模</div><div><h3>魔搭社区 ModelScope</h3></div></div>
+        <div class="cpos">阿里达摩院 · 中国最大开源模型社区</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://modelscope.cn" target="_blank" rel="noopener">社区首页 modelscope.cn ↗</a></li>
+          <li><a href="https://modelscope.cn/models" target="_blank" rel="noopener">模型库（独立入口）↗</a></li>
+          <li><a href="https://modelscope.cn/studios" target="_blank" rel="noopener">创空间 Studio（应用托管）↗</a></li>
+          <li><a href="https://modelscope.cn/datasets" target="_blank" rel="noopener">数据集广场 ↗</a></li>
+          <li><a href="https://modelscope.cn/docs" target="_blank" rel="noopener">开发文档 / 教程 ↗</a></li>
+        </ul>
+        <div class="takeaway">看它的<b>顶部导航</b>：模型 / 数据集 / 创空间 / Studio / 社区 / 课程 全是平级入口，工作台只是其中一块。</div>
+      </div>
+
+      <div class="case-card" style="border-color:rgba(255,157,0,0.25)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#FF9D00,#FFD000)">🤗</div><div><h3>Hugging Face</h3></div></div>
+        <div class="cpos">全球最大 AI 开源社区 / Model Hub</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://huggingface.co" target="_blank" rel="noopener">Hub 首页 huggingface.co ↗</a></li>
+          <li><a href="https://huggingface.co/models" target="_blank" rel="noopener">Models（独立入口）↗</a></li>
+          <li><a href="https://huggingface.co/spaces" target="_blank" rel="noopener">Spaces（应用托管）↗</a></li>
+          <li><a href="https://huggingface.co/datasets" target="_blank" rel="noopener">Datasets ↗</a></li>
+          <li><a href="https://huggingface.co/docs" target="_blank" rel="noopener">文档中心 ↗</a></li>
+        </ul>
+        <div class="takeaway">看它的<b>模型卡片</b>：README / 评估指标 / 许可证 / 推理 API 全在卡片上，开发者无需进后台即可调用。</div>
+      </div>
+
+      <div class="case-card" style="border-color:rgba(30,80,255,0.25)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#1E50FF,#3B7BFF)">桨</div><div><h3>百度飞桨 PaddlePaddle</h3></div></div>
+        <div class="cpos">中国自主深度学习平台 + 开发者生态</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://www.paddlepaddle.org.cn" target="_blank" rel="noopener">飞桨官网 ↗</a></li>
+          <li><a href="https://aistudio.baidu.com" target="_blank" rel="noopener">AI Studio 实训平台 ↗</a></li>
+          <li><a href="https://aistudio.baidu.com/community" target="_blank" rel="noopener">星河社区（模型/数据）↗</a></li>
+          <li><a href="https://cloud.baidu.com/product/wenxinworkshop" target="_blank" rel="noopener">千帆大模型平台 ↗</a></li>
+        </ul>
+        <div class="takeaway">看它的<b>产业案例 + 实训</b>：免费算力沙箱 + 课程 + 竞赛，适合农业产业落地参考。</div>
+      </div>
+
+      <div class="case-card" style="border-color:rgba(255,106,0,0.25)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#FF6A00,#FF4D4F)">云</div><div><h3>阿里云开发者中心</h3></div></div>
+        <div class="cpos">云厂商通用开发者门户 / 开放平台</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://developer.aliyun.com" target="_blank" rel="noopener">开发者社区 developer.aliyun.com ↗</a></li>
+          <li><a href="https://bailian.console.aliyun.com" target="_blank" rel="noopener">百炼大模型开发平台 ↗</a></li>
+          <li><a href="https://developer.aliyun.com/developer/api" target="_blank" rel="noopener">API 中心（在线调试）↗</a></li>
+        </ul>
+        <div class="takeaway">看它的<b>API Explorer</b>：在线调试 + 多语言 SDK，是平台对外开放能力的最佳范例。</div>
+      </div>
+
+      <div class="case-card" style="border-color:rgba(0,82,217,0.25)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#0052D9,#2F54EB)">腾</div><div><h3>腾讯云 AI / 大模型开发者</h3></div></div>
+        <div class="cpos">大模型 + 应用开发平台</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://cloud.tencent.com/developer" target="_blank" rel="noopener">腾讯云开发者 cloud.tencent.com/developer ↗</a></li>
+          <li><a href="https://console.cloud.tencent.com/ti" target="_blank" rel="noopener">TI 平台（训练/部署）↗</a></li>
+          <li><a href="https://cloud.tencent.com/document/product/1729" target="_blank" rel="noopener">混元大模型文档 ↗</a></li>
+        </ul>
+        <div class="takeaway">看它的<b>知识引擎 + Agent</b>：上层应用开发与洛书知识库/智能应用模块呼应。</div>
+      </div>
+
+      <div class="case-card" style="border-color:rgba(35,173,164,0.3)">
+        <div class="ch"><div class="cico" style="background:linear-gradient(135deg,#23ada4,#1d8a82)">＋</div><div><h3>更多可参考平台</h3></div></div>
+        <div class="cpos">垂直 / 竞品对照</div>
+        <ul style="margin:10px 0 14px">
+          <li><a href="https://www.volcengine.com/product/ark" target="_blank" rel="noopener">火山方舟（字节大模型）↗</a></li>
+          <li><a href="https://www.xfyun.cn" target="_blank" rel="noopener">讯飞开放平台 ↗</a></li>
+          <li><a href="https://open.bigmodel.cn" target="_blank" rel="noopener">智谱 BigModel 开放平台 ↗</a></li>
+          <li><a href="https://developer.huaweicloud.com" target="_blank" rel="noopener">华为云开发者 ↗</a></li>
+        </ul>
+        <div class="takeaway">横向对比它们<b>顶部导航的一级菜单</b>，能直接看出「开发者中心」应有的结构颗粒度。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  洛书·模型服务平台 · 开发者中心功能案例库 ｜ 内部设计参考 ｜ 数据截至 2026-07
+</footer>
+
+<script>
+// 顶部导航锚点高亮
+const links=[...document.querySelectorAll('.top-nav a')];
+const secs=['cases','compare','roles','landing','refs'].map(id=>document.getElementById(id));
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+120;
+  let cur=secs[0].id;
+  secs.forEach(s=>{if(s.offsetTop<=y)cur=s.id;});
+  links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+});
+</script>
+</body>
+</html>

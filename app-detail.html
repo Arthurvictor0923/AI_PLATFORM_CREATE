@@ -506,6 +506,8 @@ button { cursor: pointer; border: none; background: none; }
   .content-area { margin-left: 0; padding: 16px; }
   .sidebar { display: none; }
 }
+/* FOOTER */
+.footer{background:#001529;color:rgba(255,255,255,0.65);padding:48px 50px 24px;font-size:13px}.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}.footer-col h4{font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:16px}.footer-col p,.footer-col a{font-size:13px;color:rgba(255,255,255,0.45);line-height:2.2;display:block;text-decoration:none}.footer-col a:hover{color:#597ef7}.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.footer-logo span{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85)}.footer-bot{max-width:1200px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8}
 </style>
 </head>
 <body>
@@ -538,24 +540,22 @@ button { cursor: pointer; border: none; background: none; }
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu">
-        <span class="top-nav-item" onclick="location.href='portal.html'">首页</span>
-        <span class="top-nav-item" onclick="location.href='model-marketplace.html'">模型广场</span>
-        <span class="top-nav-item" onclick="location.href='dataset-management.html'">数据管理</span>
-        <!-- <span class="top-nav-item" onclick="location.href='image-custom-list.html'">开发中心</span> -->
-        <span class="top-nav-item" onclick="location.href='demand-hall.html'">需求市场</span>
-        <!-- <span class="top-nav-item active" onclick="location.href='app-center.html'">应用中心</span> -->
-        <!-- <span class="top-nav-item" onclick="showToast('info','模块「智能应用」尚未开发')">智能应用</span> -->
-        <span class="top-nav-item" onclick="location.href='doc-center.html'">文档中心</span>
-      </div></div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
       <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
         <span id="headerAuthOut">
           <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
-          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
         </span>
         <span id="headerAuthIn" style="display:none">
         <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
-        <button class="header-btn" title="搜索"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+        
         <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
         <div class="notif-popover" id="notifPopover">
           <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
@@ -576,6 +576,7 @@ button { cursor: pointer; border: none; background: none; }
               <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
             </div>
             <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+            <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
             <div class="dropdown-divider"></div>
             <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
           </div>
@@ -1178,7 +1179,7 @@ function escapeHTML(str) {
 }
 
 // ===== AUTH STATE (must run first) =====
-function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function isLoggedIn(){try{return localStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
 function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
 function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
 (function(){switchAuthState(isLoggedIn());})();
@@ -1194,14 +1195,27 @@ function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.htm
 // ===== LOGOUT =====
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
 function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
-function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); switchAuthState(false); } catch(e) {} showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu_logged_in'); switchAuthState(false); } catch(e) {} showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
 // ===== NOTIFICATIONS =====
 function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="showToast(\'功能开发中\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
 function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
 function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
 document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
-// ===== TOAST =====
-function showToast(msg){ var t = document.createElement('div'); t.textContent = msg; t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2000;padding:10px 20px;border-radius:6px;font-size:14px;background:#2f54eb;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity 0.3s;'; document.body.appendChild(t); setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 2000); }
+// ===== TOAST BRIDGE =====
+function toast(msg, type){ showToast(type||'info', msg); }
+// ===== NAVIGATION =====
+document.getElementById('topNavMenu').addEventListener('click', function(e){
+  if (e.target.classList.contains('top-nav-item') && e.target.dataset.nav) {
+    var nav = e.target.dataset.nav;
+    if (nav === 'home') { window.location.href = 'portal.html'; return; }
+    if (nav === 'marketplace') { window.location.href = 'model-marketplace.html'; return; }
+    if (nav === 'cases') { window.location.href = 'case-center.html'; return; }
+    if (nav === 'data') { window.location.href = 'dataset-management.html'; return; }
+    if (nav === 'demand') { window.location.href = 'demand-hall.html'; return; }
+    if (nav === 'docs') { window.location.href = 'doc-center.html'; return; }
+    toast('模块「'+e.target.textContent+'」页面尚未开发', 'info');
+  }
+});
 </script>
 <!-- Logout Confirm Overlay -->
 <div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
@@ -1214,5 +1228,9 @@ function showToast(msg){ var t = document.createElement('div'); t.textContent = 
     </div>
   </div>
 </div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flgad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flgad)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flgad)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flgad)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
+
 </body>
 </html>

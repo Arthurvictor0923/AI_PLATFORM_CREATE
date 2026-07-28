@@ -169,9 +169,65 @@ button{cursor:pointer;border:none;background:none}
 ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.5);border:2px solid transparent;background-clip:content-box}
 [data-prefers-color="dark"] ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.25);border:2px solid transparent;background-clip:content-box}
 [data-prefers-color="dark"] ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.5);border:2px solid transparent;background-clip:content-box}
+/* FOOTER */
+.footer{background:#001529;color:rgba(255,255,255,0.65);padding:48px 50px 24px;font-size:13px}.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}.footer-col h4{font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:16px}.footer-col p,.footer-col a{font-size:13px;color:rgba(255,255,255,0.45);line-height:2.2;display:block;text-decoration:none}.footer-col a:hover{color:#597ef7}.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.footer-logo span{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85)}.footer-bot{max-width:1200px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8}
+
+/* ===== PERSPECTIVE BAR（引导 / 研发侧 / 消费侧） ===== */
+.doc-perspective{display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid rgba(5,5,5,0.06);background:#fafbfc;flex-shrink:0}
+.doc-perspective button{flex:1;padding:8px 4px;border-radius:6px;font-size:12px;font-weight:500;color:rgba(0,0,0,0.55);background:transparent;transition:all 0.2s;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.2}
+.doc-perspective button:hover{color:#2f54eb;background:rgba(47,84,235,0.04)}
+.doc-perspective button.active{color:#fff;background:#2f54eb;border-color:#2f54eb}
+.doc-perspective button .pp-ico{font-size:16px;line-height:1}
+
+/* ===== GUIDE PAGE（引导页：双视角入口） ===== */
+.doc-guide-wrap{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:44px 24px;overflow-y:auto;width:100%}
+.doc-guide{max-width:880px;width:100%}
+.doc-guide h1{font-size:26px;font-weight:700;color:rgba(0,0,0,0.88);margin-bottom:8px}
+.doc-guide .sub{font-size:14px;color:rgba(0,0,0,0.55);margin-bottom:30px;line-height:1.8}
+.doc-guide .sub strong{color:rgba(0,0,0,0.78);font-weight:600}
+.guide-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.guide-card{background:#fff;border:1px solid rgba(5,5,5,0.08);border-radius:12px;padding:28px 24px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;border-top:3px solid transparent}
+.guide-card:hover{box-shadow:0 10px 28px rgba(0,0,0,0.1);transform:translateY(-3px)}
+.guide-card.dev{border-top-color:#2f54eb}
+.guide-card.consume{border-top-color:#23ada4}
+.guide-card .gc-ico{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px}
+.guide-card.dev .gc-ico{background:#f0f5ff;color:#2f54eb}
+.guide-card.consume .gc-ico{background:#e6fffb;color:#23ada4}
+.guide-card h3{font-size:17px;font-weight:600;color:rgba(0,0,0,0.88);margin-bottom:8px}
+.guide-card p{font-size:13px;line-height:1.7;color:rgba(0,0,0,0.6);margin-bottom:18px;min-height:66px}
+.guide-card .gc-link{font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.guide-card.dev .gc-link{color:#2f54eb}
+.guide-card.consume .gc-link{color:#23ada4}
+.guide-card .gc-tags{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px}
+.guide-card .gc-tags span{font-size:11px;padding:1px 8px;border-radius:10px;background:#f5f5f5;color:rgba(0,0,0,0.55)}
+.doc-guide .note{margin-top:28px;padding:14px 18px;background:#fafafa;border:1px dashed #d9d9d9;border-radius:8px;font-size:13px;color:rgba(0,0,0,0.55);line-height:1.8}
+.doc-guide .note strong{color:rgba(0,0,0,0.75)}
+
+/* ===== EMBED MODE（内嵌于开发者中心，隐藏自身顶部菜单与 footer） ===== */
+html.embedded{height:100%}
+html.embedded body{height:100%;overflow:hidden}
+html.embedded .app-header{display:none!important}
+html.embedded .footer{display:none!important}
+html.embedded .main-layout{height:100%;margin-top:0}
+
+/* ===== DARK THEME: new perspective + guide elements ===== */
+[data-prefers-color="dark"] .doc-perspective{background:#232527;border-bottom-color:rgba(255,255,255,0.08)}
+[data-prefers-color="dark"] .doc-perspective button{color:rgba(255,255,255,0.65)}
+[data-prefers-color="dark"] .doc-perspective button:hover{color:#597ef7;background:rgba(89,126,247,0.12)}
+[data-prefers-color="dark"] .doc-perspective button.active{color:#fff;background:#2f54eb;border-color:#2f54eb}
+[data-prefers-color="dark"] .doc-guide h1{color:rgba(255,255,255,0.92)}
+[data-prefers-color="dark"] .doc-guide .sub{color:rgba(255,255,255,0.55)}
+[data-prefers-color="dark"] .doc-guide .sub strong{color:rgba(255,255,255,0.82)}
+[data-prefers-color="dark"] .guide-card{background:#2b2d30;border-color:rgba(255,255,255,0.1)}
+[data-prefers-color="dark"] .guide-card h3{color:rgba(255,255,255,0.9)}
+[data-prefers-color="dark"] .guide-card p{color:rgba(255,255,255,0.6)}
+[data-prefers-color="dark"] .guide-card .gc-tags span{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)}
+[data-prefers-color="dark"] .doc-guide .note{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.55)}
+[data-prefers-color="dark"] .doc-guide .note strong{color:rgba(255,255,255,0.78)}
 </style>
 </head>
 <body>
+<script>if(location.search.indexOf('embed=1')>-1){document.documentElement.className+=' embedded';}</script>
 
 <!-- ==================== HEADER ==================== -->
 <header class="app-header">
@@ -191,17 +247,18 @@ button{cursor:pointer;border:none;background:none}
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
-        <span class="top-nav-item" data-nav="home">首页</span>
-        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
-        <span class="top-nav-item" data-nav="data">数据管理</span>
-        <span class="top-nav-item" data-nav="demand">需求市场</span>
-        <span class="top-nav-item active" data-nav="docs">文档中心</span>
-      </div></div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item active" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
       <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
         <span id="headerAuthOut">
           <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
-          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
         </span>
         <span id="headerAuthIn" style="display:none">
           <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()">
@@ -227,6 +284,7 @@ button{cursor:pointer;border:none;background:none}
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
               <div class="dropdown-divider"></div>
               <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
             </div>
@@ -257,6 +315,11 @@ button{cursor:pointer;border:none;background:none}
 
   <!-- Left Sidebar -->
   <aside class="doc-sidebar" id="docSidebar">
+    <div class="doc-perspective" id="docPerspective">
+      <button data-side="guide" class="active" onclick="selectSide('guide')"><span class="pp-ico">📖</span>引导</button>
+      <button data-side="dev" onclick="selectSide('dev')"><span class="pp-ico">💻</span>研发侧</button>
+      <button data-side="consume" onclick="selectSide('consume')"><span class="pp-ico">🔭</span>消费侧</button>
+    </div>
     <div class="doc-sidebar-search">
       <input type="text" id="docSearch" placeholder="🔍 搜索文档..." oninput="filterDocs()">
     </div>
@@ -265,6 +328,7 @@ button{cursor:pointer;border:none;background:none}
 
   <!-- Content Area -->
   <main class="doc-content-wrap" id="docContentWrap">
+    <div class="doc-guide-wrap" id="docGuide" style="display:none"></div>
     <div class="doc-empty" id="docEmpty">
       <div class="icon">📖</div>
       <h3>文档中心</h3>
@@ -340,7 +404,7 @@ var DOC_CATEGORIES = [
     items: [
       { id: 'demand-post', title: '发布需求', tags: ['consume'] },
       { id: 'demand-apply', title: '申请接单', tags: ['dev'] },
-      { id: 'demand-accept', title: '验收与交付', tags: ['both'] }
+      { id: 'demand-accept', title: '验收与交付', tags: ['consume'] }
     ]
   },
   {
@@ -353,9 +417,9 @@ var DOC_CATEGORIES = [
   {
     id: 'api', title: '📖 API 参考', icon: '📖',
     items: [
-      { id: 'api-inference', title: '模型推理 API', tags: ['dev'] },
-      { id: 'api-dataset', title: '数据集 API', tags: ['dev'] },
-      { id: 'api-auth', title: '认证与鉴权', tags: ['dev'] }
+      { id: 'api-inference', title: '模型推理 API', tags: ['consume'] },
+      { id: 'api-dataset', title: '数据集 API', tags: ['consume'] },
+      { id: 'api-auth', title: '认证与鉴权', tags: ['consume'] }
     ]
   },
   {
@@ -511,17 +575,17 @@ DOC_CONTENT['apps-use'] = {
 
 // --- API 参考 ---
 DOC_CONTENT['api-inference'] = {
-  title: '模型推理 API', category: 'API 参考', tags: ['研发侧'],
+  title: '模型推理 API', category: 'API 参考', tags: ['消费侧'],
   content: '<h1>模型推理 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>审批通过后获得的 API Key 可用于调用模型推理 API。</p><h2>请求格式</h2><pre><code>POST /api/v1/inference/{model_id}\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "inputs": { "image_url": "...", "params": {...} },\n  "output_format": "json"\n}</code></pre><h2>响应格式</h2><pre><code>{\n  "request_id": "req-xxx",\n  "status": "success",\n  "outputs": { "predictions": [...], "confidence": 0.95 },\n  "latency_ms": 234,\n  "cost_points": 20\n}</code></pre><h2>调用限制</h2><ul><li>前 3 次调用免费（优先消耗 <code>luoshu_free_calls</code>）</li><li>之后按模型定价消耗积分（-20~-80）</li><li>超时时间：默认 30s，可在推理配置中调整</li></ul>'
 };
 
 DOC_CONTENT['api-dataset'] = {
-  title: '数据集 API', category: 'API 参考', tags: ['研发侧'],
+  title: '数据集 API', category: 'API 参考', tags: ['消费侧'],
   content: '<h1>数据集 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>数据查询 API</h2><pre><code>POST /api/v1/datasets/{dataset_id}/query\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "filters": { "region": "黑龙江", "year": 2025 },\n  "limit": 1000\n}</code></pre><h2>数据统计 API</h2><pre><code>GET /api/v1/datasets/{dataset_id}/stats\nAuthorization: Bearer {api_key}</code></pre><blockquote class="warning">数据集 API 仅返回查询结果，不提供直接下载。每次查询消耗积分（-30~-50）。</blockquote>'
 };
 
 DOC_CONTENT['api-auth'] = {
-  title: '认证与鉴权', category: 'API 参考', tags: ['研发侧'],
+  title: '认证与鉴权', category: 'API 参考', tags: ['消费侧'],
   content: '<h1>认证与鉴权</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>API Key 获取</h2><p>在模型广场申请使用模型 → 审批通过 → 工作台「我的申请」→ 查看 API Key</p><h2>认证方式</h2><p>所有 API 请求使用 Bearer Token 认证：</p><pre><code>Authorization: Bearer {api_key}</code></pre><h2>错误码</h2><table><thead><tr><th>HTTP 状态码</th><th>错误码</th><th>说明</th></tr></thead><tbody><tr><td>401</td><td>AUTH_INVALID</td><td>API Key 无效或已过期</td></tr><tr><td>403</td><td>QUOTA_EXCEEDED</td><td>调用配额已用尽</td></tr><tr><td>403</td><td>POINTS_INSUFFICIENT</td><td>积分余额不足</td></tr><tr><td>429</td><td>RATE_LIMITED</td><td>请求频率超限</td></tr><tr><td>500</td><td>INFERENCE_FAILED</td><td>模型推理失败</td></tr></tbody></table>'
 };
 
@@ -544,22 +608,30 @@ DOC_CONTENT['faq-support'] = {
 // ===== INIT =====
 var currentDocId = null;
 var activeNavItem = null;
+var currentSide = 'guide';
 
-// Render nav tree
+// Render nav tree (filtered by current perspective + text search)
 function renderNavTree(filter) {
   var html = '';
   DOC_CATEGORIES.forEach(function(cat) {
-    var visibleItems = filter
-      ? cat.items.filter(function(item) {
-          var doc = DOC_CONTENT[item.id];
-          return doc && (doc.title.toLowerCase().includes(filter) ||
-            item.title.toLowerCase().includes(filter) ||
-            cat.title.toLowerCase().includes(filter));
-        })
-      : cat.items;
+    var visibleItems = cat.items.filter(function(item) {
+      // Perspective filter
+      if (currentSide === 'dev') {
+        if (item.tags.indexOf('dev') < 0 && item.tags.indexOf('both') < 0) return false;
+      } else if (currentSide === 'consume') {
+        if (item.tags.indexOf('consume') < 0 && item.tags.indexOf('both') < 0) return false;
+      }
+      // Text filter
+      if (filter) {
+        var doc = DOC_CONTENT[item.id];
+        return doc && (doc.title.toLowerCase().indexOf(filter) > -1 ||
+          item.title.toLowerCase().indexOf(filter) > -1 ||
+          cat.title.toLowerCase().indexOf(filter) > -1);
+      }
+      return true;
+    });
 
-    var catVisible = !filter || visibleItems.length > 0;
-    if (!catVisible) return;
+    if (visibleItems.length === 0) return;
 
     var collapsed = filter ? false : (cat.expanded === false);
     html += '<div class="doc-nav-category">';
@@ -597,6 +669,93 @@ function toggleCategory(el) {
 function filterDocs() {
   var q = document.getElementById('docSearch').value.trim().toLowerCase();
   renderNavTree(q);
+}
+
+// ===== PERSPECTIVE: guide / dev / consume =====
+function setMode(mode) {
+  var guide = document.getElementById('docGuide');
+  var empty = document.getElementById('docEmpty');
+  var content = document.getElementById('docContent');
+  var toc = document.getElementById('docToc');
+  if (mode === 'guide') {
+    guide.style.display = '';
+    empty.style.display = 'none';
+    content.style.display = 'none';
+    if (toc) toc.style.display = 'none';
+  } else {
+    guide.style.display = 'none';
+    if (toc) toc.style.display = '';
+  }
+  // 关键修复：强制同步回流。否则 #docGuide 从 display:none 首次切换为 flex 时，
+  // 浏览器首帧对弹性子项高度/宽度的计算滞后，导致内容被 overflow 裁切（表现为「引导页下方空白」）。
+  // 切换一次标签后布局被重新计算才恢复正常——强制 reflow 可消除首帧塌陷。
+  if (guide) { void guide.offsetHeight; }
+}
+
+function showGuide() {
+  currentSide = 'guide';
+  setMode('guide');
+  document.querySelectorAll('#docPerspective button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.side === 'guide');
+  });
+  var g = document.getElementById('docGuide');
+  g.innerHTML =
+    '<div class="doc-guide">' +
+      '<h1>文档中心</h1>' +
+      '<p class="sub">本平台文档同时面向<strong>模型研发者</strong>与<strong>农场业务人员</strong>两类角色。请选择你的身份，进入对应的文档。</p>' +
+      '<div class="guide-cards">' +
+        '<div class="guide-card dev" onclick="selectSide(\'dev\')">' +
+          '<div class="gc-ico">💻</div>' +
+          '<h3>模型研发与发布</h3>' +
+          '<p>面向模型研发者、算法工程师与数据科学家。涵盖在线开发、镜像封装、模型部署与推理服务发布。</p>' +
+          '<span class="gc-link">进入研发侧文档 →</span>' +
+          '<div class="gc-tags"><span>在线开发</span><span>镜像管理</span><span>模型部署</span><span>接单交付</span></div>' +
+        '</div>' +
+        '<div class="guide-card consume" onclick="selectSide(\'consume\')">' +
+          '<div class="gc-ico">🔭</div>' +
+          '<h3>模型使用与需求协同</h3>' +
+          '<p>面向农场业务人员。在模型广场使用与试用模型，在需求市场提出需求并参与验收，是平台的主要使用者。</p>' +
+          '<span class="gc-link">进入消费侧文档 →</span>' +
+          '<div class="gc-tags"><span>使用模型</span><span>提出需求</span><span>验收需求</span><span>申请数据</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="note">同一平台同时服务研发与消费两端：<strong>研发侧</strong>将模型封装并发布为可调用的推理服务；<strong>消费侧</strong>（以农场业务人员为主）在模型广场使用与试用模型、在需求市场提出并验收需求，必要时通过 API / SDK 集成。文档按视角分列，便于快速定位你关心的内容。</div>' +
+    '</div>';
+  if (activeNavItem) { activeNavItem.classList.remove('active'); activeNavItem = null; }
+  currentDocId = null;
+}
+
+function firstDocIdInSide(side) {
+  for (var i = 0; i < DOC_CATEGORIES.length; i++) {
+    var cat = DOC_CATEGORIES[i];
+    for (var j = 0; j < cat.items.length; j++) {
+      var it = cat.items[j];
+      var ok = side === 'dev'
+        ? (it.tags.indexOf('dev') > -1 || it.tags.indexOf('both') > -1)
+        : (it.tags.indexOf('consume') > -1 || it.tags.indexOf('both') > -1);
+      if (ok) return it.id;
+    }
+  }
+  return null;
+}
+
+function selectSide(side) {
+  currentSide = side;
+  document.querySelectorAll('#docPerspective button').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.side === side);
+  });
+  if (side === 'guide') { showGuide(); return; }
+  setMode('doc');
+  var q = document.getElementById('docSearch').value.trim().toLowerCase();
+  renderNavTree(q);
+  var first = firstDocIdInSide(side);
+  if (first) {
+    var navEl = document.querySelector('[data-doc="' + first + '"]');
+    if (navEl) loadDoc(first, navEl);
+  } else {
+    document.getElementById('docEmpty').style.display = '';
+    document.getElementById('docContent').style.display = 'none';
+  }
 }
 
 function loadDoc(docId, navEl) {
@@ -677,7 +836,7 @@ document.addEventListener('click', function(e){
 });
 
 // ===== AUTH STATE =====
-function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function isLoggedIn(){try{return localStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
 function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
 (function(){switchAuthState(isLoggedIn());if(isLoggedIn()){renderNotifs();}})();
 
@@ -689,7 +848,7 @@ document.addEventListener('click', function(e){ var wrap = document.getElementBy
 // ===== LOGOUT =====
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
 function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
-function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); toast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); toast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
 
 // ===== TOAST =====
 function toast(msg, type){
@@ -701,7 +860,7 @@ function toast(msg, type){
 }
 
 // ===== TOP NAV =====
-var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', data:'dataset-management.html', demand:'demand-hall.html', appcenter:'app-center.html', apps:null, docs:null };
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', cases:'case-center.html', data:'dataset-management.html', demand:'demand-hall.html', appcenter:'app-center.html', apps:null, docs:null };
 document.getElementById('topNavMenu').addEventListener('click', function(e){
   var item = e.target.closest('.top-nav-item');
   if (!item || !item.dataset.nav) return;
@@ -722,18 +881,34 @@ function showPointsRules() {
 function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
 
 // ===== INIT =====
-renderNavTree();
-// Open first doc by default
-setTimeout(function(){
-  DOC_CATEGORIES.forEach(function(cat){
-    if(cat.items.length > 0 && !currentDocId){
-      var firstItem = cat.items[0];
-      var navEl = document.querySelector('[data-doc="' + firstItem.id + '"]');
-      if(navEl) loadDoc(firstItem.id, navEl);
+(function(){
+  var sideParam = '', docParam = '';
+  try { var p = new URLSearchParams(location.search); sideParam = p.get('side') || ''; docParam = p.get('doc') || ''; } catch(e) {}
+  if (docParam && DOC_CONTENT[docParam]) {
+    // 深链直达指定文档：按文档标签推断视角
+    var side = (sideParam === 'dev' || sideParam === 'consume') ? sideParam : null;
+    if (!side) {
+      for (var i = 0; i < DOC_CATEGORIES.length && !side; i++) {
+        var items = DOC_CATEGORIES[i].items || [];
+        for (var j = 0; j < items.length; j++) {
+          if (items[j].id === docParam) {
+            var t = items[j].tags || [];
+            side = (t.indexOf('dev') >= 0 && t.indexOf('consume') < 0) ? 'dev' : 'consume';
+            break;
+          }
+        }
+      }
     }
-  });
-}, 100);
+    selectSide(side || 'consume');
+    var navEl = document.querySelector('[data-doc="' + docParam + '"]');
+    if (navEl) loadDoc(docParam, navEl);
+  }
+  else if (sideParam === 'dev' || sideParam === 'consume') { selectSide(sideParam); }
+  else { showGuide(); }
+})();
 </script>
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg2)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg2)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg2)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
 
 </body>
 </html>

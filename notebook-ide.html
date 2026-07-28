@@ -305,12 +305,14 @@ var _nb = null;
     var nbName = params.get('name') || '新建 Notebook';
     var taskId = params.get('taskId') || '';
     var taskTitle = params.get('taskTitle') || '独立开发任务';
+    var ideType = params.get('ide') || 'JupyterLab';
+    var ideIcon = ideType === 'VSCode' ? '🖥️' : '📓';
     _nb = {
       id: nbId || 'NB-NEW',
       name: nbName,
       taskId: taskId,
       taskTitle: taskTitle,
-      type: 'JupyterLab', typeIcon: '📓',
+      type: ideType, typeIcon: ideIcon,
       status: 'running', statusText: '运行中',
       image: 'pytorch-training:1.0.0', cpu: '8核', memory: '16G', gpu: 'A100 × 1',
       createdAt: new Date().toISOString().slice(0,10),

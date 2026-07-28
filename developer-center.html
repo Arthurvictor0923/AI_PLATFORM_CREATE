@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发者中心 · 北大荒智慧农业协同创新平台</title>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[data-prefers-color="light"]{color-scheme:light}
+[data-prefers-color="dark"]{color-scheme:dark}
+html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;font-size:14px;line-height:1.5714285714285714;color:rgba(0,0,0,0.88);background-color:#F7F9FD;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden}
+[data-prefers-color="dark"] body{background-color:#1c1e21;color:rgba(255,255,255,0.85)}
+a{color:#2f54eb;text-decoration:none;transition:color 0.3s}
+a:hover{color:#597ef7}
+ul,ol{list-style:none}
+img{display:block;max-width:100%}
+input,button{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+
+/* ===== HEADER ===== */
+.app-header{position:fixed;top:0;left:0;right:0;height:60px;line-height:60px;background:transparent;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(5,5,5,0.06);z-index:19;display:flex;flex-direction:column;padding:0}
+[data-prefers-color="dark"] .app-header{background-color:rgba(28,30,33,0.88);border-bottom-color:rgba(255,255,255,0.08)}
+.top-nav-header{position:relative;width:100%;height:100%;background-color:transparent}
+.top-nav-header-main{display:flex;align-items:center;padding-inline-start:16px;margin:12px 0;height:40px}
+.top-nav-header-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-link{display:flex;align-items:center;gap:8px}
+.system-name-title{font-weight:600;font-size:20px;color:rgba(0,0,0,0.88);white-space:nowrap}
+[data-prefers-color="dark"] .system-name-title{color:rgba(255,255,255,0.85)}
+.top-nav-menu-wrap{flex:1;display:flex;align-items:center;height:40px;overflow:hidden}
+.top-nav-menu{display:flex;align-items:center;height:100%;border-bottom:1px solid rgba(5,5,5,0.06);background-color:transparent;gap:8px}
+.top-nav-item{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 16px;margin:0 0;font-size:14px;color:rgba(0,0,0,0.65);white-space:nowrap;cursor:pointer;user-select:none;transition:color 0.3s,background 0.3s}
+.top-nav-item:hover{color:rgb(47,84,235)}
+.top-nav-item.active{color:rgb(47,84,235)!important;font-weight:600;background-color:transparent!important}
+.top-nav-item.active::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:10px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat}
+[data-prefers-color="dark"] .top-nav-item{color:rgba(255,255,255,0.65)}
+[data-prefers-color="dark"] .top-nav-item.active{color:rgb(47,84,235)!important}
+.header-right{display:flex;align-items:center;gap:12px;padding-right:50px;flex-shrink:0;position:relative}
+.header-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;color:rgba(0,0,0,0.65);font-size:16px;transition:all 0.2s;cursor:pointer;position:relative}
+.header-btn:hover{background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.88)}
+[data-prefers-color="dark"] .header-btn{color:rgba(255,255,255,0.65)}
+[data-prefers-color="dark"] .header-btn:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85)}
+.header-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#ff4d4f;border:1px solid #fff}
+.points-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;background:rgba(47,84,235,0.06);font-size:13px;color:#2f54eb;cursor:pointer;user-select:none;transition:all 0.2s;white-space:nowrap}
+.points-badge:hover{background:rgba(47,84,235,0.12)}
+[data-prefers-color="dark"] .points-badge{background:rgba(47,84,235,0.15);color:#85a5ff}
+.points-badge strong{font-weight:600}
+.dropdown-wrap{position:relative;display:inline-flex}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7566FF,#2F54EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
+.dropdown-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;min-width:180px;padding:4px;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.dropdown-menu.visible{display:block}
+[data-prefers-color="dark"] .dropdown-menu{background:#2b2d30}
+.dropdown-item{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:6px;font-size:14px;color:rgba(0,0,0,0.88);cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.dropdown-item:hover{background:rgba(0,0,0,0.04)}
+[data-prefers-color="dark"] .dropdown-item{color:rgba(255,255,255,0.85)}
+[data-prefers-color="dark"] .dropdown-item:hover{background:rgba(255,255,255,0.08)}
+.dropdown-item.danger{color:#ff4d4f}
+.dropdown-item.danger:hover{background:#fff2f0}
+.dropdown-divider{height:1px;background:rgba(5,5,5,0.06);margin:4px 0}
+
+/* ===== MAIN LAYOUT ===== */
+.main-layout{display:flex;height:calc(100vh - 60px);margin-top:60px}
+
+/* ===== LEFT SIDEBAR ===== */
+.dc-sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid rgba(5,5,5,0.06);display:flex;flex-direction:column;overflow:hidden}
+[data-prefers-color="dark"] .dc-sidebar{background:#1c1e21;border-right-color:rgba(255,255,255,0.08)}
+.dc-sidebar-head{padding:16px 20px 12px;border-bottom:1px solid rgba(5,5,5,0.06);flex-shrink:0}
+.dc-sidebar-head .t{font-size:15px;font-weight:600;color:rgba(0,0,0,0.88);display:flex;align-items:center;gap:8px}
+[data-prefers-color="dark"] .dc-sidebar-head .t{color:rgba(255,255,255,0.85)}
+.dc-sidebar-head .t::before{content:'';display:inline-block;width:2px;height:14px;background-color:rgb(47,84,235);border-radius:1px;margin-right:8px}
+.dc-sidebar-head .s{font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px;padding-left:18px}
+.dc-nav{flex:1;overflow-y:auto;padding:8px}
+.dc-nav-item{display:flex;align-items:center;gap:8px;padding:0 16px;height:40px;margin:0 0 4px;border-radius:4px;font-size:14px;color:rgba(0,0,0,0.65);cursor:pointer;transition:all 0.2s;user-select:none}
+.dc-nav-item:hover{color:#2f54eb;background:rgba(47,84,235,0.03)}
+.dc-nav-item.active{color:#2f54eb;background:rgba(47,84,235,0.2);font-weight:600}
+.dc-nav-item .ico{font-size:16px;width:18px;text-align:center;flex-shrink:0}
+
+/* ===== CONTENT ===== */
+.dc-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px 32px 48px;position:relative}
+.dc-view{display:none;animation:fadeIn 0.25s ease}
+.dc-view.active{display:block}
+/* 文档中心内嵌视图：全屏铺满，隐藏面包屑 */
+.dc-content.docs-active{padding:0;overflow:hidden}
+.dc-content.docs-active .breadcrumb{display:none}
+.dc-content.docs-active #view-docs{position:absolute;inset:0;padding:0;height:100%}
+.dc-doc-frame{width:100%;height:100%;border:0;display:block;background:#F7F9FD}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Page title */
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px}
+.page-title h1{font-size:24px;font-weight:600;color:rgba(0,0,0,0.88);display:flex;align-items:center;gap:10px}
+.page-title h1::before{content:'';display:inline-block;width:2px;height:20px;background-color:rgb(47,84,235);border-radius:1px;margin-right:8px}
+[data-prefers-color="dark"] .page-title h1{color:rgba(255,255,255,0.85)}
+.page-title .desc{font-size:14px;color:rgba(0,0,0,0.45);margin-top:6px}
+[data-prefers-color="dark"] .page-title .desc{color:rgba(255,255,255,0.45)}
+
+/* Breadcrumb (reinforces top-level menu hierarchy) */
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:18px;flex-shrink:0}
+[data-prefers-color="dark"] .breadcrumb{color:rgba(255,255,255,0.45)}
+.breadcrumb .root{color:rgba(0,0,0,0.65);font-weight:500}
+[data-prefers-color="dark"] .breadcrumb .root{color:rgba(255,255,255,0.65)}
+.breadcrumb .sep{opacity:.5}
+.breadcrumb .cur{color:#2f54eb;font-weight:600}
+
+/* Card */
+.card{background:#fff;border-radius:8px;box-shadow:2px 2px 5px rgba(0,0,0,0.05);border:1px solid rgba(5,5,5,0.04)}
+[data-prefers-color="dark"] .card{background:#2b2d30;border-color:rgba(255,255,255,0.08)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0}
+[data-prefers-color="dark"] .card-head{border-bottom-color:rgba(255,255,255,0.08)}
+.card-head .ttl{font-size:16px;font-weight:600;color:rgba(0,0,0,0.88);display:flex;align-items:center}
+.card-head .ttl::before{content:'';display:inline-block;width:2px;height:14px;background-color:rgb(47,84,235);border-radius:1px;margin-right:8px}
+[data-prefers-color="dark"] .card-head .ttl{color:rgba(255,255,255,0.85)}
+.card-body{padding:20px}
+.grid{display:grid;gap:16px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1280px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}}
+
+/* Stat card */
+.stat{background:#fff;border-radius:8px;box-shadow:2px 2px 5px rgba(0,0,0,0.05);border:1px solid rgba(5,5,5,0.04);padding:18px 20px;display:flex;align-items:center;gap:14px}
+[data-prefers-color="dark"] .stat{background:#2b2d30;border-color:rgba(255,255,255,0.08)}
+.stat .ic{width:44px;height:44px;border-radius:8px;background:#f0f5ff;color:#2f54eb;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.stat .meta .v{font-size:26px;font-weight:600;color:rgba(0,0,0,0.88);line-height:1.1}
+[data-prefers-color="dark"] .stat .meta .v{color:rgba(255,255,255,0.92)}
+.stat .meta .l{font-size:12px;color:rgba(0,0,0,0.45);margin-top:2px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:4px 15px;font-size:14px;border-radius:6px;border:1px solid transparent;transition:all 0.2s cubic-bezier(0.645,0.045,0.355,1);cursor:pointer;white-space:nowrap}
+.btn-primary{background:#2f54eb;color:#fff;box-shadow:0 2px 0 rgba(47,84,235,0.1)}
+.btn-primary:hover{background:#597ef7}
+.btn-primary:active{background:#1d39c4}
+.btn-default{background:#fff;color:rgba(0,0,0,0.88);border-color:#d9d9d9;box-shadow:0 2px 0 rgba(0,0,0,0.02)}
+.btn-default:hover{color:#597ef7;border-color:#597ef7}
+.btn-text{background:transparent;color:rgba(0,0,0,0.88)}
+.btn-text:hover{background:rgba(0,0,0,0.06)}
+.btn-sm{height:28px;padding:0 12px;font-size:13px}
+[data-prefers-color="dark"] .btn-default{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85)}
+[data-prefers-color="dark"] .btn-default:hover{color:#597ef7;border-color:#597ef7}
+[data-prefers-color="dark"] .btn-text{color:rgba(255,255,255,0.85)}
+
+/* Inline link-style action button (key table) */
+.lnk{background:none;border:none;padding:0;margin-right:8px;font-size:13px;cursor:pointer;color:#2f54eb;font-family:inherit}
+.lnk:hover{text-decoration:underline}
+.lnk-danger{color:#ff4d4f}
+.lnk-primary{color:#2f54eb}
+[data-prefers-color="dark"] .lnk{color:#85b7eb}
+[data-prefers-color="dark"] .lnk-danger{color:#ff7875}
+[data-prefers-color="dark"] .lnk-primary{color:#85b7eb}
+
+/* Chips */
+.chip{display:inline-block;font-size:12px;padding:1px 8px;border-radius:4px;line-height:20px;font-weight:500}
+.chip-success{color:rgb(82,196,26);background:rgb(217,247,190)}
+.chip-pending{color:rgb(47,84,235);background:rgb(214,228,255)}
+.chip-default{color:rgba(0,0,0,0.65);background:#f0f0f0}
+.chip-failed{color:#ff4d4f;background:#fff2f0}
+.chip-published{color:#23ada4;background:#e6fffb}
+.chip-info{color:#2f54eb;background:#f0f5ff}
+.chip-teal{color:#23ada4;background:#e6fffb}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;padding:12px 16px;background:rgba(0,0,0,0.04);font-weight:600;color:rgba(0,0,0,0.88);font-size:13px;border-bottom:1px solid #f0f0f0}
+.tbl td{padding:12px 16px;border-bottom:1px solid #f0f0f0;color:rgba(0,0,0,0.75);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:rgba(47,84,235,0.02)}
+[data-prefers-color="dark"] .tbl th{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.85);border-bottom-color:rgba(255,255,255,0.08)}
+[data-prefers-color="dark"] .tbl td{color:rgba(255,255,255,0.75);border-bottom-color:rgba(255,255,255,0.08)}
+[data-prefers-color="dark"] .tbl tbody tr:hover{background:rgba(47,84,235,0.1)}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid #f0f0f0;gap:4px}
+[data-prefers-color="dark"] .tabs{border-bottom-color:rgba(255,255,255,0.08)}
+.tab{padding:10px 16px;font-size:14px;color:rgba(0,0,0,0.65);cursor:pointer;position:relative;transition:color 0.2s;user-select:none}
+.tab:hover{color:#2f54eb}
+.tab.active{color:#2f54eb;font-weight:600}
+.tab.active::after{content:'';position:absolute;left:0;bottom:-1px;width:100%;height:2px;background:#2f54eb}
+.tab-panel{display:none;padding-top:20px}
+.tab-panel.active{display:block}
+
+/* Code */
+pre{background:#1f2430;border-radius:8px;padding:16px 18px;overflow-x:auto;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;color:#c9d1d9;position:relative}
+[data-prefers-color="dark"] pre{background:#16181d}
+pre .k{color:#ff7b72}pre .s{color:#a5d6ff}pre .c{color:#8b949e}pre .f{color:#d2a8ff}pre .n{color:#79c0ff}
+.copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.1);color:#c9d1d9;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{background:rgba(255,255,255,0.2)}
+code.inline{font-family:monospace;font-size:12px;background:#f0f0f0;padding:1px 5px;border-radius:3px;color:#d9363e}
+[data-prefers-color="dark"] code.inline{background:rgba(255,255,255,0.1);color:#ffa39e}
+
+/* Path cards */
+.path-card{background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:8px;padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+[data-prefers-color="dark"] .path-card{background:#2b2d30;border-color:rgba(255,255,255,0.08)}
+.path-card:hover{border-color:#2f54eb;box-shadow:0 4px 12px rgba(47,84,235,0.12);transform:translateY(-2px)}
+.path-card .num{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7566FF,#2F54EB);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-bottom:12px}
+.path-card h4{font-size:16px;font-weight:600;color:rgba(0,0,0,0.88);margin-bottom:6px}
+[data-prefers-color="dark"] .path-card h4{color:rgba(255,255,255,0.88)}
+.path-card p{font-size:13px;color:rgba(0,0,0,0.55);line-height:1.7}
+[data-prefers-color="dark"] .path-card p{color:rgba(255,255,255,0.55)}
+.path-card .arrow{position:absolute;top:20px;right:18px;color:#2f54eb;font-size:18px;opacity:.5}
+
+/* API capability list item */
+.cap-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid rgba(5,5,5,0.06);border-radius:8px;margin-bottom:12px;transition:all .2s}
+[data-prefers-color="dark"] .cap-item{border-color:rgba(255,255,255,0.08);background:#2b2d30}
+.cap-item:hover{border-color:#2f54eb;background:rgba(47,84,235,0.02)}
+.cap-ic{width:42px;height:42px;border-radius:8px;background:#e6fffb;color:#23ada4;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.cap-info{flex:1;min-width:0}
+.cap-info h4{font-size:15px;font-weight:600;color:rgba(0,0,0,0.88)}
+[data-prefers-color="dark"] .cap-info h4{color:rgba(255,255,255,0.88)}
+.cap-info .ep{font-size:12px;color:rgba(0,0,0,0.45);font-family:monospace;margin-top:2px}
+[data-prefers-color="dark"] .cap-info .ep{color:rgba(255,255,255,0.45)}
+
+/* Form */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:14px;color:rgba(0,0,0,0.88);margin-bottom:6px;font-weight:500}
+.field label .req{color:#ff4d4f;margin-right:4px;font-family:SimSun}
+.field input,.field select,.field textarea{width:100%;height:32px;padding:0 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;color:rgba(0,0,0,0.88);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+.field textarea{padding:8px 12px;height:auto;resize:vertical;line-height:1.6}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#2f54eb;box-shadow:0 0 0 2px rgba(47,84,235,0.1)}
+.field .hint{font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px}
+[data-prefers-color="dark"] .field label{color:rgba(255,255,255,0.85)}
+[data-prefers-color="dark"] .field input,[data-prefers-color="dark"] .field select,[data-prefers-color="dark"] .field textarea{background:#1c1e21;color:rgba(255,255,255,0.85);border-color:rgba(255,255,255,0.15)}
+[data-prefers-color="dark"] .field .hint{color:rgba(255,255,255,0.45)}
+
+/* Explorer */
+.explorer{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:980px){.explorer{grid-template-columns:1fr}}
+.ex-box{background:#fff;border:1px solid rgba(5,5,5,0.06);border-radius:8px;overflow:hidden}
+[data-prefers-color="dark"] .ex-box{background:#2b2d30;border-color:rgba(255,255,255,0.08)}
+.ex-box .ex-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0f0f0;font-weight:600;font-size:14px}
+[data-prefers-color="dark"] .ex-box .ex-head{border-bottom-color:rgba(255,255,255,0.08)}
+.ex-box .ex-body{padding:16px}
+
+/* Progress bar */
+.pbar{height:8px;border-radius:99px;background:#f0f0f0;overflow:hidden}
+[data-prefers-color="dark"] .pbar{background:rgba(255,255,255,0.1)}
+.pbar > span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7566FF,#2F54EB)}
+
+/* Switch */
+.switch{position:relative;display:inline-block;width:44px;height:24px}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:#d9d9d9;border-radius:99px;transition:.2s}
+.switch .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:#2f54eb}
+.switch input:checked + .slider::before{transform:translateX(20px)}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:#fff;border-radius:8px;width:480px;max-width:92vw;box-shadow:0 1px 2px -2px rgba(0,0,0,0.16),0 3px 6px 0 rgba(0,0,0,0.12),0 5px 12px 4px rgba(0,0,0,0.09)}
+[data-prefers-color="dark"] .modal{background:#2b2d30}
+.modal-head{padding:16px 20px;border-bottom:1px solid #f0f0f0;font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+[data-prefers-color="dark"] .modal-head{border-bottom-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.88)}
+.modal-body{padding:20px}
+.modal-foot{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:8px}
+[data-prefers-color="dark"] .modal-foot{border-top-color:rgba(255,255,255,0.08)}
+
+/* Toast */
+.toast-wrap{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{padding:10px 20px;background:#fff;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,0.1);font-size:14px;color:rgba(0,0,0,0.88);animation:toastIn 0.3s ease;pointer-events:auto;display:flex;align-items:center;gap:8px}
+.toast-item.success{color:#52c41a}
+.toast-item.info{color:#2f54eb}
+.toast-item.error{color:#ff4d4f}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Misc */
+.mt16{margin-top:16px}.mt24{margin-top:24px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
+.flex-bw{display:flex;align-items:center;justify-content:space-between}
+.flex{display:flex;align-items:center;gap:10px}
+.muted{color:rgba(0,0,0,0.45)}
+[data-prefers-color="dark"] .muted{color:rgba(255,255,255,0.45)}
+.row-hover{cursor:pointer}
+.inline-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.doc-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid rgba(5,5,5,0.06);border-radius:8px;margin-bottom:12px;transition:all .2s;cursor:pointer}
+[data-prefers-color="dark"] .doc-row{border-color:rgba(255,255,255,0.08);background:#2b2d30}
+.doc-row:hover{border-color:#2f54eb;background:rgba(47,84,235,0.02)}
+.doc-row .di{width:40px;height:40px;border-radius:8px;background:#f0f5ff;color:#2f54eb;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.doc-row .dt{font-size:15px;font-weight:600;color:rgba(0,0,0,0.88)}
+[data-prefers-color="dark"] .doc-row .dt{color:rgba(255,255,255,0.88)}
+.doc-row .dd{font-size:13px;color:rgba(0,0,0,0.5);margin-top:2px}
+[data-prefers-color="dark"] .doc-row .dd{color:rgba(255,255,255,0.5)}
+.scope-tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:3px;background:#f0f5ff;color:#2f54eb;margin:2px 4px 2px 0}
+
+/* Accordion detail (快速开始路径) */
+.path-detail{display:none;border:1px solid rgba(5,5,5,0.06);border-radius:8px;padding:0 20px;margin-top:16px;background:#FAFBFE}
+[data-prefers-color="dark"] .path-detail{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.08)}
+.path-detail.open{display:block;animation:fadeIn .25s ease}
+.step-link{color:#2f54eb;cursor:pointer;font-weight:500}
+.step-link:hover{text-decoration:underline}
+
+/* Notification popover (shared with other prototypes) */
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+.notif-popover.visible{display:block}
+[data-prefers-color="dark"] .notif-popover{background:#2b2d30;border:1px solid rgba(255,255,255,.08)}
+/* Auth State Containers — inline-flex keeps items on one row */
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+/* Logged-out buttons (shared with other prototypes) */
+.header-btn-login, .header-btn-register { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+.header-btn-register:hover { background: #597ef7; }
+[data-prefers-color="dark"] .header-btn-login{background:#2b2d30;color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.2)}
+[data-prefers-color="dark"] .header-btn-register{background:#597ef7}
+
+/* ===== 未登录展示：横幅 + 私有内容锁态占位 ===== */
+.dc-login-banner{display:none;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(90deg,#f0f5ff,#e6f0ff);border:1px solid #d6e0ff;border-radius:10px;margin-bottom:20px}
+.dc-login-banner .lb-ico{font-size:22px;line-height:1}
+.dc-login-banner .lb-txt{flex:1;min-width:0}
+.dc-login-banner .lb-txt b{font-size:14px;color:rgba(0,0,0,0.88)}
+.dc-login-banner .lb-txt p{margin:2px 0 0;font-size:13px;color:rgba(0,0,0,0.55)}
+.dc-login-banner .lb-actions{display:flex;gap:8px;flex-shrink:0}
+.dc-private-locked{text-align:center;padding:40px 20px;color:rgba(0,0,0,0.5)}
+.dc-private-locked .pl-ico{font-size:34px}
+.dc-private-locked h4{margin:12px 0 6px;font-size:16px;color:rgba(0,0,0,0.7)}
+.dc-private-locked p{font-size:13px;color:rgba(0,0,0,0.5);margin:0 0 16px}
+[data-prefers-color="dark"] .dc-login-banner{background:rgba(47,84,235,0.12);border-color:rgba(47,84,235,0.3)}
+[data-prefers-color="dark"] .dc-login-banner .lb-txt b{color:rgba(255,255,255,0.9)}
+[data-prefers-color="dark"] .dc-login-banner .lb-txt p{color:rgba(255,255,255,0.6)}
+[data-prefers-color="dark"] .dc-private-locked h4{color:rgba(255,255,255,0.8)}
+[data-prefers-color="dark"] .dc-private-locked p{color:rgba(255,255,255,0.5)}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
+        <span class="top-nav-item" data-nav="home" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="location.href='case-center.html'">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="location.href='model-marketplace.html'">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="location.href='dataset-management.html'">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="location.href='demand-hall.html'">需求市场</span>
+        <span class="top-nav-item active" data-nav="devcenter">开发者中心</span>
+      </div></div>
+      <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="window.location.href='workbench.html'">👤 个人中心</div>
+              <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main-layout">
+
+  <!-- Sidebar -->
+  <aside class="dc-sidebar">
+    <div class="dc-sidebar-head">
+      <div class="t">开发者中心</div>
+    </div>
+    <nav class="dc-nav" id="dcNav">
+      <div class="dc-nav-item active" data-view="overview"><span class="ico">🏠</span>概览</div>
+      <div class="dc-nav-item" data-view="quickstart"><span class="ico">🚀</span>快速开始</div>
+      <div class="dc-nav-item" data-view="api"><span class="ico">🔌</span>API 中心</div>
+      <div class="dc-nav-item" data-view="sdk"><span class="ico">📦</span>SDK &amp; 工具</div>
+      <div class="dc-nav-item" data-view="docs"><span class="ico">📖</span>文档中心</div>
+      <div class="dc-nav-item" data-view="credentials"><span class="ico">🔑</span>个人凭证</div>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="dc-content">
+
+    <!-- Breadcrumb: reinforces 开发者中心 = top-level menu -->
+    <div class="breadcrumb">
+      <span class="root">开发者中心</span><span class="sep">/</span><span class="cur" id="bcCur">概览</span>
+    </div>
+
+    <!-- 未登录横幅（仅未登录时显示） -->
+    <div class="dc-login-banner" id="dcLoginBanner">
+      <div class="lb-ico">🔓</div>
+      <div class="lb-txt"><b>您尚未登录</b><p>登录后可查看个人凭证、API 密钥与调用用量，并创建密钥、调试接口。</p></div>
+      <div class="lb-actions">
+        <a class="btn btn-primary btn-sm" href="javascript:void(0)" onclick="goLogin()">登录</a>
+        <a class="btn btn-default btn-sm" href="apply-settlement.html">申请入驻</a>
+      </div>
+    </div>
+
+    <!-- ============ 概览 ============ -->
+    <section class="dc-view active" id="view-overview">
+      <div class="page-title">
+        <div>
+          <h1>概览</h1>
+          <div class="desc">平台开放能力、你的调用凭证与资源用量汇总。</div>
+        </div>
+        <button class="btn btn-primary" onclick="switchView('quickstart')">开始接入</button>
+      </div>
+
+      <div class="grid grid-4 mt24">
+        <div class="stat"><div class="ic">🔌</div><div class="meta"><div class="v">12</div><div class="l">已开放 API 能力</div></div></div>
+        <div class="stat" data-private-stat><div class="ic">🔑</div><div class="meta"><div class="v" id="statKeys">3</div><div class="l">我的密钥数</div></div></div>
+        <div class="stat" data-private-stat><div class="ic">📈</div><div class="meta"><div class="v">8,642</div><div class="l">本月调用量</div></div></div>
+        <div class="stat" data-private-stat><div class="ic">🧩</div><div class="meta"><div class="v">5</div><div class="l">已发布推理服务</div></div></div>
+      </div>
+
+      <div class="grid grid-2 mt24" style="align-items:start">
+        <div class="card">
+          <div class="card-head"><div class="ttl">平台能力速览</div><span class="muted" style="font-size:12px">复用工作台「平台概况」</span></div>
+          <div class="card-body">
+            <div class="grid grid-3" style="gap:12px">
+              <div style="text-align:center;padding:14px;background:#F7F9FD;border-radius:8px"><div style="font-size:24px;font-weight:600;color:#2f54eb">187</div><div class="muted" style="font-size:12px">模型</div></div>
+              <div style="text-align:center;padding:14px;background:#F7F9FD;border-radius:8px"><div style="font-size:24px;font-weight:600;color:#2f54eb">42</div><div class="muted" style="font-size:12px">数据集</div></div>
+              <div style="text-align:center;padding:14px;background:#F7F9FD;border-radius:8px"><div style="font-size:24px;font-weight:600;color:#2f54eb">23</div><div class="muted" style="font-size:12px">需求</div></div>
+            </div>
+            <div class="mt16 flex-bw" style="font-size:13px;color:rgba(0,0,0,0.65)"><span>其中可经 API 消费的能力</span><a href="javascript:switchView('api')" style="font-weight:600">查看 12 项 →</a></div>
+          </div>
+        </div>
+        <div class="card" data-private data-private-label="我的凭证概览">
+          <div class="card-head"><div class="ttl">我的凭证概览</div></div>
+          <div class="card-body">
+            <div class="flex-bw mb16"><span class="muted">活跃密钥</span><span style="font-weight:600"><span id="ovActiveKeys">3</span> / 10</span></div>
+            <div class="pbar"><span style="width:30%"></span></div>
+            <div class="flex-bw mb16 mt24"><span class="muted">本月配额用量</span><span style="font-weight:600">8,642 / 50,000</span></div>
+            <div class="pbar"><span style="width:17%"></span></div>
+            <div class="flex-bw mb16 mt24"><span class="muted">活跃推理服务</span><span style="font-weight:600">5</span></div>
+            <button type="button" class="btn btn-default btn-sm mt16" onclick="switchView('api');switchApiTab('keys')">管理凭证 →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt24">
+        <div class="card-head"><div class="ttl">接入路径</div><span class="muted" style="font-size:12px">按场景选择</span></div>
+        <div class="card-body">
+          <div class="grid grid-4">
+            <div class="path-card" onclick="switchView('quickstart')"><div class="num">①</div><h4>调用一个模型</h4><p>5 分钟用 API 调通作物病害识别</p><div class="arrow">→</div></div>
+            <div class="path-card" onclick="switchView('quickstart')"><div class="num">②</div><h4>发布推理服务</h4><p>把自有模型发布为可调用的 API</p><div class="arrow">→</div></div>
+            <div class="path-card" onclick="switchView('sdk')"><div class="num">③</div><h4>集成到系统</h4><p>用 SDK / CLI 嵌入自有应用</p><div class="arrow">→</div></div>
+            <div class="path-card" onclick="switchView('docs')"><div class="num">④</div><h4>学最佳实践</h4><p>农业场景 Cookbook 与示例</p><div class="arrow">→</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt24">
+        <div class="card-head"><div class="ttl">基础镜像目录 <span class="chip chip-default">只读</span></div><span class="muted" style="font-size:12px">上传 / 管理请前往工作台·开发中心</span></div>
+        <div class="card-body">
+          <div class="grid grid-3" style="gap:12px">
+            <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px"><div style="font-weight:600;font-size:13px">bdhaiplatform/pytorch-cuda12</div><div class="muted" style="font-size:12px;margin-top:4px">PyTorch 2.1 · CUDA 12.1 · Python 3.10</div></div>
+            <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px"><div style="font-weight:600;font-size:13px">bdhaiplatform/agri-framework</div><div class="muted" style="font-size:12px;margin-top:4px">农业推理框架 · 模型服务 SDK</div></div>
+            <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px"><div style="font-weight:600;font-size:13px">bdhaiplatform/notebook-base</div><div class="muted" style="font-size:12px;margin-top:4px">JupyterLab · 终端 · Git 预装</div></div>
+          </div>
+          <div class="mt16 flex-bw" style="font-size:13px;color:rgba(0,0,0,0.65)"><span>需要自定义镜像或管理实例？</span><a href="workbench.html" style="font-weight:600">前往工作台·开发中心 →</a></div>
+        </div>
+      </div>
+
+      <div class="card mt24">
+        <div class="card-head"><div class="ttl">示例 Notebook 快速启动</div><span class="chip chip-published">一键运行</span></div>
+        <div class="card-body">
+          <div class="grid grid-2" style="gap:12px">
+            <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:13px">作物病害识别 Notebook</div><div class="muted" style="font-size:12px">端到端推理 Demo</div></div><button class="btn btn-default btn-sm" onclick="toast('已跳转到工作台·开发中心打开 Notebook','info')">启动 →</button></div>
+            <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:13px">产量预测训练 Notebook</div><div class="muted" style="font-size:12px">用平台数据集微调</div></div><button class="btn btn-default btn-sm" onclick="toast('已跳转到工作台·开发中心打开 Notebook','info')">启动 →</button></div>
+          </div>
+          <div class="muted" style="font-size:12px;margin-top:12px">示例 Notebook 仅做入口与展示，实际运行 / 编辑回到工作台·开发中心，开发者中心不重建 Notebook IDE。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 快速开始 ============ -->
+    <section class="dc-view" id="view-quickstart">
+      <div class="page-title"><div><h1>快速开始</h1><div class="desc">按场景选择接入路径，跟随示例完成首次调用。</div></div></div>
+
+      <div class="mt24" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
+        <div class="path-card" onclick="openPath(1)"><div class="num">1</div><h4>调用一个作物识别模型</h4><p>拿现成模型，发一次请求看结果。</p><div class="arrow">→</div></div>
+        <div class="path-card" onclick="openPath(2)"><div class="num">2</div><h4>微调自己的模型</h4><p>用平台数据集训练专属模型。</p><div class="arrow">→</div></div>
+        <div class="path-card" onclick="openPath(3)"><div class="num">3</div><h4>发布推理服务并拿 API</h4><p>把模型发布为可调用端点。</p><div class="arrow">→</div></div>
+        <div class="path-card" onclick="openPath(4)"><div class="num">4</div><h4>把模型嵌进自有系统</h4><p>用 SDK 集成到你的应用。</p><div class="arrow">→</div></div>
+        <div class="path-card" onclick="openPath(5)"><div class="num">5</div><h4>启动一个示例 Notebook</h4><p>打开农业示例笔记本直接跑。</p><div class="arrow">→</div></div>
+      </div>
+
+      <!-- 路径详情：点击上方卡片展开 -->
+      <div class="path-detail" id="pd-1">
+        <h3 style="font-size:15px;font-weight:600;margin:16px 0 12px">路径 ① · 5 分钟调通作物病害识别</h3>
+        <div style="display:flex;gap:12px;margin-bottom:12px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">1</div><div><b style="font-size:14px">获取 API 密钥</b><div class="muted" style="font-size:13px">前往<span class="step-link" onclick="switchView('credentials')">个人凭证 → API 密钥</span>，创建 <code class="inline">sk-xxxx</code></div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:12px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">2</div><div><b style="font-size:14px">选择能力</b><div class="muted" style="font-size:13px">在<span class="step-link" onclick="switchView('api')">API 中心「能力目录」</span>选「作物病害识别」</div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:16px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">3</div><div><b style="font-size:14px">发送请求</b><div class="muted" style="font-size:13px">用调试台或下方代码发起调用</div></div></div>
+        <pre><span class="c"># Python 调用示例（需先安装 SDK）</span>
+<span class="k">import</span> bdhaiplatform
+
+client = bdhaiplatform.Client(api_key=<span class="s">"sk-your-key"</span>)
+
+resp = client.models.<span class="f">predict</span>(
+    model=<span class="s">"crop-disease-v3"</span>,
+    inputs={<span class="s">"image"</span>: <span class="s">"https://img/leaf.jpg"</span>}
+)
+<span class="k">print</span>(resp.json())
+<span class="c"># → {"label": "稻瘟病", "score": 0.92}</span><button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        <div class="mt16"><button class="btn btn-primary btn-sm" onclick="switchView('api');switchApiTab('explorer')">前往调试台试一下 →</button></div>
+      </div>
+
+      <div class="path-detail" id="pd-2">
+        <h3 style="font-size:15px;font-weight:600;margin:16px 0 12px">路径 ② · 微调自己的模型</h3>
+        <p class="muted" style="font-size:13px;margin-bottom:12px">模型训练在「工作台·开发中心」完成，开发者中心提供指引：</p>
+        <div style="display:flex;gap:12px;margin-bottom:10px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">1</div><div><b style="font-size:14px">上传 / 选择数据集</b><div class="muted" style="font-size:13px">在<span class="step-link" onclick="location.href='dataset-management.html'">数据管理</span>准备训练数据</div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:10px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">2</div><div><b style="font-size:14px">创建训练任务</b><div class="muted" style="font-size:13px">选择基础镜像，配置超参，启动训练</div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:14px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">3</div><div><b style="font-size:14px">评估并发布</b><div class="muted" style="font-size:13px">评估指标达标后发布为推理服务</div></div></div>
+        <div class="mt16"><button class="btn btn-default btn-sm" onclick="location.href='workbench.html'">前往工作台·开发中心 →</button></div>
+      </div>
+
+      <div class="path-detail" id="pd-3">
+        <h3 style="font-size:15px;font-weight:600;margin:16px 0 12px">路径 ③ · 发布推理服务并拿 API</h3>
+        <div style="display:flex;gap:12px;margin-bottom:10px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">1</div><div><b style="font-size:14px">在「我的模型」点发布</b><div class="muted" style="font-size:13px">选择已训练模型版本</div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:10px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#2f54eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">2</div><div><b style="font-size:14px">配置算力与镜像</b><div class="muted" style="font-size:13px">设置副本数、资源规格</div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:14px"><div class="step-num" style="width:26px;height:26px;border-radius:50%;background:#52c41a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">✓</div><div><b style="font-size:14px">获得可调用的端点</b><div class="muted" style="font-size:13px">在开发者中心用密钥调用</div></div></div>
+        <div class="mt16"><button class="btn btn-default btn-sm" onclick="location.href='workbench.html'">前往工作台发布 →</button></div>
+      </div>
+
+      <div class="path-detail" id="pd-4">
+        <h3 style="font-size:15px;font-weight:600;margin:16px 0 12px">路径 ④ · 把模型嵌进自有系统</h3>
+        <p class="muted" style="font-size:13px;margin-bottom:12px">使用官方 SDK 在后端服务中集成：</p>
+        <pre><span class="k">import</span> bdhaiplatform
+client = bdhaiplatform.Client(api_key=<span class="s">"sk-your-key"</span>)
+<span class="c"># 在任意后端服务中调用</span>
+resp = client.models.<span class="f">predict</span>(model=<span class="s">"crop-disease-v3"</span>, inputs={<span class="s">"image"</span>: img_url})<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        <div class="mt16"><button class="btn btn-primary btn-sm" onclick="switchView('sdk')">查看全部 SDK →</button></div>
+      </div>
+
+      <div class="path-detail" id="pd-5">
+        <h3 style="font-size:15px;font-weight:600;margin:16px 0 12px">路径 ⑤ · 启动一个示例 Notebook</h3>
+        <p class="muted" style="font-size:13px;margin-bottom:12px">示例 Notebook 在工作台·开发中心运行，点击下方按钮跳转：</p>
+        <div class="grid grid-2" style="gap:12px;margin-bottom:14px">
+          <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px"><div style="font-weight:600;font-size:13px">作物病害识别 Notebook</div><div class="muted" style="font-size:12px">端到端推理 Demo</div></div>
+          <div style="padding:12px 14px;border:1px solid #EAEDF2;border-radius:8px"><div style="font-weight:600;font-size:13px">产量预测训练 Notebook</div><div class="muted" style="font-size:12px">用平台数据集微调</div></div>
+        </div>
+        <div class="mt16"><button class="btn btn-default btn-sm" onclick="location.href='workbench.html'">前往工作台·开发中心启动 →</button></div>
+      </div>
+    </section>
+
+    <!-- ============ API 中心 ============ -->
+    <section class="dc-view" id="view-api">
+      <div class="page-title"><div><h1>API 中心</h1><div class="desc">查看开放能力、申请密钥并调试接口。</div></div>
+        <button class="btn btn-primary" onclick="openCreateKey()">+ 创建密钥</button>
+      </div>
+
+      <div class="tabs mt24" id="apiTabs">
+        <div class="tab active" data-tab="catalog">能力目录</div>
+        <div class="tab" data-tab="keys">API 密钥</div>
+        <div class="tab" data-tab="explorer">调试台</div>
+        <div class="tab" data-tab="samples">代码示例</div>
+      </div>
+
+      <!-- 能力目录 -->
+      <div class="tab-panel active" id="tab-catalog" data-private data-private-label="能力目录">
+        <div class="inline-form mb16">
+          <input id="capSearch" style="max-width:280px" placeholder="搜索能力，如：病害、知识库、产量…" oninput="filterCaps()">
+          <select id="capProto" style="max-width:160px" onchange="filterCaps()"><option value="">全部协议</option><option>HTTPS / REST</option><option>gRPC</option></select>
+          <select id="capStatus" style="max-width:160px" onchange="filterCaps()"><option value="">全部状态</option><option>已开放</option><option>测试中</option></select>
+        </div>
+        <div class="cap-item" data-name="作物病害识别 病害 crop disease" data-proto="HTTPS / REST" data-status="已开放">
+          <div class="cap-ic">🌾</div>
+          <div class="cap-info"><h4>作物病害识别</h4><div class="ep">POST /v1/models/crop-disease-v3/predict</div></div>
+          <span class="chip chip-published">已开放</span><span class="chip chip-info">REST</span><span class="chip chip-default">鉴权: Bearer</span>
+          <button class="btn btn-default btn-sm" onclick="switchApiTab('explorer')">调试</button>
+        </div>
+        <div class="cap-item" data-name="农业知识库问答 知识库 kb" data-proto="HTTPS / REST" data-status="已开放">
+          <div class="cap-ic">📚</div>
+          <div class="cap-info"><h4>农业知识库问答</h4><div class="ep">POST /v1/kb/{kb_id}/chat</div></div>
+          <span class="chip chip-published">已开放</span><span class="chip chip-info">REST</span><span class="chip chip-default">鉴权: Bearer</span>
+          <button class="btn btn-default btn-sm" onclick="switchApiTab('explorer')">调试</button>
+        </div>
+        <div class="cap-item" data-name="产量预测 yield forecast" data-proto="HTTPS / REST" data-status="测试中">
+          <div class="cap-ic">📊</div>
+          <div class="cap-info"><h4>产量预测</h4><div class="ep">POST /v1/models/yield-forecast/predict</div></div>
+          <span class="chip chip-pending">测试中</span><span class="chip chip-info">REST</span><span class="chip chip-default">鉴权: Bearer</span>
+          <button class="btn btn-default btn-sm" onclick="switchApiTab('explorer')">调试</button>
+        </div>
+        <div class="cap-item" data-name="气象因子订阅 气象 weather" data-proto="HTTPS / REST" data-status="已开放">
+          <div class="cap-ic">🌡️</div>
+          <div class="cap-info"><h4>气象因子订阅</h4><div class="ep">GET /v1/weather/subscribe</div></div>
+          <span class="chip chip-published">已开放</span><span class="chip chip-info">REST</span><span class="chip chip-default">鉴权: Bearer</span>
+          <button class="btn btn-default btn-sm" onclick="switchApiTab('explorer')">调试</button>
+        </div>
+        <div id="capEmpty" class="muted" style="display:none;padding:24px;text-align:center;font-size:14px">未找到匹配的能力，请调整搜索条件。</div>
+      </div>
+
+      <!-- API 密钥 -->
+      <div class="tab-panel" id="tab-keys" data-private data-private-label="API 密钥">
+        <div class="card">
+          <div class="card-body" style="padding:0">
+            <table class="tbl">
+              <thead><tr><th>密钥名称</th><th>密钥前缀</th><th>权限 Scope</th><th>状态</th><th>最近调用</th><th>操作</th></tr></thead>
+              <tbody id="keysTbody">
+                <tr><td>生产环境</td><td><code class="inline">sk-prod-7f3a••</code></td><td><span class="scope-tag">model:predict</span><span class="scope-tag">kb:chat</span></td><td><span class="chip chip-success">启用</span></td><td>2 分钟前</td><td><button type="button" class="lnk" onclick="copyKey(this)">复制</button><button type="button" class="lnk" onclick="rotateKey(this)">轮换</button><button type="button" class="lnk lnk-danger" onclick="toggleKey(this)">禁用</button></td></tr>
+                <tr><td>测试沙箱</td><td><code class="inline">sk-test-a1b2••</code></td><td><span class="scope-tag">model:predict</span></td><td><span class="chip chip-success">启用</span></td><td>1 小时前</td><td><button type="button" class="lnk" onclick="copyKey(this)">复制</button><button type="button" class="lnk" onclick="rotateKey(this)">轮换</button><button type="button" class="lnk lnk-danger" onclick="toggleKey(this)">禁用</button></td></tr>
+                <tr><td>农企集成</td><td><code class="inline">sk-ent-9c4d••</code></td><td><span class="scope-tag">model:predict</span><span class="scope-tag">kb:chat</span><span class="scope-tag">weather:read</span></td><td><span class="chip chip-default">已禁用</span></td><td>3 天前</td><td><button type="button" class="lnk" onclick="copyKey(this)">复制</button><button type="button" class="lnk" onclick="rotateKey(this)">轮换</button><button type="button" class="lnk lnk-primary" onclick="toggleKey(this)">启用</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="muted mt16" style="font-size:12px">密钥仅创建时完整展示一次，请妥善保存。轮换会立即使旧密钥失效。</p>
+      </div>
+
+      <!-- 调试台 -->
+      <div class="tab-panel" id="tab-explorer">
+        <div class="explorer">
+          <div class="ex-box">
+            <div class="ex-head"><span>请求 Request</span><select id="reqMethod" style="height:28px;width:auto;font-size:12px" onchange="toggleReqBody()"><option>POST</option><option>GET</option></select></div>
+            <div class="ex-body">
+              <div class="field" style="margin-bottom:12px"><label>端点 Endpoint</label><input value="https://api.bdhaiplatform.ai/v1/models/crop-disease-v3/predict"></div>
+              <div class="field" style="margin-bottom:12px"><label>API 密钥</label><input value="sk-prod-7f3a••••" type="password"></div>
+              <div class="field" id="reqBodyField" style="margin-bottom:12px"><label>请求体 Body (JSON)</label><textarea rows="6">{
+  "image": "https://img.example/leaf.jpg",
+  "top_k": 3
+}</textarea></div>
+              <button class="btn btn-primary" onclick="runRequest()">▶ 发送请求</button>
+            </div>
+          </div>
+          <div class="ex-box">
+            <div class="ex-head"><span>响应 Response</span><span id="respStatus" class="chip chip-default">待发送</span></div>
+            <div class="ex-body">
+              <pre id="respBody">{
+  <span class="c">// 点击「发送请求」查看响应</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 代码示例 -->
+      <div class="tab-panel" id="tab-samples">
+        <div class="tabs" id="langTabs" style="border-bottom:none;margin-bottom:12px">
+          <div class="tab active" data-lang="py">Python</div>
+          <div class="tab" data-lang="java">Java</div>
+          <div class="tab" data-lang="go">Go</div>
+          <div class="tab" data-lang="curl">cURL</div>
+        </div>
+        <pre id="codeBlock"><span class="k">import</span> bdhaiplatform
+
+client = bdhaiplatform.Client(api_key=<span class="s">"sk-your-key"</span>)
+resp = client.models.<span class="f">predict</span>(
+    model=<span class="s">"crop-disease-v3"</span>,
+    inputs={<span class="s">"image"</span>: <span class="s">"https://img/leaf.jpg"</span>}
+)
+<span class="k">print</span>(resp.json())<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+      </div>
+    </section>
+
+    <!-- ============ SDK & 工具 ============ -->
+    <section class="dc-view" id="view-sdk">
+      <div class="page-title"><div><h1>SDK &amp; 工具</h1><div class="desc">提供多语言客户端与命令行工具。</div></div></div>
+      <div class="grid grid-3 mt24">
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">🐍</div><b style="font-size:16px">Python SDK</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">官方 Python 客户端，支持模型推理、知识库问答。</p>
+          <pre>pip install bdhaiplatform<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">☕</div><b style="font-size:16px">Java SDK</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">Maven 依赖，适用于后端服务集成。</p>
+          <pre>&lt;dependency&gt;
+  &lt;groupId&gt;ai.bdhaiplatform&lt;/groupId&gt;
+  &lt;artifactId&gt;bdhaiplatform-java&lt;/artifactId&gt;
+&lt;/dependency&gt;<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">🐹</div><b style="font-size:16px">Go SDK</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">Go 模块，轻量、无第三方重依赖。</p>
+          <pre>go get ai.bdhaiplatform/sdk-go<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">⌨️</div><b style="font-size:16px">CLI 命令行</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">脚本化调用、CI/CD 流水线集成。</p>
+          <pre>brew install bdhaiplatform-cli<button class="copy-btn" onclick="copyCode(this)">复制</button></pre>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">🔧</div><b style="font-size:16px">Postman 集合</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">导入即可调试全部开放 API。</p>
+          <button type="button" class="btn btn-default btn-sm" onclick="toast('开始下载 Postman 集合','info')">下载集合</button>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <div class="flex" style="margin-bottom:10px"><div class="cap-ic" style="background:#f0f5ff;color:#2f54eb">📦</div><b style="font-size:16px">OpenAPI 规范</b></div>
+          <p class="muted" style="font-size:13px;margin-bottom:12px">完整接口描述，可生成任意语言客户端。</p>
+          <button type="button" class="btn btn-default btn-sm" onclick="toast('开始下载 OpenAPI 3.0 YAML','info')">下载 YAML</button>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- ============ 文档中心（内嵌 doc-center.html?embed=1） ============ -->
+    <section class="dc-view" id="view-docs">
+      <iframe src="doc-center.html?embed=1" class="dc-doc-frame" title="文档中心"></iframe>
+    </section>
+
+    <!-- ============ 个人凭证 ============ -->
+    <section class="dc-view" id="view-credentials">
+      <div class="page-title"><div><h1>个人凭证</h1><div class="desc">集中管理你调用平台能力的密钥、配额与权限。</div></div></div>
+
+      <div class="grid grid-2 mt24" style="align-items:start">
+        <div class="card" data-private data-private-label="我的 API 用量">
+          <div class="card-head"><div class="ttl">我的 API 用量</div><a class="btn btn-default btn-sm" href="workbench.html?applyQuota=api">📈 申请提额</a></div>
+          <div class="card-body">
+            <div class="flex-bw mb16"><span class="muted">本月 API 调用</span><span style="font-weight:600">8,642 / 50,000</span></div>
+            <div class="pbar mb24"><span style="width:17%"></span></div>
+            <div class="flex-bw mb16"><span class="muted">并发上限</span><span style="font-weight:600">10 QPS</span></div>
+            <div class="pbar"><span style="width:60%"></span></div>
+            <p class="muted mt16" style="font-size:12px">调用额度与并发限制为你的消费侧配额，如需提升请前往个人中心提交提额申请，审核通过后生效。</p>
+          </div>
+        </div>
+        <div class="card" data-private data-private-label="我的推理服务">
+          <div class="card-head"><div class="ttl">我的推理服务</div><a class="btn btn-default btn-sm" href="workbench.html">管理 →</a></div>
+          <div class="card-body" style="padding:0">
+            <table class="tbl">
+              <thead><tr><th>服务名</th><th>端点</th><th>状态</th></tr></thead>
+              <tbody>
+                <tr><td>作物病害识别</td><td><code class="inline">/v1/models/crop-disease-v3</code></td><td><span class="chip chip-published">已发布</span></td></tr>
+                <tr><td>产量预测</td><td><code class="inline">/v1/models/yield-pred</code></td><td><span class="chip chip-published">已发布</span></td></tr>
+                <tr><td>知识库问答</td><td><code class="inline">/v1/models/kb-chat</code></td><td><span class="chip chip-success">运行中</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt24" data-private data-private-label="通知偏好">
+        <div class="card-head"><div class="ttl">通知偏好</div></div>
+        <div class="card-body">
+          <div class="flex-bw" style="padding:12px 0;border-bottom:1px solid #f0f0f0">
+            <div><b style="font-size:14px">调用量告警</b><div class="muted" style="font-size:13px">用量达 80% 时通知</div></div>
+            <label class="switch"><input type="checkbox" checked onchange="notifToggle(this,'调用量告警')"><span class="slider"></span></label>
+          </div>
+          <div class="flex-bw" style="padding:12px 0;border-bottom:1px solid #f0f0f0">
+            <div><b style="font-size:14px">密钥泄露提醒</b><div class="muted" style="font-size:13px">检测到异常调用时通知</div></div>
+            <label class="switch"><input type="checkbox" checked onchange="notifToggle(this,'密钥泄露提醒')"><span class="slider"></span></label>
+          </div>
+          <div class="flex-bw" style="padding:12px 0">
+            <div><b style="font-size:14px">新能力上线</b><div class="muted" style="font-size:13px">平台开放新 API 时通知</div></div>
+            <label class="switch"><input type="checkbox" onchange="notifToggle(this,'新能力上线')"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt24" style="border:1px dashed #d9d9d9">
+        <div class="card-body" style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:20px">ℹ️</span>
+          <div style="font-size:13px;color:rgba(0,0,0,0.55)">账号实名 / 机构认证、积分与等级权益等由 <b>账号设置</b> 与 <b>工作台</b> 统一管理，不在开发者中心内。</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ==================== 创建密钥 Modal ==================== -->
+<div class="overlay" id="keyOverlay">
+  <div class="modal">
+    <div class="modal-head">🔑 创建 API 密钥</div>
+    <div class="modal-body">
+      <div class="field"><label><span class="req">*</span>密钥名称</label><input placeholder="如：生产环境、测试沙箱"><div class="hint">输入框，必填项，由中英文、数字组成，限制 30 字符</div></div>
+      <div class="field"><label><span class="req">*</span>权限 Scope</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <label class="switch" style="width:auto"><input type="checkbox" checked><span class="slider"></span></label><span style="font-size:13px;margin-right:12px">model:predict</span>
+          <label class="switch" style="width:auto"><input type="checkbox"><span class="slider"></span></label><span style="font-size:13px;margin-right:12px">kb:chat</span>
+          <label class="switch" style="width:auto"><input type="checkbox"><span class="slider"></span></label><span style="font-size:13px">weather:read</span>
+        </div>
+        <div class="hint">多选，决定该密钥可调用的能力范围</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeCreateKey()">取消</button>
+      <button class="btn btn-primary" onclick="createKey()">创建</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ===== 积分系统（与全站共享 localStorage.luoshu_points）=====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+setTimeout(updatePointsDisplay, 100);
+
+// Sidebar view switching
+function switchView(v){
+  document.querySelectorAll('.dc-view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.dc-nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+  var raw=(document.querySelector('.dc-nav-item[data-view="'+v+'"]')||{}).textContent||'';
+  var label=raw.replace(/^[^一-龥]+/,'').trim()||'概览';
+  var bc=document.getElementById('bcCur'); if(bc) bc.textContent=label;
+  var dc=document.querySelector('.dc-content');
+  if(dc) dc.classList.toggle('docs-active', v==='docs');
+  dc.scrollTop=0;
+}
+document.querySelectorAll('.dc-nav-item').forEach(n=>n.addEventListener('click',()=>switchView(n.dataset.view)));
+
+// API sub-tabs
+function switchApiTab(t){
+  document.querySelectorAll('#apiTabs .tab').forEach(tb=>tb.classList.toggle('active',tb.dataset.tab===t));
+  document.querySelectorAll('#view-api .tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+document.querySelectorAll('#apiTabs .tab').forEach(tb=>tb.addEventListener('click',()=>switchApiTab(tb.dataset.tab)));
+
+// Language tabs
+const codeMap={
+  py:`<span class="k">import</span> bdhaiplatform
+
+client = bdhaiplatform.Client(api_key=<span class="s">"sk-your-key"</span>)
+resp = client.models.<span class="f">predict</span>(
+    model=<span class="s">"crop-disease-v3"</span>,
+    inputs={<span class="s">"image"</span>: <span class="s">"https://img/leaf.jpg"</span>}
+)
+<span class="k">print</span>(resp.json())`,
+  java:`<span class="k">import</span> ai.bdhaiplatform.Client;
+
+Client client = <span class="k">new</span> Client(<span class="s">"sk-your-key"</span>);
+Map&lt;String,Object&gt; in = <span class="k">new</span> HashMap&lt;&gt;();
+in.put(<span class="s">"image"</span>, <span class="s">"https://img/leaf.jpg"</span>);
+System.<span class="f">out</span>.println(client.predict(<span class="s">"crop-disease-v3"</span>, in));`,
+  go:`client := bdhaiplatform.<span class="f">New</span>(<span class="s">"sk-your-key"</span>)
+resp, _ := client.Models.<span class="f">Predict</span>(<span class="s">"crop-disease-v3"</span>, map[<span class="k">string</span>]<span class="k">any</span>{
+    <span class="s">"image"</span>: <span class="s">"https://img/leaf.jpg"</span>,
+})
+fmt.<span class="f">Println</span>(resp)`,
+  curl:`curl -X POST https://api.bdhaiplatform.ai/v1/models/crop-disease-v3/predict \\
+  -H <span class="s">"Authorization: Bearer sk-your-key"</span> \\
+  -H <span class="s">"Content-Type: application/json"</span> \\
+  -d '{<span class="s">"image"</span>:<span class="s">"https://img/leaf.jpg"</span>}'`
+};
+document.querySelectorAll('#langTabs .tab').forEach(tb=>tb.addEventListener('click',()=>{
+  document.querySelectorAll('#langTabs .tab').forEach(t=>t.classList.remove('active'));
+  tb.classList.add('active');
+  document.getElementById('codeBlock').innerHTML=codeMap[tb.dataset.lang]+'<button class="copy-btn" onclick="copyCode(this)">复制</button>';
+}));
+
+// Explorer send
+function runRequest(){
+  const st=document.getElementById('respStatus');
+  st.className='chip chip-pending';st.textContent='请求中…';
+  setTimeout(()=>{
+    st.className='chip chip-success';st.textContent='200 OK';
+    document.getElementById('respBody').innerHTML=`{
+  <span class="s">"request_id"</span>: <span class="s">"req_8f2a1c"</span>,
+  <span class="s">"label"</span>: <span class="s">"稻瘟病"</span>,
+  <span class="s">"score"</span>: <span class="n">0.92</span>,
+  <span class="s">"top_k"</span>: [
+    {<span class="s">"label"</span>: <span class="s">"稻瘟病"</span>, <span class="s">"score"</span>: <span class="n">0.92</span>},
+    {<span class="s">"label"</span>: <span class="s">"纹枯病"</span>, <span class="s">"score"</span>: <span class="n">0.05</span>}
+  ]
+}`;
+    toast('请求成功，耗时 218ms','success');
+  },700);
+}
+
+// Modal
+function openCreateKey(){ if(!isLoggedIn()){ goLogin(); return; } document.getElementById('keyOverlay').classList.add('on'); }
+function closeCreateKey(){document.getElementById('keyOverlay').classList.remove('on');}
+function createKey(){
+  var nameInput=document.querySelector('#keyOverlay input');
+  var name=(nameInput&&nameInput.value||'').trim();
+  if(!name){toast('请输入密钥名称','error');return;}
+  var scopeDef=['model:predict','kb:chat','weather:read'];
+  var scopes=[];
+  document.querySelectorAll('#keyOverlay .switch input').forEach((c,i)=>{if(c.checked)scopes.push(scopeDef[i]);});
+  var prefix='sk-'+(Math.random().toString(36).slice(2,6))+'-'+Math.random().toString(36).slice(2,6);
+  var full='sk_live_'+Math.random().toString(36).slice(2,22);
+  var tr=document.createElement('tr');
+  tr.className='row-new';
+  tr.innerHTML='<td>'+name+'</td><td><code class="inline">'+prefix+'••</code></td><td>'+
+    scopes.map(function(s){return '<span class="scope-tag">'+s+'</span>';}).join('')+
+    '</td><td><span class="chip chip-success">启用</span></td><td>刚刚</td><td>'+
+    '<button type="button" class="lnk" onclick="copyKey(this)">复制</button>'+
+    '<button type="button" class="lnk" onclick="rotateKey(this)">轮换</button>'+
+    '<button type="button" class="lnk lnk-danger" onclick="toggleKey(this)">禁用</button></td>';
+  var tb=document.getElementById('keysTbody');
+  if(tb)tb.insertBefore(tr,tb.firstChild);
+  var sk=document.getElementById('statKeys'); if(sk)sk.textContent=parseInt(sk.textContent||'0')+1;
+  var ak=document.getElementById('ovActiveKeys'); if(ak)ak.textContent=parseInt(ak.textContent||'0')+1;
+  if(nameInput)nameInput.value='';
+  document.querySelectorAll('#keyOverlay .switch input').forEach(function(c,i){c.checked=(i===0);});
+  closeCreateKey();
+  toast('密钥已创建：'+full+'（仅展示一次，请妥善保存）','success');
+}
+// Key row actions: copy / rotate / enable-disable
+function copyKey(btn){
+  var tr=btn.closest('tr');
+  var codeEl=tr&&tr.querySelector('code.inline');
+  var key=codeEl?codeEl.textContent.replace(/•+/g,'').trim():'';
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(key);}
+  toast('已复制密钥前缀：'+key,'success');
+}
+function rotateKey(btn){
+  var tr=btn.closest('tr');
+  var codeEl=tr&&tr.querySelector('code.inline');
+  if(!codeEl)return;
+  var np='sk-'+Math.random().toString(36).slice(2,6)+'-'+Math.random().toString(36).slice(2,6)+'••';
+  codeEl.textContent=np;
+  toast('已轮换，旧密钥立即失效','success');
+}
+function toggleKey(btn){
+  var tr=btn.closest('tr');
+  var chip=tr&&tr.querySelector('td:nth-child(4) .chip');
+  if(!chip)return;
+  var enabling=chip.classList.contains('chip-default');
+  if(enabling){
+    chip.className='chip chip-success';chip.textContent='启用';
+    btn.className='lnk lnk-danger';btn.textContent='禁用';
+    toast('已启用','success');
+  }else{
+    chip.className='chip chip-default';chip.textContent='已禁用';
+    btn.className='lnk lnk-primary';btn.textContent='启用';
+    toast('已禁用','info');
+  }
+  var ak=document.getElementById('ovActiveKeys');
+  if(ak){var n=parseInt(ak.textContent||'0')+(enabling?1:-1);ak.textContent=Math.max(0,n);}
+}
+document.getElementById('keyOverlay').addEventListener('click',e=>{if(e.target.id==='keyOverlay')closeCreateKey();});
+
+// User dropdown
+function toggleUserMenu(){document.getElementById('userDropdown').classList.toggle('visible');}
+document.addEventListener('click',e=>{if(!e.target.closest('.dropdown-wrap'))document.getElementById('userDropdown').classList.remove('visible');});
+
+// Copy
+function copyCode(btn){
+  const txt=btn.parentElement.innerText.replace('复制','').trim();
+  navigator.clipboard?.writeText(txt);
+  toast('已复制到剪贴板','success');
+}
+
+// Toast
+function toast(msg,type){
+  const w=document.getElementById('toastWrap');
+  const el=document.createElement('div');el.className='toast-item '+(type||'info');
+  el.textContent=(type==='success'?'✓ ':(type==='error'?'✕ ':'ℹ '))+msg;
+  w.appendChild(el);setTimeout(()=>el.remove(),2200);
+}
+
+// ===== 逻辑闭环补充 =====
+// 快速开始路径展开
+function openPath(n){
+  document.querySelectorAll('.path-detail').forEach(d=>d.classList.remove('open'));
+  var el=document.getElementById('pd-'+n);
+  if(el){el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+// API 能力目录筛选
+function filterCaps(){
+  var q=(document.getElementById('capSearch').value||'').trim().toLowerCase();
+  var proto=document.getElementById('capProto').value;
+  var status=document.getElementById('capStatus').value;
+  var shown=0;
+  document.querySelectorAll('#tab-catalog .cap-item').forEach(it=>{
+    var name=(it.dataset.name||'').toLowerCase();
+    var p=it.dataset.proto||'', s=it.dataset.status||'';
+    var ok=(!q||name.indexOf(q)>=0)&&(!proto||p===proto)&&(!status||s===status);
+    it.style.display=ok?'':'none';
+    if(ok)shown++;
+  });
+  var empty=document.getElementById('capEmpty');
+  if(empty)empty.style.display=shown?'none':'block';
+}
+// 调试台 方法切换（GET 隐藏 Body）
+function toggleReqBody(){
+  var m=document.getElementById('reqMethod').value;
+  var f=document.getElementById('reqBodyField');
+  if(f)f.style.display=(m==='GET')?'none':'';
+}
+// 通知偏好开关
+function notifToggle(el,name){
+  toast((el.checked?'已开启 ':'已关闭 ')+name,'info');
+}
+// ===== AUTH STATE (与全站一致：读取 localStorage.luoshu_logged_in) =====
+function isLoggedIn(){ try { return localStorage.getItem('luoshu_logged_in') === '1'; } catch(e){ return false; } }
+function switchAuthState(loggedIn){
+  document.getElementById('headerAuthOut').style.display = loggedIn ? 'none' : '';
+  document.getElementById('headerAuthIn').style.display = loggedIn ? '' : 'none';
+  applyAuthToContent(loggedIn);
+}
+// 未登录时，私有内容（个人凭证/密钥/用量/通知偏好）显示锁态占位；登录后恢复原文
+function goLogin(){ window.location.href='login.html?redirect='+encodeURIComponent(window.location.href); }
+function dcLockedHtml(label){
+  return '<div class="dc-private-locked"><div class="pl-ico">🔒</div><h4>'+label+'需登录后查看</h4><p>该内容需经平台审批开通，登录后即可查看与管理你的开发者资源。</p><button class="btn btn-primary btn-sm" onclick="goLogin()">登录查看</button></div>';
+}
+function applyAuthToContent(loggedIn){
+  var banner=document.getElementById('dcLoginBanner');
+  if(banner) banner.style.display = loggedIn ? 'none' : 'flex';
+  document.querySelectorAll('[data-private]').forEach(function(el){
+    if(!loggedIn){
+      if(!el.dataset._orig) el.dataset._orig = el.innerHTML;
+      el.innerHTML = dcLockedHtml(el.dataset.privateLabel || '个人内容');
+    } else if(el.dataset._orig){
+      el.innerHTML = el.dataset._orig;
+      delete el.dataset._orig;
+    }
+  });
+  document.querySelectorAll('[data-private-stat]').forEach(function(el){
+    var v=el.querySelector('.v'), l=el.querySelector('.l');
+    if(!v||!l) return;
+    if(!loggedIn){
+      if(!el.dataset._ov) el.dataset._ov = v.textContent+'|'+l.textContent;
+      v.textContent='—'; l.textContent='登录后可见';
+    } else if(el.dataset._ov){
+      var p=el.dataset._ov.split('|'); v.textContent=p[0]; l.textContent=p[1]; delete el.dataset._ov;
+    }
+  });
+}
+(function(){ switchAuthState(isLoggedIn()); })();
+// ===== NOTIFICATIONS (与全站一致：共享同一份通知内容) =====
+var NOTIFS=[
+  {icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},
+  {icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},
+  {icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},
+  {icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},
+  {icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}
+];
+function renderNotifs(){
+  document.getElementById('notifList').innerHTML = NOTIFS.map(function(n){
+    return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';
+  }).join('');
+}
+renderNotifs();
+function toggleNotifPopover(){ document.getElementById('notifPopover').classList.toggle('visible'); closeUserMenu(); }
+function markAllRead(){ NOTIFS.forEach(function(n){ n.unread=false; }); renderNotifs(); document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none'; }
+document.addEventListener('click',function(e){ var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn'); if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){ popover.classList.remove('visible'); }});
+// ===== USER DROPDOWN =====
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); if(confirm('确定退出登录？')){ try { localStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录','info'); } }
+</script>
+</body>
+</html>

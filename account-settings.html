@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-prefers-color="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>账号设置 — 北大荒智慧农业协同创新平台</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-prefers-color="light"] { color-scheme: light; }
+[data-prefers-color="dark"] { color-scheme: dark; }
+html, body {
+  width: 100%; height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 14px; line-height: 1.5714;
+  color: rgba(0,0,0,0.88); background-color: #F7F9FD;
+  -webkit-font-smoothing: antialiased;
+}
+[data-prefers-color="dark"] body { background-color: #1c1e21; color: rgba(255,255,255,0.85); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 8px; }
+
+/* ===== HEADER（全站标准）===== */
+.app-header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(5,5,5,0.06); z-index: 19; }
+[data-prefers-color="dark"] .app-header { background: rgba(28,30,33,0.85); border-bottom-color: rgba(255,255,255,0.08); }
+.top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+.top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logo-link { display: flex; align-items: center; gap: 8px; }
+.system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+[data-prefers-color="dark"] .system-name-title { color: rgba(255,255,255,0.85); }
+.top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+.top-nav-menu { display: flex; align-items: center; height: 100%; gap: 8px; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s; }
+.top-nav-item:hover { color: rgb(47,84,235); }
+[data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+.header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn:hover { background: rgba(0,0,0,0.06); }
+.header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+.header-btn-login, .header-btn-register { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); }
+.header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+.header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; }
+.header-btn-register:hover { background: #597ef7; }
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+.dropdown-wrap { position: relative; display: inline-flex; }
+#headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+.dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12); z-index: 100; }
+.dropdown-menu.visible { display: block; }
+[data-prefers-color="dark"] .dropdown-menu { background: #2b2d30; }
+.dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); }
+.dropdown-item.danger { color: #ff4d4f; }
+.dropdown-item.danger:hover { background: #fff2f0; }
+.dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
+.points-badge:hover { background: rgba(47,84,235,0.12); }
+[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+.notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px rgba(0,0,0,0.08);z-index:100}
+.notif-popover.visible{display:block}
+
+/* ===== 页面布局 ===== */
+.page { padding-top: 60px; min-height: 100vh; }
+.page-topbar { background: #fff; border-bottom: 1px solid rgba(5,5,5,0.05); padding: 18px 40px; }
+[data-prefers-color="dark"] .page-topbar { background: #26282b; border-bottom-color: rgba(255,255,255,0.08); }
+.page-topbar h2 { font-size: 18px; font-weight: 600; }
+.page-topbar span { font-size: 13px; color: rgba(0,0,0,0.45); }
+.breadcrumb { font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 6px; }
+.breadcrumb a { color: rgba(0,0,0,0.45); }
+.breadcrumb a:hover { color: #2f54eb; }
+.settings-layout { display: flex; gap: 24px; max-width: 1180px; margin: 0 auto; padding: 24px 40px 60px; }
+
+/* 左侧导航 */
+.settings-nav { width: 220px; flex-shrink: 0; background: #fff; border: 1px solid rgba(5,5,5,0.06); border-radius: 10px; padding: 8px; align-self: flex-start; position: sticky; top: 84px; }
+[data-prefers-color="dark"] .settings-nav { background: #26282b; border-color: rgba(255,255,255,0.08); }
+.settings-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
+.settings-nav-item:hover { background: rgba(47,84,235,0.04); color: #2f54eb; }
+.settings-nav-item.active { background: rgba(47,84,235,0.08); color: #2f54eb; font-weight: 600; }
+[data-prefers-color="dark"] .settings-nav-item { color: rgba(255,255,255,0.65); }
+
+/* 右侧内容 */
+.settings-main { flex: 1; min-width: 0; }
+.settings-panel { display: none; }
+.settings-panel.active { display: block; }
+.card { background: #fff; border: 1px solid rgba(5,5,5,0.06); border-radius: 10px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+[data-prefers-color="dark"] .card { background: #26282b; border-color: rgba(255,255,255,0.08); }
+.card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.card .card-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-bottom: 20px; }
+
+/* 表单 */
+.form-row { display: flex; align-items: flex-start; margin-bottom: 18px; }
+.form-label { width: 110px; flex-shrink: 0; padding-top: 5px; font-size: 14px; color: rgba(0,0,0,0.65); }
+.form-field { flex: 1; max-width: 400px; }
+.form-input, .form-select, .form-textarea { width: 100%; padding: 6px 12px; border: 1px solid #d9d9d9; border-radius: 6px; background: #fff; font-size: 14px; transition: all 0.2s; outline: none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #2f54eb; box-shadow: 0 0 0 2px rgba(47,84,235,0.1); }
+.form-input[readonly] { background: #fafafa; color: rgba(0,0,0,0.45); cursor: not-allowed; }
+.form-textarea { resize: vertical; min-height: 72px; }
+.form-hint { font-size: 12px; color: rgba(0,0,0,0.4); margin-top: 4px; }
+[data-prefers-color="dark"] .form-input, [data-prefers-color="dark"] .form-select, [data-prefers-color="dark"] .form-textarea { background: #1c1e21; border-color: rgba(255,255,255,0.15); }
+
+/* 按钮 */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; white-space: nowrap; border: 1px solid transparent; }
+.btn-primary { background: #2f54eb; color: #fff; }
+.btn-primary:hover { background: #597ef7; }
+.btn-default { background: #fff; border-color: #d9d9d9; color: rgba(0,0,0,0.88); }
+.btn-default:hover { color: #597ef7; border-color: #597ef7; }
+.btn-sm { height: 26px; padding: 2px 10px; font-size: 13px; }
+.btn-danger-ghost { background: #fff; border-color: #ffccc7; color: #ff4d4f; }
+.btn-danger-ghost:hover { border-color: #ff4d4f; background: #fff2f0; }
+[data-prefers-color="dark"] .btn-default, [data-prefers-color="dark"] .btn-danger-ghost { background: transparent; }
+
+/* 头像编辑 */
+.avatar-edit { display: flex; align-items: center; gap: 16px; }
+.avatar-lg { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 600; flex-shrink: 0; }
+
+/* chip */
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; white-space: nowrap; }
+.chip-success { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+.chip-warning { background: #fffbe6; color: #d48806; border: 1px solid #ffe58f; }
+.chip-default { background: #fafafa; color: rgba(0,0,0,0.45); border: 1px solid #d9d9d9; }
+.chip-blue { background: #f0f5ff; color: #2f54eb; border: 1px solid #adc6ff; }
+
+/* 设置行（安全/通知用） */
+.setting-row { display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(5,5,5,0.05); }
+.setting-row:last-child { border-bottom: none; }
+.setting-info { flex: 1; min-width: 0; }
+.setting-title { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.setting-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+[data-prefers-color="dark"] .setting-row { border-bottom-color: rgba(255,255,255,0.06); }
+
+/* 开关 */
+.switch { position: relative; width: 40px; height: 22px; border-radius: 11px; background: rgba(0,0,0,0.25); cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.switch.on { background: #2f54eb; }
+.switch.on::after { left: 20px; }
+
+/* 认证卡 */
+.cert-card { display: flex; align-items: center; gap: 16px; padding: 18px; border: 1px solid rgba(5,5,5,0.06); border-radius: 10px; margin-bottom: 12px; }
+.cert-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: rgba(47,84,235,0.06); }
+.cert-body { flex: 1; min-width: 0; }
+.cert-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.cert-desc { font-size: 13px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+[data-prefers-color="dark"] .cert-card { border-color: rgba(255,255,255,0.08); }
+
+/* 设备列表 */
+.device-row { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(5,5,5,0.05); }
+.device-row:last-child { border-bottom: none; }
+.device-icon { font-size: 20px; width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.device-info { flex: 1; min-width: 0; }
+.device-name { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.device-meta { font-size: 12px; color: rgba(0,0,0,0.4); margin-top: 2px; }
+
+/* 外观选择 */
+.theme-options { display: flex; gap: 14px; }
+.theme-opt { flex: 1; max-width: 150px; border: 2px solid rgba(5,5,5,0.08); border-radius: 10px; padding: 10px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.theme-opt:hover { border-color: #adc6ff; }
+.theme-opt.active { border-color: #2f54eb; }
+.theme-thumb { height: 56px; border-radius: 6px; margin-bottom: 8px; border: 1px solid rgba(5,5,5,0.06); position: relative; overflow: hidden; }
+.theme-thumb.light { background: #f7f9fd; }
+.theme-thumb.light::before { content:''; position:absolute; top:0; left:0; right:0; height:12px; background:#fff; border-bottom:1px solid #eee; }
+.theme-thumb.dark { background: #1c1e21; }
+.theme-thumb.dark::before { content:''; position:absolute; top:0; left:0; right:0; height:12px; background:#26282b; }
+.theme-thumb.auto { background: linear-gradient(110deg, #f7f9fd 50%, #1c1e21 50%); }
+.theme-opt-label { font-size: 13px; }
+
+/* 弹窗 */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+.modal-overlay.on { display: flex; }
+.modal { background: #fff; border-radius: 10px; padding: 24px; width: 420px; max-width: 92vw; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+[data-prefers-color="dark"] .modal { background: #26282b; }
+.modal h3 { font-size: 16px; margin-bottom: 16px; }
+.modal .form-row { margin-bottom: 14px; }
+.modal .form-label { width: 90px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* Toast */
+.toast { position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(-8px); background: #fff; border-radius: 8px; padding: 9px 16px; font-size: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.12); opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 2000; }
+.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-success::before { content: '✅ '; }
+.toast-info::before { content: 'ℹ️ '; }
+.toast-error::before { content: '⚠️ '; }
+[data-prefers-color="dark"] .toast { background: #2b2d30; }
+
+@media (max-width: 900px) {
+  .settings-layout { flex-direction: column; padding: 16px; }
+  .settings-nav { width: 100%; position: static; display: flex; overflow-x: auto; }
+  .form-row { flex-direction: column; }
+  .form-label { width: auto; margin-bottom: 4px; }
+}
+
+.top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+.top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
+      <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600">通知</div>
+            <div style="padding:12px 14px;font-size:13px;color:rgba(0,0,0,0.55)">🔔 平台算力资源扩容完成，GPU 可用额度提升 50%</div>
+          </div>
+          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="location.href='workbench.html'">👤 个人中心</div>
+              <div class="dropdown-item" onclick="closeUserMenu()">⚙️ 账号设置</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <div class="page-topbar">
+    <div class="breadcrumb"><a href="portal.html">首页</a> / <a href="workbench.html">个人中心</a> / 账号设置</div>
+    <h2>账号设置</h2>
+    <span>管理你的基本资料、账号安全、认证信息与通知偏好</span>
+  </div>
+
+  <div class="settings-layout">
+    <!-- 左侧导航 -->
+    <nav class="settings-nav" id="settingsNav">
+      <div class="settings-nav-item active" data-panel="profile" onclick="switchPanel('profile')">🪪 基本资料</div>
+      <div class="settings-nav-item" data-panel="security" onclick="switchPanel('security')">🔒 安全设置</div>
+      <div class="settings-nav-item" data-panel="cert" onclick="switchPanel('cert')">🏅 实名与机构认证</div>
+      <div class="settings-nav-item" data-panel="notify" onclick="switchPanel('notify')">🔔 通知设置</div>
+      <div class="settings-nav-item" data-panel="pref" onclick="switchPanel('pref')">🎨 偏好设置</div>
+    </nav>
+
+    <!-- 右侧内容 -->
+    <main class="settings-main">
+
+      <!-- 1. 基本资料 -->
+      <section class="settings-panel active" id="panel-profile">
+        <div class="card">
+          <h3>基本资料</h3>
+          <div class="card-desc">你的公开资料将展示在需求协作、案例署名等场景中</div>
+          <div class="form-row">
+            <div class="form-label">头像</div>
+            <div class="form-field">
+              <div class="avatar-edit">
+                <div class="avatar-lg" id="avatarPreview">张</div>
+                <button class="btn btn-default btn-sm" onclick="toast('演示环境暂不支持上传，将使用姓名首字生成头像','info')">更换头像</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">姓名</div>
+            <div class="form-field">
+              <input class="form-input" id="fName" value="张研究员" maxlength="20">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">所属机构</div>
+            <div class="form-field">
+              <input class="form-input" value="智慧农场技术与系统全国重点实验室" readonly>
+              <div class="form-hint">机构信息由机构管理员维护，如需变更请联系管理员</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">平台角色</div>
+            <div class="form-field" style="padding-top:5px">
+              <span class="chip chip-blue">模型研发者</span>
+              <span class="chip chip-default" style="margin-left:6px">消费侧（默认开通）</span>
+              <div class="form-hint">角色由入驻审核确定，决定可访问的功能范围</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">研究方向</div>
+            <div class="form-field">
+              <input class="form-input" id="fField" value="农业遥感 · 病虫害识别" maxlength="50">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">个人简介</div>
+            <div class="form-field">
+              <textarea class="form-textarea" id="fBio" maxlength="200">专注于农业遥感与作物病虫害智能识别方向，参与玉米、大豆等主粮作物的模型研发与落地应用。</textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label"></div>
+            <div class="form-field">
+              <button class="btn btn-primary" onclick="saveProfile()">保存修改</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 安全设置 -->
+      <section class="settings-panel" id="panel-security">
+        <div class="card">
+          <h3>账号安全</h3>
+          <div class="card-desc">保护你的账号与平台数据安全</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">登录密码 <span class="chip chip-success">强度：高</span></div>
+              <div class="setting-desc">上次修改于 2026-06-12，建议每 90 天更换一次</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="openPwdModal()">修改密码</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">绑定手机</div>
+              <div class="setting-desc">已绑定：138****5678，用于登录验证与安全提醒</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="toast('已发送验证码至原手机号，请查收后继续操作（演示）','info')">更换手机</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">绑定邮箱</div>
+              <div class="setting-desc">已绑定：zhang***@bdh-lab.cn，用于接收平台通知</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="toast('已发送确认邮件至原邮箱，请查收后继续操作（演示）','info')">更换邮箱</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">两步验证</div>
+              <div class="setting-desc">开启后，登录时需额外输入短信验证码</div>
+            </div>
+            <div class="switch" id="sw2fa" onclick="toggleSwitch(this,'两步验证')"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>登录设备</h3>
+          <div class="card-desc">当前已登录本账号的设备，可将异常设备下线</div>
+          <div id="deviceList">
+            <div class="device-row">
+              <div class="device-icon">💻</div>
+              <div class="device-info">
+                <div class="device-name">Windows · Chrome <span class="chip chip-success">当前设备</span></div>
+                <div class="device-meta">哈尔滨 · 最近活跃：刚刚</div>
+              </div>
+            </div>
+            <div class="device-row">
+              <div class="device-icon">📱</div>
+              <div class="device-info">
+                <div class="device-name">iPhone · 移动端</div>
+                <div class="device-meta">哈尔滨 · 最近活跃：昨天 18:42</div>
+              </div>
+              <button class="btn btn-danger-ghost btn-sm" onclick="removeDevice(this)">下线</button>
+            </div>
+            <div class="device-row">
+              <div class="device-icon">💻</div>
+              <div class="device-info">
+                <div class="device-name">Windows · Edge</div>
+                <div class="device-meta">建三江 · 最近活跃：2026-07-20</div>
+              </div>
+              <button class="btn btn-danger-ghost btn-sm" onclick="removeDevice(this)">下线</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 实名与机构认证 -->
+      <section class="settings-panel" id="panel-cert">
+        <div class="card">
+          <h3>实名与机构认证</h3>
+          <div class="card-desc">认证信息用于入驻审核、需求协作与结算，认证通过后不可自行修改</div>
+          <div class="cert-card">
+            <div class="cert-icon">🪪</div>
+            <div class="cert-body">
+              <div class="cert-title">个人实名认证 <span class="chip chip-success">已认证</span></div>
+              <div class="cert-desc">张** · 身份证 2301**********0012 · 认证时间 2026-03-02</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="toast('实名信息如需变更，请提交人工审核工单（演示）','info')">变更申请</button>
+          </div>
+          <div class="cert-card">
+            <div class="cert-icon">🏛️</div>
+            <div class="cert-body">
+              <div class="cert-title">机构认证 <span class="chip chip-success">已认证</span></div>
+              <div class="cert-desc">智慧农场技术与系统全国重点实验室 · 科研机构 · 认证时间 2026-03-05</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="toast('机构认证材料可在有效期内更新（演示）','info')">查看材料</button>
+          </div>
+          <div class="cert-card">
+            <div class="cert-icon">🧑‍💻</div>
+            <div class="cert-body">
+              <div class="cert-title">开发者资质 <span class="chip chip-success">已开通</span></div>
+              <div class="cert-desc">已通过入驻审核，可使用开发者中心的密钥管理与 API 接入能力</div>
+            </div>
+            <button class="btn btn-default btn-sm" onclick="location.href='developer-center.html'">前往开发者中心</button>
+          </div>
+          <p style="font-size:12px;color:rgba(0,0,0,0.4);margin-top:4px">尚未入驻的机构可通过 <a href="apply-settlement.html" style="color:#2f54eb">申请入驻</a> 提交认证材料。</p>
+        </div>
+      </section>
+
+      <!-- 4. 通知设置 -->
+      <section class="settings-panel" id="panel-notify">
+        <div class="card">
+          <h3>通知类型</h3>
+          <div class="card-desc">选择你希望接收的平台消息</div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">系统通知</div>
+              <div class="setting-desc">平台公告、资源扩容、维护计划等</div>
+            </div>
+            <div class="switch on" onclick="toggleSwitch(this,'系统通知')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">需求动态</div>
+              <div class="setting-desc">需求被接单、进度更新、验收结果等</div>
+            </div>
+            <div class="switch on" onclick="toggleSwitch(this,'需求动态')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">模型构建与部署</div>
+              <div class="setting-desc">训练完成、构建成功/失败、推理服务状态变更</div>
+            </div>
+            <div class="switch on" onclick="toggleSwitch(this,'模型构建与部署')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-title">密钥与配额提醒</div>
+              <div class="setting-desc">API 密钥即将到期、调用量接近配额上限</div>
+            </div>
+            <div class="switch on" onclick="toggleSwitch(this,'密钥与配额提醒')"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>接收方式</h3>
+          <div class="card-desc">重要安全类消息将始终通过短信发送，不受此设置影响</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">站内消息</div></div>
+            <div class="switch on" onclick="toggleSwitch(this,'站内消息')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">邮件</div></div>
+            <div class="switch on" onclick="toggleSwitch(this,'邮件')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-title">短信</div></div>
+            <div class="switch" onclick="toggleSwitch(this,'短信')"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 偏好设置 -->
+      <section class="settings-panel" id="panel-pref">
+        <div class="card">
+          <h3>外观</h3>
+          <div class="card-desc">选择界面主题，仅对当前浏览器生效</div>
+          <div class="theme-options" id="themeOptions">
+            <div class="theme-opt active" data-theme="light" onclick="setTheme('light')">
+              <div class="theme-thumb light"></div>
+              <div class="theme-opt-label">浅色</div>
+            </div>
+            <div class="theme-opt" data-theme="dark" onclick="setTheme('dark')">
+              <div class="theme-thumb dark"></div>
+              <div class="theme-opt-label">深色</div>
+            </div>
+            <div class="theme-opt" data-theme="auto" onclick="setTheme('auto')">
+              <div class="theme-thumb auto"></div>
+              <div class="theme-opt-label">跟随系统</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>通用</h3>
+          <div class="card-desc">登录后的默认行为</div>
+          <div class="form-row">
+            <div class="form-label">默认首页</div>
+            <div class="form-field">
+              <select class="form-select" id="fLanding" onchange="toast('已保存：登录后默认进入「'+this.options[this.selectedIndex].text+'」','success')">
+                <option value="portal">门户首页</option>
+                <option value="workbench">个人中心（工作台）</option>
+                <option value="marketplace">模型广场</option>
+                <option value="devcenter">开发者中心</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">语言</div>
+            <div class="form-field">
+              <select class="form-select">
+                <option>简体中文</option>
+              </select>
+              <div class="form-hint">当前版本仅提供简体中文</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- 修改密码弹窗 -->
+<div class="modal-overlay" id="pwdModal">
+  <div class="modal">
+    <h3>修改登录密码</h3>
+    <div class="form-row">
+      <div class="form-label">当前密码</div>
+      <div class="form-field"><input type="password" class="form-input" id="pwdOld" placeholder="请输入当前密码"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">新密码</div>
+      <div class="form-field"><input type="password" class="form-input" id="pwdNew" placeholder="8-20 位，含字母与数字"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">确认新密码</div>
+      <div class="form-field"><input type="password" class="form-input" id="pwdNew2" placeholder="再次输入新密码"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closePwdModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitPwd()">确认修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- 退出确认 -->
+<div class="modal-overlay" id="logoutOverlay">
+  <div class="modal">
+    <h3>确定退出登录？</h3>
+    <p style="font-size:13px;color:rgba(0,0,0,0.55)">退出后需重新登录才能访问个人数据。</p>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('logoutOverlay').classList.remove('on')">取消</button>
+      <button class="btn btn-primary" onclick="doLogout()">确定退出</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== TOAST =====
+function toast(msg, type){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast visible toast-' + (type || 'info');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('visible'); }, 3000);
+}
+function showToast(type, msg){ toast(msg, type); }
+
+// ===== AUTH STATE（全站标准）=====
+function isLoggedIn() { try { return localStorage.getItem('luoshu_logged_in') === '1'; } catch(e) { return false; } }
+function switchAuthState(loggedIn) {
+  document.getElementById('headerAuthOut').style.display = loggedIn ? 'none' : '';
+  document.getElementById('headerAuthIn').style.display = loggedIn ? '' : 'none';
+}
+(function(){ switchAuthState(isLoggedIn()); })();
+
+// ===== 积分系统（全站共享 localStorage.luoshu_points）=====
+var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
+function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
+function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
+function getRemainingFreeCalls() { return getFreeCalls(); }
+function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
+function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong>' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
+function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
+if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
+
+// ===== 顶导 =====
+var NAV_TARGETS = { home:'portal.html', marketplace:'model-marketplace.html', cases:'case-center.html', data:'dataset-management.html', demand:'demand-hall.html', devcenter:'developer-center.html' };
+document.getElementById('topNavMenu').addEventListener('click', function(e) {
+  var item = e.target.closest('.top-nav-item');
+  if (!item) return;
+  var nav = item.getAttribute('data-nav');
+  if (nav && NAV_TARGETS[nav]) { location.href = NAV_TARGETS[nav]; }
+});
+
+// ===== HEADER 交互 =====
+function toggleNotifPopover(){ document.getElementById('notifPopover').classList.toggle('visible'); closeUserMenu(); }
+function toggleUserMenu(){ document.getElementById('userDropdown').classList.toggle('visible'); var np=document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); }
+function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('userDropdownWrap');
+  if(wrap && !wrap.contains(e.target)){ closeUserMenu(); }
+  var popover=document.getElementById('notifPopover'), btn=document.getElementById('notifBtn');
+  if(popover && popover.classList.contains('visible') && !popover.contains(e.target) && e.target!==btn && !btn.contains(e.target)){ popover.classList.remove('visible'); }
+});
+function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
+function doLogout(){ try { localStorage.removeItem('luoshu_logged_in'); } catch(e){} document.getElementById('logoutOverlay').classList.remove('on'); switchAuthState(false); toast('已退出登录','info'); }
+
+// ===== 设置面板切换（支持深链 ?tab=security）=====
+function switchPanel(p){
+  document.querySelectorAll('.settings-panel').forEach(function(s){ s.classList.remove('active'); });
+  var panel = document.getElementById('panel-'+p);
+  if(panel) panel.classList.add('active');
+  document.querySelectorAll('.settings-nav-item').forEach(function(n){ n.classList.toggle('active', n.dataset.panel===p); });
+  try { history.replaceState(null,'', '?tab='+p); } catch(e){}
+}
+(function(){
+  var m = location.search.match(/[?&]tab=([a-z]+)/);
+  if (m && document.getElementById('panel-'+m[1])) switchPanel(m[1]);
+})();
+
+// ===== 基本资料 =====
+function saveProfile(){
+  var name = document.getElementById('fName').value.trim();
+  if(!name){ toast('姓名不能为空','error'); return; }
+  document.getElementById('avatarPreview').textContent = name.charAt(0);
+  var headerAvatar = document.getElementById('userAvatarBtn');
+  if(headerAvatar) headerAvatar.textContent = name.charAt(0);
+  toast('基本资料已保存','success');
+}
+
+// ===== 安全设置 =====
+function openPwdModal(){ document.getElementById('pwdModal').classList.add('on'); }
+function closePwdModal(){ document.getElementById('pwdModal').classList.remove('on'); ['pwdOld','pwdNew','pwdNew2'].forEach(function(id){ document.getElementById(id).value=''; }); }
+function submitPwd(){
+  var o = document.getElementById('pwdOld').value, n = document.getElementById('pwdNew').value, n2 = document.getElementById('pwdNew2').value;
+  if(!o){ toast('请输入当前密码','error'); return; }
+  if(n.length < 8 || n.length > 20 || !/[a-zA-Z]/.test(n) || !/[0-9]/.test(n)){ toast('新密码需 8-20 位且包含字母与数字','error'); return; }
+  if(n !== n2){ toast('两次输入的新密码不一致','error'); return; }
+  closePwdModal();
+  toast('密码修改成功，下次登录请使用新密码','success');
+}
+function toggleSwitch(el, label){
+  el.classList.toggle('on');
+  toast(label + (el.classList.contains('on') ? '已开启' : '已关闭'), 'success');
+}
+function removeDevice(btn){
+  var row = btn.closest('.device-row');
+  row.style.opacity = '0.4';
+  btn.disabled = true; btn.textContent = '已下线';
+  toast('该设备已下线，其登录状态已失效','success');
+}
+
+// ===== 偏好：主题 =====
+function setTheme(t){
+  try { localStorage.setItem('luoshu_theme', t); } catch(e){}
+  var applied = t;
+  if (t === 'auto') { applied = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+  document.documentElement.setAttribute('data-prefers-color', applied);
+  document.querySelectorAll('.theme-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.theme===t); });
+  toast('外观已切换为「' + (t==='light'?'浅色':t==='dark'?'深色':'跟随系统') + '」','success');
+}
+(function(){
+  var t; try { t = localStorage.getItem('luoshu_theme'); } catch(e){}
+  if (t && t !== 'light') {
+    document.querySelectorAll('.theme-opt').forEach(function(o){ o.classList.toggle('active', o.dataset.theme===t); });
+    var applied = t === 'auto' ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light') : t;
+    document.documentElement.setAttribute('data-prefers-color', applied);
+  }
+})();
+</script>
+</body>
+</html>

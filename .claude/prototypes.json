@@ -1,8 +1,8 @@
 {
   "_description": "洛书·模型服务平台 — 原型文件注册表。新增原型时在此文件中追加条目，并同步更新所有已有原型的侧边栏导航链接。",
-  "_updated": "2026-07-27",
+  "_updated": "2026-07-28",
   "_convention": {
-    "sidebar": "每个原型的侧边栏分为两个 group：'模型管理'（资源总览、模型部署）和 '开发中心'（镜像管理、在线开发、工作流）。新增原型时在对应 group 下添加菜单项，并在所有其他原型的侧边栏中添加指向新原型的链接。推理服务已整合至工作台「我的模型→发布」抽屉中。",
+    "sidebar": "每个原型的侧边栏分为两个 group：'模型管理'（资源总览、模型部署）和 '开发中心'（镜像管理、在线开发、工作流）。新增原型时在对应 group 下添加菜单项，并在所有其他原型的侧边栏中添加指向新原型的链接。推理服务已整合至工作台「我的模型→发布」抽屉中。顶层菜单含：首页/模型广场/案例中心/数据管理/开发者中心/需求市场（文档中心 v1.6 起不再是顶层菜单，改为内嵌于开发者中心左侧菜单的「文档中心」视图，iframe 载入 doc-center.html?embed=1）。开发者中心侧边栏含 6 项：概览/快速开始/API中心/SDK&工具/文档中心/个人凭证。",
     "naming": "原型文件使用英文小写+连字符命名，如 model-deployment.html、image-custom-list.html",
     "registry": "每次新增或删除原型，必须同步更新此注册表文件"
   },
@@ -12,10 +12,10 @@
       "file": "portal.html",
       "title": "门户首页",
       "module": "首页",
-      "description": "门户首页v3(供需对接定位，面向消费侧客户)。品牌名：北大荒智慧农业协同创新平台。Hero badge「科研力量汇聚·供需精准对接」，h1「连接顶尖科研力量，解决田间真实需求」。3项统计(187+模型/50+数据集/农场需求已落地)。5优势卡片(科研力量→需求匹配→数据优势→场景深耕→开箱即用)，强调实力背书+服务承诺双线叙事。6个section：Hero→热门模型→数据资源→需求大厅预览→合作机构。文案已统一：全页以供需对接为主线，协同创新为品牌名，消除三种不同描述造成的认知负担。",
+      "description": "门户首页v4（供需对接定位）。4个精选案例改为真实企业案例（极飞科技/北大荒×哈工大/先正达/托普云农），含实景图片。6个section：Hero→热门模型→精选案例→数据资源→需求大厅→合作机构。文案已调整为去'独家/壁垒'话术，需求大厅改为'需求驱动'叙事。",
       "status": "active",
       "created": "2026-07-23",
-      "linksTo": ["model-marketplace"]
+      "linksTo": ["model-marketplace", "developer-center"]
     },
     {
       "id": "login",
@@ -35,7 +35,7 @@
       "description": "登录后工作台 7 Tab（模型/数据集/需求/任务/镜像/在线开发/我的申请），快速创建入口，候选人筛选 Modal，申请审批追踪",
       "status": "active",
       "created": "2026-07-23",
-      "linksTo": ["portal", "model-marketplace", "model-deployment", "image-custom-list"]
+      "linksTo": ["portal", "model-marketplace", "model-deployment", "image-custom-list", "developer-center"]
     },
     {
       "id": "model-deployment",
@@ -86,7 +86,7 @@
       "status": "active",
       "created": "2026-07-24",
       "updated": "2026-07-24",
-      "linksTo": ["model-deployment", "image-custom-list"]
+      "linksTo": ["model-deployment", "image-custom-list", "developer-center"]
     },
     {
       "id": "demand-hall",
@@ -96,7 +96,7 @@
       "description": "需求市场卡片网格页（模型广场风格，左侧238px筛选面板+2列卡片网格+分页）。14条Mock数据。核心操作：发布需求（抽屉）、申请接单（候选池机制，非直接分配）、查看详情。已申请显示✓已申请。",
       "status": "active",
       "created": "2026-07-26",
-      "linksTo": ["demand-my", "demand-workspace", "portal"]
+      "linksTo": ["demand-my", "demand-workspace", "portal", "developer-center"]
     },
     {
       "id": "demand-my",
@@ -188,7 +188,7 @@
       "status": "active",
       "created": "2026-07-27",
       "updated": "2026-07-27",
-      "linksTo": ["portal", "model-deployment"]
+      "linksTo": ["portal", "model-deployment", "developer-center"]
     },
     {
       "id": "notebook-ide",
@@ -204,11 +204,63 @@
       "id": "doc-center",
       "file": "doc-center.html",
       "title": "文档中心",
-      "module": "文档中心",
-      "description": "平台文档中心原型（3栏布局：左侧280px导航树+中间内容区+右侧200px锚点目录）。10大分类、26篇文档覆盖平台全部功能模块，面向研发侧和消费侧双角色。支持搜索过滤、折叠分类、TOC锚点滚动定位、登录态铃铛通知。参考 ModelScope 文档中心设计。",
+      "module": "开发者中心（内嵌）",
+      "description": "平台文档中心原型（3栏布局：左侧280px导航树+中间内容区+右侧200px锚点目录）。10大分类、26篇文档覆盖平台全部功能模块，面向研发侧和消费侧双角色。支持搜索过滤、折叠分类、TOC锚点滚动定位、登录态铃铛通知。参考 ModelScope 文档中心设计。v1.6 起不再是顶层菜单，改为内嵌于「开发者中心」左侧菜单（iframe 载入 doc-center.html?embed=1，隐藏自身顶部菜单与 footer），作为开发者中心的「文档中心」视图。",
       "status": "active",
       "created": "2026-07-27",
-      "linksTo": ["portal", "workbench", "model-marketplace"]
+      "updated": "2026-07-28",
+      "embeddedIn": "developer-center",
+      "linksTo": ["portal", "workbench", "model-marketplace", "developer-center"]
+    },
+    {
+      "id": "case-center",
+      "file": "case-center.html",
+      "title": "案例中心",
+      "module": "案例中心",
+      "description": "案例中心页（左侧行业场景垂直菜单 + 顶部筛选标签 + 3列案例卡片网格 + 分页）。16个真实企业案例覆盖8大行业场景（新增精准农业/AI大模型）。全部案例含具体地点（省·市/县）、真实事件背景、量化数据。4个精选案例显示实景图片（assets/cases/*.webp）。支持行业分类切换与交付状态/作物/技术筛选。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["portal", "model-marketplace", "developer-center"]
+    },
+    {
+      "id": "case-detail",
+      "file": "case-detail.html",
+      "title": "案例详情",
+      "module": "案例中心",
+      "description": "案例详情页（URL参数?id=读取ALL_CASES）。Breadcrumb导航+Hero Banner（标题+状态+机构+地点+标签）+两栏布局（左65%：业务背景/技术方案/落地效果/机构简介4个section，右35%：案例信息卡片+相关案例推荐）。16个案例全部提供4段完整详情内容，落地效果用stat cards展示量化指标。从case-center.html点击案例卡片跳转。",
+      "status": "active",
+      "created": "2026-07-27",
+      "linksTo": ["case-center", "portal"]
+    },
+    {
+      "id": "developer-center",
+      "file": "developer-center.html",
+      "title": "开发者中心",
+      "module": "开发者中心",
+      "description": "开发者中心高保真原型（顶层菜单一级项，与首页/模型广场/案例中心/数据管理/需求市场/文档中心平级，非工作台子页）。覆盖5模块：概览/快速开始/API中心(能力目录·密钥·调试台·代码示例)/SDK&工具/文档与教程/个人凭证。定位为工作台的外围赋能层，补齐API消费层+上手引导+文档重组；不含社区/创空间/认证成长。面包屑「开发者中心/子模块」强化顶层菜单层级。",
+      "status": "active",
+      "created": "2026-07-28",
+      "linksTo": ["portal", "model-marketplace", "case-center", "dataset-management", "demand-hall", "doc-center", "workbench"]
+    },
+    {
+      "id": "apply-settlement",
+      "file": "apply-settlement.html",
+      "title": "申请入驻",
+      "module": "首页",
+      "description": "申请入驻说明展示页（门户级信息页，非功能模块）。复用门户页设计语言（6项顶导、footer、主色#2f54eb）。含面包屑(门户首页>申请入驻)、Hero、平台为谁开放(消费侧农场企业/研发侧科研机构/集成侧开发者)、入驻后可做什么能力网格、四步入驻流程、入驻须知FAQ、末尾CTA。内容为说明与展示文字，无表单。提供返回门户首页入口(顶导/面包屑/Hero/CTA/浮动按钮)与联系管理员申请(toast)。受邀注册制说明。各原型头部与页脚的申请入驻/入驻申请入口已统一指向本页。",
+      "status": "active",
+      "created": "2026-07-28",
+      "linksTo": ["portal", "model-marketplace", "developer-center", "demand-hall", "workbench"]
+    },
+    {
+      "id": "account-settings",
+      "file": "account-settings.html",
+      "title": "账号设置",
+      "module": "个人中心",
+      "description": "账号设置页（标准header：6项顶导+登录态+积分徽章）。左侧粘性设置导航+右侧五个面板：①基本资料(头像/姓名/所属机构只读/平台角色chip/研究方向/简介，保存后同步header头像首字)；②安全设置(修改密码弹窗含强度校验、更换手机/邮箱、两步验证开关、登录设备列表可下线)；③实名与机构认证(个人实名/机构认证/开发者资质三张认证卡，均已认证态，链接开发者中心与申请入驻)；④通知设置(4类通知开关+3种接收方式开关)；⑤偏好设置(浅色/深色/跟随系统主题选择持久化localStorage.luoshu_theme、默认首页、语言)。支持深链?tab=security。全站21个原型页用户下拉在「个人中心」后接入「⚙️账号设置」入口。",
+      "status": "active",
+      "created": "2026-07-28",
+      "linksTo": ["portal", "workbench", "developer-center", "apply-settlement"]
     }
   ],
   "planned": []

@@ -256,15 +256,12 @@ button { cursor: pointer; border: none; background: none; }
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
-        <a class="top-nav-item" href="portal.html">首页</a>
-        <span class="top-nav-item" data-nav="marketplace">模型广场</span>
-        <span class="top-nav-item" data-nav="data">数据管理</span>
-        <!-- <span class="top-nav-item" data-nav="dev">开发中心</span> -->
-        <span class="top-nav-item" data-nav="demand">需求市场</span>
-        <!-- <span class="top-nav-item" data-nav="appcenter">应用中心</span> -->
-        <!-- <span class="top-nav-item" data-nav="apps">智能应用</span> -->
-      </div></div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
       <div class="header-right">
         <a class="header-btn-login" href="portal.html">← 返回首页</a>
       </div>
@@ -329,7 +326,7 @@ button { cursor: pointer; border: none; background: none; }
         还没有账号？平台采用<strong>受邀注册制</strong><br>
         请先通过机构入驻申请，由管理员分配账号
       </p>
-      <p class="login-back"><a href="javascript:void(0)" onclick="goToPortalAbout()">了解入驻流程 →</a></p>
+      <p class="login-back"><a href="javascript:void(0)" onclick="location.href='apply-settlement.html'">了解入驻流程 →</a></p>
       <p class="login-back"><a href="portal.html">← 返回首页</a></p>
     </div>
   </div>
@@ -450,7 +447,7 @@ function doLogin(){
     var success = Math.random() < 0.9;
     if (success) {
       // Store login state
-      try { sessionStorage.setItem('luoshu_logged_in', '1'); } catch(e) {}
+      try { localStorage.setItem('luoshu_logged_in', '1'); } catch(e) {}
       try { if (!localStorage.getItem('luoshu_points')) localStorage.setItem('luoshu_points', '1000'); if (!localStorage.getItem('luoshu_free_calls')) localStorage.setItem('luoshu_free_calls', '3'); } catch(e) {}
       toast('登录成功，正在跳转…', 'success');
       var params = new URLSearchParams(window.location.search);

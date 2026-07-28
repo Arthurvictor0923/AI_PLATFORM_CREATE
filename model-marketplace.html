@@ -823,7 +823,25 @@ button { cursor: pointer; border: none; background: none; }
 .points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
 .points-badge:hover { background: rgba(47,84,235,0.12); }
 [data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer { background: #001529; color: rgba(255,255,255,0.65); padding: 48px 50px 24px; font-size: 13px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+.footer-col h4 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 16px; }
+.footer-col p, .footer-col a { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 2.2; display: block; text-decoration: none; }
+.footer-col a:hover { color: #597ef7; }
+.footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-logo span { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.footer-bot { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.8; }
 </style>
+<style>
+.card-ico{width:100%;height:100%;display:block;object-fit:contain;border-radius:inherit}
+.card-ico.xs{width:16px;height:16px}
+.card-ico.notif{width:18px;height:18px;flex-shrink:0}
+</style>
+<script>function ico(k,c){var ov={'corn':'assets/models/model-corn.webp','soybean':'assets/models/model-soybean.webp','wheat':'assets/datasets/ds-crop.webp','satellite':'assets/datasets/ds-satellite.webp','drone':'assets/datasets/ds-drone.webp','cloud-sun':'assets/datasets/ds-weather.webp','flask-conical':'assets/datasets/ds-soil.webp','map':'assets/datasets/ds-gis.webp'};var s=ov[k]||('assets/card-img/'+k+'.webp');return '<img class="card-ico'+(c?' '+c:'')+'" src="'+s+'" alt="" onerror="this.onerror=null;this.src=\'assets/icons/'+k+'.svg\'">';}</script>
 </head>
 <body>
 
@@ -845,23 +863,21 @@ button { cursor: pointer; border: none; background: none; }
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
-        <span class="top-nav-item" data-nav="home">首页</span>
-        <span class="top-nav-item active" data-nav="marketplace">模型广场</span>
-        <span class="top-nav-item" data-nav="data">数据管理</span>
-        <!-- <span class="top-nav-item" data-nav="dev">开发中心</span> -->
-        <span class="top-nav-item" data-nav="demand">需求市场</span>
-        <span class="top-nav-item" data-nav="docs">文档中心</span>
-        <!-- <span class="top-nav-item" data-nav="appcenter">应用中心</span> -->
-        <!-- <span class="top-nav-item" data-nav="apps">智能应用</span> -->
-      </div></div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item active" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
       <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+
         <span id="headerAuthOut">
           <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
-          <a class="header-btn-register" href="portal.html?open=about">申请入驻</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
         </span>
         <span id="headerAuthIn" style="display:none">
-          <button class="header-btn" title="搜索"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+          
           <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
           <div class="notif-popover" id="notifPopover">
             <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
@@ -883,6 +899,7 @@ button { cursor: pointer; border: none; background: none; }
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
               <div class="dropdown-divider"></div>
               <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
             </div>
@@ -978,7 +995,7 @@ button { cursor: pointer; border: none; background: none; }
     <!-- Model Header Card -->
     <div class="md-header-card">
       <div class="md-header-top">
-        <div class="md-header-icon" id="mdIcon">🌽</div>
+        <div class="md-header-icon" id="mdIcon"><img class="card-ico" src="assets/icons/corn.svg" alt=""></div>
         <div class="md-header-info">
           <div class="md-header-title-row">
             <h1 class="md-header-name" id="mdName">模型名称</h1>
@@ -1083,7 +1100,7 @@ button { cursor: pointer; border: none; background: none; }
     <!-- Collection Header -->
     <div class="cd-header-card">
       <div class="cd-header-top">
-        <div class="cd-header-icon" id="cdIcon">📁</div>
+        <div class="cd-header-icon" id="cdIcon"><img class="card-ico" src="assets/icons/folder.svg" alt=""></div>
         <div class="cd-header-info">
           <div class="cd-header-title-row">
             <h1 class="cd-header-name" id="cdName">合集名称</h1>
@@ -1191,7 +1208,7 @@ button { cursor: pointer; border: none; background: none; }
           <span class="lj-relation-badge parent" id="ljRelationBadge">上游模型</span>
         </div>
         <div class="lj-model-preview">
-          <div class="lj-model-icon" id="ljIcon">🧠</div>
+          <div class="lj-model-icon" id="ljIcon"><img class="card-ico" src="assets/icons/brain.svg" alt=""></div>
           <div class="lj-model-info">
             <div class="lj-model-name" id="ljName">模型名称</div>
             <div class="lj-model-meta" id="ljMeta">--</div>
@@ -1361,10 +1378,10 @@ var MODELS = [
   // =====================================================================
   // 1. 玉米病虫害遥感识别模型集 (COLLECTION)
   // =====================================================================
-  {cardType:'collection', icon:'🌽', title:'玉米病虫害遥感识别模型集', tags:['作物识别','无人机遥感','目标检测','规模应用'], category:'作物识别', scene:'管', direction:'规模应用', models:[
-    {icon:'🌽',name:'玉米病虫害识别 v1',size:'1.2 GB',desc:'基于 Sentinel-2 多光谱影像的玉米常见病害（大斑病、小斑病、锈病）高精度识别模型'},
-    {icon:'🛰️',name:'病虫害遥感检测 v2',size:'980 MB',desc:'融合多时相遥感数据的虫害早期预警与危害等级评估'},
-    {icon:'📷',name:'多光谱影像分析模型',size:'1.5 GB',desc:'多光谱数据预处理与植被指数计算基础模型'}
+  {cardType:'collection', icon:'corn', title:'玉米病虫害遥感识别模型集', tags:['作物识别','无人机遥感','目标检测','规模应用'], category:'作物识别', scene:'管', direction:'规模应用', models:[
+    {icon:'corn',name:'玉米病虫害识别 v1',size:'1.2 GB',desc:'基于 Sentinel-2 多光谱影像的玉米常见病害（大斑病、小斑病、锈病）高精度识别模型'},
+    {icon:'satellite',name:'病虫害遥感检测 v2',size:'980 MB',desc:'融合多时相遥感数据的虫害早期预警与危害等级评估'},
+    {icon:'camera',name:'多光谱影像分析模型',size:'1.5 GB',desc:'多光谱数据预处理与植被指数计算基础模型'}
   ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-20', calls:'1.2k', stars:'89', notebookCost:40, apiCost:25,
     readme:'本模型集面向玉米主要病虫害的遥感监测与识别，包含三个协同工作的子模型：病虫害识别模型基于深度学习目标检测算法，可识别玉米大斑病、小斑病、锈病等常见病害；遥感检测模型融合多时相 Sentinel-2 影像，实现虫害早期预警；多光谱分析模型提供标准化的数据预处理与植被指数计算管线。\n\n三个模型可独立部署，也可编排为推理流水线实现从数据预处理到病虫害诊断的全链路自动化。',
     framework:'PyTorch 2.1 + MMDetection', license:'Apache 2.0', modelSize:'3.7 GB (合计)', inputFormat:'GeoTIFF / 512×512', outputFormat:'GeoJSON 矢量 + 分类栅格', accuracy:'mAP@0.5: 89.2%, 召回率: 92.1%',
@@ -1372,24 +1389,24 @@ var MODELS = [
     requirements:'GPU ≥ 16GB VRAM (NVIDIA T4/A10), CUDA 11.8+, RAM 32GB+',
     deploySteps:['在镜像管理中选择 "crop-pest-detection" 镜像','配置推理服务：GPU ≥ 16GB，副本数 ≥ 2','启动服务后获取 API 端点','调用 /detect 接口传入 GeoTIFF 影像路径'],
     lineage:{ baseModel:'ViT-L/16 (ImageNet-21k)', baseModelLink:null, finetuneStage:'农业病虫害数据集微调 → 多光谱适配训练', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'智慧农场智能决策助手',icon:'🤖',desc:'集成玉米病虫害识别作为核心诊断算子'},{name:'农田病虫害巡检系统',icon:'🔍',desc:'作为病虫害检测算子，驱动无人机巡检流程'}]},
+    relatedApps:[{name:'智慧农场智能决策助手',icon:'bot',desc:'集成玉米病虫害识别作为核心诊断算子'},{name:'农田病虫害巡检系统',icon:'search',desc:'作为病虫害检测算子，驱动无人机巡检流程'}]},
   // =====================================================================
   // 2. 水稻产量预估模型 v2 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌾', title:'水稻产量预估模型 v2', tags:['作物生长检测','卫星遥感','气象预警','时序分析'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'结合气象与 Sentinel-2 遥感数据的端到端产量预测，覆盖黑龙江垦区主要水稻产区', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-18', calls:'856', stars:'67', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'wheat', title:'水稻产量预估模型 v2', tags:['作物生长检测','卫星遥感','气象预警','时序分析'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'结合气象与 Sentinel-2 遥感数据的端到端产量预测，覆盖黑龙江垦区主要水稻产区', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-18', calls:'856', stars:'67', notebookCost:50, apiCost:30,
     readme:'本模型基于多模态深度学习框架，融合气象站数据与 Sentinel-2 卫星遥感影像，实现水稻产量的端到端预测。模型采用 ConvLSTM 架构捕捉 NDVI 时序变化特征，同时引入注意力机制融合气温、降水、日照等气象因子。\n\nv2 版本相比 v1 的主要改进：扩大了训练数据集覆盖范围至黑龙江垦区全部水稻产区，新增了土壤有机质含量作为辅助输入特征，预测精度提升约 12%。',
     framework:'PyTorch 2.0 + ConvLSTM', license:'Apache 2.0', modelSize:'1.8 GB', inputFormat:'GeoTIFF (NDVI 时序) + CSV (气象)', outputFormat:'JSON (分地块产量预测值)', accuracy:'RMSE: 385 kg/ha, R²: 0.87',
     useCases:['寒地水稻产量预测','种植规划与产量目标制定','农业保险定损评估','粮食收储调度决策支持'],
     requirements:'GPU ≥ 8GB VRAM, CUDA 11.8+, RAM 16GB+, 存储 30GB+（时序影像缓存）',
     deploySteps:['选择镜像 "rice-yield-prediction"','配置 GPU 资源 ≥ 8GB','启动推理服务','准备 NDVI 时序 GeoTIFF 与气象 CSV 数据','调用 /predict-yield API 接口'],
     lineage:{ baseModel:'ResNet-50 (ImageNet)', baseModelLink:null, finetuneStage:'时序遥感预训练 → ConvLSTM 产量预测头替换', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'智慧农场智能决策助手',icon:'🤖',desc:'集成产量预测能力，支撑种植规划决策'},{name:'粮食收储调度平台',icon:'🌾',desc:'提供分地块产量预估，驱动仓储调度'}]},
+    relatedApps:[{name:'智慧农场智能决策助手',icon:'bot',desc:'集成产量预测能力，支撑种植规划决策'},{name:'粮食收储调度平台',icon:'wheat',desc:'提供分地块产量预估，驱动仓储调度'}]},
   // =====================================================================
   // 3. 大豆补贴核查工具集 (COLLECTION)
   // =====================================================================
-  {cardType:'collection', icon:'🫘', title:'大豆补贴核查工具集', tags:['分类','作物识别','卫星遥感','精准管控'], category:'分类', scene:'收', direction:'精准管控', models:[
-    {icon:'🫘',name:'大豆种植面积提取',size:'2.1 GB',desc:'基于 Sentinel-2 多时相影像的大豆种植地块自动分割与面积统计'},
-    {icon:'📋',name:'补贴申报数据核查',size:'850 MB',desc:'多源遥感数据交叉验证的补贴申报真实性自动核查'}
+  {cardType:'collection', icon:'soybean', title:'大豆补贴核查工具集', tags:['分类','作物识别','卫星遥感','精准管控'], category:'分类', scene:'收', direction:'精准管控', models:[
+    {icon:'soybean',name:'大豆种植面积提取',size:'2.1 GB',desc:'基于 Sentinel-2 多时相影像的大豆种植地块自动分割与面积统计'},
+    {icon:'clipboard-check',name:'补贴申报数据核查',size:'850 MB',desc:'多源遥感数据交叉验证的补贴申报真实性自动核查'}
   ], uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-15', calls:'634', stars:'45', notebookCost:40, apiCost:25,
     readme:'本工具集面向大豆种植补贴核查业务场景，解决传统人工核查效率低、覆盖不全的痛点。种植面积提取模型基于 U-Net++ 语义分割架构，利用大豆关键生育期的多时相 Sentinel-2 影像实现地块级自动提取。数据核查模型通过多源遥感数据交叉验证，自动比对申报面积与遥感提取面积的差异，标记异常申报记录。\n\n两模型可串联使用：先提取实际种植面积，再与申报数据自动比对，生成核查报告。',
     framework:'PyTorch 2.1 + U-Net++', license:'Apache 2.0', modelSize:'2.95 GB (合计)', inputFormat:'GeoTIFF (Sentinel-2 L2A) + CSV (申报数据)', outputFormat:'GeoJSON + PDF 核查报告', accuracy:'面积提取 mIoU: 0.91, 核查准确率: 94.3%',
@@ -1397,25 +1414,25 @@ var MODELS = [
     requirements:'GPU ≥ 12GB VRAM, CUDA 11.8+, RAM 24GB+, 存储 50GB+',
     deploySteps:['选择镜像 "soybean-subsidy-audit"','配置推理服务：GPU ≥ 12GB','分别部署面积提取与数据核查两个服务端点','调用 /extract-area 和 /audit-claim 接口'],
     lineage:{ baseModel:'Swin Transformer (ImageNet-22k)', baseModelLink:null, finetuneStage:'农业遥感语义分割预训练 → 补贴核查场景精调', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'农业补贴精准发放平台',icon:'💰',desc:'集成大豆面积核查能力，支撑补贴发放审核'}]},
+    relatedApps:[{name:'农业补贴精准发放平台',icon:'badge-dollar-sign',desc:'集成大豆面积核查能力，支撑补贴发放审核'}]},
   // =====================================================================
   // 4. 林草湿地变化监测模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌲', title:'林草湿地变化监测模型', tags:['变化检测','卫星遥感','分割','多期影像'], category:'变化检测', scene:'管', direction:'规模应用', desc:'2018–2025 年多期变化图斑自动检测算法，支持耕地、林地、草地、湿地变化识别', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-12', calls:'412', stars:'31', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'tree-pine', title:'林草湿地变化监测模型', tags:['变化检测','卫星遥感','分割','多期影像'], category:'变化检测', scene:'管', direction:'规模应用', desc:'2018–2025 年多期变化图斑自动检测算法，支持耕地、林地、草地、湿地变化识别', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-12', calls:'412', stars:'31', notebookCost:50, apiCost:30,
     readme:'基于 Siamese-UNet 双时相变化检测架构，支持耕地、林地、草地、湿地四种地类的变化图斑自动提取。模型使用 2018–2025 年 Landsat 8/9 和 Sentinel-2 构建的多期影像数据集训练，可检测新增、消失、类型转换等多种变化模式。\n\n输出包含变化图斑矢量边界、变化类型分类、变化时间推断，可直接导入 GIS 系统进行后续分析。',
     framework:'PyTorch 2.0 + Siamese-UNet', license:'MIT', modelSize:'2.4 GB', inputFormat:'双期 GeoTIFF (512×512)', outputFormat:'GeoJSON (变化图斑) + 变化类型栅格', accuracy:'变化检测 F1: 0.88, 类型分类 OA: 91.5%',
     useCases:['退耕还林/还草监测','湿地保护与恢复评估','建设用地扩张监测','年度国土变更调查'],
     requirements:'GPU ≥ 16GB VRAM, CUDA 11.8+, RAM 32GB+',
     deploySteps:['选择镜像 "landcover-change-detection"','配置 GPU ≥ 16GB','启动推理服务','准备前后两期影像（含预处理）','调用 /detect-change 接口'],
     lineage:{ baseModel:'EfficientNet-B7 (ImageNet)', baseModelLink:null, finetuneStage:'变化检测数据集预训练 → 多类别地类变化精调', parentModel:'耕地变化检测工具集 - 地块变化检测', parentModelIdx:6 },
-    relatedApps:[{name:'国土变更调查系统',icon:'🗺️',desc:'驱动林草湿地类变化图斑自动提取'}]},
+    relatedApps:[{name:'国土变更调查系统',icon:'map',desc:'驱动林草湿地类变化图斑自动提取'}]},
   // =====================================================================
   // 5. 土壤养分遥感反演模型集 (COLLECTION)
   // =====================================================================
-  {cardType:'collection', icon:'🗺️', title:'土壤养分遥感反演模型集', tags:['分类','分割','卫星遥感','精准管控'], category:'分类', scene:'种', direction:'精准管控', models:[
-    {icon:'🗺️',name:'有机质含量反演',size:'1.6 GB',desc:'基于多光谱遥感与地形因子的土壤有机质空间分布反演模型'},
-    {icon:'🧪',name:'氮磷钾空间分布',size:'1.3 GB',desc:'融合遥感与土壤采样数据的氮磷钾养分空间插值与制图'},
-    {icon:'📊',name:'土壤肥力评估',size:'980 MB',desc:'综合多指标的耕地土壤肥力等级划分与推荐施肥方案'}
+  {cardType:'collection', icon:'map', title:'土壤养分遥感反演模型集', tags:['分类','分割','卫星遥感','精准管控'], category:'分类', scene:'种', direction:'精准管控', models:[
+    {icon:'map',name:'有机质含量反演',size:'1.6 GB',desc:'基于多光谱遥感与地形因子的土壤有机质空间分布反演模型'},
+    {icon:'flask-conical',name:'氮磷钾空间分布',size:'1.3 GB',desc:'融合遥感与土壤采样数据的氮磷钾养分空间插值与制图'},
+    {icon:'bar-chart-3',name:'土壤肥力评估',size:'980 MB',desc:'综合多指标的耕地土壤肥力等级划分与推荐施肥方案'}
   ], uploader:'张研究员', org:'全重实验室', updated:'2026-07-10', calls:'520', stars:'38', notebookCost:40, apiCost:25,
     readme:'本模型集利用多源遥感数据（Sentinel-2、DEM、气候数据）结合地面土壤采样点，实现耕地土壤养分的高精度空间反演。有机质反演模型采用随机森林+地理加权回归的混合方法；氮磷钾分布模型基于 cokriging 空间插值；肥力评估模型综合多指标进行等级划分。\n\n适用于精准施肥决策、高标准农田建设规划、耕地质量评价等场景。',
     framework:'scikit-learn + XGBoost + PyTorch', license:'Apache 2.0', modelSize:'3.88 GB (合计)', inputFormat:'GeoTIFF (遥感+DEM) + CSV (采样点)', outputFormat:'GeoTIFF (养分分布图) + PDF (评估报告)', accuracy:'有机质 R²: 0.82, 氮 R²: 0.78, 磷 R²: 0.73, 钾 R²: 0.76',
@@ -1423,24 +1440,24 @@ var MODELS = [
     requirements:'GPU ≥ 8GB VRAM, RAM 32GB+, 存储 100GB+（多源数据）',
     deploySteps:['选择镜像 "soil-nutrient-inversion"','配置推理服务：GPU ≥ 8GB','上传遥感影像与采样点 CSV','调用 /invert-nutrient 接口获取养分分布图'],
     lineage:{ baseModel:'XGBoost + GWR 混合模型', baseModelLink:null, finetuneStage:'东北黑土区土壤采样数据训练 → 多光谱协变量引入', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'精准施肥处方图系统',icon:'🧪',desc:'集成养分反演结果，生成变量施肥处方图'},{name:'高标准农田评估平台',icon:'🏗️',desc:'驱动耕地质量等级评价模块'}]},
+    relatedApps:[{name:'精准施肥处方图系统',icon:'flask-conical',desc:'集成养分反演结果，生成变量施肥处方图'},{name:'高标准农田评估平台',icon:'building-2',desc:'驱动耕地质量等级评价模块'}]},
   // =====================================================================
   // 6. 智慧农场智能决策助手 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🤖', title:'智慧农场智能决策助手', tags:['大语言模型','智能装备','决策支持','种','管','收'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'集成长势监测+产量预测+病虫害识别的综合性智能应用，支持多模型协同编排', uploader:'陈教授', org:'中国农业大学', updated:'2026-07-08', calls:'1.8k', stars:'156', notebookCost:80, apiCost:60,
+  {cardType:'model', icon:'bot', title:'智慧农场智能决策助手', tags:['大语言模型','智能装备','决策支持','种','管','收'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'集成长势监测+产量预测+病虫害识别的综合性智能应用，支持多模型协同编排', uploader:'陈教授', org:'中国农业大学', updated:'2026-07-08', calls:'1.8k', stars:'156', notebookCost:80, apiCost:60,
     readme:'基于农业垂直领域大语言模型（AgriLLM-7B）的综合性智能决策助手，集成了长势监测、产量预测、病虫害识别、农事建议四大核心能力。模型在 500 万条农业科技文献、农技推广资料、田间试验报告上进行继续训练，具备专业的农业知识问答与决策推理能力。\n\n支持自然语言交互，农户可通过语音或文字描述田间情况，系统自动调用相应的视觉模型进行分析并给出综合建议。',
     framework:'PyTorch 2.1 + vLLM (AgriLLM-7B)', license:'Apache 2.0', modelSize:'14 GB (FP16)', inputFormat:'自然语言文本 + 可选图片', outputFormat:'JSON (结构化决策建议)', accuracy:'农技问答准确率: 91.2%, 决策建议采纳率: 87.5%',
     useCases:['农事操作最佳时间窗推荐','病虫害诊断与防治建议','施肥与灌溉决策支持','农产品市场价格预测'],
     requirements:'GPU ≥ 24GB VRAM (A10/A100), CUDA 12.1+, RAM 64GB+, 存储 100GB+',
     deploySteps:['选择镜像 "agrillm-assistant"','配置高配 GPU ≥ 24GB (推荐 A100)','启动推理服务（首次加载约 2 分钟）','通过 RESTful API 或 WebSocket 进行自然语言交互'],
     lineage:{ baseModel:'Qwen-7B (阿里通义千问)', baseModelLink:null, finetuneStage:'500万条农业文献继续训练 → 农技知识 RAG 对齐 → 多模态视觉接入', parentModel:'农业知识问答大模型', parentModelIdx:10 },
-    relatedApps:[{name:'农场管理驾驶舱',icon:'📊',desc:'作为核心智能助手，集成全部农场决策能力'},{name:'农技服务小程序',icon:'📱',desc:'面向农户提供自然语言农技问答'}]},
+    relatedApps:[{name:'农场管理驾驶舱',icon:'bar-chart-3',desc:'作为核心智能助手，集成全部农场决策能力'},{name:'农技服务小程序',icon:'smartphone',desc:'面向农户提供自然语言农技问答'}]},
   // =====================================================================
   // 7. 耕地变化检测工具集 (COLLECTION)
   // =====================================================================
-  {cardType:'collection', icon:'🛰️', title:'耕地变化检测工具集', tags:['变化检测','卫星遥感','人车识别','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', models:[
-    {icon:'🛰️',name:'耕地地块变化检测',size:'1.8 GB',desc:'基于高分辨率遥感影像的耕地地块新增、消失、边界变化自动检测'},
-    {icon:'🌲',name:'林草湿地变化监测',size:'1.2 GB',desc:'多时相影像的林草湿地与耕地互转变化监测'}
+  {cardType:'collection', icon:'satellite', title:'耕地变化检测工具集', tags:['变化检测','卫星遥感','人车识别','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', models:[
+    {icon:'satellite',name:'耕地地块变化检测',size:'1.8 GB',desc:'基于高分辨率遥感影像的耕地地块新增、消失、边界变化自动检测'},
+    {icon:'tree-pine',name:'林草湿地变化监测',size:'1.2 GB',desc:'多时相影像的林草湿地与耕地互转变化监测'}
   ], uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-07-05', calls:'367', stars:'29', notebookCost:40, apiCost:25,
     readme:'面向自然资源管理与耕地保护业务需求，提供耕地变化自动检测能力。地块变化检测模型基于高分辨率影像（高分系列 + Sentinel-2）的双时相变化检测，可识别耕地新增开垦、建设用地占用、闲置撂荒等变化类型。林草湿地变化监测模型专注于耕地与生态用地之间的转换监测。\n\n两模型均已对接国土调查数据库格式，输出结果可直接用于变更调查。',
     framework:'PyTorch 2.1 + ChangeFormer', license:'MIT', modelSize:'3.0 GB (合计)', inputFormat:'GeoTIFF (高分+Sentinel-2)', outputFormat:'GeoJSON + 变化统计报表', accuracy:'变化检测 Precision: 90.2%, Recall: 87.8%',
@@ -1448,161 +1465,161 @@ var MODELS = [
     requirements:'GPU ≥ 16GB VRAM, CUDA 11.8+, RAM 32GB+, 存储 80GB+',
     deploySteps:['选择镜像 "cropland-change-detection"','配置推理服务：GPU ≥ 16GB','上传前后两期高分影像','调用 /detect-changes 接口获取变化图斑'],
     lineage:{ baseModel:'Siamese-UNet (自研)', baseModelLink:null, finetuneStage:'直接训练于 2018-2025 多期 Landsat/Sentinel-2 数据集', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'国土变更调查系统',icon:'🗺️',desc:'驱动年度国土变更图斑自动检测'},{name:'耕地保护红线监测平台',icon:'🛡️',desc:'集成变化检测能力，实时监测耕地占用'}]},
+    relatedApps:[{name:'国土变更调查系统',icon:'map',desc:'驱动年度国土变更图斑自动检测'},{name:'耕地保护红线监测平台',icon:'shield',desc:'集成变化检测能力，实时监测耕地占用'}]},
   // =====================================================================
   // 8. 作物补贴申报智能核查 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'📋', title:'作物补贴申报智能核查', tags:['分类','作物识别','数据分析','精准管控'], category:'分类', scene:'收', direction:'精准管控', desc:'基于多源遥感数据交叉验证的补贴申报自动核查工具，降低人工核查成本', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'298', stars:'22', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'clipboard-check', title:'作物补贴申报智能核查', tags:['分类','作物识别','数据分析','精准管控'], category:'分类', scene:'收', direction:'精准管控', desc:'基于多源遥感数据交叉验证的补贴申报自动核查工具，降低人工核查成本', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'298', stars:'22', notebookCost:50, apiCost:30,
     readme:'利用多源遥感数据（Sentinel-2、高分一号/二号）对作物种植补贴申报数据进行自动化交叉验证。模型首先通过遥感影像分类提取实际种植作物类型与面积，然后与农户申报数据进行逐地块比对，自动识别申报面积超标、作物类型不符、地块不存在等异常情况。\n\n支持与农业农村部门现有的补贴管理系统对接，输出标准化核查报告，可将核查效率提升 80% 以上。',
     framework:'PyTorch 1.13 + Random Forest', license:'Apache 2.0', modelSize:'1.1 GB', inputFormat:'GeoTIFF + CSV (申报台账)', outputFormat:'JSON (核查结果) + PDF 报告', accuracy:'作物分类 OA: 93.1%, 异常检测召回率: 95.6%',
     useCases:['种植补贴申报面积核查','轮作休耕补贴核验','政策性农业保险定损','种植结构调整补贴审核'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 40GB+',
     deploySteps:['选择镜像 "subsidy-audit-tool"','配置推理服务','上传遥感影像与申报台账 CSV','调用 /audit 接口获取核查结果'],
     lineage:{ baseModel:'ResNet-152 (ImageNet)', baseModelLink:null, finetuneStage:'遥感作物分类预训练 → 补贴核查场景精调', parentModel:'大豆补贴核查工具集 - 大豆种植面积提取', parentModelIdx:2 },
-    relatedApps:[{name:'农业补贴精准发放平台',icon:'💰',desc:'集成申报核查能力，自动标记异常申报'}]},
+    relatedApps:[{name:'农业补贴精准发放平台',icon:'badge-dollar-sign',desc:'集成申报核查能力，自动标记异常申报'}]},
   // =====================================================================
   // 9. 向日葵种植区智能识别 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌻', title:'向日葵种植区智能识别', tags:['作物识别','卫星遥感','分割','Sentinel-2'], category:'作物识别', scene:'种', direction:'精准管控', desc:'基于 Sentinel-2 多光谱影像的向日葵地块自动提取与面积统计', uploader:'张研究员', org:'全重实验室', updated:'2026-07-22', calls:'342', stars:'28', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'sunflower', title:'向日葵种植区智能识别', tags:['作物识别','卫星遥感','分割','Sentinel-2'], category:'作物识别', scene:'种', direction:'精准管控', desc:'基于 Sentinel-2 多光谱影像的向日葵地块自动提取与面积统计', uploader:'张研究员', org:'全重实验室', updated:'2026-07-22', calls:'342', stars:'28', notebookCost:50, apiCost:30,
     readme:'面向向日葵种植区的高精度自动识别模型。利用向日葵开花期特有的光谱特征（Sentinel-2 Band 3/4/8 组合指数），基于 DeepLabV3+ 语义分割架构实现地块级精确提取。模型在黑龙江省西部向日葵主产区训练，对连片种植和零星分布均有良好识别效果。',
     framework:'PyTorch 2.0 + DeepLabV3+', license:'Apache 2.0', modelSize:'920 MB', inputFormat:'GeoTIFF (Sentinel-2 L2A)', outputFormat:'GeoJSON + 面积统计 CSV', accuracy:'mIoU: 0.89, 面积误差: < 5%',
     useCases:['向日葵种植面积统计','经济作物种植结构调整','作物轮作模式分析','油料作物产量预估'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 30GB+',
     deploySteps:['选择镜像 "sunflower-detection"','配置推理服务','上传 Sentinel-2 开花期影像','调用 /extract-sunflower 接口'],
     lineage:{ baseModel:'DeepLabV3+ (Cityscapes 预训练)', baseModelLink:null, finetuneStage:'向日葵开花期光谱特征训练 → 黑龙江主产区验证', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'油料作物监测平台',icon:'🌻',desc:'驱动向日葵种植面积统计与产量预估'}]},
+    relatedApps:[{name:'油料作物监测平台',icon:'sunflower',desc:'驱动向日葵种植面积统计与产量预估'}]},
   // =====================================================================
   // 10. 玉米螟虫害遥感检测 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🐛', title:'玉米螟虫害遥感检测', tags:['作物生育检测','无人机遥感','多光谱','作物模型'], category:'作物生育检测', scene:'管', direction:'作物模型', desc:'结合多光谱与热红外数据的玉米螟早期检测与危害等级评估', uploader:'张研究员', org:'全重实验室', updated:'2026-07-18', calls:'486', stars:'36', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'bug', title:'玉米螟虫害遥感检测', tags:['作物生育检测','无人机遥感','多光谱','作物模型'], category:'作物生育检测', scene:'管', direction:'作物模型', desc:'结合多光谱与热红外数据的玉米螟早期检测与危害等级评估', uploader:'张研究员', org:'全重实验室', updated:'2026-07-18', calls:'486', stars:'36', notebookCost:50, apiCost:30,
     readme:'专门针对亚洲玉米螟（Ostrinia furnacalis）的遥感检测模型。利用无人机搭载的多光谱+热红外传感器获取玉米冠层高分辨率影像，通过 NDVI 异常、冠层温度升高、叶片含水量下降等多指标综合分析，实现玉米螟危害的早期检测（比人工目视可提前 5-7 天）。\n\n模型输出包含虫害发生区域、危害等级（轻/中/重）、建议防治措施等结构化信息。',
     framework:'PyTorch 2.1 + YOLOv8', license:'Apache 2.0', modelSize:'780 MB', inputFormat:'多光谱 GeoTIFF + 热红外 (无人机)', outputFormat:'GeoJSON (虫害斑块) + 危害等级图', accuracy:'早期检测准确率: 85.3%, 危害等级分类 OA: 91.7%',
     useCases:['玉米螟早期预警','精准施药指导','虫害损失评估','植保无人机航线规划'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 支持热红外影像输入',
     deploySteps:['选择镜像 "corn-borer-detection"','配置推理服务','上传无人机多光谱+热红外影像','调用 /detect-borer 接口获取虫害分布'],
     lineage:{ baseModel:'YOLOv8 (COCO 预训练)', baseModelLink:null, finetuneStage:'无人机多光谱虫害数据集训练 → 玉米螟专项精调', parentModel:'玉米病虫害遥感识别模型集 - 病虫害遥感检测 v2', parentModelIdx:0 },
-    relatedApps:[{name:'植保无人机调度平台',icon:'🚁',desc:'集成虫害检测结果，自动规划施药航线'}]},
+    relatedApps:[{name:'植保无人机调度平台',icon:'drone',desc:'集成虫害检测结果，自动规划施药航线'}]},
   // =====================================================================
   // 11. 农业知识问答大模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'💬', title:'农业知识问答大模型', tags:['大语言模型','知识库','RAG','智能装备'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于农技知识库的 RAG 增强问答系统，覆盖 200+ 作物品种的种植技术问答', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'678', stars:'52', notebookCost:80, apiCost:60,
+  {cardType:'model', icon:'message-circle', title:'农业知识问答大模型', tags:['大语言模型','知识库','RAG','智能装备'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于农技知识库的 RAG 增强问答系统，覆盖 200+ 作物品种的种植技术问答', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-01', calls:'678', stars:'52', notebookCost:80, apiCost:60,
     readme:'基于开源 LLM（Qwen-7B）进行农业领域继续训练，并构建了覆盖 200+ 作物品种、50 万条农技知识的结构化知识库。采用 RAG（检索增强生成）架构，在回答用户农业技术问题时，先从知识库中检索最相关的技术文档片段，再结合大语言模型的推理能力生成专业、准确的回答。\n\n支持的问题类型包括：病虫害防治、施肥管理、灌溉技术、品种选择、农时安排等。',
     framework:'PyTorch 2.1 + LangChain (Qwen-7B-Agri)', license:'Apache 2.0', modelSize:'14 GB (FP16)', inputFormat:'自然语言文本', outputFormat:'JSON (回答 + 引用来源)', accuracy:'农业问答 BLEU: 42.3, 回答准确率: 88.6%',
     useCases:['农技知识问答','病虫害诊断问答','施肥方案推荐','农业政策咨询'],
     requirements:'GPU ≥ 24GB VRAM (A10), CUDA 12.1+, RAM 64GB+, 存储 80GB+ (含知识库)',
     deploySteps:['选择镜像 "agri-knowledge-llm"','配置高配 GPU ≥ 24GB','首次启动需加载知识向量库（约 5 分钟）','通过 /chat API 或 WebSocket 进行问答交互'],
     lineage:{ baseModel:'Qwen-7B (阿里通义千问)', baseModelLink:null, finetuneStage:'50万条农技知识继续训练 → RAG 知识库构建', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'农技服务小程序',icon:'📱',desc:'面向农户提供自然语言农技问答'},{name:'农场管理驾驶舱',icon:'📊',desc:'作为知识问答模块集成'}]},
+    relatedApps:[{name:'农技服务小程序',icon:'smartphone',desc:'面向农户提供自然语言农技问答'},{name:'农场管理驾驶舱',icon:'bar-chart-3',desc:'作为知识问答模块集成'}]},
   // =====================================================================
   // 12. 玉米产量多源数据融合预测 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌽', title:'玉米产量多源数据融合预测', tags:['作物生长检测','卫星遥感','无人机遥感','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'融合地面测产+无人机+卫星遥感的多层级产量预估模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-05', calls:'423', stars:'33', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'corn', title:'玉米产量多源数据融合预测', tags:['作物生长检测','卫星遥感','无人机遥感','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'融合地面测产+无人机+卫星遥感的多层级产量预估模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-07-05', calls:'423', stars:'33', notebookCost:50, apiCost:30,
     readme:'采用多层级数据融合策略的玉米产量预估模型。底层利用 Sentinel-2 卫星数据进行大范围产量趋势分析，中层引入无人机高分辨率影像进行地块级精细化估产，顶层融合地面测产样点数据进行模型校准。\n\n三层数据通过贝叶斯融合框架进行不确定性量化，输出包含点估计和置信区间的产量预测结果。',
     framework:'PyTorch 2.0 + 贝叶斯融合框架', license:'Apache 2.0', modelSize:'2.2 GB', inputFormat:'GeoTIFF (卫星+无人机) + CSV (测产点)', outputFormat:'JSON (产量预测 + 95% CI)', accuracy:'RMSE: 412 kg/ha, R²: 0.85',
     useCases:['玉米产量高精度预估','多源遥感数据融合分析','产量保险精算定价','粮食收储库容规划'],
     requirements:'GPU ≥ 12GB VRAM, RAM 24GB+, 存储 50GB+（多层级数据）',
     deploySteps:['选择镜像 "corn-yield-fusion"','配置 GPU ≥ 12GB','上传三级数据（卫星/无人机/地面测产）','调用 /predict-yield-fusion 接口'],
     lineage:{ baseModel:'贝叶斯融合框架 (自研)', baseModelLink:null, finetuneStage:'多层级遥感+地面数据融合训练', parentModel:'水稻产量预估模型 v2', parentModelIdx:1 },
-    relatedApps:[{name:'粮食收储调度平台',icon:'🌾',desc:'提供玉米产量预测，驱动仓储容量规划'}]},
+    relatedApps:[{name:'粮食收储调度平台',icon:'wheat',desc:'提供玉米产量预测，驱动仓储容量规划'}]},
   // =====================================================================
   // 13. 水稻秧田面积遥感提取 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌿', title:'水稻秧田面积遥感提取', tags:['作物识别','无人机遥感','目标检测','精准管控'], category:'作物识别', scene:'种', direction:'精准管控', desc:'面向寒地水稻的秧田面积高精度提取，支持无人机与卫星影像', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-10', calls:'567', stars:'41', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'sprout', title:'水稻秧田面积遥感提取', tags:['作物识别','无人机遥感','目标检测','精准管控'], category:'作物识别', scene:'种', direction:'精准管控', desc:'面向寒地水稻的秧田面积高精度提取，支持无人机与卫星影像', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-07-10', calls:'567', stars:'41', notebookCost:50, apiCost:30,
     readme:'专门针对寒地水稻秧田的高精度面积提取模型。利用水稻秧田特有的光谱特征（灌水后蓝光波段反射率显著变化）和纹理特征，基于 Mask R-CNN 架构实现秧田地块边界精确提取。模型在黑龙江省水稻主产区训练和验证，能够处理多种水稻种植模式（直播、移栽、旱直播）的秧田。\n\n支持无人机影像和卫星影像两种数据源，自动适配不同的空间分辨率。',
     framework:'PyTorch 2.0 + Mask R-CNN', license:'Apache 2.0', modelSize:'1.3 GB', inputFormat:'GeoTIFF (无人机/卫星)', outputFormat:'GeoJSON (秧田边界) + 面积统计', accuracy:'mIoU: 0.93, 面积误差: < 3.5%',
     useCases:['水稻秧田面积核实','育秧补贴面积核查','水稻种植面积早期监测','灌溉水源调度规划'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 30GB+',
     deploySteps:['选择镜像 "rice-seedling-extraction"','配置推理服务','上传水稻插秧期影像','调用 /extract-seedling 接口'],
     lineage:{ baseModel:'Mask R-CNN (COCO 预训练)', baseModelLink:null, finetuneStage:'寒地水稻秧田数据集训练 → 多分辨率适配', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'水稻种植管理平台',icon:'🌿',desc:'驱动秧田面积核实与灌溉调度'}]},
+    relatedApps:[{name:'水稻种植管理平台',icon:'sprout',desc:'驱动秧田面积核实与灌溉调度'}]},
   // =====================================================================
   // 14. 蝗虫迁飞路径预测模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🦗', title:'蝗虫迁飞路径预测模型', tags:['气象预警','目标检测','时序分析','作物模型'], category:'气象预警', scene:'管', direction:'作物模型', desc:'基于气象雷达与植被指数的蝗群监测与迁飞路径预警', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-28', calls:'312', stars:'25', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'bug', title:'蝗虫迁飞路径预测模型', tags:['气象预警','目标检测','时序分析','作物模型'], category:'气象预警', scene:'管', direction:'作物模型', desc:'基于气象雷达与植被指数的蝗群监测与迁飞路径预警', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-28', calls:'312', stars:'25', notebookCost:50, apiCost:30,
     readme:'利用气象雷达反射率数据与 NDVI 植被指数，结合大气环流模型（WRF），实现蝗群空中密度监测与未来 72 小时迁飞路径预测。模型采用 ConvLSTM + 物理约束神经网络的混合架构，既能捕捉蝗群时空迁移模式，又能遵循大气动力学规律。\n\n输出包含迁飞路径预测、风险区域分级预警、建议防控措施等。',
     framework:'PyTorch 2.0 + ConvLSTM + WRF耦合', license:'Apache 2.0', modelSize:'1.6 GB', inputFormat:'气象雷达 NetCDF + NDVI GeoTIFF', outputFormat:'GeoJSON (迁飞路径) + 风险热力图', accuracy:'24h路径误差: < 15km, 48h: < 30km, 72h: < 50km',
     useCases:['蝗虫迁飞路径预警','跨境蝗灾联防联控','精准施药区域规划','农业生产安全应急响应'],
     requirements:'GPU ≥ 16GB VRAM, RAM 32GB+, 需接入实时气象雷达数据',
     deploySteps:['选择镜像 "locust-migration-prediction"','配置 GPU ≥ 16GB','接入气象雷达数据流','调用 /predict-migration 接口获取 72h 预测'],
     lineage:{ baseModel:'ConvLSTM (自研气象模型)', baseModelLink:null, finetuneStage:'东亚飞蝗历史迁飞数据训练 → WRF 物理约束耦合', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'蝗灾应急预警系统',icon:'⚠️',desc:'驱动蝗虫迁飞路径预测与风险分级预警'}]},
+    relatedApps:[{name:'蝗灾应急预警系统',icon:'triangle-alert',desc:'驱动蝗虫迁飞路径预测与风险分级预警'}]},
   // =====================================================================
   // 15. 多源遥感数据融合分析平台 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'📡', title:'多源遥感数据融合分析平台', tags:['卫星遥感','分类','多源融合','智能装备'], category:'卫星遥感', scene:'管', direction:'智能装备', desc:'整合 Sentinel/Landsat/高分系列的多源遥感一站式分析工具', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-18', calls:'456', stars:'35', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'satellite-dish', title:'多源遥感数据融合分析平台', tags:['卫星遥感','分类','多源融合','智能装备'], category:'卫星遥感', scene:'管', direction:'智能装备', desc:'整合 Sentinel/Landsat/高分系列的多源遥感一站式分析工具', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-18', calls:'456', stars:'35', notebookCost:50, apiCost:30,
     readme:'整合 Sentinel-1/2、Landsat 8/9、高分一号/二号/六号等多源卫星遥感数据的一站式融合分析平台。提供数据预处理（辐射定标、大气校正、几何配准）、时空融合（多源数据统一分辨率与投影）、地物分类与变化检测等标准化分析管线。\n\n平台内置了多个预训练模型，支持用户通过配置文件快速组合分析流程，无需编写代码。',
     framework:'PyTorch 2.0 + GDAL + 多模型集成', license:'MIT', modelSize:'3.5 GB', inputFormat:'多源卫星影像 (GeoTIFF)', outputFormat:'GeoTIFF + GeoJSON + 统计报表', accuracy:'融合精度: SSIM > 0.92, 分类 OA: 90.5%',
     useCases:['多源遥感数据融合分析','地表覆盖自动分类','长时间序列变化分析','生态环境质量评估'],
     requirements:'GPU ≥ 16GB VRAM, RAM 32GB+, 存储 200GB+ (多源数据缓存)',
     deploySteps:['选择镜像 "multi-source-rs-fusion"','配置 GPU ≥ 16GB，存储 ≥ 200GB','上传多源卫星影像数据','通过可视化界面或 API 配置分析流程'],
     lineage:{ baseModel:'GDAL + PyTorch 多模型集成', baseModelLink:null, finetuneStage:'多源遥感数据配准与融合训练', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'生态环境监测平台',icon:'🌍',desc:'提供多源遥感融合分析能力'}]},
+    relatedApps:[{name:'生态环境监测平台',icon:'globe',desc:'提供多源遥感融合分析能力'}]},
   // =====================================================================
   // 16. 防护林带退化遥感监测 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🌳', title:'防护林带退化遥感监测', tags:['变化检测','卫星遥感','时序分析','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', desc:'基于高分一号时序影像的农田防护林健康评估与退化预警', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-30', calls:'167', stars:'14', notebookCost:30, apiCost:20,
+  {cardType:'model', icon:'tree-deciduous', title:'防护林带退化遥感监测', tags:['变化检测','卫星遥感','时序分析','规模应用'], category:'变化检测', scene:'管', direction:'规模应用', desc:'基于高分一号时序影像的农田防护林健康评估与退化预警', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-30', calls:'167', stars:'14', notebookCost:30, apiCost:20,
     readme:'利用高分一号多时相影像对农田防护林带的健康状况进行长时间序列监测。模型通过分析 NDVI 时序趋势、纹理特征变化、林带宽度变化等指标，自动评估防护林退化程度（健康/轻度退化/中度退化/重度退化/消失）。\n\n特别适用于三北防护林工程区的农田防护林网监测，支持林带逐条编号管理与退化预警。',
     framework:'PyTorch 2.0 + TimeSformer', license:'MIT', modelSize:'1.4 GB', inputFormat:'GeoTIFF (高分时序)', outputFormat:'GeoJSON (林带退化评估) + 趋势报告', accuracy:'退化等级分类 OA: 88.9%, 变化检测 F1: 0.86',
     useCases:['农田防护林退化监测','三北防护林工程评估','退耕还林成效监测','林业碳汇评估'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 存储 50GB+ (时序数据)',
     deploySteps:['选择镜像 "shelterbelt-monitoring"','配置推理服务','上传多时相高分影像','调用 /assess-degradation 接口'],
     lineage:{ baseModel:'TimeSformer (Kinetics 预训练)', baseModelLink:null, finetuneStage:'三北防护林时序影像训练 → 林带退化等级分类', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'三北防护林监测平台',icon:'🌳',desc:'驱动防护林健康评估与退化预警'}]},
+    relatedApps:[{name:'三北防护林监测平台',icon:'tree-deciduous',desc:'驱动防护林健康评估与退化预警'}]},
   // =====================================================================
   // 17. 湿地水体面积动态监测 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'💧', title:'湿地水体面积动态监测', tags:['变化检测','水资源','卫星遥感','规模应用'], category:'水资源', scene:'水', direction:'规模应用', desc:'基于 SAR 影像的湿地水体面积季节变化监测与趋势分析', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-22', calls:'234', stars:'19', notebookCost:30, apiCost:20,
+  {cardType:'model', icon:'droplet', title:'湿地水体面积动态监测', tags:['变化检测','水资源','卫星遥感','规模应用'], category:'水资源', scene:'水', direction:'规模应用', desc:'基于 SAR 影像的湿地水体面积季节变化监测与趋势分析', uploader:'刘研究员', org:'中科院东北地理所', updated:'2026-06-22', calls:'234', stars:'19', notebookCost:30, apiCost:20,
     readme:'利用 Sentinel-1 SAR 影像全天候、不受云雨影响的优势，实现湿地水体面积的高频动态监测。模型基于 U-Net 架构对 SAR 影像进行水体/非水体语义分割，通过分析多期水体范围的季节变化和年际趋势，识别湿地退化、萎缩等生态风险。\n\n支持自动生成水体面积变化曲线、趋势分析报告和生态预警。',
     framework:'PyTorch 2.0 + U-Net (SAR)', license:'Apache 2.0', modelSize:'980 MB', inputFormat:'GeoTIFF (Sentinel-1 GRD)', outputFormat:'GeoJSON + 面积变化曲线图', accuracy:'水体分割 mIoU: 0.94, 面积监测误差: < 3%',
     useCases:['湿地水体面积动态监测','湖泊/水库水位变化评估','洪涝灾害快速评估','湿地生态补水决策支持'],
     requirements:'GPU ≥ 8GB VRAM, RAM 16GB+, 支持 SAR 数据预处理',
     deploySteps:['选择镜像 "wetland-water-monitoring"','配置推理服务','上传 Sentinel-1 SAR 时序影像','调用 /monitor-water-area 接口获取变化曲线'],
     lineage:{ baseModel:'U-Net (医学影像预训练 → SAR 迁移)', baseModelLink:null, finetuneStage:'Sentinel-1 水体分割数据集训练 → 时序变化分析', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'湿地保护监测平台',icon:'💧',desc:'驱动湿地水体动态监测与生态补水决策'}]},
+    relatedApps:[{name:'湿地保护监测平台',icon:'droplet',desc:'驱动湿地水体动态监测与生态补水决策'}]},
   // =====================================================================
   // 18. 大豆产量预估模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🫘', title:'大豆产量预估模型', tags:['作物生长检测','卫星遥感','气象预警','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键生育期遥感指数的寒地大豆产量预测，支持分地块估产', uploader:'陈教授', org:'中国农业大学', updated:'2026-06-20', calls:'345', stars:'29', notebookCost:50, apiCost:30,
+  {cardType:'model', icon:'soybean', title:'大豆产量预估模型', tags:['作物生长检测','卫星遥感','气象预警','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键生育期遥感指数的寒地大豆产量预测，支持分地块估产', uploader:'陈教授', org:'中国农业大学', updated:'2026-06-20', calls:'345', stars:'29', notebookCost:50, apiCost:30,
     readme:'专用的寒地大豆产量预估模型，聚焦大豆四个关键生育期（出苗、开花、结荚、鼓粒）的遥感植被指数（NDVI、EVI、NDWI）与气象因子（积温、降水、日照时数）。采用 XGBoost + LSTM 的混合模型架构，兼顾特征工程的可解释性与时序依赖的捕获能力。\n\n支持分地块产量预测，输出结果可直接对接农场管理信息系统。',
     framework:'XGBoost + LSTM (PyTorch)', license:'Apache 2.0', modelSize:'1.1 GB', inputFormat:'CSV (遥感指数+气象) + 地块矢量', outputFormat:'JSON (分地块产量) + CSV 统计', accuracy:'RMSE: 245 kg/ha, R²: 0.83',
     useCases:['大豆产量预估','大豆轮作规划','大豆贸易采购决策','农业保险精算'],
     requirements:'GPU ≥ 6GB VRAM (CPU推理也可), RAM 16GB+',
     deploySteps:['选择镜像 "soybean-yield-prediction"','配置推理服务','上传生育期遥感指数与气象 CSV','调用 /predict-soybean-yield 接口'],
     lineage:{ baseModel:'XGBoost + LSTM 混合模型', baseModelLink:null, finetuneStage:'寒地大豆生育期数据训练 → 关键物候期特征工程', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'大豆贸易决策系统',icon:'📈',desc:'提供大豆产量预测，支撑贸易采购决策'}]},
+    relatedApps:[{name:'大豆贸易决策系统',icon:'bar-chart',desc:'提供大豆产量预测，支撑贸易采购决策'}]},
   // =====================================================================
   // 19. 马铃薯产量遥感估算 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🥔', title:'马铃薯产量遥感估算', tags:['作物生长检测','卫星遥感','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于 NDVI 时序曲线的马铃薯块茎产量估算模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-15', calls:'198', stars:'18', notebookCost:30, apiCost:20,
+  {cardType:'model', icon:'potato', title:'马铃薯产量遥感估算', tags:['作物生长检测','卫星遥感','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于 NDVI 时序曲线的马铃薯块茎产量估算模型', uploader:'赵研究员', org:'全重实验室', updated:'2026-06-15', calls:'198', stars:'18', notebookCost:30, apiCost:20,
     readme:'利用马铃薯全生育期 NDVI 时序曲线特征进行块茎产量估算的专用模型。建模核心是 NDVI 时序曲线的积分面积（累积光合有效辐射）与块茎产量之间的统计关系，同时引入关键生育期（块茎形成期、块茎膨大期）的气象条件作为约束因子。\n\n在黑龙江省马铃薯主产区验证，适用于加工薯和鲜食薯两种类型。',
     framework:'scikit-learn + LSTM', license:'MIT', modelSize:'650 MB', inputFormat:'CSV (NDVI 时序 + 气象)', outputFormat:'JSON (产量预测)', accuracy:'RMSE: 1.8 t/ha, R²: 0.79',
     useCases:['马铃薯产量预估','加工薯原料采购规划','种薯生产基地评估','马铃薯仓储物流调度'],
     requirements:'CPU 推理即可，RAM 8GB+, 存储 10GB+',
     deploySteps:['选择镜像 "potato-yield-estimation"','配置推理服务（CPU即可）','上传 NDVI 时序与气象 CSV','调用 /estimate-potato-yield 接口'],
     lineage:{ baseModel:'scikit-learn + LSTM (自研)', baseModelLink:null, finetuneStage:'黑龙江马铃薯主产区 NDVI 时序训练', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'马铃薯仓储物流平台',icon:'🥔',desc:'驱动产量预估，支撑仓储调度与加工规划'}]},
+    relatedApps:[{name:'马铃薯仓储物流平台',icon:'potato',desc:'驱动产量预估，支撑仓储调度与加工规划'}]},
   // =====================================================================
   // 20. 冬小麦产量预估模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🍚', title:'冬小麦产量预估模型', tags:['作物生长检测','气象预警','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键物候期气象因子的冬小麦产量回归预测', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-03', calls:'276', stars:'22', notebookCost:30, apiCost:20,
+  {cardType:'model', icon:'wheat', title:'冬小麦产量预估模型', tags:['作物生长检测','气象预警','时序分析','作物模型'], category:'作物生长检测', scene:'种', direction:'作物模型', desc:'基于关键物候期气象因子的冬小麦产量回归预测', uploader:'王工程师', org:'北大荒信息公司', updated:'2026-07-03', calls:'276', stars:'22', notebookCost:30, apiCost:20,
     readme:'专注于冬小麦关键物候期（返青、拔节、抽穗、灌浆、成熟）气象因子的产量预测模型。模型基于多年冬小麦产量与逐日气象数据的统计关系，识别出返青期积温、抽穗期降水、灌浆期日照时数为最关键影响因子。\n\n采用贝叶斯回归方法，输出产量预测的点估计值及其不确定性区间，便于进行风险决策。',
     framework:'Stan + PyMC (贝叶斯回归)', license:'MIT', modelSize:'220 MB', inputFormat:'CSV (逐日气象数据)', outputFormat:'JSON (产量 + 95% CI)', accuracy:'RMSE: 312 kg/ha, R²: 0.81',
     useCases:['冬小麦产量预估','小麦市场行情分析','粮食安全保障决策','冬小麦种植保险'],
     requirements:'CPU 推理即可，RAM 4GB+, 存储 5GB+',
     deploySteps:['选择镜像 "wheat-yield-prediction"','配置推理服务（轻量级）','上传关键物候期气象 CSV','调用 /predict-wheat-yield 接口'],
     lineage:{ baseModel:'Stan + PyMC (贝叶斯回归)', baseModelLink:null, finetuneStage:'冬小麦多年产量与气象数据训练', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'粮食安全保障平台',icon:'🍚',desc:'提供冬小麦产量预估，支撑粮食安全预警'}]},
+    relatedApps:[{name:'粮食安全保障平台',icon:'wheat',desc:'提供冬小麦产量预估，支撑粮食安全预警'}]},
   // =====================================================================
   // 21. 农事操作智能排期模型 (MODEL)
   // =====================================================================
-  {cardType:'model', icon:'🗓️', title:'农事操作智能排期模型', tags:['大语言模型','智能装备','时序规划','气象预警'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于天气预报与作物生长模型的农事操作最佳时间窗推荐', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-06-28', calls:'189', stars:'15', notebookCost:80, apiCost:60,
+  {cardType:'model', icon:'calendar', title:'农事操作智能排期模型', tags:['大语言模型','智能装备','时序规划','气象预警'], category:'大语言模型', scene:'管', direction:'智能装备', desc:'基于天气预报与作物生长模型的农事操作最佳时间窗推荐', uploader:'李博士', org:'哈工大AI实验室', updated:'2026-06-28', calls:'189', stars:'15', notebookCost:80, apiCost:60,
     readme:'结合数值天气预报（7-15 天）与作物生长模型（DSSAT），利用运筹学优化算法（遗传算法 + 约束满足），为播种、施肥、喷药、灌溉、收获等关键农事操作推荐最佳时间窗口。\n\n模型综合考虑气象条件适宜度、土壤墒情、农机可用性、劳动力约束、农资供应时间等多维约束，输出优化的农事操作排期表，支持按地块、按作物、按操作类型的多维度规划。',
     framework:'Python + OR-Tools + DSSAT集成', license:'Apache 2.0', modelSize:'480 MB', inputFormat:'JSON (天气预报+地块信息+资源约束)', outputFormat:'JSON (优化排期表) + iCal 日历', accuracy:'排期满意度: 92.3%, 气象窗口利用率: 88.7%',
     useCases:['农事操作时间窗推荐','农机跨区作业调度','施肥喷药最佳时机选择','大规模农场生产计划编制'],
     requirements:'CPU 推理即可，RAM 8GB+, 需接入气象预报 API',
     deploySteps:['选择镜像 "farm-scheduler"','配置推理服务','上传地块信息、资源约束 JSON','调用 /optimize-schedule 接口获取排期表'],
     lineage:{ baseModel:'OR-Tools + DSSAT (运筹学+作物模型)', baseModelLink:null, finetuneStage:'黑龙江垦区多年农事记录训练 → 多约束优化', parentModel:null, parentModelIdx:null },
-    relatedApps:[{name:'智慧农场管理驾驶舱',icon:'📊',desc:'集成排期能力，驱动全农场生产计划编制'},{name:'农机跨区调度平台',icon:'🚜',desc:'提供农事时间窗推荐，优化农机调度'}]}
+    relatedApps:[{name:'智慧农场管理驾驶舱',icon:'bar-chart-3',desc:'集成排期能力，驱动全农场生产计划编制'},{name:'农机跨区调度平台',icon:'tractor',desc:'提供农事时间窗推荐，优化农机调度'}]}
 ];
 
 // ============================================================
@@ -1850,7 +1867,7 @@ function renderCard(m){
   var isModel = !isCollection;
 
   // Thumbnail
-  var thumb = '<div class="model-card-thumb'+(isCollection?' collection':'')+'">'+m.icon+'</div>';
+  var thumb = '<div class="model-card-thumb'+(isCollection?' collection':'')+'">'+ico(m.icon)+'</div>';
 
   // Title + badge
   var titleRow = '<div class="model-card-title-row"><h4 class="model-card-name">'+m.title+'</h4><span class="model-card-badge '+(isCollection?'collection':'model')+'">'+(isCollection?'合集':'模型')+'</span></div>';
@@ -1858,7 +1875,7 @@ function renderCard(m){
   // Description
   var descText = '';
   if (isCollection) {
-    descText = '包含 '+m.models.length+' 个子模型：'+m.models.map(function(sm){return sm.icon+' '+sm.name;}).join('、');
+    descText = '包含 '+m.models.length+' 个子模型：'+m.models.map(function(sm){return sm.name;}).join('、');
   } else {
     descText = m.desc || m.tags.join(' · ');
   }
@@ -1938,6 +1955,7 @@ document.getElementById('topNavMenu').addEventListener('click', function(e){
     var nav = e.target.dataset.nav;
     if (nav === 'home') { window.location.href = 'portal.html'; return; }
     if (nav === 'marketplace') return;
+    if (nav === 'cases') { window.location.href = 'case-center.html'; return; }
     if (nav === 'data') { window.location.href = 'dataset-management.html'; return; }
     if (nav === 'dev') { window.location.href = 'image-custom-list.html'; return; }
     if (nav === 'demand') { window.location.href = 'demand-hall.html'; return; }
@@ -2186,7 +2204,8 @@ function saveCollectionSelections(){
   showToast('合集已更新 ✅');
 }
 
-// Simple toast
+// Simple toast (also accessible as toast() for cross-page consistency)
+function toast(msg, type){ showToast(msg, type); }
 function showToast(msg, type){
   var t = document.getElementById('collectionToast');
   if (!t) {
@@ -2227,7 +2246,7 @@ function renderDetail(m){
   document.getElementById('mdBreadcrumbName').textContent = m.title;
 
   // Header
-  document.getElementById('mdIcon').textContent = m.icon;
+  document.getElementById('mdIcon').innerHTML = ico(m.icon);
   document.getElementById('mdIcon').className = 'md-header-icon'+(isCollection?' collection':'');
   document.getElementById('mdName').textContent = m.title;
   var badge = document.getElementById('mdBadge');
@@ -2346,7 +2365,7 @@ function renderTabOverview(m){
 function renderTabFiles(m){
   var cards = m.models.map(function(sm){
     return '<div class="md-file-card">'+
-      '<div class="md-file-icon">'+sm.icon+'</div>'+
+      '<div class="md-file-icon">'+ico(sm.icon)+'</div>'+
       '<div class="md-file-info">'+
         '<div class="md-file-name">'+sm.name+'</div>'+
         (sm.desc ? '<div class="md-file-desc">'+sm.desc+'</div>' : '')+
@@ -2484,7 +2503,7 @@ function renderSidebarApps(m){
   }
   container.innerHTML = apps.map(function(a){
     return '<div class="md-sidebar-item">'+
-      '<span class="md-sidebar-item-icon">'+a.icon+'</span>'+
+      '<span class="md-sidebar-item-icon">'+ico(a.icon,'card-ico xs')+'</span>'+
       '<span class="md-sidebar-item-text" title="'+a.desc+'">'+a.name+'</span>'+
     '</div>';
   }).join('');
@@ -2508,7 +2527,7 @@ function navigateToModel(idx, relation){
     document.getElementById('ljRelationBadge').textContent = '关联模型';
     document.getElementById('ljRelationBadge').className = 'lj-relation-badge child';
   }
-  document.getElementById('ljIcon').textContent = target.icon;
+  document.getElementById('ljIcon').innerHTML = ico(target.icon);
   document.getElementById('ljName').textContent = target.title;
   document.getElementById('ljMeta').textContent = (target.cardType==='collection'?'合集':'模型') + ' · ' + target.org + ' · ' + target.updated;
   document.getElementById('ljDesc').textContent = target.desc || (target.readme ? target.readme.split('\n')[0] : '暂无描述');
@@ -3086,7 +3105,7 @@ function renderCollectionDetail(m){
   // Breadcrumb
   document.getElementById('cdBreadcrumbName').textContent = m.title;
   // Header
-  document.getElementById('cdIcon').textContent = m.icon;
+  document.getElementById('cdIcon').innerHTML = ico(m.icon);
   document.getElementById('cdName').textContent = m.title;
   document.getElementById('cdDesc').textContent = m.readme ? m.readme.split('\n')[0] : (m.desc || '暂无描述');
   document.getElementById('cdUploader').textContent = m.uploader;
@@ -3113,7 +3132,7 @@ function renderCollectionDetail(m){
     var targetModel = isClickable ? MODELS[matchIdx] : null;
 
     return '<div class="cd-model-card"'+(isClickable ? ' onclick="showDetail('+matchIdx+')"' : '')+'>'+
-      '<div class="cd-card-icon">'+sm.icon+'</div>'+
+      '<div class="cd-card-icon">'+ico(sm.icon)+'</div>'+
       '<div class="cd-card-body">'+
         '<div class="cd-card-name">'+sm.name+(isClickable ? '' : '')+'</div>'+
         (sm.desc ? '<div class="cd-card-desc">'+sm.desc+'</div>' : '')+
@@ -3169,15 +3188,15 @@ function findModelIndexBySubModel(sm, parentCollection){
 // INIT
 // ============================================================
 // ===== AUTH STATE (must run first) =====
-function isLoggedIn(){try{return sessionStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
+function isLoggedIn(){try{return localStorage.getItem('luoshu_logged_in')==='1';}catch(e){return false;}}
 function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
 function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
 (function(){switchAuthState(isLoggedIn());})();
 buildFilterTags();
 renderAll();
 // ===== NOTIFICATIONS =====
-var NOTIFS=[{icon:'🧠',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'📋',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'📊',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'🔔',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'📝',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
-function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')"><span style="font-size:16px">'+n.icon+'</span><span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
+var NOTIFS=[{icon:'brain',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'clipboard-check',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'bar-chart-3',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'bell',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'file-text',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
+function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')">'+ico(n.icon,'card-ico notif')+'<span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
 function toggleNotifPopover(){var el=document.getElementById('notifPopover');el.classList.toggle('visible');closeUserMenu();}
 function markAllRead(){NOTIFS.forEach(function(n){n.unread=false;});renderNotifs();document.getElementById('notifBtn').querySelector('.badge-dot').style.display='none';}
 document.addEventListener('click',function(e){var popover=document.getElementById('notifPopover'),btn=document.getElementById('notifBtn');if(popover&&popover.classList.contains('visible')&&!popover.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){popover.classList.remove('visible');}});
@@ -3190,7 +3209,7 @@ function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.htm
 // ===== LOGOUT =====
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); document.getElementById('logoutOverlay').classList.add('on'); }
 function closeLogoutConfirm(){ document.getElementById('logoutOverlay').classList.remove('on'); }
-function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
+function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu_logged_in'); } catch(e) {} switchAuthState(false); showToast('已退出登录'); setTimeout(function(){ window.location.href = 'portal.html'; }, 600); }
 </script>
 <!-- Logout Confirm Overlay -->
 <div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
@@ -3203,5 +3222,23 @@ function doLogout(){ closeLogoutConfirm(); try { sessionStorage.removeItem('luos
     </div>
   </div>
 </div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg)"/></svg>
+        <span>北大荒信息有限公司</span>
+      </div>
+      <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
+    </div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
+    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div>
+    <div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div>
+  </div>
+  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+</footer>
+
 </body>
 </html>
