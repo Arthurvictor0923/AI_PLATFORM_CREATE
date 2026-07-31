@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>模型中心 — 北大荒智慧农业协同创新平台</title>
+<title>机构模型合集 · 洛书模型服务平台</title>
 <style>
 /* ============================================================
    CSS Reset & Base
@@ -889,12 +889,18 @@ button { cursor: pointer; border: none; background: none; }
 .footer-logo span { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.85); }
 .footer-bot { max-width: 1200px; margin: 36px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.8; }
 
+.module-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px;padding:18px 20px;background:linear-gradient(135deg,#f3f6ff 0%,#eef2ff 100%);border:1px solid #e6ebff;border-radius:10px;}
+.mph-left{flex:1;min-width:0;}
+.mph-title{margin:0;font-size:22px;font-weight:700;color:rgba(0,0,0,0.88);line-height:1.3;}
+.mph-sub{margin:6px 0 0;font-size:13px;color:rgba(0,0,0,0.55);line-height:1.6;}
+.mph-source-badge{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:13px;font-size:12px;font-weight:600;white-space:nowrap;background:#e6f0ff;color:#2f54eb;border:1px solid #d6e4ff;}
 .model-card-src{display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:9px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:middle;}
 .model-card-src.src-platform{background:#f0f5ff;color:#2f54eb;}
 .model-card-src.src-user{background:#f0f5ff;color:#2f54eb;}
 
 /* ===== 社区视图（模型社区） ===== */
 .community-hero{display:none;}
+.community-view .module-page-head{display:none;}
 .community-view .community-hero{display:block;}
 .community-hero{margin-bottom:18px;padding:22px 24px;border-radius:14px;background:linear-gradient(135deg,#f0f5ff 0%,#f0f5ff 100%);border:1px solid rgba(47,84,235,0.25);position:relative;overflow:hidden;}
 .community-hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(47,84,235,0.12),transparent 70%);}
@@ -907,6 +913,9 @@ button { cursor: pointer; border: none; background: none; }
 .community-stats .cs{padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.7);border:1px solid rgba(47,84,235,0.18);text-align:center;min-width:74px;}
 .community-stats .cs b{display:block;font-size:18px;font-weight:700;color:#2f54eb;}
 .community-stats .cs span{font-size:11px;color:rgba(0,0,0,0.65);}
+.community-hero-bot{display:flex;align-items:center;gap:18px;margin-top:16px;flex-wrap:wrap;position:relative;z-index:1;}
+.community-contribs{display:flex;align-items:center;gap:8px;}
+.community-contribs .cc-label{font-size:12px;color:rgba(0,0,0,0.65);}
 .avatar-stack{display:flex;}
 .avatar-stack .ava{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;margin-left:-8px;border:2px solid #fff;}
 .avatar-stack .ava:first-child{margin-left:0;}
@@ -926,7 +935,7 @@ button { cursor: pointer; border: none; background: none; }
 [data-prefers-color="dark"] .community-hero .ch-sub{color:rgba(255,255,255,0.6);}
 [data-prefers-color="dark"] .community-stats .cs{background:rgba(255,255,255,0.06);border-color:rgba(47,84,235,0.25);}
 [data-prefers-color="dark"] .community-stats .cs b{color:#85a5ff;}
-[data-prefers-color="dark"] .community-stats .cs span,[data-prefers-color="dark"] .community-topics .ct-label{color:rgba(255,255,255,0.5);}
+[data-prefers-color="dark"] .community-stats .cs span,[data-prefers-color="dark"] .community-contribs .cc-label,[data-prefers-color="dark"] .community-topics .ct-label{color:rgba(255,255,255,0.5);}
 [data-prefers-color="dark"] .ch-topic{background:rgba(255,255,255,0.06);border-color:rgba(47,84,235,0.3);color:#85a5ff;}
 [data-prefers-color="dark"] .ch-topic:hover{background:#2f54eb;color:rgba(255,255,255,0.85);}
 [data-prefers-color="dark"] .community-view .model-card{border-color:rgba(255,255,255,0.08);}
@@ -965,37 +974,35 @@ button { cursor: pointer; border: none; background: none; }
 [data-prefers-color="dark"] .ch-cta-ghost{background:rgba(255,255,255,0.05);border-color:rgba(47,84,235,0.3);color:#85a5ff;}
 [data-prefers-color="dark"] .ch-cta-ghost:hover{background:rgba(47,84,235,0.16);}
 
-/* 五步上架 · 各步独立弹窗（与工作台个人中心弹窗同款样式，就地打开、互不串联业务流） */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:3000;align-items:center;justify-content:center;}
-.modal-overlay.visible{display:flex;}
-.modal-box{background:#fff;border-radius:8px;width:560px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,0.08);}
-.modal-header{display:flex;align-items:center;padding:16px 24px;border-bottom:1px solid #f0f0f0;}
-.modal-title{font-size:16px;font-weight:600;flex:1;color:rgba(0,0,0,0.88);}
-.modal-close{font-size:16px;color:rgba(0,0,0,0.45);cursor:pointer;padding:4px 6px;border-radius:4px;}
-.modal-close:hover{color:rgba(0,0,0,0.88);background:rgba(0,0,0,0.06);}
-.modal-body{padding:24px;overflow-y:auto;flex:1;min-height:0;font-size:14px;color:rgba(0,0,0,0.65);line-height:1.6;}
-.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;border-top:1px solid #f0f0f0;}
-.mc-form-group{margin-bottom:16px;}
-.mc-form-group:last-child{margin-bottom:0;}
-.mc-form-hint{font-size:12px;color:rgba(0,0,0,0.45);margin:0 0 14px;line-height:1.6;}
-.mc-summary{background:rgba(47,84,235,0.04);border:1px solid rgba(47,84,235,0.18);border-radius:8px;padding:12px 16px;}
-.mc-summary-row{display:flex;font-size:13px;margin-bottom:8px;}
-.mc-summary-row:last-child{margin-bottom:0;}
-.mc-summary-key{width:96px;flex-shrink:0;color:rgba(0,0,0,0.45);}
-.mc-summary-val{flex:1;color:rgba(0,0,0,0.88);word-break:break-all;}
-.nb-form-textarea{width:100%;min-height:72px;padding:8px 11px;font-size:14px;border:1px solid #d9d9d9;border-radius:6px;outline:none;transition:border-color 0.2s;color:rgba(0,0,0,0.88);resize:vertical;font-family:inherit;line-height:1.6;}
-.nb-form-textarea:focus{border-color:#2f54eb;box-shadow:0 0 0 2px rgba(47,84,235,0.1);}
-[data-prefers-color="dark"] .modal-box{background:#1f1f1f;color:rgba(255,255,255,0.85);}
-[data-prefers-color="dark"] .modal-header{border-bottom-color:#303030;}
-[data-prefers-color="dark"] .modal-title{color:rgba(255,255,255,0.92);}
-[data-prefers-color="dark"] .modal-close{color:rgba(255,255,255,0.45);}
-[data-prefers-color="dark"] .modal-close:hover{color:rgba(255,255,255,0.88);background:rgba(255,255,255,0.08);}
-[data-prefers-color="dark"] .modal-footer{border-top-color:#303030;}
-[data-prefers-color="dark"] .mc-form-hint{color:rgba(255,255,255,0.45);}
-[data-prefers-color="dark"] .mc-summary{background:rgba(47,84,235,0.12);border-color:rgba(47,84,235,0.3);}
-[data-prefers-color="dark"] .mc-summary-key{color:rgba(255,255,255,0.45);}
-[data-prefers-color="dark"] .mc-summary-val{color:rgba(255,255,255,0.88);}
-[data-prefers-color="dark"] .nb-form-textarea{background:rgba(255,255,255,0.04);border-color:#434343;color:rgba(255,255,255,0.85);}
+/* ===== 机构模型合集页（institution-models.html）专属样式 ===== */
+.institution-dir .filter-sidebar,
+.institution-dir .search-section,
+.institution-dir .toolbar,
+.institution-dir .model-grid,
+.institution-dir .empty-state,
+.institution-dir .module-page-head { display:none !important; }
+.inst-dir-wrap{display:none;}
+.institution-dir .inst-dir-wrap{display:block;max-width:1160px;margin:0 auto;padding:8px 24px 60px;}
+.inst-back{display:inline-block;font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:10px;text-decoration:none;}
+.inst-back:hover{color:#2f54eb;}
+.inst-banner-row{display:flex;align-items:center;gap:16px;}
+.inst-avatar{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;flex-shrink:0;}
+.inst-banner-main{flex:1;min-width:0;}
+.inst-banner-main .mph-title{font-size:22px;}
+.inst-badges{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.sec-title{font-size:16px;font-weight:600;margin:0 0 16px;display:flex;align-items:center;gap:8px;}
+.sec-title .count{font-size:13px;color:rgba(0,0,0,0.45);font-weight:400;}
+.inst-org-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+.inst-org-card{background:#fff;border:1px solid #f0f0f0;border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px;transition:box-shadow .2s,border-color .2s;text-decoration:none;cursor:pointer;}
+.inst-org-card:hover{box-shadow:0 6px 18px rgba(0,0,0,0.07);border-color:rgba(47,84,235,0.4);}
+.inst-org-ava{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700;flex-shrink:0;}
+.inst-org-body{flex:1;min-width:0;}
+.inst-org-name{font-size:16px;font-weight:600;margin-bottom:4px;color:rgba(0,0,0,0.88);}
+.inst-org-meta{font-size:13px;color:rgba(0,0,0,0.45);}
+.inst-org-arrow{color:rgba(0,0,0,0.3);font-size:18px;flex-shrink:0;}
+[data-prefers-color="dark"] .inst-org-card{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);}
+[data-prefers-color="dark"] .inst-org-name{color:rgba(255,255,255,0.85);}
+[data-prefers-color="dark"] .inst-back{color:rgba(255,255,255,0.45);}
 
 </style>
 <style>
@@ -1107,6 +1114,16 @@ button { cursor: pointer; border: none; background: none; }
 
     <!-- ===== RIGHT: CONTENT ===== -->
     <div class="content-main">
+  <div class="module-page-head">
+    <div class="mph-left">
+      <h1 class="mph-title" id="mphTitle">模型中心</h1>
+      <p class="mph-sub" id="mphSub">平台统一托管与维护的官方模型库，支持一键部署为推理服务、开放 API 调用。</p>
+    </div>
+    <span class="mph-source-badge" id="mphSourceBadge">平台提供</span>
+  </div>
+
+  <div id="dirContainer" class="inst-dir-wrap"></div>
+
   <div class="community-hero" id="communityHero">
     <div class="community-hero-top">
       <div>
@@ -1120,10 +1137,20 @@ button { cursor: pointer; border: none; background: none; }
         </div>
       </div>
       <div class="community-stats">
+        <div class="cs"><b>4</b><span>贡献机构</span></div>
         <div class="cs"><b id="communityModelCount">0</b><span>社区模型</span></div>
         <div class="cs"><b>2.1k</b><span>API 调用</span></div>
         <div class="cs"><b>5</b><span>本月新增</span></div>
       </div>
+    </div>
+    <div class="community-hero-bot">
+      <div class="community-contribs"><span class="cc-label">贡献机构</span><div class="contrib-chips">
+        <a class="contrib-chip" href="institution-models.html?org=哈工大AI实验室"><span class="ava" style="background:#2f54eb">哈</span>哈工大AI实验室</a>
+        <a class="contrib-chip" href="institution-models.html?org=北大荒信息公司"><span class="ava" style="background:#6366f1">北</span>北大荒信息公司</a>
+        <a class="contrib-chip" href="institution-models.html?org=中国农业大学"><span class="ava" style="background:#f59e0b">中</span>中国农业大学</a>
+        <a class="contrib-chip" href="institution-models.html?org=中科院东北地理所"><span class="ava" style="background:#0ea5e9">院</span>中科院东北地理所</a>
+        <a class="contrib-chip contrib-more" href="institution-models.html">查看全部机构 →</a>
+      </div></div>
     </div>
   </div>
 
@@ -1140,30 +1167,31 @@ button { cursor: pointer; border: none; background: none; }
       <div class="of-step">
         <div class="of-step-head"><span class="of-step-no">1</span><span class="of-step-ico">📝</span><h4 class="of-step-title">登记模型元数据</h4></div>
         <p class="of-step-desc">填写模型名称、类型、所属科研单位与任务信息，建立模型档案。</p>
-        <button class="of-step-btn" onclick="mcOpen(1)">进入 →</button>
+        <button class="of-step-btn" onclick="openStepDialog('stepMeta')">进入 →</button>
       </div>
       <div class="of-connector">→</div>
       <div class="of-step">
         <div class="of-step-head"><span class="of-step-no">2</span><span class="of-step-ico">📦</span><h4 class="of-step-title">上传镜像</h4></div>
         <p class="of-step-desc">上传模型运行镜像或填写镜像仓库地址，校验格式与依赖。</p>
-        <button class="of-step-btn" onclick="mcOpen(2)">进入 →</button>
+        <button class="of-step-btn" onclick="location.href='workbench.html?create=image'">进入 →</button>
       </div>
       <div class="of-connector">→</div>
       <div class="of-step">
         <div class="of-step-head"><span class="of-step-no">3</span><span class="of-step-ico">🚀</span><h4 class="of-step-title">部署推理服务</h4></div>
         <p class="of-step-desc">配置资源规格与端口，部署推理服务并获取调用地址与 API Key。</p>
-        <button class="of-step-btn" onclick="mcOpen(3)">进入 →</button>
+        <button class="of-step-btn" onclick="openStepDialog('stepDeploy')">进入 →</button>
       </div>
       <div class="of-connector">→</div>
       <div class="of-step">
         <div class="of-step-head"><span class="of-step-no">4</span><span class="of-step-ico">🛡️</span><h4 class="of-step-title">提交审核</h4></div>
-        <p class="of-step-desc">在「我的模型」中对已部署服务点击「同步」，提交平台审批，通过后自动上架至模型社区。</p>
-        <button class="of-step-btn" onclick="mcOpen(4)">进入 →</button>
+        <p class="of-step-desc">核对元数据、镜像与服务地址，提交平台合规与质量审核。</p>
+        <button class="of-step-btn" onclick="openStepDialog('stepReview')">进入 →</button>
       </div>
       <div class="of-connector">→</div>
       <div class="of-step">
         <div class="of-step-head"><span class="of-step-no">5</span><span class="of-step-ico">✅</span><h4 class="of-step-title">审核通过上架</h4></div>
         <p class="of-step-desc">平台审核通过后自动上架，开放检索与 API 调用（未过审不可上架）。</p>
+        <button class="of-step-btn" onclick="location.href='workbench.html?tab=my-models'">进入 →</button>
       </div>
     </div>
   </div>
@@ -1859,19 +1887,98 @@ var state = {
   detailModelIndex: -1
 };
 // 来源切换：模型中心 / 模型社区（由 URL ?view= 决定）
+// 机构模式：?org=机构名 → 仅展示该机构模型合集；无 org 参数 → 贡献机构总览目录
+var ORG_META = {
+  '全重实验室':{c:'#2f54eb'},
+  '北大荒信息公司':{c:'#6366f1'},
+  '哈工大AI实验室':{c:'#2f54eb'},
+  '中国农业大学':{c:'#23ada4'},
+  '中科院东北地理所':{c:'#0ea5e9'}
+};
+function orgColor(name){ return (ORG_META[name] && ORG_META[name].c) || '#2f54eb'; }
+
+// 机构信息横幅（替换模型中心页头，展示机构名 / 简介 / 公开模型数 / 机构性质）
+function renderInstitutionBanner(org){
+  var list = MODELS.filter(function(m){ return m.org === org; });
+  var isOfficial = (org === '全重实验室');
+  var head = document.querySelector('.module-page-head');
+  if (!head) return;
+  var badgeStyle = isOfficial
+    ? 'background:#e6f0ff;color:#2f54eb;border-color:#d6e4ff;'
+    : 'background:rgba(35,173,164,0.1);color:#23ada4;border-color:rgba(35,173,164,0.25);';
+  head.innerHTML =
+    '<a class="inst-back" href="institution-models.html">← 贡献机构总览</a>'+
+    '<div class="inst-banner-row">'+
+      '<div class="inst-avatar" style="background:'+orgColor(org)+'">'+org.charAt(0)+'</div>'+
+      '<div class="inst-banner-main">'+
+        '<h1 class="mph-title">'+org+'</h1>'+
+        '<p class="mph-sub">该机构贡献并公开在洛书模型服务平台的模型合集，涵盖遥感监测、产量预估、大模型等方向。</p>'+
+        '<div class="inst-badges">'+
+          '<span class="mph-source-badge">公开模型 '+list.length+' 个</span>'+
+          '<span class="mph-source-badge" style="'+badgeStyle+'">'+(isOfficial?'平台官方':'生态合作机构')+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+
+// 贡献机构总览目录（无 org 参数时）
+function renderInstitutionDirectory(){
+  var map = {};
+  MODELS.forEach(function(m){
+    if (!map[m.org]) map[m.org] = { org:m.org, count:0, platform:0 };
+    map[m.org].count++;
+    if (m.source === 'platform') map[m.org].platform++;
+  });
+  var orgs = Object.keys(map);
+  var box = document.getElementById('dirContainer');
+  if (!box) return;
+  var html = '<h2 class="sec-title">贡献机构总览 <span class="count">共 '+orgs.length+' 家机构</span></h2>';
+  html += '<div class="inst-org-grid">'+orgs.map(function(name){
+    var o = map[name];
+    return '<a class="inst-org-card" href="institution-models.html?org='+encodeURIComponent(name)+'">'+
+      '<div class="inst-org-ava" style="background:'+orgColor(name)+'">'+name.charAt(0)+'</div>'+
+      '<div class="inst-org-body"><div class="inst-org-name">'+name+'</div>'+
+      '<div class="inst-org-meta">公开模型 '+o.count+' 个'+(o.platform>0?' · 含平台官方 '+o.platform+' 个':'')+'</div></div>'+
+      '<div class="inst-org-arrow">→</div></a>';
+  }).join('')+'</div>';
+  box.innerHTML = html;
+}
+
 (function(){
-  var v = new URLSearchParams(location.search).get('view');
+  var params = new URLSearchParams(location.search);
+  var instOrg = params.get('org');
+  if (instOrg) window.INST_ORG = instOrg; else window.INST_DIR = true;
+
+  var v = params.get('view');
   if (v !== 'platform' && v !== 'user') v = 'platform';
   state.source = v;
   var isUser = (v === 'user');
-  if (isUser) document.body.classList.add('community-view');
-  document.title = (isUser ? '模型社区' : '模型中心') + ' — 北大荒智慧农业协同创新平台';
+
+  // 机构模式下隐藏「模型中心 / 模型社区」切换，避免来源二态歧义
   var np = document.querySelector('[data-nav="model-platform"]');
   var nu = document.querySelector('[data-nav="model-user"]');
-  if (np) np.classList.toggle('active', !isUser);
-  if (nu) nu.classList.toggle('active', isUser);
-  var backs = document.querySelectorAll('.md-back-link');
-  backs.forEach(function(el){ el.textContent = isUser ? '← 返回模型社区' : '← 返回模型中心'; });
+  if (np) np.style.display = 'none';
+  if (nu) nu.style.display = 'none';
+
+  if (!window.INST_ORG) {
+    // 普通模型中心 / 模型社区
+    if (isUser) document.body.classList.add('community-view');
+    document.title = (isUser ? '模型社区' : '模型中心') + ' — 北大荒智慧农业协同创新平台';
+    var mphTitle = document.getElementById('mphTitle');
+    var mphSub = document.getElementById('mphSub');
+    var mphBadge = document.getElementById('mphSourceBadge');
+    if (mphTitle) mphTitle.textContent = isUser ? '模型社区' : '模型中心';
+    if (mphSub) mphSub.textContent = isUser ? '面向科研侧人员开放的外部模型中心：提交自研模型、使用社区模型、通过 API 接口调用（能力与官方一致，来源为非官方贡献）' : '平台统一托管与维护的官方模型库，支持一键部署为推理服务、开放 API 调用。';
+    if (mphBadge) mphBadge.textContent = isUser ? '社区贡献' : '平台提供';
+    var backs = document.querySelectorAll('.md-back-link');
+    backs.forEach(function(el){ el.textContent = isUser ? '← 返回模型社区' : '← 返回模型中心'; });
+  } else {
+    // 机构模型合集模式：复用模型中心卡片与详情弹窗，仅按机构过滤 + 机构信息横幅
+    state.source = null; // 展示该机构全部来源模型
+    document.title = instOrg + ' · 模型合集 — 北大荒智慧农业协同创新平台';
+    renderInstitutionBanner(instOrg);
+  }
+
   // 社区指标（按索引稳定生成，原型演示数据）
   function communityMetrics(i){
     return {
@@ -1890,6 +1997,9 @@ var state = {
     }
     var cmc = document.getElementById('communityModelCount');
     if (cmc) cmc.textContent = MODELS.filter(function(m){return m.source==='user';}).length;
+  }
+  if (window.INST_DIR) {
+    document.title = '贡献机构总览 — 北大荒智慧农业协同创新平台';
   }
 })();
 
@@ -1986,6 +2096,11 @@ function getFilteredModels(){
   // 来源筛选：模型中心 / 模型社区
   if (state.source) {
     models = models.filter(function(m){ return m.source === state.source; });
+  }
+
+  // 机构筛选：仅展示指定机构的模型合集
+  if (window.INST_ORG) {
+    models = models.filter(function(m){ return m.org === window.INST_ORG; });
   }
 
 
@@ -2418,7 +2533,126 @@ function closeCollectionDialog(){
 }
 
 // ============================================================
-// RENDER DETAIL
+// 五步上架流程：当前页弹窗（复用平台 .dialog-overlay 组件，内容对齐个人中心）
+// ============================================================
+function openStepDialog(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(id === 'stepDeploy' || id === 'stepReview'){
+    var sel = document.getElementById(id === 'stepDeploy' ? 'stepDeployModel' : 'stepReviewModel');
+    if(sel){
+      sel.innerHTML = MODELS.map(function(m, i){ return '<option value="'+i+'">'+m.title+'</option>'; }).join('');
+    }
+  }
+  el.classList.add('visible');
+}
+function closeStepDialog(id){
+  var el = document.getElementById(id);
+  if(el) el.classList.remove('visible');
+}
+function submitStepMeta(){
+  closeStepDialog('stepMeta');
+  toast('模型元数据已登记，请前往个人中心上传镜像并部署推理服务', 'success');
+}
+function submitStepDeploy(){
+  closeStepDialog('stepDeploy');
+  toast('推理服务发布成功，已生成调用地址与 API Key', 'success');
+}
+function submitStepReview(){
+  closeStepDialog('stepReview');
+  toast('已提交平台审核，等待合规与质量审核结果', 'success');
+}
+
+function renderCollectionList(){
+  var modelIdx = state.detailModelIndex;
+  var container = document.getElementById('collList');
+  if (COLLECTIONS.length === 0) {
+    container.innerHTML = '<div class="coll-empty">暂无合集，在下方新建</div>';
+    return;
+  }
+  container.innerHTML = COLLECTIONS.map(function(c){
+    var checked = c.modelIds.indexOf(modelIdx) >= 0;
+    return '<div class="coll-item'+(checked?' checked':'')+'" data-coll-id="'+c.id+'" onclick="toggleCollCheck(this)">'+
+      '<span class="coll-checkbox"></span>'+
+      '<span class="coll-name">'+c.name+'</span>'+
+      '<span class="coll-vis-badge '+(c.isPublic?'public':'private')+'">'+(c.isPublic?'公开':'私人')+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleCollCheck(el){
+  el.classList.toggle('checked');
+}
+
+function saveCollectionSelections(){
+  var modelIdx = state.detailModelIndex;
+  // Update existing collections
+  document.querySelectorAll('.coll-item').forEach(function(item){
+    var collId = item.dataset.collId;
+    var checked = item.classList.contains('checked');
+    var coll = COLLECTIONS.find(function(c){ return c.id === collId; });
+    if (!coll) return;
+    var idxInColl = coll.modelIds.indexOf(modelIdx);
+    if (checked && idxInColl < 0) {
+      coll.modelIds.push(modelIdx);
+    } else if (!checked && idxInColl >= 0) {
+      coll.modelIds.splice(idxInColl, 1);
+    }
+  });
+
+  // Create new collection if name is filled
+  var newName = document.getElementById('collNewName').value.trim();
+  if (newName) {
+    var isPublic = document.querySelector('.coll-vis-opt.active').dataset.vis === 'public';
+    COLLECTIONS.push({
+      id: 'c'+Date.now(),
+      name: newName,
+      isPublic: isPublic,
+      modelIds: [modelIdx],
+      createdAt: new Date().toISOString().split('T')[0],
+      desc: ''
+    });
+  }
+
+  closeCollectionDialog();
+  // Toast feedback
+  showToast('合集已更新 ✅');
+}
+
+// Simple toast (also accessible as toast() for cross-page consistency)
+function toast(msg, type){ showToast(msg, type); }
+function showToast(msg, type){
+  var t = document.getElementById('collectionToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'collectionToast';
+    t.style.cssText = 'position:fixed;top:76px;right:24px;z-index:2000;padding:10px 16px;border-radius:6px;font-size:14px;transition:opacity 0.3s;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08);';
+    document.body.appendChild(t);
+  }
+  t.textContent = (type==='error'?'⚠ ':'') + msg;
+  if (type === 'success' || !type) { t.style.background = '#f6ffed'; t.style.border = '1px solid #b7eb8f'; t.style.color = '#52c41a'; }
+  else if (type === 'error') { t.style.background = '#fff2f0'; t.style.border = '1px solid #ffccc7'; t.style.color = '#ff4d4f'; }
+  else if (type === 'info') { t.style.background = '#f0f5ff'; t.style.border = '1px solid #d6e4ff'; t.style.color = '#2f54eb'; }
+  t.style.opacity = '1';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(function(){ t.style.opacity = '0'; }, 4000);
+}
+
+// Click outside dialog to close
+document.getElementById('collectionDialog').addEventListener('click', function(e){
+  if (e.target === this) closeCollectionDialog();
+});
+
+// Visibility toggle in new collection form
+document.getElementById('collVisToggle').addEventListener('click', function(e){
+  var opt = e.target.closest('.coll-vis-opt');
+  if (!opt) return;
+  this.querySelectorAll('.coll-vis-opt').forEach(function(o){ o.classList.remove('active'); });
+  opt.classList.add('active');
+});
+
+// ============================================================
+// DETAIL RENDER
 // ============================================================
 function renderDetail(m){
   var isCollection = m.cardType === 'collection';
@@ -3371,8 +3605,13 @@ function isLoggedIn(){try{return localStorage.getItem('luoshu_logged_in')==='1';
 function requireAuth(){if(!isLoggedIn()){window.location.href='login.html?redirect='+encodeURIComponent(window.location.href);return false;}return true;}
 function switchAuthState(loggedIn){document.getElementById('headerAuthOut').style.display=loggedIn?'none':'';document.getElementById('headerAuthIn').style.display=loggedIn?'':'none';}
 (function(){switchAuthState(isLoggedIn());})();
-buildFilterTags();
-renderAll();
+if (window.INST_DIR) {
+  document.body.classList.add('institution-dir');
+  renderInstitutionDirectory();
+} else {
+  buildFilterTags();
+  renderAll();
+}
 // ===== NOTIFICATIONS =====
 var NOTIFS=[{icon:'brain',text:'你的模型「玉米病虫害识别 v3」构建成功，已发布至模型中心',time:'10 分钟前',unread:true},{icon:'clipboard-check',text:'哈工大 AI 实验室接受了你的协作邀请',time:'1 小时前',unread:true},{icon:'bar-chart-3',text:'数据集「作物长势样本集」上传完成，已通过审核',time:'3 小时前',unread:true},{icon:'bell',text:'平台算力资源扩容完成，GPU 可用额度提升 50%',time:'昨天',unread:false},{icon:'file-text',text:'2026 Q2 平台使用报告已发布，点击查看',time:'2 天前',unread:false}];
 function renderNotifs(){document.getElementById('notifList').innerHTML=NOTIFS.map(function(n){return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background 0.2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')">'+ico(n.icon,'card-ico notif')+'<span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span><span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'+(n.unread?'<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>':'')+'</div>';}).join('');}
@@ -3420,65 +3659,64 @@ function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu
   <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
 </footer>
 
-<!-- 五步上架 · 各步独立弹窗（与工作台个人中心弹窗同款；就地打开，互不串联业务流） -->
-<div class="modal-overlay" id="mcModal1" onclick="if(event.target===this)mcClose(1)">
-  <div class="modal-box">
-    <div class="modal-header"><span class="modal-title">步骤一 · 登记模型元数据</span><span class="modal-close" onclick="mcClose(1)">✕</span></div>
-    <div class="modal-body">
-      <div class="mc-form-group"><label class="nb-form-label">模型名称 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc1Name" placeholder="最长 54 个字符" maxlength="54"></div>
-      <div class="mc-form-group"><label class="nb-form-label">模型类型 <span style="color:#ff4d4f">*</span></label><select class="nb-form-select" id="mc1Type"><option value="AI模型">AI 模型</option><option value="普通模型">普通模型</option></select></div>
-      <div class="mc-form-group"><label class="nb-form-label">所属科研单位 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc1Org" placeholder="如：北大荒研究院"></div>
-      <div class="mc-form-group"><label class="nb-form-label">任务信息</label><textarea class="nb-form-textarea" id="mc1Task" placeholder="描述模型的任务目标、适用场景等"></textarea></div>
+  <!-- ==================== 五步上架高保真弹窗（当前页，复用平台弹窗组件） ==================== -->
+  <div class="dialog-overlay" id="stepMeta" onclick="if(event.target===this)closeStepDialog('stepMeta')">
+    <div class="dialog-box">
+      <div class="dialog-header"><span class="dialog-title">📝 登记模型元数据</span><span class="dialog-close" onclick="closeStepDialog('stepMeta')">✕</span></div>
+      <div class="dialog-body">
+        <p style="margin:0 0 14px;color:rgba(0,0,0,0.65);font-size:13px">填写模型基础档案，建立模型元数据。提交后可在个人中心「我的模型」继续上传镜像与部署服务。</p>
+        <form class="sm-form" id="stepMetaForm" onsubmit="return false">
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>模型类型</label><div class="sm-form-control"><select><option>AI模型</option><option>普通模型</option></select></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>模型编码</label><div class="sm-form-control"><input placeholder="如 rice-yield-prediction-v2"></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>模型名称</label><div class="sm-form-control"><input placeholder="最长54个字符"></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>业务类型</label><div class="sm-form-control"><select><option>作物识别</option><option>变化检测</option><option>产量预估</option><option>病虫害监测</option><option>大语言模型</option><option>数据分析</option></select></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>标签</label><div class="sm-form-control"><input placeholder="逗号分隔，如：作物生长检测,卫星遥感"></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>版本</label><div class="sm-form-control"><input placeholder="如 v1.0.0"></div></div>
+          <div class="sm-row">
+            <div class="sm-form-item"><label class="sm-form-label">训练框架</label><div class="sm-form-control"><input placeholder="如 PyTorch 2.1"></div></div>
+            <div class="sm-form-item"><label class="sm-form-label">推理框架</label><div class="sm-form-control"><input placeholder="如 TensorRT 8.6"></div></div>
+          </div>
+          <div class="sm-form-item"><label class="sm-form-label">模型简介</label><div class="sm-form-control"><textarea rows="3" placeholder="一句话描述模型用途"></textarea></div></div>
+        </form>
+      </div>
+      <div class="dialog-footer"><button class="btn btn-default" onclick="closeStepDialog('stepMeta')">取消</button><button class="btn btn-primary" onclick="submitStepMeta()">保存元数据</button></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-default" onclick="mcClose(1)">取消</button><button class="btn btn-primary" onclick="mcSave(1)">保存</button></div>
   </div>
-</div>
 
-<div class="modal-overlay" id="mcModal2" onclick="if(event.target===this)mcClose(2)">
-  <div class="modal-box">
-    <div class="modal-header"><span class="modal-title">步骤二 · 上传镜像</span><span class="modal-close" onclick="mcClose(2)">✕</span></div>
-    <div class="modal-body">
-      <div class="mc-form-group"><label class="nb-form-label">镜像名称 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc2Name" placeholder="仅小写字母、数字和连字符"></div>
-      <div class="mc-form-group"><label class="nb-form-label">镜像分类 <span style="color:#ff4d4f">*</span></label><select class="nb-form-select" id="mc2Cat"><option value="遥感感知">📡 遥感感知</option><option value="智能决策">🧠 智能决策</option><option value="时空模拟">🌍 时空模拟</option><option value="大语言模型">💬 大语言模型</option></select></div>
-      <div class="mc-form-group"><label class="nb-form-label">功能名称 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc2Func" placeholder="仅小写字母、数字和连字符"></div>
-      <div class="mc-form-group"><label class="nb-form-label">描述</label><textarea class="nb-form-textarea" id="mc2Desc" placeholder="可选，描述镜像用途与特性"></textarea></div>
+  <div class="dialog-overlay" id="stepDeploy" onclick="if(event.target===this)closeStepDialog('stepDeploy')">
+    <div class="dialog-box">
+      <div class="dialog-header"><span class="dialog-title">🚀 部署推理服务</span><span class="dialog-close" onclick="closeStepDialog('stepDeploy')">✕</span></div>
+      <div class="dialog-body">
+        <p style="margin:0 0 14px;color:rgba(0,0,0,0.65);font-size:13px">配置资源规格并部署推理服务，部署完成后获取调用地址与 API Key。</p>
+        <form class="sm-form" id="stepDeployForm" onsubmit="return false">
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>服务名称</label><div class="sm-form-control"><input placeholder="如：小麦条锈病识别-推理服务-v1"></div></div>
+          <div class="sm-form-item"><label class="sm-form-label"><span class="req">*</span>关联模型</label><div class="sm-form-control"><select id="stepDeployModel"></select></div></div>
+          <div class="sm-form-item"><label class="sm-form-label">模型版本</label><div class="sm-form-control"><input placeholder="如 v1.0.0"></div></div>
+          <div class="sm-form-item"><label class="sm-form-label">服务描述</label><div class="sm-form-control"><textarea rows="2" placeholder="推理服务用途、输入输出说明…"></textarea></div></div>
+          <div class="sm-row">
+            <div class="sm-form-item"><label class="sm-form-label">CPU（核）</label><div class="sm-form-control"><select><option>2</option><option selected>4</option><option>8</option><option>16</option><option>32</option></select></div></div>
+            <div class="sm-form-item"><label class="sm-form-label">内存（GB）</label><div class="sm-form-control"><select><option>8</option><option selected>16</option><option>32</option><option>64</option><option>128</option></select></div></div>
+          </div>
+          <div class="sm-row">
+            <div class="sm-form-item"><label class="sm-form-label">GPU</label><div class="sm-form-control"><select><option selected>无</option><option>T4 × 1</option><option>T4 × 2</option><option>A10 × 1</option><option>A100 × 1</option><option>A100 × 2</option></select></div></div>
+            <div class="sm-form-item"><label class="sm-form-label">副本数</label><div class="sm-form-control"><select><option selected>1</option><option>2</option><option>3</option><option>5</option></select></div></div>
+          </div>
+        </form>
+      </div>
+      <div class="dialog-footer"><button class="btn btn-default" onclick="closeStepDialog('stepDeploy')">取消</button><button class="btn btn-primary" onclick="submitStepDeploy()">发布服务</button></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-default" onclick="mcClose(2)">取消</button><button class="btn btn-primary" onclick="mcSave(2)">保存</button></div>
   </div>
-</div>
 
-<div class="modal-overlay" id="mcModal3" onclick="if(event.target===this)mcClose(3)">
-  <div class="modal-box">
-    <div class="modal-header"><span class="modal-title">步骤三 · 部署推理</span><span class="modal-close" onclick="mcClose(3)">✕</span></div>
-    <div class="modal-body">
-      <div class="mc-form-group"><label class="nb-form-label">资源规格 <span style="color:#ff4d4f">*</span></label><select class="nb-form-select" id="mc3Res"><option value="GPU 推理节点">GPU 推理节点</option><option value="CPU 推理节点">CPU 推理节点</option></select></div>
-      <div class="mc-form-group"><label class="nb-form-label">服务端口 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc3Port" value="8080" placeholder="如 8080"></div>
-      <div class="mc-form-group"><label class="nb-form-label">调用地址</label><input class="nb-form-input" id="mc3Endpoint" readonly placeholder="部署后自动生成"></div>
+  <div class="dialog-overlay" id="stepReview" onclick="if(event.target===this)closeStepDialog('stepReview')">
+    <div class="dialog-box">
+      <div class="dialog-header"><span class="dialog-title">🛡️ 提交模型审核</span><span class="dialog-close" onclick="closeStepDialog('stepReview')">✕</span></div>
+      <div class="dialog-body">
+        <p style="margin:0 0 14px;color:rgba(0,0,0,0.65);font-size:13px">核对元数据、镜像与服务地址，提交平台合规与质量审核。审核通过后将自动上架，开放检索与 API 调用。</p>
+        <div class="sm-form-item"><label class="sm-form-label">选择模型</label><div class="sm-form-control"><select id="stepReviewModel"></select></div></div>
+      </div>
+      <div class="dialog-footer"><button class="btn btn-default" onclick="closeStepReview()">取消</button><button class="btn btn-primary" onclick="submitStepReview()">提交审核</button></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-default" onclick="mcClose(3)">取消</button><button class="btn btn-primary" onclick="mcSave(3)">保存</button></div>
   </div>
-</div>
-
-<div class="modal-overlay" id="mcModal4" onclick="if(event.target===this)mcClose(4)">
-  <div class="modal-box">
-    <div class="modal-header"><span class="modal-title">步骤四 · 提交审核上架</span><span class="modal-close" onclick="mcClose(4)">✕</span></div>
-    <div class="modal-body">
-      <p class="mc-form-hint">完成前序步骤（登记元数据、上传镜像、部署推理）后，在此提交平台审核。审核通过后模型将自动上架至模型社区，开放检索与 API 调用。</p>
-      <div class="mc-form-group"><label class="nb-form-label">镜像命名空间 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc4Ns" placeholder="如：beidahuang/rice-yield"></div>
-      <div class="mc-form-group"><label class="nb-form-label">版本号 <span style="color:#ff4d4f">*</span></label><input class="nb-form-input" id="mc4Ver" value="v1.0.0" placeholder="如 v1.0.0"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-default" onclick="mcClose(4)">取消</button><button class="btn btn-primary" onclick="mcSubmit()">提交审核</button></div>
-  </div>
-</div>
-
-<script>
-/* 五步上架 · 各步独立弹窗：就地打开，互不串联业务流 */
-function mcOpen(n){var el=document.getElementById('mcModal'+n);if(el)el.classList.add('visible');}
-function mcClose(n){var el=document.getElementById('mcModal'+n);if(el)el.classList.remove('visible');}
-function mcSave(n){mcClose(n);toast('已保存「步骤'+n+'」信息（示例）','success');}
-function mcSubmit(){mcClose(4);toast('已提交审核，等待平台审批','success');}
-</script>
-
 
 </body>
 </html>

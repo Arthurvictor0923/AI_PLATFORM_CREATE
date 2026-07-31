@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>课题中心 — 北大荒智慧农业协同创新平台</title>
+<style>
+  :root{
+    --primary:#2f54eb; --primary-hover:#597ef7; --primary-active:#1d39c4;
+    --teal:#23ada4; --teal-bg:#e6fffb;
+    --green:#52c41a; --green-bg:#d9f7be;
+    --red:#ff4d4f; --red-bg:#fff2f0;
+    --blue-bg:#d6e4ff;
+    --text-1:rgba(0,0,0,0.88); --text-2:rgba(0,0,0,0.65); --text-3:rgba(0,0,0,0.45);
+    --line:rgba(5,5,5,0.08); --bg:#f5f7fa; --card:#fff; --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;color:var(--text-1);background:var(--bg);}
+  a{color:var(--primary);text-decoration:none;}
+  /* ===== HEADER (与平台标准原型一致) ===== */
+  .app-header {
+    position: fixed; top: 0; left: 0; right: 0; height: 60px; line-height: 60px;
+    background: transparent;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(5,5,5,0.06);
+    z-index: 19; display: flex; flex-direction: column; padding: 0;
+  }
+  .top-nav-header { position: relative; width: 100%; height: 100%; background-color: transparent; }
+  .top-nav-header-main { display: flex; align-items: center; padding-inline-start: 16px; margin: 12px 0; height: 40px; }
+  .top-nav-header-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .logo-link { display: flex; align-items: center; gap: 8px; }
+  .system-name-title { font-weight: 600; font-size: 20px; color: rgba(0,0,0,0.88); white-space: nowrap; }
+  .top-nav-menu-wrap { flex: 1; display: flex; align-items: center; height: 40px; overflow: hidden; }
+  .top-nav-menu { display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(5,5,5,0.06); background-color: transparent; gap: 8px; }
+  .top-nav-item { position: relative; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; margin: 0 0; font-size: 14px; color: rgba(0,0,0,0.65); white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.3s, background 0.3s; }
+  .top-nav-item:hover { color: rgb(47,84,235); }
+  .top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
+  .top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
+  [data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
+  [data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
+  .header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
+  .header-btn-login, .header-btn-register {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 32px; padding: 4px 15px; font-size: 14px; border-radius: 6px;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none;
+  }
+  .header-btn-login { border: 1px solid #d9d9d9; background: #fff; color: rgba(0,0,0,0.88); box-shadow: 0 2px 0 rgba(0,0,0,0.02); }
+  .header-btn-login:hover { color: #597ef7; border-color: #597ef7; }
+  .header-btn-register { border: 1px solid transparent; background: #2f54eb; color: #fff; box-shadow: 0 2px 0 rgba(47,84,235,0.1); }
+  .header-btn-register:hover { background: #597ef7; }
+  /* ===== 登录态组件（与模型中心等原型统一） ===== */
+  .header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; background: none; border: none; }
+  .header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
+  .header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
+  .notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
+  .notif-popover.visible{display:block}
+  .avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7566FF,#2F54EB); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+  .dropdown-wrap { position: relative; display: inline-flex; }
+  #headerAuthOut, #headerAuthIn { display: inline-flex; align-items: center; gap: 12px; }
+  .dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 4px; background: #fff; border-radius: 8px; min-width: 180px; padding: 4px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05); z-index: 100; }
+  .dropdown-menu.visible { display: block; }
+  .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-size: 14px; color: rgba(0,0,0,0.88); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .dropdown-item:hover { background: rgba(0,0,0,0.04); }
+  .dropdown-item.danger { color: #ff4d4f; }
+  .dropdown-item.danger:hover { background: #fff2f0; }
+  .dropdown-divider { height: 1px; background: rgba(5,5,5,0.06); margin: 4px 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 4px 15px; font-size: 14px; font-weight: 400; border-radius: 6px; border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; transition: all 0.2s; }
+  .btn.btn-sm { height: 28px; padding: 0 12px; font-size: 13px; }
+  .logout-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+  .logout-overlay.on { display: flex; }
+  .logout-dialog { background: #fff; border-radius: 8px; padding: 20px 24px; min-width: 320px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+  /* ===== layout ===== */
+  .page-wrap{max-width:1280px;margin:0 auto;padding:80px 16px 60px;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
+  .ph-title{font-size:22px;font-weight:600;margin:0;display:flex;align-items:center;gap:8px;}
+  .ph-title::before{content:"";width:3px;height:20px;background:var(--primary);border-radius:2px;display:inline-block;}
+  .ph-sub{color:var(--text-3);font-size:13px;margin:6px 0 0;}
+  .note-bar{background:var(--teal-bg);border:1px solid #b5ebd9;border-radius:var(--radius);padding:8px 12px;color:#0c6b5e;font-size:12.5px;margin:10px 0 18px;}
+  /* ===== toolbar ===== */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+  .toolbar input,.toolbar select{height:34px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;background:#fff;color:var(--text-1);transition:border-color .15s,box-shadow .15s;}
+  .toolbar input{min-width:240px;padding-left:34px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 11px center;}
+  .toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(47,84,235,0.12);}
+  .toolbar select{cursor:pointer;}
+  .toolbar .spacer{flex:1;}
+  /* ===== topic stats ===== */
+  .topic-stats{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px;}
+  .stat-chip{display:flex;flex-direction:column;gap:3px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:92px;}
+  .stat-chip .num{font-size:20px;font-weight:700;color:var(--primary);line-height:1.1;}
+  .stat-chip .lbl{font-size:12px;color:var(--text-3);}
+  .stat-chip.teal .num{color:var(--teal);}
+  .stat-chip.orange .num{color:#d46b08;}
+  .stat-chip.green .num{color:var(--green);}
+  /* ===== topic grid ===== */
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:8px;}
+  .topic-card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .2s,border-color .2s;display:flex;flex-direction:column;}
+  .topic-card:hover{box-shadow:0 12px 30px rgba(47,84,235,0.14);transform:translateY(-3px);border-color:rgba(47,84,235,0.45);}
+  .tc-banner{height:58px;display:flex;align-items:center;justify-content:center;background:var(--tint,#eef2ff);}
+  .tc-icon{font-size:26px;line-height:1;}
+  .tc-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .tc-row1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .tc-dir{display:inline-block;font-size:12px;color:var(--accent,#2f54eb);background:var(--tint,#eef2ff);border-radius:6px;padding:2px 9px;font-weight:600;}
+  .tc-title{font-size:16px;font-weight:600;line-height:1.45;margin:0;color:var(--text-1);}
+  .tc-summary{font-size:13px;color:var(--text-2);line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .tc-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--text-2);}
+  .tc-meta span{display:inline-flex;align-items:center;gap:4px;}
+  .tc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--text-3);}
+  .tc-deadline{display:inline-flex;align-items:center;gap:4px;}
+  .tc-more{color:var(--primary);font-weight:600;}
+  .st-orange{color:#d46b08;background:#fff3e6;}
+  /* ===== status chip ===== */
+  .st{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:12px;line-height:1;white-space:nowrap;}
+  .st-blue{color:var(--primary);background:var(--blue-bg);}
+  .st-green{color:var(--green);background:var(--green-bg);}
+  .st-red{color:var(--red);background:var(--red-bg);}
+  .st-teal{color:var(--teal);background:var(--teal-bg);}
+  .st-gray{color:var(--text-2);background:#f0f0f0;}
+  /* ===== dialog ===== */
+  .dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;}
+  .dialog-overlay.visible{display:flex;}
+  .dialog-box{background:#fff;border-radius:10px;width:720px;max-width:100%;max-height:88vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,0.2);}
+  .dialog-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2;}
+  .dialog-title{font-size:16px;font-weight:600;}
+  .dialog-close{cursor:pointer;color:var(--text-3);font-size:18px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
+  .dialog-close:hover{background:#f0f0f0;color:var(--text-1);}
+  .dialog-body{padding:18px 20px;}
+  .dialog-footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
+  .btn-primary{height:34px;padding:0 18px;background:var(--primary);color:#fff;border:1px solid var(--primary);border-radius:var(--radius);font-size:14px;cursor:pointer;}
+  .btn-primary:hover{background:var(--primary-hover);border-color:var(--primary-hover);}
+  .btn-default{height:34px;padding:0 18px;background:#fff;color:var(--text-1);border:1px solid var(--line);border-radius:var(--radius);font-size:14px;cursor:pointer;}
+  /* ===== 视角切换（申报者 / 管理者） ===== */
+  .view-switch{display:inline-flex;background:#f0f2f5;border-radius:8px;padding:3px;gap:2px;}
+  .vs-btn{border:none;background:transparent;padding:6px 16px;font-size:13px;border-radius:6px;color:rgba(0,0,0,0.65);cursor:pointer;transition:all .2s;white-space:nowrap;}
+  .vs-btn.active{background:#fff;color:var(--primary);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .mgr-hint{display:none;align-items:center;gap:8px;margin:8px 0 4px;padding:8px 12px;border-radius:var(--radius);background:rgba(47,84,235,0.06);border:1px solid rgba(47,84,235,0.15);color:var(--primary);font-size:13px;}
+  .mgr-hint.show{display:flex;}
+  /* ===== 卡片管理区（管理者视角） ===== */
+  .tc-manage{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--text-2);align-items:center;justify-content:space-between;gap:8px;}
+  .tc-manage.show{display:flex;}
+  .tc-team-label b{color:var(--text-1);font-weight:600;}
+  .btn-sm-link{border:none;background:transparent;color:var(--primary);font-size:12.5px;cursor:pointer;padding:2px 4px;border-radius:4px;white-space:nowrap;}
+  .btn-sm-link:hover{background:rgba(47,84,235,0.08);}
+  /* ===== 选择团队弹窗 ===== */
+  .ta-team-list{display:flex;flex-direction:column;gap:8px;}
+  .ta-team-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:all .2s;}
+  .ta-team-item:hover{border-color:var(--primary);background:rgba(47,84,235,0.03);}
+  .ta-team-item.sel{border-color:var(--primary);background:rgba(47,84,235,0.06);}
+  .ta-radio{width:16px;height:16px;border-radius:50%;border:2px solid #d9d9d9;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .ta-team-item.sel .ta-radio{border-color:var(--primary);}
+  .ta-team-item.sel .ta-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);}
+  .ta-team-meta{display:flex;flex-direction:column;}
+  .ta-team-name{font-size:14px;font-weight:600;color:var(--text-1);}
+  .ta-team-org{font-size:12px;color:var(--text-3);}
+  .btn-default:hover{border-color:var(--primary);color:var(--primary);}
+  .detail-block{margin-bottom:16px;}
+  .detail-block h4{font-size:14px;margin:0 0 8px;color:var(--text-1);}
+  .detail-block p{margin:0;color:var(--text-2);line-height:1.7;font-size:13.5px;}
+  .guide-list{margin:8px 0 0;padding-left:20px;color:var(--text-2);font-size:13.5px;line-height:1.9;}
+  .guide-list li{margin-bottom:2px;}
+  .kv{display:flex;gap:8px;font-size:13.5px;margin-bottom:6px;}
+  .kv .k{color:var(--text-3);min-width:84px;}
+  .kv .v{color:var(--text-1);}
+  .empty-hint{text-align:center;color:var(--text-3);padding:40px 0;font-size:14px;}
+  .pill{display:inline-block;font-size:12px;background:#f0f0f0;color:var(--text-2);border-radius:10px;padding:1px 10px;margin:2px 4px 2px 0;}
+  /* ===== toast ===== */
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;padding:10px 18px;border-radius:6px;font-size:14px;z-index:500;opacity:0;transition:opacity .2s;pointer-events:none;}
+  .toast.show{opacity:1;}
+  .hidden{display:none !important;}
+
+  /* ===== pagination（与模型中心一致） ===== */
+  .pagination-wrap{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:32px 0 8px;}
+  .page-info{font-size:13px;color:#8284A4;margin-right:auto;}
+  [data-prefers-color="dark"] .page-info{color:rgba(255,255,255,0.45);}
+  .pagination{display:flex;align-items:center;gap:8px;}
+  .page-btn{min-width:32px;height:32px;padding:0 8px;border-radius:6px;font-size:14px;line-height:30px;color:rgba(0,0,0,0.65);background:#fff;border:1px solid #d9d9d9;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+  .page-btn:hover{color:#624AFF;border-color:#8a73ff;}
+  .page-btn.active{background:#624AFF;border-color:#624AFF;color:#fff;font-weight:500;}
+  .page-btn:disabled{color:#C4C3D9;cursor:not-allowed;border-color:#d9d9d9;background:#fff;}
+  [data-prefers-color="dark"] .page-btn{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.65);}
+  [data-prefers-color="dark"] .page-btn:hover{color:#624AFF;border-color:#624AFF;}
+  [data-prefers-color="dark"] .page-btn.active{background:#624AFF;color:#fff;}
+  [data-prefers-color="dark"] .page-btn:disabled{opacity:.4;}
+
+  /* ===== footer（与平台其他原型一致） ===== */
+  .footer{background:#001529;color:rgba(255,255,255,0.65);padding:48px 50px 24px;font-size:13px;}
+  .footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;}
+  .footer-col h4{font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:16px;}
+  .footer-col p,.footer-col a{font-size:13px;color:rgba(255,255,255,0.45);line-height:2.2;display:block;text-decoration:none;}
+  .footer-col a:hover{color:#597ef7;}
+  .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .footer-logo span{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85);}
+  .footer-bot{max-width:1200px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8;}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="app-header">
+  <div class="top-nav-header">
+    <div class="top-nav-header-main">
+      <div class="top-nav-header-logo">
+        <a class="logo-link" href="portal.html">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5317 4.03642C12.5089 4.60464 11.4288 5.526 10.9688 5.9422C14.7146 6.46793 16.2261 7.78226 17.7375 9.35945C19.101 10.7822 19.709 12.9081 19.5119 16.0625C20.169 15.0768 20.6816 14.0253 20.8262 13.3024C20.9576 12.6453 21.7462 9.5566 20.0376 6.46793C18.7233 4.09203 16.6642 3.20402 15.8318 3.11639C15.4594 3.20402 14.478 3.51069 13.5317 4.03642Z" fill="url(#gl1)"/>
+            <path d="M25.2035 7.87255C24.2 7.27089 22.862 6.79615 22.2715 6.60587C23.6892 10.1127 23.3066 12.0789 22.6965 14.1764C22.1461 16.0686 20.609 17.6581 17.7786 19.0646C18.9609 19.1408 20.1278 19.059 20.8261 18.8228C21.4609 18.608 24.5301 17.7466 26.3507 14.7226C27.7511 12.3964 27.4906 10.1692 27.1503 9.40446C26.8882 9.12576 26.1319 8.42922 25.2035 7.87255Z" fill="url(#gl2)"/>
+            <path d="M27.7167 19.8987C27.736 18.7288 27.4781 17.3327 27.3477 16.7262C25.0195 19.7073 23.1255 20.3591 21.0039 20.8795C19.09 21.3489 16.9449 20.8125 14.3117 19.0646C14.8368 20.1266 15.4911 21.0962 16.0448 21.5829C16.5482 22.0253 18.8288 24.2526 22.358 24.3172C25.0727 24.3669 26.8713 23.0277 27.3634 22.3506C27.4737 21.9843 27.6988 20.9811 27.7167 19.8987Z" fill="url(#gl3)"/>
+            <path d="M18.5582 28.0886C19.5809 27.5204 20.6611 26.599 21.1211 26.1828C17.3753 25.6571 15.8638 24.3428 14.3523 22.7656C12.9888 21.3428 12.3808 19.2169 12.578 16.0625C11.9208 17.0483 11.4082 18.0997 11.2636 18.8226C11.1322 19.4798 10.3436 22.5684 12.0522 25.6571C13.3666 28.033 15.4257 28.921 16.2581 29.0086C16.6305 28.921 17.6118 28.6143 18.5582 28.0886Z" fill="url(#gl4)"/>
+            <path d="M6.88639 24.2525C7.88988 24.8541 9.22786 25.3289 9.81831 25.5192C8.40069 22.0123 8.78319 20.0462 9.39335 17.9486C9.94375 16.0564 11.4809 14.4669 14.3112 13.0604C13.1289 12.9842 11.9621 13.066 11.2637 13.3022C10.6289 13.517 7.55973 14.3784 5.73918 17.4024C4.33875 19.7286 4.59927 21.9559 4.93959 22.7206C5.20167 22.9993 5.95794 23.6958 6.88639 24.2525Z" fill="url(#gl5)"/>
+            <path d="M4.37316 12.2264C4.35386 13.3963 4.6117 14.7923 4.74214 15.3988C7.07035 12.4177 8.96433 11.7659 11.086 11.2455C12.9998 10.7761 15.145 11.3125 17.7782 13.0604C17.2531 11.9984 16.5988 11.0288 16.045 10.5421C15.5416 10.0997 13.261 7.87246 9.73187 7.80783C7.01711 7.75813 5.21852 9.09736 4.72643 9.77444C4.61611 10.1408 4.39102 11.144 4.37316 12.2264Z" fill="url(#gl6)"/>
+            <defs><linearGradient id="gl1" x1="16.0453" y1="16.0625" x2="16.0453" y2="3.11639" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl2" x1="16.0454" y1="16.0625" x2="27.257" y2="9.58942" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl3" x1="16.0449" y1="16.0625" x2="27.2566" y2="22.5356" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl4" x1="16.0453" y1="16.0625" x2="16.0453" y2="29.0086" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl5" x1="16.0454" y1="16.0625" x2="4.8363" y2="22.7068" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient><linearGradient id="gl6" x1="16.0453" y1="16.0625" x2="4.83691" y2="9.63985" gradientUnits="userSpaceOnUse"><stop stop-color="#7566FF"/><stop offset="1" stop-color="#2F54EB"/></linearGradient></defs>
+          </svg>
+          <span class="system-name-title">北大荒智慧农业协同创新平台</span>
+        </a>
+      </div>
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
+        <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
+        <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span>
+      </div></div>
+      <div class="header-right">
+        <button class="header-btn" title="搜索" onclick="var s=document.getElementById('topicSearch');if(s){s.focus();s.scrollIntoView({block:'center'});}else{toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
+        <span id="headerAuthOut">
+          <a class="header-btn-login" href="javascript:void(0)" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window.location.href)">登录</a>
+          <a class="header-btn-register" href="apply-settlement.html">申请入驻</a>
+        </span>
+        <span id="headerAuthIn" style="display:none">
+          <button class="header-btn" title="通知" id="notifBtn" onclick="toggleNotifPopover()"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M816 768h-24V428c0-141.1-104.3-257.7-240-277.1V112c0-22.1-17.9-40-40-40s-40 17.9-40 40v38.9c-135.7 19.4-240 136-240 277.1v340h-24c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h216c0 61.8 50.2 112 112 112s112-50.2 112-112h216c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM512 888c-26.5 0-48-21.5-48-48h96c0 26.5-21.5 48-48 48z"/></svg><span class="badge-dot"></span></button>
+          <div class="notif-popover" id="notifPopover">
+            <div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+              <span>通知</span>
+              <span style="font-size:12px;color:#2f54eb;cursor:pointer;font-weight:400" onclick="markAllRead()">全部已读</span>
+            </div>
+            <div id="notifList"></div>
+            <div style="padding:8px 14px;border-top:1px solid #f0f0f0;text-align:center">
+              <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
+            </div>
+          </div>
+          <div class="dropdown-wrap" id="userDropdownWrap">
+            <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
+            <div class="dropdown-menu" id="userDropdown">
+              <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
+                <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
+              </div>
+              <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
+              <div class="dropdown-item" onclick="location.href='account-settings.html'">⚙️ 账号设置</div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logoutBtn" onclick="confirmLogout(event)">🚪 退出登录</div>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== PAGE ==================== -->
+<div class="page-wrap">
+  <div class="page-head">
+    <div>
+      <h1 class="ph-title">课题中心</h1>
+      <p class="ph-sub">平台发布课题指南，涵盖智能育种、智慧农机、遥感监测、耕地保护等方向；课题经形式审查、专家评审、择优立项、签订任务书后进入执行。</p>
+    </div>
+    <div class="view-switch" id="viewSwitch">
+      <button class="vs-btn active" data-view="applicant" onclick="switchTopicView('applicant')">申报者视角</button>
+      <button class="vs-btn" data-view="manager" onclick="switchTopicView('manager')">管理者视角</button>
+    </div>
+  </div>
+
+  <div class="topic-stats" id="topicStats"></div>
+  <div class="mgr-hint" id="mgrHint">🛠 管理者视角：可为每个课题指定承担团队（选择由哪个科研团队来执行该课题）。</div>
+
+  <div class="toolbar">
+    <input id="topicSearch" placeholder="搜索课题名称 / 方向…" oninput="renderTopics()" />
+    <select id="topicStatusFilter" onchange="renderTopics()">
+      <option value="">全部状态</option>
+      <option value="申报中">申报中</option>
+      <option value="评审中">评审中</option>
+      <option value="已立项">已立项</option>
+      <option value="执行中">执行中</option>
+    </select>
+    <select id="topicDirFilter" onchange="renderTopics()">
+      <option value="">全部方向</option>
+      <option value="智能育种">智能育种</option>
+      <option value="智慧农机">智慧农机</option>
+      <option value="遥感监测">遥感监测</option>
+      <option value="耕地保护">耕地保护</option>
+    </select>
+  </div>
+  <div class="topic-grid" id="topicGrid"></div>
+  <div class="pagination-wrap" id="paginationWrap">
+    <span class="page-info" id="pageInfo"></span>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- ==================== FOOTER（与平台其他原型一致） ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg)"/></svg>
+        <span>北大荒信息有限公司</span>
+      </div>
+      <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
+    </div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html?view=platform">模型中心</a><a href="model-marketplace.html?view=user">模型社区</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
+    <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div>
+    <div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html">常见问题</a></div>
+  </div>
+  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+</footer>
+
+<!-- ==================== DIALOGS ==================== -->
+<!-- 课题详情 -->
+<div class="dialog-overlay" id="topicDetail" onclick="if(event.target===this)closeTopicDetail()">
+  <div class="dialog-box">
+    <div class="dialog-header"><span class="dialog-title" id="tdTitle">课题申报指南</span><span class="dialog-close" onclick="closeTopicDetail()">✕</span></div>
+    <div class="dialog-body" id="tdBody"></div>
+    <div class="dialog-footer">
+      <button class="btn-default" onclick="closeTopicDetail()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 选择承担团队（管理者视角） -->
+<div class="dialog-overlay" id="teamAssignModal" onclick="if(event.target===this)closeTeamAssign()">
+  <div class="dialog-box" style="width:480px">
+    <div class="dialog-header"><span class="dialog-title" id="taTitle">选择承担团队</span><span class="dialog-close" onclick="closeTeamAssign()">✕</span></div>
+    <div class="dialog-body">
+      <p style="font-size:13px;color:var(--text-3);margin:0 0 12px">指定该课题由哪个科研团队承担执行（与课题方向匹配的团队已列出，可据实选择）。</p>
+      <div class="ta-team-list" id="taBody"></div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-default" onclick="closeTeamAssign()">取消</button>
+      <button class="btn-primary" onclick="confirmTeamAssign()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 退出登录确认 -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogoutConfirm()">
+  <div class="logout-dialog" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">⚠</span><span style="font-weight:600;font-size:14px">确定退出登录？</span></div>
+    <div style="font-size:13px;color:rgba(0,0,0,0.45);margin-bottom:16px">退出后需重新登录才能访问平台</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm btn-default" onclick="closeLogoutConfirm()">取消</button>
+      <button class="btn btn-sm btn-primary" onclick="doLogout()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== 数据 =====================
+var TOPICS = [
+  {id:'t1', title:'寒地水稻智能育种大模型研发', direction:'智能育种', org:'全重实验室', budget:80, deadline:'2026-08-31', status:'申报中',
+   summary:'面向寒地水稻产量与抗逆性状，研发融合多组学与环境因子的智能育种大模型。',
+   qualification:'高校 / 科研院所课题组；具备作物遗传育种或 AI 交叉研究基础；团队不少于 5 人。',
+   content:'研究内容：构建寒地水稻表型-基因型联合建模框架；研发产量与抗逆性状预测大模型；形成可复现的育种决策支持能力。考核以模型精度、可解释性及示范应用为准。'},
+  {id:'t2', title:'大马力农机自动驾驶与协同作业系统', direction:'智慧农机', org:'全重实验室', budget:120, deadline:'2026-09-15', status:'申报中',
+   summary:'面向垦区大马力拖拉机，研发自动驾驶、多机协同与作业质量在线评估系统。',
+   qualification:'具备农机装备、控制或自动驾驶研发能力的机构；有田间试验条件优先。',
+   content:'研究内容：基于北斗的自动驾驶控制；多机协同路径规划；作业质量在线感知。需提交田间验证方案。'},
+  {id:'t3', title:'基于多源遥感的作物长势与墒情监测', direction:'遥感监测', org:'全重实验室', budget:60, deadline:'2026-08-20', status:'评审中',
+   summary:'融合卫星、无人机与地面传感，构建作物长势与土壤墒情近实时监测能力。',
+   qualification:'具备遥感 / 地理信息或农业气象研究基础。',
+   content:'研究内容：多源遥感数据同化；长势与墒情反演模型；近实时产品生成与发布。'},
+  {id:'t4', title:'大豆病虫害视觉识别与预警模型', direction:'智能育种', org:'全重实验室', budget:50, deadline:'2026-09-30', status:'申报中',
+   summary:'研发大豆叶部病害与虫害的视觉识别模型，支撑田间早期预警。',
+   qualification:'具备计算机视觉或植保研究基础的团队。',
+   content:'研究内容：病害虫样本库建设；轻量化识别模型；边缘端部署与预警接口。'},
+  {id:'t5', title:'黑土地保护性耕作决策支持平台', direction:'耕地保护', org:'全重实验室', budget:100, deadline:'2026-10-10', status:'已立项',
+   summary:'面向黑土地保护，研发耕作措施推荐与碳汇核算决策支持平台。',
+   qualification:'已立项示范课题，面向执行阶段合作机构开放。',
+   content:'研究内容：保护性耕作措施知识图谱；决策推荐引擎；碳汇核算模块。'},
+  {id:'t6', title:'农场智能灌溉与水肥一体化优化', direction:'智慧农机', org:'全重实验室', budget:70, deadline:'2026-09-05', status:'申报中',
+   summary:'研发基于土壤-作物-气象耦合的灌溉与水肥一体化优化控制模型。',
+   qualification:'具备农业水土工程或优化控制研究基础。',
+   content:'研究内容：水肥需求耦合模型；优化控制策略；与现有灌溉设施对接方案。'},
+  {id:'t7', title:'玉米籽粒机收质量在线检测与调控', direction:'智慧农机', org:'全重实验室', budget:65, deadline:'2026-09-20', status:'申报中',
+   summary:'面向玉米籽粒直收，研发收获质量在线检测与脱粒参数自适应调控方法。',
+   qualification:'具备农业机械、机器视觉或自动控制研发能力的机构。',
+   content:'研究内容：籽粒破损与杂质在线感知；滚筒转速 / 凹板间隙自适应调控；机收质量评价体系。'},
+  {id:'t8', title:'寒地大豆产量形成机理与精准栽培模型', direction:'智能育种', org:'全重实验室', budget:75, deadline:'2026-08-25', status:'评审中',
+   summary:'解析寒地大豆产量形成机理，构建光温水肥耦合的精准栽培决策模型。',
+   qualification:'具备作物栽培生理或农业模型研究基础。',
+   content:'研究内容：寒地大豆群体构建；光温水肥耦合模型；精准栽培处方生成。'},
+  {id:'t9', title:'基于无人机多光谱的玉米倒伏评估', direction:'遥感监测', org:'全重实验室', budget:45, deadline:'2026-09-12', status:'申报中',
+   summary:'利用无人机多光谱影像快速评估风灾后玉米倒伏面积与等级。',
+   qualification:'具备遥感或农业灾情评估研究基础。',
+   content:'研究内容：倒伏光谱特征提取；倒伏等级分类模型；灾情图件自动出图。'},
+  {id:'t10', title:'黑土地有机质提升与碳汇监测', direction:'耕地保护', org:'全重实验室', budget:90, deadline:'2026-10-20', status:'申报中',
+   summary:'面向黑土地有机质提升，研发土壤碳库动态监测与碳汇核算方法。',
+   qualification:'具备土壤学或农业碳汇研究基础。',
+   content:'研究内容：有机质监测网络；碳汇核算模型；提升措施效果评估。'},
+  {id:'t11', title:'水稻智能叶龄诊断与施肥推荐', direction:'智能育种', org:'全重实验室', budget:55, deadline:'2026-09-08', status:'已立项',
+   summary:'基于图像的水稻叶龄智能诊断，生成分蘖期精准施肥推荐。',
+   qualification:'已立项课题，面向示范应用合作机构开放。',
+   content:'研究内容：叶龄图像识别；需肥诊断模型；施肥处方推送接口。'},
+  {id:'t12', title:'农机具智能调度与作业排队优化', direction:'智慧农机', org:'全重实验室', budget:80, deadline:'2026-09-25', status:'评审中',
+   summary:'面向垦区规模化作业，研发农机具智能调度与跨区作业排队优化。',
+   qualification:'具备运筹优化或农机管理信息化研究基础。',
+   content:'研究内容：作业任务建模；调度优化算法；跨区协同排程。'},
+  {id:'t13', title:'作物病虫害遥感早期预警与扩散预测', direction:'遥感监测', org:'全重实验室', budget:58, deadline:'2026-08-28', status:'已立项',
+   summary:'融合气象与遥感，构建病虫害早期预警与空间扩散预测能力。',
+   qualification:'已立项课题，面向监测预警合作机构开放。',
+   content:'研究内容：病害发生适宜度模型；扩散路径预测；预警信息发布。'},
+  {id:'t14', title:'盐碱地改良与耐盐碱作物筛选模型', direction:'耕地保护', org:'全重实验室', budget:85, deadline:'2026-10-15', status:'申报中',
+   summary:'面向盐碱地综合利用，研发改良措施推荐与耐盐碱作物筛选模型。',
+   qualification:'具备土壤改良或作物抗逆育种研究基础。',
+   content:'研究内容：盐碱胁迫评价；改良措施知识库；耐盐碱品种筛选。'},
+  {id:'t15', title:'畜禽养殖环境智能调控与疫病预警', direction:'智能育种', org:'全重实验室', budget:62, deadline:'2026-09-18', status:'执行中',
+   summary:'面向规模化养殖场，研发环境智能调控与疫病早期预警系统。',
+   qualification:'执行中课题，面向养殖示范场开放。',
+   content:'研究内容：环境多参数感知；通风温控优化；疫病风险预警。'}
+];
+
+// 课题公告（只读展示，无主动申报入口）
+
+// ===================== 通用 =====================
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},1800); }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+// ===================== 登录态（与平台其他原型统一） =====================
+function isLoggedIn(){ try { return localStorage.getItem('luoshu_logged_in') === '1'; } catch(e){ return false; } }
+function switchAuthState(loggedIn){
+  var out = document.getElementById('headerAuthOut');
+  var inn = document.getElementById('headerAuthIn');
+  if(out) out.style.display = loggedIn ? 'none' : '';
+  if(inn) inn.style.display = loggedIn ? '' : 'none';
+}
+// 通知
+var NOTIFS = [
+  {icon:'🧠', text:'平台发布新课题指南：玉米智能育种大模型构建', time:'10 分钟前', unread:true},
+  {icon:'🚜', text:'智慧农机调度优化课题进入专家评审阶段', time:'1 小时前', unread:true},
+  {icon:'🛰️', text:'遥感监测方向新增 3 条开放合作课题', time:'3 小时前', unread:true},
+  {icon:'🔔', text:'您的课题申报进度已更新，请于个人中心查看', time:'昨天', unread:false},
+  {icon:'📄', text:'2026 年度平台课题申报指南已汇总发布', time:'2 天前', unread:false}
+];
+function renderNotifs(){
+  var el = document.getElementById('notifList'); if(!el) return;
+  el.innerHTML = NOTIFS.map(function(n){
+    return '<div style="padding:10px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;transition:background .2s" onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" onmouseout="this.style.background=\'\'" onclick="toast(\'功能开发中\',\'info\')">'
+      + '<span style="font-size:15px;line-height:1.4">'+n.icon+'</span>'
+      + '<span style="flex:1;color:rgba(0,0,0,0.65)">'+n.text+'</span>'
+      + '<span style="font-size:11px;color:rgba(0,0,0,0.35);white-space:nowrap">'+n.time+'</span>'
+      + (n.unread ? '<span style="width:6px;height:6px;border-radius:50%;background:#ff4d4f;flex-shrink:0;margin-top:5px"></span>' : '')
+      + '</div>';
+  }).join('');
+}
+function toggleNotifPopover(){ var el=document.getElementById('notifPopover'); if(el) el.classList.toggle('visible'); closeUserMenu(); }
+function markAllRead(){ NOTIFS.forEach(function(n){n.unread=false;}); renderNotifs(); var b=document.getElementById('notifBtn'); if(b){ var d=b.querySelector('.badge-dot'); if(d) d.style.display='none'; } }
+document.addEventListener('click', function(e){
+  var pop=document.getElementById('notifPopover'), btn=document.getElementById('notifBtn');
+  if(pop && pop.classList.contains('visible') && !pop.contains(e.target) && e.target!==btn && !(btn&&btn.contains(e.target))){ pop.classList.remove('visible'); }
+});
+// 用户下拉
+function toggleUserMenu(){ var np=document.getElementById('notifPopover'); if(np) np.classList.remove('visible'); var dm=document.getElementById('userDropdown'); if(dm) dm.classList.toggle('visible'); }
+function closeUserMenu(){ var dm=document.getElementById('userDropdown'); if(dm) dm.classList.remove('visible'); }
+document.addEventListener('click', function(e){ var wrap=document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
+function goToWorkbench(){ closeUserMenu(); window.location.href='workbench.html'; }
+// 退出登录
+function confirmLogout(e){ if(e) e.stopPropagation(); closeUserMenu(); var o=document.getElementById('logoutOverlay'); if(o) o.classList.add('on'); }
+function closeLogoutConfirm(){ var o=document.getElementById('logoutOverlay'); if(o) o.classList.remove('on'); }
+function doLogout(){ closeLogoutConfirm(); try { localStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录'); setTimeout(function(){ window.location.href='portal.html'; }, 600); }
+// 初始化登录态
+(function(){ switchAuthState(isLoggedIn()); renderNotifs(); })();
+var DIR_META = {
+  '智能育种':{color:'#722ed1',tint:'#f3effe',icon:'🧬'},
+  '智慧农机':{color:'#fa8c16',tint:'#fff3e6',icon:'🚜'},
+  '遥感监测':{color:'#13c2c2',tint:'#e6fbfb',icon:'🛰️'},
+  '耕地保护':{color:'#52c41a',tint:'#f0fbe8',icon:'🌱'}
+};
+function dirMeta(d){ return DIR_META[d] || {color:'#2f54eb',tint:'#eef2ff',icon:'📌'}; }
+function statusClass(st){
+  if(st==='已立项') return 'st-teal';
+  if(st==='执行中'||st==='已结题') return 'st-green';
+  if(st==='评审中') return 'st-orange';
+  return 'st-blue';
+}
+function topicStatusChip(t){ return '<span class="st '+statusClass(t.status)+'">'+esc(t.status)+'</span>'; }
+
+// ===================== 课题列表（只读公告展示） =====================
+var topicState = {page:1, pageSize:6};
+
+// ===================== 视角切换（申报者 / 管理者） =====================
+var topicView = 'applicant';
+function switchTopicView(v){
+  topicView = v;
+  document.querySelectorAll('#viewSwitch .vs-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===v); });
+  var hint = document.getElementById('mgrHint'); if(hint) hint.classList.toggle('show', v==='manager');
+  renderTopics();
+}
+
+// 可选承担团队（与课题方向匹配，原型 mock）
+var TEAMS = [
+  {name:'哈工大 AI 实验室 · 智能育种组', org:'哈尔滨工业大学'},
+  {name:'中国农业大学 · 玉米育种团队', org:'中国农业大学'},
+  {name:'北大荒信息公司 · 智慧农机组', org:'北大荒信息有限公司'},
+  {name:'中科院东北地理所 · 遥感监测组', org:'中科院东北地理与农业生态研究所'},
+  {name:'东北农业大学 · 耕地保护团队', org:'东北农业大学'},
+  {name:'中国农科院 · 畜禽环境调控组', org:'中国农业科学院'}
+];
+// 课题 → 承担团队 映射（localStorage 持久化）
+var teamAssign = {};
+function loadTeamAssign(){ try { teamAssign = JSON.parse(localStorage.getItem('ls_topic_team') || '{}'); } catch(e){ teamAssign = {}; } }
+function saveTeamAssign(){ try { localStorage.setItem('ls_topic_team', JSON.stringify(teamAssign)); } catch(e){} }
+loadTeamAssign();
+
+var curAssignId = null;
+var selTeamName = '';
+function openTeamAssign(id){
+  curAssignId = id;
+  selTeamName = teamAssign[id] || '';
+  var t = TOPICS.filter(function(x){ return x.id===id; })[0] || {};
+  document.getElementById('taTitle').textContent = '选择承担团队 · ' + (t.title || '');
+  document.getElementById('taBody').innerHTML = TEAMS.map(function(team){
+    var sel = (team.name===selTeamName) ? ' sel' : '';
+    return '<div class="ta-team-item'+sel+'" onclick="selectTeamItem(this,\''+esc(team.name)+'\')">'
+      + '<span class="ta-radio"></span>'
+      + '<span class="ta-team-meta"><span class="ta-team-name">'+esc(team.name)+'</span><span class="ta-team-org">'+esc(team.org)+'</span></span>'
+      + '</div>';
+  }).join('');
+  document.getElementById('teamAssignModal').classList.add('visible');
+}
+function selectTeamItem(el, name){
+  document.querySelectorAll('.ta-team-item').forEach(function(i){ i.classList.remove('sel'); });
+  el.classList.add('sel');
+  selTeamName = name;
+}
+function confirmTeamAssign(){
+  if(!curAssignId) return;
+  teamAssign[curAssignId] = selTeamName || '';
+  saveTeamAssign();
+  closeTeamAssign();
+  renderTopics();
+  toast(selTeamName ? ('已指定承担团队：' + selTeamName) : '已清除承担团队');
+}
+function closeTeamAssign(){ document.getElementById('teamAssignModal').classList.remove('visible'); }
+
+function renderTopics(){
+  var kw = (document.getElementById('topicSearch').value||'').trim().toLowerCase();
+  var sf = document.getElementById('topicStatusFilter').value;
+  var df = document.getElementById('topicDirFilter').value;
+  var list = TOPICS.filter(function(t){
+    if(sf && t.status!==sf) return false;
+    if(df && t.direction!==df) return false;
+    if(kw && (t.title+t.direction+t.summary).toLowerCase().indexOf(kw)===-1) return false;
+    return true;
+  });
+  // 统计概览
+  var counts={total:TOPICS.length, 申报中:0, 评审中:0, 已立项:0, 执行中:0};
+  TOPICS.forEach(function(t){ if(counts[t.status]!=null) counts[t.status]++; });
+  document.getElementById('topicStats').innerHTML =
+     '<div class="stat-chip"><span class="num">'+counts.total+'</span><span class="lbl">课题总数</span></div>'
+    +'<div class="stat-chip"><span class="num">'+counts['申报中']+'</span><span class="lbl">申报中</span></div>'
+    +'<div class="stat-chip orange"><span class="num">'+counts['评审中']+'</span><span class="lbl">评审中</span></div>'
+    +'<div class="stat-chip teal"><span class="num">'+counts['已立项']+'</span><span class="lbl">已立项</span></div>'
+    +'<div class="stat-chip green"><span class="num">'+counts['执行中']+'</span><span class="lbl">执行中</span></div>';
+
+  var grid = document.getElementById('topicGrid');
+  var wrap = document.getElementById('paginationWrap');
+  if(!list.length){ grid.innerHTML='<div class="empty-hint">没有匹配的课题指南。</div>'; wrap.style.display='none'; return; }
+  var totalPages = Math.ceil(list.length / topicState.pageSize);
+  if(topicState.page > totalPages) topicState.page = Math.max(1, totalPages);
+  var start = (topicState.page - 1) * topicState.pageSize;
+  var pageList = list.slice(start, start + topicState.pageSize);
+  grid.innerHTML = pageList.map(function(t){
+    var m=dirMeta(t.direction);
+    var manageHtml = '';
+    if(topicView==='manager'){
+      var team = teamAssign[t.id] || '';
+      manageHtml = '<div class="tc-manage show" onclick="event.stopPropagation()">'
+        + '<span class="tc-team-label">承担团队：<b>'+(team?esc(team):'未指定')+'</b></span>'
+        + '<button class="btn-sm-link" onclick="event.stopPropagation();openTeamAssign(\''+t.id+'\')">'+(team?'更改':'选择团队')+'</button>'
+        + '</div>';
+    }
+    return '<div class="topic-card" style="--accent:'+m.color+';--tint:'+m.tint+'" onclick="openTopicDetail(\''+t.id+'\')">'
+      +'<div class="tc-banner"><span class="tc-icon">'+m.icon+'</span></div>'
+      +'<div class="tc-body">'
+      +'<div class="tc-row1"><span class="tc-dir" style="color:'+m.color+';background:'+m.tint+'">'+esc(t.direction)+'</span>'+topicStatusChip(t)+'</div>'
+      +'<h3 class="tc-title">'+esc(t.title)+'</h3>'
+      +'<p class="tc-summary">'+esc(t.summary)+'</p>'
+      +'<div class="tc-meta"><span>💰 经费 '+t.budget+' 万元</span><span>🏛 '+esc(t.org)+'</span></div>'
+      +'<div class="tc-foot"><span class="tc-deadline">⏰ 截止 '+t.deadline+'</span><span class="tc-more">查看指南 →</span></div>'
+      + manageHtml
+      +'</div></div>';
+  }).join('');
+  wrap.style.display='';
+  renderTopicPagination(totalPages);
+}
+
+function renderTopicPagination(totalPages){
+  document.getElementById('pageInfo').textContent = '第 '+topicState.page+'/'+totalPages+' 页 · 共 '+TOPICS.length+' 条';
+  var html='';
+  html += '<button class="page-btn" '+(topicState.page<=1?'disabled':'')+' onclick="goTopicPage('+(topicState.page-1)+')">←</button>';
+  for(var i=1;i<=totalPages;i++){
+    if(totalPages<=7 || i===1 || i===totalPages || (i>=topicState.page-1 && i<=topicState.page+1)){
+      html += '<button class="page-btn'+(i===topicState.page?' active':'')+'" onclick="goTopicPage('+i+')">'+i+'</button>';
+    } else if(i===2 && topicState.page>4){
+      html += '<button class="page-btn" disabled>…</button>';
+    } else if(i===totalPages-1 && topicState.page<totalPages-3){
+      html += '<button class="page-btn" disabled>…</button>';
+    }
+  }
+  html += '<button class="page-btn" '+(topicState.page>=totalPages?'disabled':'')+' onclick="goTopicPage('+(topicState.page+1)+')">→</button>';
+  document.getElementById('pagination').innerHTML = html;
+}
+function goTopicPage(n){ topicState.page=n; renderTopics(); }
+
+// 课题详情
+var curTopicId=null;
+function openTopicDetail(id){
+  var t = TOPICS.filter(function(x){return x.id===id;})[0]; if(!t) return;
+  curTopicId=id;
+  document.getElementById('tdTitle').textContent='课题申报指南 · '+t.title;
+  document.getElementById('tdBody').innerHTML =
+    (function(){ var m=dirMeta(t.direction); return '<div class="detail-block"><span class="tc-dir" style="color:'+m.color+';background:'+m.tint+'">'+esc(t.direction)+'</span> '+topicStatusChip(t)+'</div>'; })()
+    +'<div class="detail-block"><h4>课题概要</h4><p>'+esc(t.summary)+'</p></div>'
+    +'<div class="detail-block"><h4>申报资质门槛</h4><p>'+esc(t.qualification)+'</p></div>'
+    +'<div class="detail-block"><h4>主要研究内容</h4><p>'+esc(t.content)+'</p></div>'
+    +'<div class="kv"><span class="k">经费额度</span><span class="v">'+t.budget+' 万元</span></div>'
+    +'<div class="kv"><span class="k">发布机构</span><span class="v">'+esc(t.org)+'</span></div>'
+    +'<div class="kv"><span class="k">申报截止</span><span class="v">'+t.deadline+'</span></div>'
+    +'<div class="detail-block" style="margin-top:18px;border-top:1px dashed var(--line);padding-top:16px"><h4>申报说明（线下申报）</h4>'
+    +'<p>本平台课题采用「申报制」：由科研团队自愿申报，经形式审查、专家评审、择优立项、签订任务书后进入执行。流程为：发布指南 → 下载并填写申报文档 → 线下递交 → 形式审查 → 专家评审 → 择优立项 → 签订任务书。</p>'
+    +'<p>申报主体须为高校 / 科研院所课题组或具备相应研发能力的机构，团队规模、研究基础等须满足指南中的资质门槛。</p></div>'
+    +'<div class="detail-block"><h4>需递交资料说明</h4><p>请按以下清单准备并递交申报材料（均须加盖依托单位公章）：</p><ul class="guide-list">'
+    +'<li>《课题申报书》（从本页下载模板，完整填写并签章）</li>'
+    +'<li>依托单位科研资质 / 法人证书复印件</li>'
+    +'<li>团队主要成员职称与研究方向说明</li>'
+    +'<li>前期研究基础证明材料（论文、专利、数据、平台条件等）</li>'
+    +'<li>经费预算明细及测算依据</li>'
+    +'</ul></div>'
+    +'<div class="detail-block"><h4>下载申报文档</h4><p>点击下方按钮下载《课题申报书》模板，填写完整后按线下流程递交。</p><button class="btn-primary" onclick="downloadApplyDoc()">⬇ 下载申报文档模板</button></div>'
+    +'<div class="note-bar">本平台课题申报业务走线下：请下载并填写申报文档，按依托单位科研管理部门要求盖章递交；平台仅发布指南与查询进度（进度请于个人中心「我的申报」查看）。</div>';
+  document.getElementById('topicDetail').classList.add('visible');
+}
+function closeTopicDetail(){ document.getElementById('topicDetail').classList.remove('visible'); }
+
+function downloadApplyDoc(){
+  var t = TOPICS.filter(function(x){return x.id===curTopicId;})[0];
+  var name = t? t.title : '课题';
+  var lines = [
+    '课题申报书（模板）',
+    '课题名称：'+(t?t.title:''),
+    '申报方向：'+(t?t.direction:''),
+    '发布机构：'+(t?t.org:''),
+    '经费额度：'+(t?t.budget+' 万元':''),
+    '申报截止：'+(t?t.deadline:''),
+    '',
+    '一、申报团队信息',
+    '  负责人（姓名 / 职称）：',
+    '  依托单位：',
+    '  研究团队名称：',
+    '  团队规模（人）：',
+    '',
+    '二、研究方案',
+    '  研究目标：',
+    '  技术路线：',
+    '  创新点：',
+    '',
+    '三、经费预算（万元）',
+    '  ',
+    '',
+    '四、前期研究基础',
+    '  ',
+    '',
+    '（本文件为原型占位模板，正式申报以依托单位下发版本为准）'
+  ];
+  var blob = new Blob(['﻿'+lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name.replace(/[\\/:*?"<>|]/g,'_')+'_申报书模板.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('申报文档已开始下载');
+}
+
+// ===================== 工具 =====================
+
+// 当前页 nav 高亮
+(function(){ var el=document.querySelector('[data-nav="topic"]'); if(el) el.classList.add('active'); })();
+
+// 初始化
+renderTopics();
+</script>
+</body>
+</html>

@@ -57,8 +57,6 @@ button{cursor:pointer;border:none;background:none}
 .notif-popover.visible{display:block}
 
 /* Points badge */
-.points-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;background:#f0f5ff;font-size:13px;color:#2f54eb;cursor:pointer;user-select:none;white-space:nowrap}
-.points-badge strong{font-weight:600}
 
 /* User dropdown */
 .dropdown-wrap{position:relative;display:inline-flex}
@@ -248,11 +246,15 @@ html.embedded .main-layout{height:100%;margin-top:0}
         </a>
       </div>
       <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
-        
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
-        <span class="top-nav-item active" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
+        <span class="top-nav-item active" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span>
+      </div></div>
       <div class="header-right">
         <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
 
@@ -275,12 +277,11 @@ html.embedded .main-layout{height:100%;margin-top:0}
               <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
             </div>
           </div>
-          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
           <div class="dropdown-wrap" id="userDropdownWrap">
             <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
             <div class="dropdown-menu" id="userDropdown">
               <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
-                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
@@ -358,7 +359,7 @@ var DOC_CATEGORIES = [
     ]
   },
   {
-    id: 'models', title: '🧠 模型广场', icon: '🧠',
+    id: 'models', title: '🧠 模型中心', icon: '🧠',
     items: [
       { id: 'models-browse', title: '浏览与搜索模型', tags: ['both'] },
       { id: 'models-detail', title: '模型详情与试用', tags: ['both'] },
@@ -425,7 +426,6 @@ var DOC_CATEGORIES = [
   {
     id: 'faq', title: '❓ 常见问题', icon: '❓',
     items: [
-      { id: 'faq-points', title: '积分体系说明', tags: ['both'] },
       { id: 'faq-status', title: '模型状态说明', tags: ['both'] },
       { id: 'faq-support', title: '联系技术支持', tags: ['both'] }
     ]
@@ -448,12 +448,12 @@ DOC_CONTENT['account'] = {
 
 DOC_CONTENT['qs-dev'] = {
   title: '研发侧快速上手', category: '快速入门', tags: ['研发侧'],
-  content: '<h1>研发侧快速上手</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>模型开发者、数据科学家、算法工程师</strong>等研发角色，帮助你在 10 分钟内了解平台核心研发流程。</p><h2>典型研发流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>在线开发（Notebook）</h4><p>在工作台「在线开发」Tab 创建 Notebook 会话，使用内置 IDE 编写和调试模型代码。支持 Python + 主流 ML 框架。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>封装镜像</h4><p>Notebook 中点击「🚀 部署」→ 跳转镜像创建页 → 编写 Dockerfile → 构建镜像。镜像支持 Tar 包上传和在线编辑。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>构建与发布</h4><p>镜像详情页执行「构建」（未构建→构建中→构建成功/失败），构建成功后「发布」至镜像广场，供推理服务使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布推理服务</h4><p>工作台「我的模型」→ 点击「发布」→ 打开 7 段发布抽屉（模型元数据→版本→镜像→服务类型→使用说明→推理配置→资源启动配置）→ 提交发布。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>部署监控</h4><p>模型部署页查看部署状态，点击「记录」查看 Pod 调度 + 容器启动进度，部署成功后下载日志或重新部署。</p></div></div><h2>接单需求（可选）</h2><p>在需求大厅浏览待接需求 → 申请接单（进入候选人池）→ 需求方选择后进入处理 → 交付 → 获得积分奖励（接单+200，完成+500）。</p><h2>关键入口</h2><table><thead><tr><th>功能</th><th>入口</th></tr></thead><tbody><tr><td>在线开发</td><td>工作台 → 在线开发 Tab / 开发中心 → 在线开发</td></tr><tr><td>镜像管理</td><td>工作台 → 镜像管理 Tab / 开发中心 → 镜像管理</td></tr><tr><td>模型部署</td><td>模型管理 → 模型部署</td></tr><tr><td>需求接单</td><td>需求市场 → 需求大厅 → 申请接单</td></tr></tbody></table>'
+  content: '<h1>研发侧快速上手</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>模型开发者、数据科学家、算法工程师</strong>等研发角色，帮助你在 10 分钟内了解平台核心研发流程。</p><h2>典型研发流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>在线开发（Notebook）</h4><p>在工作台「在线开发」Tab 创建 Notebook 会话，使用内置 IDE 编写和调试模型代码。支持 Python + 主流 ML 框架。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>封装镜像</h4><p>Notebook 中点击「🚀 部署」→ 跳转镜像创建页 → 编写 Dockerfile → 构建镜像。镜像支持 Tar 包上传和在线编辑。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>构建与发布</h4><p>镜像详情页执行「构建」（未构建→构建中→构建成功/失败），构建成功后「发布」至镜像广场，供推理服务使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布推理服务</h4><p>工作台「我的模型」→ 点击「发布」→ 打开 7 段发布抽屉（模型元数据→版本→镜像→服务类型→使用说明→推理配置→资源启动配置）→ 提交发布。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>部署监控</h4><p>模型部署页查看部署状态，点击「记录」查看 Pod 调度 + 容器启动进度，部署成功后下载日志或重新部署。</p></div></div><h2>接单需求（可选）</h2><p>在需求大厅浏览待接需求 → 申请接单（进入候选人池）→ 需求方选择后进入处理 → 交付 → 获得平台贡献记录与成果展示。</p><h2>关键入口</h2><table><thead><tr><th>功能</th><th>入口</th></tr></thead><tbody><tr><td>在线开发</td><td>工作台 → 在线开发 Tab / 开发中心 → 在线开发</td></tr><tr><td>镜像管理</td><td>工作台 → 镜像管理 Tab / 开发中心 → 镜像管理</td></tr><tr><td>模型部署</td><td>模型管理 → 模型部署</td></tr><tr><td>需求接单</td><td>需求市场 → 需求大厅 → 申请接单</td></tr></tbody></table>'
 };
 
 DOC_CONTENT['qs-consume'] = {
   title: '消费侧快速上手', category: '快速入门', tags: ['消费侧'],
-  content: '<h1>消费侧快速上手</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>农业科研人员、业务分析师、机构管理者</strong>等消费角色，帮助你在 5 分钟内了解如何使用平台 AI 能力。</p><h2>典型消费流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>浏览模型广场</h4><p>进入模型广场，按作物类型/任务类型/框架筛选模型。21 个预置农业 AI 模型覆盖病虫害识别、作物分类、产量预测等场景。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>申请使用模型</h4><p>在模型详情页点击「申请使用」→ 填写申请信息 → 提交审批。审批通过后获得 API Key，可通过 API 或 Notebook 使用模型。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>使用数据集</h4><p>在数据管理中浏览数据集（15 个，7 个类目）→ 申请使用（消耗积分）→ 查看示例数据。平台不提供直接下载，数据通过模型推理间接使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布需求</h4><p>需求大厅点击「发布需求」→ 填写需求详情 + 积分悬赏（消耗 10 积分）→ 等待开发者接单 → 选择开发者 → 验收交付物。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>使用应用</h4><p>应用中心浏览已上架应用 → 查看应用详情 → 申请使用（填写用途说明）→ 获得交付物（报告/数据集/工作流/部署服务）。</p></div></div><h2>积分体系</h2><p>新用户初始积分 <strong>1000</strong>，前 3 次模型调用免费。各模块消耗/获取积分见「常见问题 → 积分体系说明」。</p>'
+  content: '<h1>消费侧快速上手</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>本指南面向<strong>农业科研人员、业务分析师、机构管理者</strong>等消费角色，帮助你在 5 分钟内了解如何使用平台 AI 能力。</p><h2>典型消费流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>浏览模型广场</h4><p>进入模型广场，按作物类型/任务类型/框架筛选模型。21 个预置农业 AI 模型覆盖病虫害识别、作物分类、产量预测等场景。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>申请使用模型</h4><p>在模型详情页点击「申请使用」→ 填写申请信息 → 提交审批。审批通过后获得 API Key，可通过 API 或 Notebook 使用模型。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>使用数据集</h4><p>在数据管理中浏览数据集（15 个，7 个类目）→ 申请使用→ 查看示例数据。平台不提供直接下载，数据通过模型推理间接使用。</p></div></div><div class="step"><div class="step-num">4</div><div class="step-content"><h4>发布需求</h4><p>需求大厅点击「发布需求」→ 填写需求详情 → 等待开发者接单 → 选择开发者 → 验收交付物。</p></div></div><div class="step"><div class="step-num">5</div><div class="step-content"><h4>使用应用</h4><p>应用中心浏览已上架应用 → 查看应用详情 → 申请使用（填写用途说明）→ 获得交付物（报告/数据集/工作流/部署服务）。</p></div></div><h2>使用说明</h2><p>平台面向入驻团队免费开放，模型调用、数据集申请等资源均不收取费用。</p>'
 };
 
 // --- 模型广场 ---
@@ -469,7 +469,7 @@ DOC_CONTENT['models-detail'] = {
 
 DOC_CONTENT['models-apply'] = {
   title: '申请使用模型（审批流程）', category: '模型广场', tags: ['消费侧'],
-  content: '<h1>申请使用模型（审批流程）</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>模型广场中的模型需要<strong>申请审批</strong>后才能使用。审批流程确保模型的合理使用和资源管控。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>发起申请</h4><p>模型详情页点击「📡 API」按钮 → 填写申请信息（使用场景、预计调用量等）→ 提交申请。申请记录写入 <code>luoshu_applications</code>（localStorage）。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>等待审批</h4><p>申请提交后状态为 pending。在工作台「我的申请」Tab 可查看所有申请记录，支持撤回操作。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>审批通过</h4><p>审批通过后，状态变为 approved，系统生成 apiKey + apiEndpoint。在工作台可查看凭证并复制使用。</p></div></div><blockquote class="tip">前 3 次模型调用免费（优先消耗 <code>luoshu_free_calls</code>），之后按模型定价消耗积分。</blockquote><h2>申请记录结构</h2><pre><code>{\n  id: "APP-xxxxx",\n  type: "api_call",       // model | dataset | api_call | notebook\n  targetId: "model-xxx",\n  targetTitle: "玉米病虫害识别 v3",\n  status: "approved",      // pending | approved | rejected\n  apiKey: "ak-xxxxxxxx",\n  apiEndpoint: "https://...",\n  appliedAt: "2026-07-27"\n}</code></pre>'
+  content: '<h1>申请使用模型（审批流程）</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>模型广场中的模型需要<strong>申请审批</strong>后才能使用。审批流程确保模型的合理使用和资源管控。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>发起申请</h4><p>模型详情页点击「📡 API」按钮 → 填写申请信息（使用场景、预计调用量等）→ 提交申请。申请记录写入 <code>luoshu_applications</code>（localStorage）。</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>等待审批</h4><p>申请提交后状态为 pending。在工作台「我的申请」Tab 可查看所有申请记录，支持撤回操作。</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>审批通过</h4><p>审批通过后，状态变为 approved，系统生成 apiKey + apiEndpoint。在工作台可查看凭证并复制使用。</p></div></div><blockquote class="tip">模型调用免费开放。</blockquote><h2>申请记录结构</h2><pre><code>{\n  id: "APP-xxxxx",\n  type: "api_call",       // model | dataset | api_call | notebook\n  targetId: "model-xxx",\n  targetTitle: "玉米病虫害识别 v3",\n  status: "approved",      // pending | approved | rejected\n  apiKey: "ak-xxxxxxxx",\n  apiEndpoint: "https://...",\n  appliedAt: "2026-07-27"\n}</code></pre>'
 };
 
 DOC_CONTENT['models-notebook'] = {
@@ -485,7 +485,7 @@ DOC_CONTENT['data-browse'] = {
 
 DOC_CONTENT['data-apply'] = {
   title: '申请使用数据集', category: '数据管理', tags: ['消费侧'],
-  content: '<h1>申请使用数据集</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>数据集申请使用消耗积分，审批通过后可在模型推理中引用该数据集。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>进入详情</h4><p>数据集卡片 → 点击进入详情页（全页视图，Header + 70/30 两栏）</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>查看示例数据</h4><p>点击「查看示例数据」→ Modal 弹窗显示 15 个类别 × 5 行样本数据</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>申请使用</h4><p>点击「申请使用」→ Popconfirm 确认（-30 积分）→ 提交审批 → 审批通过后可用</p></div></div><blockquote class="warning">数据集不提供直接下载功能，数据通过模型推理间接使用。申请消耗 <strong>30 积分</strong>。</blockquote>'
+  content: '<h1>申请使用数据集</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>数据集申请使用审批通过后，可在模型推理中引用该数据集。</p><h2>申请流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>进入详情</h4><p>数据集卡片 → 点击进入详情页（全页视图，Header + 70/30 两栏）</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>查看示例数据</h4><p>点击「查看示例数据」→ Modal 弹窗显示 15 个类别 × 5 行样本数据</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>申请使用</h4><p>点击「申请使用」→ Popconfirm 确认 → 提交审批 → 审批通过后可用</p></div></div><blockquote class="warning">数据集不提供直接下载功能，数据通过模型推理间接使用。</blockquote>'
 };
 
 DOC_CONTENT['data-upload'] = {
@@ -517,7 +517,7 @@ DOC_CONTENT['deploy-monitor'] = {
 // --- 镜像管理 ---
 DOC_CONTENT['images-create'] = {
   title: '创建自定义镜像', category: '镜像管理', tags: ['研发侧'],
-  content: '<h1>创建自定义镜像</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>镜像管理模块支持创建自定义 Docker 镜像，是模型部署的前置步骤。</p><h2>创建方式</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>手动创建</h4><p>镜像管理页 → 点击「创建镜像」→ 进入 split-panel 编辑页 → 填写镜像名称/描述 → 编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>从 Notebook 创建</h4><p>Notebook IDE 中点击「🚀 部署」→ 自动跳转 <code>image-custom-create.html?from=notebook&name=xxx&desc=xxx</code> → 预填镜像信息 → 用户编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>从需求创建</h4><p>需求工作台点击「部署为推理服务」→ 跳转 <code>image-custom-create.html?from=demand&name=xxx</code> → 预填 → 保存</p></div></div><h2>编辑页布局</h2><p>Split-panel 分栏布局：左侧编辑面板（镜像名称/描述/Dockerfile 编辑器），右侧预览面板（Dockerfile 语法高亮渲染 + 构建提示）。</p><blockquote class="tip">上传镜像消耗 <strong>30 积分</strong>。</blockquote>'
+  content: '<h1>创建自定义镜像</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>镜像管理模块支持创建自定义 Docker 镜像，是模型部署的前置步骤。</p><h2>创建方式</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>手动创建</h4><p>镜像管理页 → 点击「创建镜像」→ 进入 split-panel 编辑页 → 填写镜像名称/描述 → 编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>从 Notebook 创建</h4><p>Notebook IDE 中点击「🚀 部署」→ 自动跳转 <code>image-custom-create.html?from=notebook&name=xxx&desc=xxx</code> → 预填镜像信息 → 用户编写 Dockerfile → 保存</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>从需求创建</h4><p>需求工作台点击「部署为推理服务」→ 跳转 <code>image-custom-create.html?from=demand&name=xxx</code> → 预填 → 保存</p></div></div><h2>编辑页布局</h2><p>Split-panel 分栏布局：左侧编辑面板（镜像名称/描述/Dockerfile 编辑器），右侧预览面板（Dockerfile 语法高亮渲染 + 构建提示）。</p><blockquote class="tip">上传镜像免费。</blockquote>'
 };
 
 DOC_CONTENT['images-build'] = {
@@ -549,7 +549,7 @@ DOC_CONTENT['dev-to-image'] = {
 // --- 需求市场 ---
 DOC_CONTENT['demand-post'] = {
   title: '发布需求', category: '需求市场', tags: ['消费侧'],
-  content: '<h1>发布需求</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>需求市场采用积分悬赏机制，消费侧用户可发布 AI 研发需求，研发侧用户接单完成。</p><h2>发布流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>打开发布抽屉</h4><p>需求大厅 → 点击「发布需求」→ 右侧抽屉打开</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>填写需求信息</h4><p>需求标题 / 需求分类（6类）/ 详细描述 / 期望交付物（报告/数据集/工作流/部署服务）/ 积分悬赏</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>提交发布</h4><p>提交 → 消耗 10 积分 → 需求上架需求大厅</p></div></div><blockquote class="warning">发布需求消耗 <strong>10 积分</strong>，请确保积分余额充足。</blockquote><h2>需求大厅</h2><p>14 条 Mock 数据覆盖 6 个分类。卡片展示：标题/分类/积分/状态/发布时间。申请接单后卡片显示「✓ 已申请」标记。</p>'
+  content: '<h1>发布需求</h1><div class="doc-meta"><span class="tag consume">消费侧</span><span>更新于 2026-07-27</span></div><p>需求市场支持消费侧用户发布 AI 研发需求，研发侧用户接单完成。</p><h2>发布流程</h2><div class="step"><div class="step-num">1</div><div class="step-content"><h4>打开发布抽屉</h4><p>需求大厅 → 点击「发布需求」→ 右侧抽屉打开</p></div></div><div class="step"><div class="step-num">2</div><div class="step-content"><h4>填写需求信息</h4><p>需求标题 / 需求分类（6类）/ 详细描述 / 期望交付物（报告/数据集/工作流/部署服务）</p></div></div><div class="step"><div class="step-num">3</div><div class="step-content"><h4>提交发布</h4><p>提交 → 需求上架需求大厅</p></div></div><blockquote class="warning">发布需求免费。</blockquote><h2>需求大厅</h2><p>14 条 Mock 数据覆盖 6 个分类。卡片展示：标题/分类/状态/发布时间。申请接单后卡片显示「✓ 已申请」标记。</p>'
 };
 
 DOC_CONTENT['demand-apply'] = {
@@ -559,7 +559,7 @@ DOC_CONTENT['demand-apply'] = {
 
 DOC_CONTENT['demand-accept'] = {
   title: '验收与交付', category: '需求市场', tags: ['研发侧','消费侧'],
-  content: '<h1>验收与交付</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>研发侧：交付</h2><p>需求工作台（<code>demand-workspace.html</code>，左右 65/35 分栏）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 在线处理区 + 交付物上传</li><li><strong>右侧</strong>：操作按钮区域</li></ul><p>交付物类型：报告文档、数据集文件、工作流链接、部署服务地址。</p><h2>消费侧：验收</h2><p>需求工作台（消费视图）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 交付物预览/下载</li><li><strong>右侧</strong>：验收通过 / 退回修改 按钮</li></ul><h2>积分结算</h2><table><thead><tr><th>角色</th><th>行为</th><th>积分变动</th></tr></thead><tbody><tr><td>研发侧</td><td>申请接单</td><td>+200（被选中后）</td></tr><tr><td>研发侧</td><td>完成需求</td><td>+500（验收通过后）</td></tr><tr><td>消费侧</td><td>发布需求</td><td>-积分悬赏额</td></tr></tbody></table>'
+  content: '<h1>验收与交付</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>研发侧：交付</h2><p>需求工作台（<code>demand-workspace.html</code>，左右 65/35 分栏）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 在线处理区 + 交付物上传</li><li><strong>右侧</strong>：操作按钮区域</li></ul><p>交付物类型：报告文档、数据集文件、工作流链接、部署服务地址。</p><h2>消费侧：验收</h2><p>需求工作台（消费视图）：</p><ul><li><strong>左侧</strong>：需求信息卡片 + 交付物预览/下载</li><li><strong>右侧</strong>：验收通过 / 退回修改 按钮</li></ul><h2>结算说明</h2><p>平台面向入驻团队免费开放，需求发布、接单、交付均不涉及费用结算。研发侧的贡献记录将在个人中心展示。</p>'
 };
 
 // --- 应用中心 ---
@@ -576,24 +576,20 @@ DOC_CONTENT['apps-use'] = {
 // --- API 参考 ---
 DOC_CONTENT['api-inference'] = {
   title: '模型推理 API', category: 'API 参考', tags: ['消费侧'],
-  content: '<h1>模型推理 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>审批通过后获得的 API Key 可用于调用模型推理 API。</p><h2>请求格式</h2><pre><code>POST /api/v1/inference/{model_id}\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "inputs": { "image_url": "...", "params": {...} },\n  "output_format": "json"\n}</code></pre><h2>响应格式</h2><pre><code>{\n  "request_id": "req-xxx",\n  "status": "success",\n  "outputs": { "predictions": [...], "confidence": 0.95 },\n  "latency_ms": 234,\n  "cost_points": 20\n}</code></pre><h2>调用限制</h2><ul><li>前 3 次调用免费（优先消耗 <code>luoshu_free_calls</code>）</li><li>之后按模型定价消耗积分（-20~-80）</li><li>超时时间：默认 30s，可在推理配置中调整</li></ul>'
+  content: '<h1>模型推理 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><p>审批通过后获得的 API Key 可用于调用模型推理 API。</p><h2>请求格式</h2><pre><code>POST /api/v1/inference/{model_id}\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "inputs": { "image_url": "...", "params": {...} },\n  "output_format": "json"\n}</code></pre><h2>响应格式</h2><pre><code>{\n  "request_id": "req-xxx",\n  "status": "success",\n  "outputs": { "predictions": [...], "confidence": 0.95 },\n  "latency_ms": 234\n}</code></pre><h2>调用说明</h2><ul><li>模型调用免费开放</li><li>超时时间：默认 30s，可在推理配置中调整</li></ul>'
 };
 
 DOC_CONTENT['api-dataset'] = {
   title: '数据集 API', category: 'API 参考', tags: ['消费侧'],
-  content: '<h1>数据集 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>数据查询 API</h2><pre><code>POST /api/v1/datasets/{dataset_id}/query\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "filters": { "region": "黑龙江", "year": 2025 },\n  "limit": 1000\n}</code></pre><h2>数据统计 API</h2><pre><code>GET /api/v1/datasets/{dataset_id}/stats\nAuthorization: Bearer {api_key}</code></pre><blockquote class="warning">数据集 API 仅返回查询结果，不提供直接下载。每次查询消耗积分（-30~-50）。</blockquote>'
+  content: '<h1>数据集 API</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>数据查询 API</h2><pre><code>POST /api/v1/datasets/{dataset_id}/query\nAuthorization: Bearer {api_key}\nContent-Type: application/json\n\n{\n  "filters": { "region": "黑龙江", "year": 2025 },\n  "limit": 1000\n}</code></pre><h2>数据统计 API</h2><pre><code>GET /api/v1/datasets/{dataset_id}/stats\nAuthorization: Bearer {api_key}</code></pre><blockquote class="warning">数据集 API 仅返回查询结果，不提供直接下载。</blockquote>'
 };
 
 DOC_CONTENT['api-auth'] = {
   title: '认证与鉴权', category: 'API 参考', tags: ['消费侧'],
-  content: '<h1>认证与鉴权</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>API Key 获取</h2><p>在模型广场申请使用模型 → 审批通过 → 工作台「我的申请」→ 查看 API Key</p><h2>认证方式</h2><p>所有 API 请求使用 Bearer Token 认证：</p><pre><code>Authorization: Bearer {api_key}</code></pre><h2>错误码</h2><table><thead><tr><th>HTTP 状态码</th><th>错误码</th><th>说明</th></tr></thead><tbody><tr><td>401</td><td>AUTH_INVALID</td><td>API Key 无效或已过期</td></tr><tr><td>403</td><td>QUOTA_EXCEEDED</td><td>调用配额已用尽</td></tr><tr><td>403</td><td>POINTS_INSUFFICIENT</td><td>积分余额不足</td></tr><tr><td>429</td><td>RATE_LIMITED</td><td>请求频率超限</td></tr><tr><td>500</td><td>INFERENCE_FAILED</td><td>模型推理失败</td></tr></tbody></table>'
+  content: '<h1>认证与鉴权</h1><div class="doc-meta"><span class="tag dev">研发侧</span><span>更新于 2026-07-27</span></div><h2>API Key 获取</h2><p>在模型广场申请使用模型 → 审批通过 → 工作台「我的申请」→ 查看 API Key</p><h2>认证方式</h2><p>所有 API 请求使用 Bearer Token 认证：</p><pre><code>Authorization: Bearer {api_key}</code></pre><h2>错误码</h2><table><thead><tr><th>HTTP 状态码</th><th>错误码</th><th>说明</th></tr></thead><tbody><tr><td>401</td><td>AUTH_INVALID</td><td>API Key 无效或已过期</td></tr><tr><td>403</td><td>QUOTA_EXCEEDED</td><td>调用配额已用尽</td></tr><tr><td>429</td><td>RATE_LIMITED</td><td>请求频率超限</td></tr><tr><td>500</td><td>INFERENCE_FAILED</td><td>模型推理失败</td></tr></tbody></table>'
 };
 
 // --- 常见问题 ---
-DOC_CONTENT['faq-points'] = {
-  title: '积分体系说明', category: '常见问题', tags: ['研发侧','消费侧'],
-  content: '<h1>积分体系说明</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>积分规则</h2><table><thead><tr><th>场景</th><th>变动</th><th>说明</th></tr></thead><tbody><tr><td>🎁 新用户</td><td><strong>+1000</strong></td><td>登录时自动初始化</td></tr><tr><td>🎁 前 3 次模型调用</td><td><strong>免费</strong></td><td>优先消耗 <code>luoshu_free_calls</code></td></tr><tr><td>🧠 模型调用</td><td><strong>-20~-80</strong></td><td>各模型独立定价</td></tr><tr><td>📊 数据集申请</td><td><strong>-30~-50</strong></td><td>各数据集独立定价</td></tr><tr><td>📦 上传镜像</td><td><strong>-30</strong></td><td>每次上传消耗</td></tr><tr><td>📝 发布需求</td><td><strong>-10</strong></td><td>发布时消耗</td></tr><tr><td>📝 接单需求</td><td><strong>+200</strong></td><td>被选中后获得</td></tr><tr><td>✅ 完成需求</td><td><strong>+500</strong></td><td>验收通过后获得</td></tr></tbody></table><h2>积分查看</h2><p>Header 积分 badge（🪙）显示当前余额，点击可查看积分规则弹出说明。数据存储在 <code>luoshu_points</code>（localStorage）。</p>'
-};
 
 DOC_CONTENT['faq-status'] = {
   title: '模型状态说明', category: '常见问题', tags: ['研发侧','消费侧'],
@@ -602,7 +598,7 @@ DOC_CONTENT['faq-status'] = {
 
 DOC_CONTENT['faq-support'] = {
   title: '联系技术支持', category: '常见问题', tags: ['研发侧','消费侧'],
-  content: '<h1>联系技术支持</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>常见问题</h2><h3>模型构建失败怎么办？</h3><p>检查 Dockerfile 语法是否正确，确保基础镜像可访问。查看构建日志获取详细错误信息。可在镜像详情页点击「编辑」修改 Dockerfile 后重新构建。</p><h3>部署一直处于 Pod 调度中？</h3><p>可能是集群资源不足。请联系机构管理员检查资源配额，或在资源总览页查看当前集群负载。</p><h3>积分不足怎么办？</h3><p>积分可通过以下途径获取：接单需求（+200）、完成需求（+500）。联系机构管理员申请额外积分额度。</p><h3>API 调用返回 429 错误？</h3><p>请求频率超过限制，建议增加请求间隔或联系管理员提升配额。</p><h2>联系方式</h2><blockquote class="tip">如需进一步技术支持，请联系平台运营团队。邮箱：support@luoshu.ai（示例），或在工作台通过反馈入口提交问题。</blockquote>'
+  content: '<h1>联系技术支持</h1><div class="doc-meta"><span class="tag both">研发侧</span><span class="tag both">消费侧</span><span>更新于 2026-07-27</span></div><h2>常见问题</h2><h3>模型构建失败怎么办？</h3><p>检查 Dockerfile 语法是否正确，确保基础镜像可访问。查看构建日志获取详细错误信息。可在镜像详情页点击「编辑」修改 Dockerfile 后重新构建。</p><h3>部署一直处于 Pod 调度中？</h3><p>可能是集群资源不足。请联系机构管理员检查资源配额，或在资源总览页查看当前集群负载。</p><h3>API 调用返回 429 错误？</h3><p>请求频率超过限制，建议增加请求间隔或联系管理员提升配额。</p><h2>联系方式</h2><blockquote class="tip">如需进一步技术支持，请联系平台运营团队。邮箱：support@luoshu.ai（示例），或在工作台通过反馈入口提交问题。</blockquote>'
 };
 
 // ===== INIT =====
@@ -871,11 +867,6 @@ document.getElementById('topNavMenu').addEventListener('click', function(e){
   else { toast('模块「'+item.textContent.replace(/[📖\s]/g,'')+'」页面尚未开发', 'info'); }
 });
 
-// ===== POINTS =====
-function showPointsRules() {
-  toast('积分余额：' + (localStorage.getItem('luoshu_points') || 1000) + ' 🪙\n新用户初始 1000 积分 | 前3次模型调用免费 | 接单+200 完成+500', 'info');
-}
-(function(){try{var p = localStorage.getItem('luoshu_points');if(!p){localStorage.setItem('luoshu_points','1000');}document.getElementById('headerPoints').textContent=localStorage.getItem('luoshu_points')||1000;}catch(e){}})();
 
 // ===== GO TO WORKBENCH =====
 function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.html'; }
@@ -908,7 +899,7 @@ function goToWorkbench(){ closeUserMenu(); window.location.href = 'workbench.htm
 })();
 </script>
 <!-- ==================== FOOTER ==================== -->
-<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg2)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg2)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg2)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
+<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flg2)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flg2)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flg2)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html?view=platform">模型中心</a><a href="model-marketplace.html?view=user">模型社区</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
 
 </body>
 </html>

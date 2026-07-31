@@ -61,7 +61,7 @@ button { cursor: pointer; border: none; background: none; }
 [data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
 
 .header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
-.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; background: none; border: none; }
 .header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
 .header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
 .header-btn-login {
@@ -257,11 +257,15 @@ button { cursor: pointer; border: none; background: none; }
         </a>
       </div>
       <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
-        
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
-        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span>
+      </div></div>
       <div class="header-right">
         <a class="header-btn-login" href="portal.html">← 返回首页</a>
       </div>
@@ -287,7 +291,7 @@ button { cursor: pointer; border: none; background: none; }
   <div class="login-right">
     <div class="login-card" id="loginCard">
       <h2>欢迎登录</h2>
-      <p class="lc-sub">平台采用受邀注册制，账号由管理员统一分配</p>
+      <p class="lc-sub">平台采用审核注册制，账号经申请审核后开通</p>
 
       <!-- Username -->
       <div class="form-group" id="fg-user">
@@ -323,8 +327,8 @@ button { cursor: pointer; border: none; background: none; }
       </button>
 
       <p class="login-note">
-        还没有账号？平台采用<strong>受邀注册制</strong><br>
-        请先通过机构入驻申请，由管理员分配账号
+        还没有账号？平台采用<strong>审核注册制</strong><br>
+        提交机构入驻申请，审核通过后开通账号
       </p>
       <p class="login-back"><a href="javascript:void(0)" onclick="location.href='apply-settlement.html'">了解入驻流程 →</a></p>
       <p class="login-back"><a href="portal.html">← 返回首页</a></p>
@@ -336,20 +340,6 @@ button { cursor: pointer; border: none; background: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== 积分系统 =====
-var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
-function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
-function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
-function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
-function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
-function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
-function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
-function getRemainingFreeCalls() { return getFreeCalls(); }
-function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
-function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
-function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
-function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
-
 // ===== CAPTCHA =====
 var captchaCode = 'A3x9';
 function refreshCaptcha(){
@@ -448,7 +438,6 @@ function doLogin(){
     if (success) {
       // Store login state
       try { localStorage.setItem('luoshu_logged_in', '1'); } catch(e) {}
-      try { if (!localStorage.getItem('luoshu_points')) localStorage.setItem('luoshu_points', '1000'); if (!localStorage.getItem('luoshu_free_calls')) localStorage.setItem('luoshu_free_calls', '3'); } catch(e) {}
       toast('登录成功，正在跳转…', 'success');
       var params = new URLSearchParams(window.location.search);
       var redirect = params.get('redirect');

@@ -41,10 +41,6 @@ button{cursor:pointer;border:none;background:none}
 [data-prefers-color="dark"] .header-btn{color:rgba(255,255,255,0.65)}
 [data-prefers-color="dark"] .header-btn:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85)}
 .header-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#ff4d4f;border:1px solid #fff}
-.points-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;background:rgba(47,84,235,0.06);font-size:13px;color:#2f54eb;cursor:pointer;user-select:none;transition:all 0.2s;white-space:nowrap}
-.points-badge:hover{background:rgba(47,84,235,0.12)}
-[data-prefers-color="dark"] .points-badge{background:rgba(47,84,235,0.15);color:#85a5ff}
-.points-badge strong{font-weight:600}
 .dropdown-wrap{position:relative;display:inline-flex}
 .avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7566FF,#2F54EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
 .dropdown-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;min-width:180px;padding:4px;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
@@ -341,11 +337,13 @@ code.inline{font-family:monospace;font-size:12px;background:#f0f0f0;padding:1px 
           <span class="system-name-title">北大荒智慧农业协同创新平台</span>
         </a>
       </div>
-      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">
-        <span class="top-nav-item" data-nav="home" onclick="location.href='portal.html'">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="location.href='case-center.html'">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="location.href='model-marketplace.html'">模型广场</span>
-        
+      <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="location.href='portal.html'">首页</span>
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="location.href='case-center.html'">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         <span class="top-nav-item" data-nav="data" onclick="location.href='dataset-management.html'">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="location.href='demand-hall.html'">需求市场</span>
         <span class="top-nav-item active" data-nav="devcenter">开发者中心</span>
       </div></div>
@@ -368,12 +366,11 @@ code.inline{font-family:monospace;font-size:12px;background:#f0f0f0;padding:1px 
               <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
             </div>
           </div>
-          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
           <div class="dropdown-wrap" id="userDropdownWrap">
             <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
             <div class="dropdown-menu" id="userDropdown">
               <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
-                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="window.location.href='workbench.html'">👤 个人中心</div>
@@ -810,16 +807,6 @@ resp = client.models.<span class="f">predict</span>(
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// ===== 积分系统（与全站共享 localStorage.luoshu_points）=====
-var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
-function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
-function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
-function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
-function getRemainingFreeCalls() { return getFreeCalls(); }
-function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
-function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
-function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
-setTimeout(updatePointsDisplay, 100);
 
 // Sidebar view switching
 function switchView(v){
@@ -1068,6 +1055,13 @@ function toggleUserMenu(){ document.getElementById('userDropdown').classList.tog
 function closeUserMenu(){ document.getElementById('userDropdown').classList.remove('visible'); }
 document.addEventListener('click', function(e){ var wrap = document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); if(confirm('确定退出登录？')){ try { localStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录','info'); } }
+// Deep link: developer-center.html?view=api|sdk|docs|... → switch to that view
+(function(){
+  try {
+    var v = new URLSearchParams(window.location.search).get('view');
+    if (v) { setTimeout(function(){ switchView(v); }, 60); }
+  } catch(e){}
+})();
 </script>
 </body>
 </html>

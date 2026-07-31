@@ -49,7 +49,7 @@ button { cursor: pointer; border: none; background: none; }
 .top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
 .top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
 .header-right { display: flex; align-items: center; gap: 12px; padding-right: 24px; flex-shrink: 0; position: relative; }
-.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; background: none; border: none; }
 .header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
 .header-btn-login, .header-btn-register {
   display: inline-flex; align-items: center; justify-content: center;
@@ -62,10 +62,6 @@ button { cursor: pointer; border: none; background: none; }
 .header-btn-register:hover { background: #597ef7; }
 /* ===== AUTH: 通知 / 用户菜单 / 积分 (与全站一致) ===== */
 .header-btn .badge-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#ff4d4f;border:1px solid #fff}
-.points-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;background:rgba(47,84,235,0.06);font-size:13px;color:#2f54eb;cursor:pointer;user-select:none;transition:all 0.2s;white-space:nowrap}
-.points-badge:hover{background:rgba(47,84,235,0.12)}
-[data-prefers-color="dark"] .points-badge{background:rgba(47,84,235,0.15);color:#85a5ff}
-.points-badge strong{font-weight:600}
 .dropdown-wrap{position:relative;display:inline-flex}
 .avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7566FF,#2F54EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0}
 .dropdown-menu{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;min-width:180px;padding:4px;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
@@ -292,11 +288,11 @@ button { cursor: pointer; border: none; background: none; }
         </a>
       </div>
       <div class="top-nav-menu-wrap">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span><span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         
         <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
-        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span><span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span></div>
       <div class="header-right">
         <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
 
@@ -316,12 +312,11 @@ button { cursor: pointer; border: none; background: none; }
               <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
             </div>
           </div>
-          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
           <div class="dropdown-wrap" id="userDropdownWrap">
             <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
             <div class="dropdown-menu" id="userDropdown">
               <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
-                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="window.location.href='workbench.html'">👤 个人中心</div>
@@ -347,12 +342,12 @@ button { cursor: pointer; border: none; background: none; }
         <span class="sep">/</span>
         <span class="cur">申请入驻</span>
       </nav>
-      <div class="hero-badge">📋 受邀注册制 · 不面向社会公众开放</div>
+      <div class="hero-badge">📋 审核注册制 · 面向机构与科研团队开放申请</div>
       <h1>申请入驻<br><span class="accent">北大荒智慧农业协同创新平台</span></h1>
-      <p class="hero-desc">平台汇聚全国重点实验室、985 高校与领军企业的农业 AI 能力，一端连接农场与企业的真实业务需求，一端连接科研团队的模型与算法。提交入驻申请后，由平台管理员审核并开通对应角色账号。</p>
+      <p class="hero-desc">平台汇聚全国重点实验室、985 高校与领军企业的农业 AI 能力，一端连接农场与企业的真实业务需求，一端连接科研团队的模型与算法。提交入驻申请后，由平台管理员审核并开通<strong>团队账号</strong>。入驻后以团队为单位进行管理，团队管理员可在工作台「团队管理」中为下级人员分配账号，账号数量上限由平台后台管理员设定。</p>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg" onclick="location.href='portal.html'">返回门户首页</button>
-        <button class="btn btn-ghost-light btn-lg" onclick="openSettlementModal()">联系管理员申请入驻</button>
+        <button class="btn btn-ghost-light btn-lg" onclick="openSettlementModal()">在线提交申请</button>
       </div>
     </div>
   </section>
@@ -362,10 +357,21 @@ button { cursor: pointer; border: none; background: none; }
     <div class="section-inner">
       <div class="sec-head">
         <div class="sec-head-label">🤝 面向对象</div>
-        <h2>平台为哪些主体开放</h2>
-        <p>平台同时服务消费侧与研发侧两类角色，不同主体在入驻后可使用的功能有所差异。</p>
+        <h2>平台为哪些团队开放</h2>
+        <p>平台同时服务消费侧与研发侧两类角色，不同团队在入驻后可使用的功能有所差异。</p>
       </div>
       <div class="grid-3">
+        <div class="card">
+          <div class="card-ico">🔬</div>
+          <span class="role-tag">研发侧 · 高校与科研机构</span>
+          <h3>高校与科研机构</h3>
+          <p class="lead">平台的科研供给主力。由高校老师作为申请人，可带领研究团队入驻，将科研成果沉淀为可复用的模型与服务。</p>
+          <ul class="feat">
+            <li>以老师为负责人、带领团队申报平台课题</li>
+            <li>发布与托管农业 AI 模型至模型社区</li>
+            <li>申请垦区专有数据集、使用算力沙箱</li>
+          </ul>
+        </div>
         <div class="card">
           <div class="card-ico">🌾</div>
           <span class="role-tag">消费侧 · 农场与企业</span>
@@ -375,17 +381,6 @@ button { cursor: pointer; border: none; background: none; }
             <li>提出业务需求并跟踪处理进展</li>
             <li>在模型广场使用与试用农业 AI 模型</li>
             <li>对交付成果进行验收与退回</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-ico">🔬</div>
-          <span class="role-tag">研发侧 · 科研机构</span>
-          <h3>科研机构与高校</h3>
-          <p class="lead">农业 AI 能力的供给方，将科研成果沉淀为可复用的模型与服务。</p>
-          <ul class="feat">
-            <li>发布与托管农业 AI 模型</li>
-            <li>承接需求大厅中的研发任务</li>
-            <li>通过工作台管理镜像与在线开发环境</li>
           </ul>
         </div>
         <div class="card">
@@ -412,12 +407,12 @@ button { cursor: pointer; border: none; background: none; }
         <p>无论是提出需求还是供给能力，平台都提供从对接到交付的完整链路。</p>
       </div>
       <div class="cap-grid">
-        <div class="cap-item"><div class="cap-ico">📝</div><div class="cap-txt"><h4>发布业务需求</h4><p>描述场景、作物与目标，由平台匹配科研团队</p></div></div>
-        <div class="cap-item"><div class="cap-ico">🧠</div><div class="cap-txt"><h4>使用农业模型</h4><p>浏览 187+ 模型，在线试用或申请使用</p></div></div>
-        <div class="cap-item"><div class="cap-ico">✅</div><div class="cap-txt"><h4>验收交付成果</h4><p>对模型、报告、数据集等交付物验收或退回</p></div></div>
-        <div class="cap-item"><div class="cap-ico">🚀</div><div class="cap-txt"><h4>发布与部署模型</h4><p>将研究成果发布为可调用的推理服务</p></div></div>
-        <div class="cap-item"><div class="cap-ico">🔌</div><div class="cap-txt"><h4>调用 API 能力</h4><p>获取密钥，通过接口集成平台能力</p></div></div>
-        <div class="cap-item"><div class="cap-ico">📊</div><div class="cap-txt"><h4>管理资源配额</h4><p>查看调用额度、并发上限与工作空间资源</p></div></div>
+        <div class="cap-item"><div class="cap-ico">📝</div><div class="cap-txt"><h4>发布与托管模型</h4><p>将自研农业 AI 模型发布至模型社区，供平台统一调用</p></div></div>
+        <div class="cap-item"><div class="cap-ico">🗂️</div><div class="cap-txt"><h4>申请垦区数据集</h4><p>申请北大荒遥感、气象、土壤等专有数据用于科研</p></div></div>
+        <div class="cap-item"><div class="cap-ico">🧪</div><div class="cap-txt"><h4>使用算力沙箱</h4><p>免费 / 优惠 GPU 算力，在线训练与验证模型</p></div></div>
+        <div class="cap-item"><div class="cap-ico">📋</div><div class="cap-txt"><h4>申报平台课题</h4><p>入驻后可参与平台发布的课题申报，与产业方联合攻关</p></div></div>
+        <div class="cap-item"><div class="cap-ico">🔌</div><div class="cap-txt"><h4>调用 API 能力</h4><p>获取密钥，通过接口集成与调用模型中心</p></div></div>
+        <div class="cap-item"><div class="cap-ico">👥</div><div class="cap-txt"><h4>管理团队与资源</h4><p>管理团队成员、分配下级账号、查看资源配额</p></div></div>
       </div>
     </div>
   </section>
@@ -434,26 +429,26 @@ button { cursor: pointer; border: none; background: none; }
         <div class="step">
           <div class="step-num">1</div>
           <h4>提交申请</h4>
-          <p>填写主体名称、所属行业、使用场景等基本信息，说明拟使用的平台能力。</p>
+          <p>填写团队名称、所属机构、使用场景等基本信息，说明拟使用的平台能力。</p>
           <div class="step-meta">线上提交 · 约 5 分钟</div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
           <h4>资质审核</h4>
-          <p>平台管理员对主体资质与使用场景进行人工审核，必要时电话沟通。</p>
+          <p>平台管理员对团队资质与使用场景进行人工审核，必要时电话沟通。</p>
           <div class="step-meta">审核周期 · 1–3 个工作日</div>
         </div>
         <div class="step">
           <div class="step-num">3</div>
           <h4>开通账号</h4>
-          <p>审核通过后，按申请角色开通对应账号与权限，分配初始资源额度。</p>
+          <p>审核通过后，为团队开通<strong>管理员账号</strong>并设定账号配额上限。团队管理员登录后可在「团队管理」中为下级人员分配账号。</p>
           <div class="step-meta">角色授权 · 消费 / 研发 / 集成</div>
         </div>
         <div class="step">
           <div class="step-num">4</div>
           <h4>正式入驻</h4>
-          <p>使用分配的账号登录工作台，开始发布需求、使用模型或发布能力。</p>
-          <div class="step-meta">入驻完成 · 进入工作台</div>
+          <p>团队管理员使用分配的账号登录工作台，为团队成员分配下级账号后，即可开始发布需求、使用模型或发布能力。</p>
+          <div class="step-meta">入驻完成 · 进入团队管理</div>
         </div>
       </div>
     </div>
@@ -470,19 +465,23 @@ button { cursor: pointer; border: none; background: none; }
       <div class="faq" id="faq">
         <div class="faq-item open">
           <div class="faq-q" onclick="toggleFaq(this)">平台是否面向个人开放？<span class="arrow">▾</span></div>
-          <div class="faq-a"><div class="faq-a-inner">平台采用<strong>受邀注册制</strong>，主要面向具有明确农业业务场景的<strong>农场、涉农企业、科研机构与高校</strong>等组织主体，不面向社会公众与个人开发者开放。如确有合作意向，可先联系平台管理员。</div></div>
+          <div class="faq-a"><div class="faq-a-inner">平台采用<strong>审核注册制</strong>，面向<strong>高校老师、科研团队、农场、涉农企业</strong>等组织开放申请，由平台审核后开通<strong>团队账号</strong>；不面向个人开发者单独开放。入驻后以团队为单位进行管理——团队管理员可在工作台为下级人员分配账号，账号数量上限由平台后台管理员设定。提交申请后平台将尽快与您联系。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">团队管理员可以做什么？<span class="arrow">▾</span></div>
+          <div class="faq-a"><div class="faq-a-inner">团队管理员入驻后可在工作台「团队管理」中：<strong>添加/移除团队成员</strong>、为成员分配账号、设置成员角色（管理员/普通成员）。账号数量上限由平台后台管理员设定，团队不可自行扩容；如需增加配额，请联系平台管理员。</div></div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">入驻是否收费？<span class="arrow">▾</span></div>
-          <div class="faq-a"><div class="faq-a-inner">平台对入驻主体不收取注册费用。模型使用、数据集申请、算力消耗等按平台统一的额度与计费规则执行，具体以账号开通时分配的配额为准。</div></div>
+          <div class="faq-a"><div class="faq-a-inner">平台<strong>不收取任何费用</strong>。入驻本身不收注册费或入驻费；平台作为内部协同创新平台，面向入驻团队提供的模型调用、数据集申请、算力沙箱等资源均<strong>免费开放</strong>，不向任何入驻主体计费。</div></div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">一个主体可以申请多个角色吗？<span class="arrow">▾</span></div>
-          <div class="faq-a"><div class="faq-a-inner">可以。同一主体可根据业务需要同时拥有消费侧与研发侧权限（例如农场既提需求、也发布自有模型）。角色权限在审核时由管理员按申请内容开通。</div></div>
+          <div class="faq-q" onclick="toggleFaq(this)">一个团队可以申请多个角色吗？<span class="arrow">▾</span></div>
+          <div class="faq-a"><div class="faq-a-inner">可以。同一团队可根据业务需要同时拥有消费侧与研发侧权限（例如农场既提需求、也发布自有模型）。角色权限在审核时由管理员按申请内容开通。团队成员的角色（管理员/普通成员）由团队管理员在工作台「团队管理」中设置。</div></div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">审核未通过会怎样？<span class="arrow">▾</span></div>
-          <div class="faq-a"><div class="faq-a-inner">审核未通过时，平台管理员会通过预留联系方式说明原因。主体可在补充材料或调整使用场景后重新提交申请，不限制申请次数。</div></div>
+          <div class="faq-a"><div class="faq-a-inner">审核未通过时，平台管理员会通过预留联系方式说明原因。团队可在补充材料或调整使用场景后重新提交申请，不限制申请次数。</div></div>
         </div>
       </div>
     </div>
@@ -495,7 +494,7 @@ button { cursor: pointer; border: none; background: none; }
         <h2>准备好加入北大荒智慧农业协同创新平台了吗？</h2>
         <p>提交入驻申请，让科研力量与田间需求在平台上精准对接。</p>
         <div class="hero-cta">
-          <button class="btn btn-ghost-light btn-lg" onclick="openSettlementModal()">联系管理员申请入驻</button>
+          <button class="btn btn-ghost-light btn-lg" onclick="openSettlementModal()">在线提交申请</button>
           <button class="btn btn-default btn-lg" style="background:#fff" onclick="location.href='portal.html'">返回门户首页</button>
         </div>
       </div>
@@ -514,11 +513,11 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <p class="footer-about">汇聚全国重点实验室、985 高校与领军企业的农业 AI 能力，连接农场与企业的真实业务需求，让 AI 从实验室直达田间地头。</p>
     </div>
-    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html?view=platform">模型中心</a><a href="model-marketplace.html?view=user">模型社区</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
     <div class="footer-col"><h4>关于平台</h4><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div>
     <div class="footer-col"><h4>帮助支持</h4><a href="developer-center.html">开发者中心</a><a href="doc-center.html">文档中心</a><a href="#faq">常见问题</a></div>
   </div>
-  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+  <div class="footer-bot">北大荒信息有限公司 · 审核注册制 · 面向机构与科研团队开放申请<br>© 2026 北大荒智慧农业协同创新平台</div>
 </footer>
 
 <!-- 返回门户浮动按钮 -->
@@ -529,16 +528,16 @@ button { cursor: pointer; border: none; background: none; }
   <div class="settle-modal" role="dialog" aria-modal="true">
     <div class="settle-modal-head">
       <div>
-        <h3>申请入驻 · 联系管理员</h3>
-        <p>请填写以下信息，提交后平台管理员将与您联系</p>
+        <h3>申请入驻 · 提交资料</h3>
+        <p>请填写机构与联系人信息，提交后由平台审核开通账号</p>
       </div>
       <button class="settle-close" type="button" onclick="closeSettlementModal()" aria-label="关闭">×</button>
     </div>
     <form class="settle-form" id="settleForm" onsubmit="return false">
       <div class="settle-field" id="f-company">
-        <label>公司 / 机构名称<span class="req">*</span></label>
-        <input type="text" id="sfCompany" placeholder="如：黑龙江北大荒农业股份有限公司" autocomplete="organization">
-        <div class="err">请填写公司 / 机构名称</div>
+        <label>机构名称（高校 / 科研单位 / 企业）<span class="req">*</span></label>
+        <input type="text" id="sfCompany" placeholder="如：XX 大学 XX 学院 / 黑龙江北大荒农业股份有限公司" autocomplete="organization">
+        <div class="err">请填写机构名称</div>
       </div>
       <div class="settle-row">
         <div class="settle-field" id="f-type">
@@ -561,9 +560,9 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="settle-row">
         <div class="settle-field" id="f-name">
-          <label>联系人姓名<span class="req">*</span></label>
-          <input type="text" id="sfName" placeholder="请输入联系人姓名" autocomplete="name">
-          <div class="err">请填写联系人姓名</div>
+          <label>申请人（老师 / 负责人）姓名<span class="req">*</span></label>
+          <input type="text" id="sfName" placeholder="请输入申请人姓名" autocomplete="name">
+          <div class="err">请填写申请人姓名</div>
         </div>
         <div class="settle-field" id="f-phone">
           <label>联系人手机<span class="req">*</span></label>
@@ -571,10 +570,24 @@ button { cursor: pointer; border: none; background: none; }
           <div class="err">请填写有效的手机号（至少 7 位）</div>
         </div>
       </div>
+      <div class="settle-row">
+        <div class="settle-field" id="f-title">
+          <label>职称 / 职务</label>
+          <input type="text" id="sfTitle" placeholder="如：副教授 / 实验室主任（选填）">
+        </div>
+        <div class="settle-field" id="f-team">
+          <label>研究团队名称</label>
+          <input type="text" id="sfTeam" placeholder="如：智慧农业算法团队（选填）">
+        </div>
+      </div>
       <div class="settle-field" id="f-email">
         <label>联系人邮箱</label>
         <input type="email" id="sfEmail" placeholder="用于接收审核结果通知（选填）" autocomplete="email">
         <div class="err">邮箱格式不正确</div>
+      </div>
+      <div class="settle-field" id="f-team-size">
+        <label>团队规模（人数）</label>
+        <input type="number" id="sfTeamSize" placeholder="如：8（选填）" min="1">
       </div>
       <div class="settle-field" id="f-role">
         <label>期望合作方向</label>
@@ -584,6 +597,7 @@ button { cursor: pointer; border: none; background: none; }
           <option>数据提供方</option>
           <option>业务需求方</option>
           <option>科研协作</option>
+          <option>申报平台课题</option>
           <option>投资 / 产业合作</option>
         </select>
       </div>
@@ -653,6 +667,9 @@ function submitSettlement(){
       company: company, type: type,
       region: document.getElementById('sfRegion').value.trim(),
       name: name, phone: phone, email: email,
+      title: document.getElementById('sfTitle').value.trim(),
+      team: document.getElementById('sfTeam').value.trim(),
+      teamSize: document.getElementById('sfTeamSize').value.trim(),
       role: document.getElementById('sfRole').value,
       need: document.getElementById('sfNeed').value.trim(),
       at: new Date().toISOString()
@@ -696,7 +713,6 @@ function toggleUserMenu(){ var d=document.getElementById('userDropdown'); if(d) 
 function closeUserMenu(){ var d=document.getElementById('userDropdown'); if(d) d.classList.remove('visible'); }
 document.addEventListener('click', function(e){ var wrap=document.getElementById('userDropdownWrap'); if(wrap && !wrap.contains(e.target)){ closeUserMenu(); } });
 function confirmLogout(e){ e.stopPropagation(); closeUserMenu(); if(confirm('确定退出登录？')){ try { localStorage.removeItem('luoshu_logged_in'); } catch(e){} switchAuthState(false); toast('已退出登录','info'); } }
-function showPointsRules(){ toast('积分可用于调用模型与 Notebook，详见个人中心','info'); }
 </script>
 </body>
 </html>

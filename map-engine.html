@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遥感影像检索 · 地图引擎 — 洛书模型服务平台</title>
+<style>
+  :root{
+    --blue:#2f54eb; --blue-h:#597ef7; --blue-a:#1d39c4;
+    --text:#27254C; --text-2:rgba(0,0,0,0.65); --text-3:rgba(0,0,0,0.45);
+    --border:#E7E6E6; --bg:#f5f6fa; --card:#fff;
+    --teal:#23ada4;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    color:var(--text); background:var(--bg); display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  }
+  /* Header */
+  .me-header{
+    height:56px; flex:0 0 56px; background:#fff; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; padding:0 20px; z-index:20;
+  }
+  .me-header-left{display:flex; align-items:center; gap:16px;}
+  .me-back{
+    font-size:13px; color:var(--text-2); text-decoration:none; display:flex; align-items:center; gap:4px;
+    padding:6px 10px; border-radius:6px; border:1px solid var(--border);
+  }
+  .me-back:hover{color:var(--blue); border-color:var(--blue-h);}
+  .me-title{font-size:16px; font-weight:600;}
+  .me-sub{font-size:12px; color:var(--text-3);}
+  /* Body */
+  .me-body{flex:1; display:flex; min-height:0;}
+  /* Left panel */
+  .me-left{
+    width:360px; flex:0 0 360px; background:#fff; border-right:1px solid var(--border);
+    display:flex; flex-direction:column; min-height:0;
+  }
+  .me-left-scroll{overflow-y:auto; padding:18px 18px 8px; flex:1;}
+  .me-left-title{font-size:14px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:6px;}
+  .me-left-title .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);}
+  .me-field{margin-bottom:14px;}
+  .me-field label{display:block; font-size:12px; color:var(--text-2); margin-bottom:5px;}
+  .me-field .req{color:#ff4d4f;}
+  .me-input, .me-select{
+    width:100%; height:36px; border:1px solid #d9d9d9; border-radius:6px; padding:0 10px; font-size:13px;
+    color:var(--text); background:#fff; outline:none;
+  }
+  .me-input:focus, .me-select:focus{border-color:var(--blue-h); box-shadow:0 0 0 2px rgba(47,84,235,0.12);}
+  .me-range{display:flex; gap:8px;}
+  .me-range .me-input{flex:1;}
+  .me-cloud-opts{display:flex; gap:6px; flex-wrap:wrap;}
+  .me-cloud-opts label{
+    flex:1; min-width:64px; text-align:center; font-size:12px; padding:7px 0; border:1px solid #d9d9d9;
+    border-radius:6px; cursor:pointer; color:var(--text-2); user-select:none;
+  }
+  .me-cloud-opts input{display:none;}
+  .me-cloud-opts input:checked + span, .me-cloud-opts label:has(input:checked){border-color:var(--blue); color:var(--blue); background:#f0f5ff;}
+  .me-submit{
+    width:100%; height:42px; font-size:14px; margin-top:4px; border-radius:8px;
+  }
+  .me-results{border-top:1px solid var(--border); margin-top:8px; padding:12px 0 4px;}
+  .me-results-head{display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px;}
+  .me-results-head .cnt{font-size:12px; font-weight:400; color:var(--text-3);}
+  .me-result-item{
+    border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .me-result-item:hover{border-color:var(--blue-h); box-shadow:0 2px 10px rgba(47,84,235,0.08);}
+  .me-result-item.active{border-color:var(--blue); background:#f7f9ff;}
+  .me-ri-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+  .me-ri-id{font-size:13px; font-weight:600; color:var(--blue);}
+  .me-ri-prod{font-size:11px; color:#fff; background:var(--teal); padding:1px 7px; border-radius:10px;}
+  .me-ri-meta{font-size:12px; color:var(--text-2); line-height:1.7;}
+  .me-ri-meta span{color:var(--text-3);}
+  .me-empty{font-size:12px; color:var(--text-3); text-align:center; padding:20px 0;}
+  /* Map */
+  .me-map-wrap{flex:1; position:relative; min-width:0; background:#eef0e6; overflow:hidden;}
+  .me-map{width:100%; height:100%; display:block; cursor:grab;}
+  .me-map.dragging{cursor:grabbing;}
+  .me-layer-toggle{
+    position:absolute; top:14px; right:14px; z-index:10; background:#fff; border-radius:8px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.12); display:flex; overflow:hidden;
+  }
+  .me-layer-toggle button{
+    border:none; background:#fff; padding:8px 14px; font-size:13px; cursor:pointer; color:var(--text-2);
+  }
+  .me-layer-toggle button.active{background:var(--blue); color:#fff;}
+  .me-coord{
+    position:absolute; top:14px; left:14px; z-index:10; background:rgba(255,255,255,0.9);
+    border-radius:6px; padding:5px 10px; font-size:12px; color:var(--text-2); font-variant-numeric:tabular-nums;
+    box-shadow:0 1px 6px rgba(0,0,0,0.08);
+  }
+  .me-zoom{
+    position:absolute; right:14px; bottom:64px; z-index:10; display:flex; flex-direction:column;
+    background:#fff; border-radius:8px; box-shadow:0 2px 12px rgba(0,0,0,0.12); overflow:hidden;
+  }
+  .me-zoom button{
+    width:38px; height:38px; border:none; background:#fff; font-size:20px; cursor:pointer; color:var(--text);
+    border-bottom:1px solid var(--border);
+  }
+  .me-zoom button:last-child{border-bottom:none;}
+  .me-zoom button:hover{background:#f0f5ff; color:var(--blue);}
+  .me-scale{
+    position:absolute; left:14px; bottom:16px; z-index:10; display:flex; align-items:center; gap:6px;
+    font-size:11px; color:var(--text-2);
+  }
+  .me-scale .bar{height:8px; border:1px solid #666; border-top:none; background:rgba(255,255,255,0.85);}
+  .me-legend{
+    position:absolute; right:14px; bottom:16px; z-index:10; background:rgba(255,255,255,0.92);
+    border-radius:8px; padding:8px 10px; font-size:11px; color:var(--text-2); box-shadow:0 1px 6px rgba(0,0,0,0.1);
+    line-height:1.8;
+  }
+  .me-legend .lg{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+  .me-info-pop{
+    position:absolute; left:14px; top:54px; z-index:11; width:260px; background:#fff; border-radius:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.18); padding:14px 16px; display:none;
+  }
+  .me-info-pop.show{display:block;}
+  .me-info-pop h4{margin:0 0 8px; font-size:14px; color:var(--blue);}
+  .me-info-pop .row{font-size:12px; color:var(--text-2); line-height:1.9; display:flex; justify-content:space-between;}
+  .me-info-pop .row b{color:var(--text); font-weight:600;}
+  .me-info-close{position:absolute; top:8px; right:10px; cursor:pointer; color:var(--text-3); font-size:16px;}
+  .toast{
+    position:fixed; left:50%; top:70px; transform:translateX(-50%); background:rgba(39,37,76,0.92); color:#fff;
+    padding:10px 18px; border-radius:8px; font-size:13px; z-index:999; opacity:0; transition:opacity .25s; pointer-events:none;
+  }
+  .toast.show{opacity:1;}
+  .me-hint{font-size:11px; color:var(--text-3); margin-top:-6px; margin-bottom:12px; line-height:1.5;}
+</style>
+</head>
+<body>
+  <header class="me-header">
+    <div class="me-header-left">
+      <a class="me-back" id="meBack" href="dataset-management.html">← 返回数据中心</a>
+      <span class="me-title">🌐 遥感影像检索 · 地图引擎</span>
+    </div>
+    <div class="me-header-right">
+      <span class="me-sub">非结构化遥感 / 多光谱数据 · 在线可视化查看</span>
+    </div>
+  </header>
+
+  <div class="me-body">
+    <!-- Left: search form -->
+    <aside class="me-left">
+      <div class="me-left-scroll">
+        <div class="me-left-title"><span class="dot"></span>影像检索条件</div>
+        <div class="me-hint">适用于含地理位置的遥感影像（卫星/无人机/多光谱），检索后将在右侧地图引擎定位并查看影像图层。</div>
+
+        <div class="me-field">
+          <label>影像产品名称 <span class="req">*</span></label>
+          <select class="me-select" id="fProduct">
+            <option value="all">全部产品</option>
+            <option value="GF-1">高分一号 GF-1</option>
+            <option value="GF-2">高分二号 GF-2</option>
+            <option value="GF-6">高分六号 GF-6</option>
+            <option value="ZY-3">资源三号 ZY-3</option>
+            <option value="S2">Sentinel-2</option>
+            <option value="L8">Landsat-8</option>
+          </select>
+        </div>
+
+        <div class="me-field">
+          <label>检索区域 <span class="req">*</span></label>
+          <select class="me-select" id="fRegion">
+            <option value="all">全部垦区</option>
+            <option value="jiansanjiang">建三江</option>
+            <option value="youyi">友谊农场</option>
+            <option value="hongxinglong">红兴隆</option>
+            <option value="baoquanling">宝泉岭</option>
+            <option value="mudanjiang">牡丹江</option>
+            <option value="nenjiang">嫩江</option>
+          </select>
+        </div>
+
+        <div class="me-field">
+          <label>时间范围</label>
+          <div class="me-range">
+            <input class="me-input" type="date" id="fStart" value="2025-01-01">
+            <input class="me-input" type="date" id="fEnd" value="2026-12-31">
+          </div>
+        </div>
+
+        <div class="me-field">
+          <label>云量</label>
+          <div class="me-cloud-opts" id="fCloud">
+            <label><input type="radio" name="cloud" value="0"><span>不限</span></label>
+            <label><input type="radio" name="cloud" value="10"><span>≤10%</span></label>
+            <label><input type="radio" name="cloud" value="20" checked><span>≤20%</span></label>
+            <label><input type="radio" name="cloud" value="30"><span>≤30%</span></label>
+          </div>
+        </div>
+
+        <div class="me-field">
+          <label>影像标识</label>
+          <input class="me-input" type="text" id="fMark" placeholder="如 GF2_PMS1_20260612_建三江">
+        </div>
+
+        <div class="me-field">
+          <label>影像文件名</label>
+          <input class="me-input" type="text" id="fFile" placeholder="如 *.tif / GF2_*.tif">
+        </div>
+
+        <div class="me-field">
+          <label>影像 ID</label>
+          <input class="me-input" type="text" id="fId" placeholder="如 IMG-20260612-001">
+        </div>
+
+        <button class="btn btn-primary me-submit" id="meSubmit">🔍 提交查询</button>
+
+        <div class="me-results" id="meResults"></div>
+      </div>
+    </aside>
+
+    <!-- Right: map engine -->
+    <main class="me-map-wrap">
+      <div class="me-coord" id="meCoord">经度 — , 纬度 —</div>
+      <div class="me-layer-toggle">
+        <button data-layer="topo" class="active" id="btnTopo">地形图</button>
+        <button data-layer="imagery" id="btnImagery">影像图</button>
+      </div>
+      <svg class="me-map" id="meMap"></svg>
+      <div class="me-zoom">
+        <button id="meZoomIn">＋</button>
+        <button id="meZoomOut">－</button>
+      </div>
+      <div class="me-scale" id="meScale"></div>
+      <div class="me-legend">
+        <div><span class="lg" style="background:#aadaff"></span>水系</div>
+        <div><span class="lg" style="background:#cfe8c2"></span>耕地网格</div>
+        <div><span class="lg" style="background:rgba(35,173,164,0.55);border:1px solid #23ada4"></span>影像足迹</div>
+      </div>
+      <div class="me-info-pop" id="meInfoPop">
+        <span class="me-info-close" onclick="closeInfoPop()">✕</span>
+        <h4 id="ipId">影像信息</h4>
+        <div class="row"><span>产品</span><b id="ipProd">—</b></div>
+        <div class="row"><span>区域</span><b id="ipRegion">—</b></div>
+        <div class="row"><span>成像时间</span><b id="ipTime">—</b></div>
+        <div class="row"><span>云量</span><b id="ipCloud">—</b></div>
+        <div class="row"><span>文件名</span><b id="ipFile">—</b></div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="meToast"></div>
+
+<script>
+/* ============================================================
+   数据：检索区域预设（中心 + 边界 + 适配缩放）
+   ============================================================ */
+var REGIONS = {
+  all:          {label:'全部垦区', cLon:132.2, cLat:47.0, minLon:124.5, minLat:44.0, maxLon:135.0, maxLat:49.5, zoom:7},
+  jiansanjiang: {label:'建三江',   cLon:133.6, cLat:47.2, minLon:132.6, minLat:46.6, maxLon:134.4, maxLat:47.9, zoom:10},
+  youyi:        {label:'友谊农场', cLon:131.55,cLat:46.72,minLon:131.2, minLat:46.5, maxLon:131.9, maxLat:46.95,zoom:11},
+  hongxinglong: {label:'红兴隆',   cLon:130.85,cLat:46.55,minLon:130.5, minLat:46.3, maxLon:131.2, maxLat:46.8, zoom:11},
+  baoquanling:  {label:'宝泉岭',   cLon:130.40,cLat:47.55,minLon:130.0, minLat:47.3, maxLon:130.8, maxLat:47.8, zoom:11},
+  mudanjiang:   {label:'牡丹江',   cLon:129.60,cLat:44.60,minLon:129.2, minLat:44.3, maxLon:130.0, maxLat:44.9, zoom:11},
+  nenjiang:     {label:'嫩江',     cLon:125.20,cLat:49.00,minLon:124.6, minLat:48.6, maxLon:125.8, maxLat:49.4, zoom:11}
+};
+var PRODUCT_LABEL = {'GF-1':'高分一号','GF-2':'高分二号','GF-6':'高分六号','ZY-3':'资源三号','S2':'Sentinel-2','L8':'Landsat-8'};
+
+/* 模拟影像景（覆盖各区域 / 产品 / 时间 / 云量） */
+var SCENES = [
+  {id:'IMG-20260612-001', product:'GF-2', region:'jiansanjiang', cLon:133.62, cLat:47.22, sLon:0.16, sLat:0.12, time:'2026-06-12', cloud:8,  file:'GF2_PMS1_20260612_L1A_1336_4722.tif', mark:'GF2_PMS1_20260612_建三江'},
+  {id:'IMG-20260528-014', product:'GF-6', region:'jiansanjiang', cLon:133.85, cLat:47.05, sLon:0.18, sLat:0.13, time:'2026-05-28', cloud:12, file:'GF6_WFV_20260528_L1A_1338_4705.tif', mark:'GF6_WFV_20260528_建三江'},
+  {id:'IMG-20260415-007', product:'S2',   region:'jiansanjiang', cLon:133.40, cLat:47.45, sLon:0.20, sLat:0.15, time:'2026-04-15', cloud:5,  file:'S2_MSIL2A_20260415_T50TLK.tif', mark:'S2_L2A_20260415_建三江'},
+  {id:'IMG-20260330-022', product:'GF-2', region:'jiansanjiang', cLon:134.10, cLat:46.85, sLon:0.15, sLat:0.11, time:'2026-03-30', cloud:18, file:'GF2_PMS2_20260330_L1A_1341_4685.tif', mark:'GF2_PMS2_20260330_建三江'},
+  {id:'IMG-20260218-009', product:'GF-1', region:'jiansanjiang', cLon:133.75, cLat:47.35, sLon:0.22, sLat:0.16, time:'2026-02-18', cloud:25, file:'GF1_WFV_20260218_L1A_1337_4735.tif', mark:'GF1_WFV_20260218_建三江'},
+  {id:'IMG-20260109-003', product:'ZY-3', region:'jiansanjiang', cLon:133.55, cLat:46.75, sLon:0.14, sLat:0.10, time:'2026-01-09', cloud:9,  file:'ZY3_NAD_20260109_L1A_1335_4675.tif', mark:'ZY3_NAD_20260109_建三江'},
+  {id:'IMG-20260605-031', product:'GF-2', region:'youyi',        cLon:131.55, cLat:46.72, sLon:0.12, sLat:0.09, time:'2026-06-05', cloud:6,  file:'GF2_PMS1_20260605_L1A_1315_4672.tif', mark:'GF2_PMS1_20260605_友谊'},
+  {id:'IMG-20260422-018', product:'GF-6', region:'youyi',        cLon:131.45, cLat:46.80, sLon:0.13, sLat:0.10, time:'2026-04-22', cloud:14, file:'GF6_WFV_20260422_L1A_1314_4680.tif', mark:'GF6_WFV_20260422_友谊'},
+  {id:'IMG-20260530-041', product:'GF-2', region:'hongxinglong', cLon:130.85, cLat:46.55, sLon:0.12, sLat:0.09, time:'2026-05-30', cloud:11, file:'GF2_PMS1_20260530_L1A_1308_4655.tif', mark:'GF2_PMS1_20260530_红兴隆'},
+  {id:'IMG-20260312-026', product:'S2',   region:'hongxinglong', cLon:130.95, cLat:46.48, sLon:0.16, sLat:0.12, time:'2026-03-12', cloud:20, file:'S2_MSIL2A_20260312_T50SKD.tif', mark:'S2_L2A_20260312_红兴隆'},
+  {id:'IMG-20260620-052', product:'GF-2', region:'baoquanling',  cLon:130.40, cLat:47.55, sLon:0.12, sLat:0.09, time:'2026-06-20', cloud:7,  file:'GF2_PMS1_20260620_L1A_1304_4755.tif', mark:'GF2_PMS1_20260620_宝泉岭'},
+  {id:'IMG-20260408-037', product:'GF-1', region:'baoquanling',  cLon:130.55, cLat:47.48, sLon:0.15, sLat:0.11, time:'2026-04-08', cloud:16, file:'GF1_WFV_20260408_L1A_1305_4748.tif', mark:'GF1_WFV_20260408_宝泉岭'},
+  {id:'IMG-20260515-063', product:'L8',   region:'mudanjiang',   cLon:129.60, cLat:44.60, sLon:0.18, sLat:0.13, time:'2026-05-15', cloud:13, file:'LC08_L1TP_20260515_MU.tif', mark:'L8_L1TP_20260515_牡丹江'},
+  {id:'IMG-20260226-071', product:'GF-6', region:'nenjiang',      cLon:125.20, cLat:49.00, sLon:0.17, sLat:0.13, time:'2026-02-26', cloud:22, file:'GF6_WFV_20260226_L1A_1252_4900.tif', mark:'GF6_WFV_20260226_嫩江'},
+  {id:'IMG-20251218-088', product:'S2',   region:'jiansanjiang', cLon:133.90, cLat:47.30, sLon:0.19, sLat:0.14, time:'2025-12-18', cloud:4,  file:'S2_MSIL2A_20251218_T50TLK.tif', mark:'S2_L2A_20251218_建三江'},
+  {id:'IMG-20251109-095', product:'GF-2', region:'hongxinglong', cLon:130.78, cLat:46.62, sLon:0.13, sLat:0.10, time:'2025-11-09', cloud:28, file:'GF2_PMS2_20251109_L1A_1307_4662.tif', mark:'GF2_PMS2_20251109_红兴隆'}
+];
+
+/* ============================================================
+   地图状态与投影
+   ============================================================ */
+var BASE_PX = 0.711;           // 缩放 0 时每度的像素数（仿 Web 墨卡托）
+var ZOOM_MIN = 6, ZOOM_MAX = 14;
+var mapState = {lon:133.6, lat:47.2, zoom:10, layer:'topo'};
+var matchedIds = [];           // 当前检索命中的影像 id
+var activeId = null;
+
+function clampZoom(z){ return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)); }
+
+function project(lon, lat){
+  var svg = document.getElementById('meMap');
+  var W = svg.clientWidth, H = svg.clientHeight;
+  var cosF = Math.cos(mapState.lat * Math.PI/180);
+  var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+  return {
+    x: W/2 + (lon - mapState.lon) * ppd * cosF,
+    y: H/2 - (lat - mapState.lat) * ppd
+  };
+}
+function unproject(x, y){
+  var svg = document.getElementById('meMap');
+  var W = svg.clientWidth, H = svg.clientHeight;
+  var cosF = Math.cos(mapState.lat * Math.PI/180);
+  var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+  return {
+    lon: mapState.lon + (x - W/2) / (ppd * cosF),
+    lat: mapState.lat - (y - H/2) / ppd
+  };
+}
+
+/* ============================================================
+   渲染地图
+   ============================================================ */
+// 固定地理要素（geo 坐标），随视图投影绘制
+var RIVERS = [
+  [[130.0,48.6],[131.2,48.8],[132.6,49.0],[134.0,48.9],[135.0,48.4]],                 // 黑龙江（北界）
+  [[126.0,46.6],[127.5,46.7],[129.0,46.5],[130.2,46.4]],                             // 松花江
+  [[134.0,45.0],[134.1,46.2],[134.0,47.2],[133.9,48.0]]                              // 乌苏里江（东界）
+];
+var ROADS = [
+  [[131.55,46.72],[130.85,46.55],[130.40,47.55]],                                    // 友谊-红兴隆-宝泉岭
+  [[133.6,47.2],[132.2,47.0],[130.85,46.55]],                                       // 建三江-红兴隆
+  [[129.6,44.6],[130.85,46.55]]                                                     // 牡丹江-红兴隆
+];
+var FARM_LABELS = [
+  {name:'建三江', lon:133.6, lat:47.2}, {name:'友谊农场', lon:131.55, lat:46.72},
+  {name:'红兴隆', lon:130.85, lat:46.55}, {name:'宝泉岭', lon:130.40, lat:47.55},
+  {name:'牡丹江', lon:129.6, lat:44.6}, {name:'嫩江', lon:125.2, lat:49.0}
+];
+var FIELD_REGION = {minLon:132.6, minLat:46.6, maxLon:134.4, maxLat:47.9}; // 建三江耕地网格区
+
+function renderMap(){
+  var svg = document.getElementById('meMap');
+  var W = svg.clientWidth, H = svg.clientHeight;
+  if(!W || !H) return;
+  var cosF = Math.cos(mapState.lat * Math.PI/180);
+  var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+  var isImg = mapState.layer === 'imagery';
+
+  var P = function(lon,lat){ return [W/2 + (lon-mapState.lon)*ppd*cosF, H/2 - (lat-mapState.lat)*ppd]; };
+  var parts = [];
+
+  // 背景
+  parts.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="'+(isImg?'#1c261b':'#eef0e6')+'"/>');
+
+  // 影像图层：伪彩色栅格底纹（示意遥感影像）
+  if(isImg){
+    var patSize = Math.max(14, 0.05*ppd);
+    parts.push('<defs><pattern id="imgPat" width="'+patSize+'" height="'+patSize+'" patternUnits="userSpaceOnUse">'+
+      '<rect width="'+patSize+'" height="'+patSize+'" fill="#274a2e"/>'+
+      '<rect width="'+(patSize/2)+'" height="'+(patSize/2)+'" fill="#3a6b3f"/>'+
+      '<rect x="'+(patSize/2)+'" y="'+(patSize/2)+'" width="'+(patSize/2)+'" height="'+(patSize/2)+'" fill="#5a4a7a"/>'+
+      '<rect x="'+(patSize/2)+'" y="0" width="'+(patSize/2)+'" height="'+(patSize/2)+'" fill="#2f5e44"/>'+
+      '<rect x="0" y="'+(patSize/2)+'" width="'+(patSize/2)+'" height="'+(patSize/2)+'" fill="#6b7a3a"/>'+
+      '</pattern></defs>');
+    parts.push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="url(#imgPat)" opacity="0.92"/>');
+  }
+
+  // 经纬网
+  var stepCandidates = [0.02,0.05,0.1,0.2,0.5,1,2];
+  var step = stepCandidates[stepCandidates.length-1];
+  for(var i=0;i<stepCandidates.length;i++){ if(stepCandidates[i]*ppd <= 150){ step = stepCandidates[i]; break; } }
+  var minLon = mapState.lon - (W/2)/(ppd*cosF), maxLon = mapState.lon + (W/2)/(ppd*cosF);
+  var minLat = mapState.lat - (H/2)/ppd, maxLat = mapState.lat + (H/2)/ppd;
+  parts.push('<g stroke="#d7d9cf" stroke-width="1">');
+  for(var lon=Math.ceil(minLon/step)*step; lon<=maxLon; lon+=step){
+    var p1=P(lon,minLat), p2=P(lon,maxLat);
+    parts.push('<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'"/>');
+  }
+  for(var lat=Math.ceil(minLat/step)*step; lat<=maxLat; lat+=step){
+    var q1=P(minLon,lat), q2=P(maxLon,lat);
+    parts.push('<line x1="'+q1[0].toFixed(1)+'" y1="'+q1[1].toFixed(1)+'" x2="'+q2[0].toFixed(1)+'" y2="'+q2[1].toFixed(1)+'"/>');
+  }
+  parts.push('</g>');
+  // 经纬网标注
+  parts.push('<g font-size="10" fill="'+(isImg?'#cfe8c2':'#9aa0a6')+'" font-family="monospace">');
+  for(var lon2=Math.ceil(minLon/step)*step; lon2<=maxLon; lon2+=step){
+    var lp=P(lon2,minLat);
+    parts.push('<text x="'+(lp[0]+2)+'" y="'+(H-6)+'">'+lon2.toFixed(2)+'°E</text>');
+  }
+  for(var lat2=Math.ceil(minLat/step)*step; lat2<=maxLat; lat2+=step){
+    var ltp=P(minLon,lat2);
+    parts.push('<text x="4" y="'+(ltp[1]-3)+'">'+lat2.toFixed(2)+'°N</text>');
+  }
+  parts.push('</g>');
+
+  // 耕地网格（建三江平原，旋转排布，体现北大荒农田肌理）
+  if(mapState.zoom >= 8){
+    var fcx=(FIELD_REGION.minLon+FIELD_REGION.maxLon)/2, fcy=(FIELD_REGION.minLat+FIELD_REGION.maxLat)/2;
+    var c0=P(FIELD_REGION.minLon, FIELD_REGION.maxLat);
+    var c1=P(FIELD_REGION.maxLon, FIELD_REGION.minLat);
+    var fw=c1[0]-c0[0], fh=c0[1]-c1[1];
+    var rotCx=(c0[0]+c1[0])/2, rotCy=(c0[1]+c1[1])/2;
+    var cell=Math.max(10, 0.05*ppd);
+    parts.push('<g transform="rotate(11,'+rotCx.toFixed(1)+','+rotCy.toFixed(1)+')">');
+    parts.push('<defs><pattern id="fieldPat" width="'+cell+'" height="'+(cell*0.78)+'" patternUnits="userSpaceOnUse">'+
+      '<rect width="'+cell+'" height="'+(cell*0.78)+'" fill="'+(isImg?'#2c4a30':'#cfe8c2')+'"/>'+
+      '<rect width="'+cell+'" height="'+(cell*0.78)+'" fill="none" stroke="'+(isImg?'#3a5e3f':'#b6d6a8')+'" stroke-width="1"/>'+
+      '</pattern></defs>');
+    parts.push('<rect x="'+c0[0].toFixed(1)+'" y="'+c1[1].toFixed(1)+'" width="'+fw.toFixed(1)+'" height="'+fh.toFixed(1)+'" fill="url(#fieldPat)" stroke="'+(isImg?'#3a5e3f':'#b6d6a8')+'" stroke-width="1.5"/>');
+    parts.push('</g>');
+  }
+
+  // 水系
+  parts.push('<g fill="none" stroke="#aadaff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="0.95">');
+  RIVERS.forEach(function(riv){
+    var d = riv.map(function(pt){ var p=P(pt[0],pt[1]); return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' ');
+    parts.push('<polyline points="'+d+'"/>');
+  });
+  parts.push('</g>');
+
+  // 道路
+  parts.push('<g fill="none" stroke="'+(isImg?'#5b5b4a':'#d9d4c4')+'" stroke-width="2" stroke-dasharray="6 4">');
+  ROADS.forEach(function(rd){
+    var d = rd.map(function(pt){ var p=P(pt[0],pt[1]); return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' ');
+    parts.push('<polyline points="'+d+'"/>');
+  });
+  parts.push('</g>');
+
+  // 农场标注
+  parts.push('<g font-size="12" font-weight="600" fill="'+(isImg?'#eaf3e0':'#5a6b4a')+'">');
+  FARM_LABELS.forEach(function(f){
+    var p=P(f.lon,f.lat);
+    parts.push('<text x="'+(p[0]+6)+'" y="'+p[1]+'" style="paint-order:stroke;stroke:'+(isImg?'#1c261b':'#eef0e6')+';stroke-width:3px">'+f.name+'</text>');
+  });
+  parts.push('</g>');
+
+  // 影像足迹（命中结果）
+  if(matchedIds.length){
+    SCENES.forEach(function(s){
+      if(matchedIds.indexOf(s.id) < 0) return;
+      var a=P(s.cLon - s.sLon, s.cLat + s.sLat);
+      var b=P(s.cLon + s.sLon, s.cLat - s.sLat);
+      var x=Math.min(a[0],b[0]), y=Math.min(a[1],b[1]);
+      var w=Math.abs(a[0]-b[0]), h=Math.abs(a[1]-b[1]);
+      var act = (s.id===activeId);
+      parts.push('<g class="foot" data-id="'+s.id+'" style="cursor:pointer">'+
+        '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" '+
+        'fill="rgba(35,173,164,0.45)" stroke="'+(act?'#1d39c4':'#23ada4')+'" stroke-width="'+(act?2.5:1.5)+'" rx="3">'+
+        '<title>'+s.id+' · '+PRODUCT_LABEL[s.product]+' · 云量'+s.cloud+'%</title></rect>'+
+        (mapState.zoom>=10 ? '<text x="'+(x+4)+'" y="'+(y+14)+'" font-size="10" fill="#0d4f49">'+s.id+'</text>' : '')+
+        '</g>');
+    });
+  }
+
+  svg.innerHTML = parts.join('');
+
+  // 绑定足迹点击
+  Array.prototype.forEach.call(svg.querySelectorAll('.foot'), function(g){
+    g.addEventListener('click', function(e){
+      e.stopPropagation();
+      var id = g.getAttribute('data-id');
+      var s = SCENES.find(function(x){return x.id===id;});
+      flyTo(s.cLon, s.cLat, Math.max(mapState.zoom, 12));
+      showInfoPop(s);
+      setActive(id);
+    });
+  });
+
+  updateScale();
+}
+
+function updateScale(){
+  var svg = document.getElementById('meMap');
+  var H = svg.clientHeight;
+  var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+  var mPerPx = 111320 / ppd;            // 纬度方向每像素米数
+  var target = 100 * mPerPx;            // 100px 对应米数
+  var nice = niceNum(target);
+  var barPx = nice / mPerPx;
+  var label = nice >= 1000 ? (nice/1000)+' km' : nice+' m';
+  document.getElementById('meScale').innerHTML = '<span class="bar" style="width:'+barPx.toFixed(0)+'px"></span>'+label;
+}
+function niceNum(v){
+  var exp = Math.floor(Math.log10(v));
+  var base = Math.pow(10, exp);
+  var f = v / base;
+  var nf = f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10;
+  return nf * base;
+}
+
+/* ============================================================
+   视图控制
+   ============================================================ */
+function setView(lon, lat, zoom){
+  mapState.lon = lon; mapState.lat = lat;
+  mapState.zoom = clampZoom(zoom);
+  renderMap();
+}
+function fitBbox(minLon, minLat, maxLon, maxLat){
+  var svg = document.getElementById('meMap');
+  var W = svg.clientWidth, H = svg.clientHeight;
+  var cosF = Math.cos(((minLat+maxLat)/2) * Math.PI/180);
+  var ppdLon = (W*0.8) / ((maxLon-minLon)*cosF);
+  var ppdLat = (H*0.8) / (maxLat-minLat);
+  var ppd = Math.min(ppdLon, ppdLat);
+  var zoom = clampZoom(Math.log2(ppd / BASE_PX));
+  setView((minLon+maxLon)/2, (minLat+maxLat)/2, zoom);
+}
+function flyTo(lon, lat, zoom){
+  // 简易过渡动画
+  var fromLon=mapState.lon, fromLat=mapState.lat, fromZ=mapState.zoom;
+  var toZ = clampZoom(zoom);
+  var steps=14, t=0;
+  clearInterval(window.__flyTimer);
+  window.__flyTimer = setInterval(function(){
+    t++;
+    var k = t/steps;
+    var z = fromZ + (toZ-fromZ)*k;
+    var lon = fromLon + (lon-fromLon)*k;
+    var lat = fromLat + (lat-fromLat)*k;
+    mapState.lon=lon; mapState.lat=lat; mapState.zoom=z;
+    renderMap();
+    if(t>=steps) clearInterval(window.__flyTimer);
+  }, 22);
+}
+
+/* ============================================================
+   交互：拖拽平移 / 滚轮缩放 / 缩放按钮 / 图层切换
+   ============================================================ */
+var dragging=false, lastX=0, lastY=0;
+var svg = document.getElementById('meMap');
+svg.addEventListener('mousedown', function(e){ dragging=true; lastX=e.clientX; lastY=e.clientY; svg.classList.add('dragging'); });
+window.addEventListener('mouseup', function(){ dragging=false; svg.classList.remove('dragging'); });
+window.addEventListener('mousemove', function(e){
+  if(dragging){
+    var dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+    var cosF = Math.cos(mapState.lat*Math.PI/180);
+    var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+    mapState.lon -= dx/(ppd*cosF);
+    mapState.lat += dy/ppd;
+    renderMap();
+  }
+  // 坐标读数
+  var rect = svg.getBoundingClientRect();
+  var g = unproject(e.clientX-rect.left, e.clientY-rect.top);
+  document.getElementById('meCoord').textContent = '经度 '+g.lon.toFixed(4)+'°E , 纬度 '+g.lat.toFixed(4)+'°N';
+});
+svg.addEventListener('wheel', function(e){
+  e.preventDefault();
+  var rect = svg.getBoundingClientRect();
+  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  var before = unproject(mx,my);
+  var factor = e.deltaY < 0 ? 1.2 : 1/1.2;
+  mapState.zoom = clampZoom(mapState.zoom + (e.deltaY<0?1:-1)*0.5);
+  // 保持光标处地理点不动
+  var cosF = Math.cos(mapState.lat*Math.PI/180);
+  var ppd = BASE_PX * Math.pow(2, mapState.zoom);
+  var W=svg.clientWidth,H=svg.clientHeight;
+  mapState.lon = before.lon - (mx - W/2)/(ppd*cosF);
+  mapState.lat = before.lat + (my - H/2)/ppd;
+  renderMap();
+}, {passive:false});
+
+document.getElementById('meZoomIn').onclick = function(){ setView(mapState.lon, mapState.lat, mapState.zoom+1); };
+document.getElementById('meZoomOut').onclick = function(){ setView(mapState.lon, mapState.lat, mapState.zoom-1); };
+
+function setLayer(layer){
+  mapState.layer = layer;
+  document.getElementById('btnTopo').classList.toggle('active', layer==='topo');
+  document.getElementById('btnImagery').classList.toggle('active', layer==='imagery');
+  renderMap();
+}
+document.getElementById('btnTopo').onclick = function(){ setLayer('topo'); };
+document.getElementById('btnImagery').onclick = function(){ setLayer('imagery'); };
+
+/* ============================================================
+   检索提交
+   ============================================================ */
+function doQuery(){
+  var product = document.getElementById('fProduct').value;
+  var region = document.getElementById('fRegion').value;
+  var start = document.getElementById('fStart').value;
+  var end = document.getElementById('fEnd').value;
+  var cloudEl = document.querySelector('input[name=cloud]:checked');
+  var cloud = cloudEl ? parseInt(cloudEl.value,10) : 0;
+  var mark = document.getElementById('fMark').value.trim().toLowerCase();
+  var file = document.getElementById('fFile').value.trim().toLowerCase();
+  var idq = document.getElementById('fId').value.trim().toLowerCase();
+
+  var matched = SCENES.filter(function(s){
+    if(product!=='all' && s.product!==product) return false;
+    if(region!=='all' && s.region!==region) return false;
+    if(start && s.time < start) return false;
+    if(end && s.time > end) return false;
+    if(cloud>0 && s.cloud > cloud) return false;
+    if(mark && s.mark.toLowerCase().indexOf(mark)<0) return false;
+    if(file && s.file.toLowerCase().indexOf(file)<0) return false;
+    if(idq && s.id.toLowerCase().indexOf(idq)<0) return false;
+    return true;
+  });
+
+  matchedIds = matched.map(function(s){return s.id;});
+  activeId = null;
+  closeInfoPop();
+
+  // 视野跳转：优先用命中景并集；若选了具体区域则用区域边界，更稳
+  if(region!=='all'){
+    var r = REGIONS[region];
+    fitBbox(r.minLon, r.minLat, r.maxLon, r.maxLat);
+  } else if(matched.length){
+    var mnLon=999,mxLon=-999,mnLat=999,mxLat=-999;
+    matched.forEach(function(s){
+      mnLon=Math.min(mnLon,s.cLon-s.sLon); mxLon=Math.max(mxLon,s.cLon+s.sLon);
+      mnLat=Math.min(mnLat,s.cLat-s.sLat); mxLat=Math.max(mxLat,s.cLat+s.sLat);
+    });
+    fitBbox(mnLon,mnLat,mxLon,mxLat);
+  }
+  // 切到影像图层以展示影像
+  setLayer('imagery');
+
+  renderResults(matched);
+  if(matched.length){
+    showToast('检索到 '+matched.length+' 景影像，已在地图定位');
+  }else{
+    showToast('未检索到符合条件的影像，请放宽条件');
+  }
+}
+document.getElementById('meSubmit').onclick = doQuery;
+
+function renderResults(list){
+  var box = document.getElementById('meResults');
+  if(!list.length){ box.innerHTML = '<div class="me-empty">未检索到影像，请调整条件</div>'; return; }
+  var html = '<div class="me-results-head">检索结果 <span class="cnt">'+list.length+' 景</span></div>';
+  list.forEach(function(s){
+    html += '<div class="me-result-item" data-id="'+s.id+'" onclick="onResultClick(\''+s.id+'\')">'+
+      '<div class="me-ri-top"><span class="me-ri-id">'+s.id+'</span><span class="me-ri-prod">'+PRODUCT_LABEL[s.product]+'</span></div>'+
+      '<div class="me-ri-meta"><span>区域：</span>'+REGIONS[s.region].label+'　<span>时间：</span>'+s.time+'</div>'+
+      '<div class="me-ri-meta"><span>云量：</span>'+s.cloud+'%　<span>标识：</span>'+s.mark+'</div>'+
+      '<div class="me-ri-meta"><span>文件：</span>'+s.file+'</div>'+
+      '</div>';
+  });
+  box.innerHTML = html;
+}
+function onResultClick(id){
+  var s = SCENES.find(function(x){return x.id===id;});
+  if(!s) return;
+  flyTo(s.cLon, s.cLat, Math.max(mapState.zoom, 12));
+  showInfoPop(s);
+  setActive(id);
+  document.getElementById('meResults').querySelectorAll('.me-result-item').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-id')===id);
+  });
+}
+function setActive(id){
+  activeId = id;
+  Array.prototype.forEach.call(document.querySelectorAll('.foot'), function(g){
+    var act = g.getAttribute('data-id')===id;
+    var rect = g.querySelector('rect');
+    if(rect){ rect.setAttribute('stroke', act?'#1d39c4':'#23ada4'); rect.setAttribute('stroke-width', act?2.5:1.5); }
+  });
+}
+function showInfoPop(s){
+  document.getElementById('ipId').textContent = s.id;
+  document.getElementById('ipProd').textContent = PRODUCT_LABEL[s.product];
+  document.getElementById('ipRegion').textContent = REGIONS[s.region].label;
+  document.getElementById('ipTime').textContent = s.time;
+  document.getElementById('ipCloud').textContent = s.cloud+'%';
+  document.getElementById('ipFile').textContent = s.file;
+  document.getElementById('meInfoPop').classList.add('show');
+}
+function closeInfoPop(){ document.getElementById('meInfoPop').classList.remove('show'); }
+
+/* Toast */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('meToast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200);
+}
+
+/* ============================================================
+   入口：来自数据中心"查看示例数据"的预填（?ds=&product=&region=）
+   ============================================================ */
+(function init(){
+  var p = new URLSearchParams(window.location.search);
+  // 返回按钮：来自数据详情页"查看示例数据"(带 ds 参数) -> 返回该数据详情；否则返回数据中心
+  var backLink = document.getElementById('meBack');
+  if (p.get('ds')) {
+    backLink.href = 'dataset-management.html?detail=' + encodeURIComponent(p.get('ds'));
+    backLink.textContent = '← 返回数据详情';
+  } else {
+    backLink.href = 'dataset-management.html';
+    backLink.textContent = '← 返回数据中心';
+  }
+  var prod = p.get('product'); var region = p.get('region');
+  if(prod && document.getElementById('fProduct').querySelector('option[value="'+prod+'"]')){
+    document.getElementById('fProduct').value = prod;
+  }
+  if(region && document.getElementById('fRegion').querySelector('option[value="'+region+'"]')){
+    document.getElementById('fRegion').value = region;
+  }
+  renderMap();
+  // 有预填（来自数据集示例数据）则自动检索演示
+  if(p.get('ds')){
+    setTimeout(doQuery, 200);
+  }
+})();
+
+window.addEventListener('resize', renderMap);
+</script>
+</body>
+</html>

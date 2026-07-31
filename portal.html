@@ -50,7 +50,7 @@ button { cursor: pointer; border: none; background: none; }
 .top-nav-item.active { color: rgb(47,84,235) !important; font-weight: 600; background-color: transparent !important; }
 .top-nav-item.active::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 10px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAUCAYAAABYm8lAAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATQSURBVHgB7VldThtJEK6aGUs8rLSDFFjtm7kATE6AOUFsBaS8gU8AnMD4BHZOALxFgghzAjsnoNkL4DytNhDh1RIpkmem9qsez2QgMbI3ipZI/UnW/HXPoP6qvvqqIXJwcPh5wPMMjjava0LUwrSISELcMszy2pwsH5HDk4I368DVzY8tkHqGSHjHnG6A0OdKqgh3opc3dXJ4UghmGRRtfdgRSQ84iFfMm9+HpUcGpI6EZRfnPXJ4MphJitc2r/vMPDQnz5p6Hb26rVIyruUSjOfglhspyzqyOMT5ewqCI/NmcUgO/wu+mbFR/Takyriq5yDPEHOVUnqdP5c4hiTzsR0LknFNYPbQY+mRkkqi9y6Q6Rt2/iPQuq0HzF/TaxsUwsa8feYU4Dtwj9gJSYdCcY3JG4pIdW3rZkg4PkhuXCc2ACRJWmBjyH6yUZZpK9/kna1tfRhgbsgk53mGTwKnLuJtY+6IBHVbskABqSFxWocK7KKmD/44XWqTw9wozJMlNUn6LHLJ8d0iZHfl8nSJmdK2EkecRPlYUNwW8jsSxLcgfUevc1KVUD1aEkVGnNLfDOJAXm1t8+YWgXIlQXIFBYg4/qdhTpYa5nSpi9+A4sCAcENxZQ/f3sAfx1oGbCA4zIUiDbHghyzJe3P628HDQdGrP5HJwQXqZyGtUf0qpIUFZGxFg6GpxGSkeut5LQYpF/jAviUtnxP8ElF8Z0xvZVS8H65aDRir5AuCiDRxGSrgt1HLQ2Tu7uXJcpMcZsYXYtUAlVxvtHWzQ74/yA0QauEBFnhdM6n8As1AZHVDCQdBXa2VCID9VHgbxzoIWZn28Vz6tYUC2V0lW4OIPi+MaOFziAyuW6mGAOhw1y/Pjnt9bEGqlT55MTFAmQTHQReLXM2ltoBmmHDNnlfGdgx62wu8GHWaGtM+vLr1cdeaMAQBMvpAM1lll6AAFMR9scegR6k3ShFQ5CeD6OVfrl+eEeWM7dtaOZFNhWYgoRiat8t7k2uVzEOOgxXTW7RSikzeQya/KGeyZt2DfreABk0axC3N5txwrW5edxAIGkBtW2f9pIYAifS9ugmipFLi18ivoA7H1fLf6PBtFBmLBTzGQnZyo2IdL/rS8uBJC2KkknSKezA+OIQgp1Xcm0aqbklWEmSzLPL403OVXK3tek1qyJh21Vjhu2fZ1iXaIOFDZK+eGyVVXXOhIg5Tca+HsXWUeRtZOiDx6mhRsJh3jXtGR41U4vex4Ed5K5LfQ5wM1PA83Jj4sscMJ5ypQtcGDiQXEZU5XttSOXw31HSmtP/VzpM1L3FQ1ezFIAPHe4yaN4QUhoUjzojq43dQ7jOtLOv2orAGgv5AGlfRM6FXxXtyg5STmhE9wPEc0jug8adhHkSTrIzwrm18p0YOs0PJfey5NUpYWN15wmaFth3dIkvt/jF3yvdK8yK70aBAUNzbuNCgYEZrZdua9iz1crI71XIEzwjdMJp1bGZ6xl30mr/yOGiqeSpJMOW97OPzJ6ZJuPlfDJBVk7G/h0Bbl8xsOXyNEUvanOv/sYq8DpeJzLYPtYbCBon0POF3tv/MNhxC626z6eeQ46NyzXb4MZibWEUmtbSXXamketkmgsqvl4Y4WkJBrJI7JH88mOaUHX4M/gWLIsY2g7RFeAAAAABJRU5ErkJggg==) center center / 100% 100% no-repeat; }
 .header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
-.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; background: none; border: none; }
 .header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
 .header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
 .notif-popover{display:none;position:absolute;top:100%;right:40px;margin-top:4px;background:#fff;border-radius:8px;width:340px;max-height:400px;overflow-y:auto;box-shadow:0 6px 16px 0 rgba(0,0,0,0.08),0 3px 6px -4px rgba(0,0,0,0.12),0 9px 28px 8px rgba(0,0,0,0.05);z-index:100}
@@ -313,6 +313,29 @@ button { cursor: pointer; border: none; background: none; }
 .svc-tag { padding: 2px 10px; border-radius: 4px; font-size: 12px; background: rgba(47,84,235,0.06); color: #2f54eb; }
 
 /* ============================================================
+   TOPIC DEV CARDS — 课题申报与联合开发能力展示
+   ============================================================ */
+.topic-portal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 28px; }
+.topic-portal-card {
+  position: relative; background: #fff; border: 1px solid rgba(5,5,5,0.06);
+  border-radius: 14px; padding: 24px 26px; transition: .25s; overflow: hidden;
+}
+.topic-portal-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, #2f54eb, #23ada4); opacity: 0; transition: .25s;
+}
+.topic-portal-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: rgba(47,84,235,0.15); }
+.topic-portal-card:hover::before { opacity: 1; }
+.topic-portal-card .tpc-icon {
+  width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; background: linear-gradient(135deg, #eef2ff, #d6e4ff); margin-bottom: 16px;
+}
+.topic-portal-card h4 { font-size: 17px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 8px; }
+.topic-portal-card p { font-size: 14px; color: rgba(0,0,0,0.55); line-height: 1.75; }
+.topic-portal-card .tpc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(5,5,5,0.04); }
+.topic-portal-card .tpc-tags .mtag { padding: 2px 10px; border-radius: 4px; font-size: 12px; background: rgba(35,173,164,0.08); color: #23ada4; }
+
+/* ============================================================
    DATASET CARDS — 3-column showcase of unique data assets
    ============================================================ */
 .dataset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -533,11 +556,7 @@ button { cursor: pointer; border: none; background: none; }
 .onboard-step .os-text { font-size: 12px; color: rgba(0,0,0,0.65); line-height: 1.4; }
 
 /* ============================================================
-   POINTS BADGE
    ============================================================ */
-.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
-.points-badge:hover { background: rgba(47,84,235,0.12); }
-[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
 
 /* ============================================================
    TOAST
@@ -662,11 +681,15 @@ button { cursor: pointer; border: none; background: none; }
         </a>
       </div>
       <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item active" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
-        
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
-        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span>
+      </div></div>
 
       <div class="header-right">
         <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
@@ -690,12 +713,11 @@ button { cursor: pointer; border: none; background: none; }
               <a href="javascript:void(0)" style="font-size:13px;color:rgba(0,0,0,0.45)" onclick="toast('功能开发中','info')">查看全部通知 →</a>
             </div>
           </div>
-          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
           <div class="dropdown-wrap" id="userDropdownWrap">
             <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
             <div class="dropdown-menu" id="userDropdown">
               <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
-                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
@@ -720,6 +742,7 @@ button { cursor: pointer; border: none; background: none; }
     <a class="anchor-link" data-target="section-cases"><span class="anchor-dot"></span><span class="anchor-label">精选案例</span></a>
     <a class="anchor-link" data-target="section-datasets"><span class="anchor-dot"></span><span class="anchor-label">数据资源</span></a>
     <a class="anchor-link" data-target="section-demands"><span class="anchor-dot"></span><span class="anchor-label">需求大厅</span></a>
+    <a class="anchor-link" data-target="section-topics"><span class="anchor-dot"></span><span class="anchor-label">课题申报</span></a>
     <a class="anchor-link" data-target="section-partners"><span class="anchor-dot"></span><span class="anchor-label">合作机构</span></a>
   </nav>
 
@@ -738,8 +761,8 @@ button { cursor: pointer; border: none; background: none; }
     <!-- Persistent brand content -->
     <div class="hero-inner">
       <div class="hero-badge">科研力量汇聚 · 供需精准对接</div>
-      <h1>连接顶尖<span>科研力量</span>，解决田间真实需求</h1>
-      <p class="hero-desc">平台一端汇聚全国重点实验室与985高校的187+农业AI模型、50+独家数据集，一端对接农场与企业的实际业务难题——发布需求、精准匹配科研团队、跟踪交付，让AI从实验室直达田间地头</p>
+      <h1>连接<span>科研力量</span>，解决田间真实需求</h1>
+      <p class="hero-desc">平台一端汇聚全国重点实验室与重点高校的187+农业AI模型、50+独家数据集，一端对接农场与企业的实际业务难题——发布需求、精准匹配科研与开发团队、跟踪交付，让AI能力从研发端直达应用端</p>
 
       <!-- Stats + CTA -->
       <div class="hero-stats-row">
@@ -759,7 +782,7 @@ button { cursor: pointer; border: none; background: none; }
         </div>
       </div>
       <div class="hero-cta">
-        <a class="btn btn-primary btn-xl" href="model-marketplace.html">浏览模型广场</a>
+        <a class="btn btn-primary btn-xl" href="model-marketplace.html?view=platform">浏览模型中心</a>
       </div>
     </div>
 
@@ -851,12 +874,52 @@ button { cursor: pointer; border: none; background: none; }
     <div class="section-inner">
       <div class="sec-head">
         <div class="sec-head-label">📋 需求大厅</div>
-        <h2>需求驱动，让AI从实验室走向田间</h2>
+        <h2>需求驱动，让AI能力直达业务场景</h2>
         <p>农场与企业在此发布真实业务需求，科研团队接单攻关、交付成果——从遥感识别到产量预测，每一个难题都能找到解法</p>
       </div>
       <div class="demand-grid" id="demandGrid"></div>
       <div class="demand-more">
         <a class="demand-more-link" href="demand-hall.html">浏览全部需求，或发布你的需求<span class="dm-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 课题申报与开发 ===== -->
+  <section class="section white" id="section-topics">
+    <div class="section-inner">
+      <div class="sec-head">
+        <div class="sec-head-label">📑 课题申报</div>
+        <h2>课题申报与联合开发，让科研成果多元落地</h2>
+        <p>平台常态化发布科研课题指南，科研团队可下载模板、按申报制流程提交，立项后依托平台模型、数据与算力联合攻关，把课题成果转化为可用的 AI 能力</p>
+      </div>
+      <div class="topic-portal-grid">
+        <div class="topic-portal-card">
+          <div class="tpc-icon">📑</div>
+          <h4>课题指南发布</h4>
+          <p>平台定期发布科研课题指南，覆盖智能育种、智慧农机、遥感监测、耕地保护四大方向，明确研究内容、资质要求与申报节点。</p>
+          <div class="tpc-tags"><span class="mtag">指南发布</span><span class="mtag">四大方向</span></div>
+        </div>
+        <div class="topic-portal-card">
+          <div class="tpc-icon">📝</div>
+          <h4>申报与立项</h4>
+          <p>下载申报书模板，按"申报制"流程填写并线下递交；平台提供申报说明与资料清单，经形式审查、专家评审后择优立项、签订任务书。</p>
+          <div class="tpc-tags"><span class="mtag">申报制</span><span class="mtag">线下递交</span></div>
+        </div>
+        <div class="topic-portal-card">
+          <div class="tpc-icon">🛰️</div>
+          <h4>平台资源支撑</h4>
+          <p>攻关全程可用平台汇聚的 187+ 模型、50+ 数据集与在线开发环境，免去从零搭建的工程门槛，专注科研本身。</p>
+          <div class="tpc-tags"><span class="mtag">模型 / 数据</span><span class="mtag">在线开发</span></div>
+        </div>
+        <div class="topic-portal-card">
+          <div class="tpc-icon">📈</div>
+          <h4>进度与成果</h4>
+          <p>在个人中心「我的申报」跟踪审核与执行进度；通过验收的成果可上架模型社区，开放 API 调用与复用，反哺平台生态。</p>
+          <div class="tpc-tags"><span class="mtag">进度跟踪</span><span class="mtag">成果上架</span></div>
+        </div>
+      </div>
+      <div class="demand-more">
+        <a class="demand-more-link" href="topic-center.html">浏览全部课题，了解申报方式<span class="dm-arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -888,11 +951,11 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p>
     </div>
-    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div>
+    <div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html?view=platform">模型中心</a><a href="model-marketplace.html?view=user">模型社区</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="topic-center.html">课题中心</a><a href="data-overview.html">数据概览</a><a href="workbench.html">工作台</a></div>
     <div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="openAbout()">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="openAbout()">联系方式</a></div>
     <div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div>
   </div>
-  <div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div>
+  <div class="footer-bot">北大荒信息有限公司 · 审核注册制 · 面向机构与科研团队开放申请<br>© 2026 北大荒智慧农业协同创新平台</div>
 </footer>
 
 <!-- ==================== ABOUT DIALOG ==================== -->
@@ -901,7 +964,7 @@ button { cursor: pointer; border: none; background: none; }
     <div class="dialog-header"><h3>关于平台</h3><button class="dialog-close" onclick="closeAbout()">✕</button></div>
     <div class="dialog-body">
       <h4>平台定位</h4>
-      <p>北大荒智慧农业协同创新平台，以供需对接为核心机制，汇集全国重点实验室与985高校的顶尖农业AI能力。一端是187+经过验证的农业AI模型与北大荒垦区独家数据资源，一端是农场与企业的真实业务难题——发布需求、精准匹配科研团队、跟踪交付，让AI从实验室直达田间地头。</p>
+      <p>北大荒智慧农业协同创新平台，以供需对接为核心机制，汇集全国重点实验室与重点高校的农业AI能力。一端是187+经过验证的农业AI模型与北大荒垦区独家数据资源，一端是农场与企业的真实业务难题——发布需求、精准匹配科研与开发团队、跟踪交付，让AI能力从研发端直达应用端。</p>
       <h4>核心优势</h4>
       <ul>
         <li><strong>顶尖科研背书：</strong>模型来自全国重点实验室、中国农科院、985高校等权威机构</li>
@@ -910,14 +973,14 @@ button { cursor: pointer; border: none; background: none; }
         <li><strong>需求驱动交付：</strong>发布需求 → 匹配专家团队 → 交付成果，平台全程跟进</li>
       </ul>
       <h4>入驻流程</h4>
-      <p>平台采用<strong>受邀注册制</strong>，不面向社会公众开放。</p>
+      <p>平台采用<strong>审核注册制</strong>，面向机构与科研团队开放申请，由平台审核后开通账号。</p>
       <div class="onboard-steps">
         <div class="onboard-step"><div class="os-num">①</div><div class="os-text">机构提交<br>入驻申请</div></div>
         <div class="onboard-step"><div class="os-num">②</div><div class="os-text">管理员<br>审核资质</div></div>
         <div class="onboard-step"><div class="os-num">③</div><div class="os-text">管理员逐一<br>创建账号</div></div>
         <div class="onboard-step"><div class="os-num">④</div><div class="os-text">用户收到账号<br>登录使用</div></div>
       </div>
-      <p style="margin-top:16px;font-size:13px;color:rgba(0,0,0,0.45)">如需申请入驻，请联系北大荒信息有限公司平台管理团队。<br>联系邮箱：platform@bdhinfo.com</p>
+      <p style="margin-top:16px;font-size:13px;color:rgba(0,0,0,0.45)">提交入驻申请后，平台将尽快完成资质审核并开通账号。如有疑问可联系平台管理团队：platform@bdhinfo.com</p>
     </div>
     <div class="dialog-footer"><button class="btn btn-primary" onclick="closeAbout()">我知道了</button></div>
   </div>
@@ -927,20 +990,6 @@ button { cursor: pointer; border: none; background: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== 积分系统 =====
-var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
-function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
-function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
-function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
-function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
-function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
-function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} return true; } return false; }
-function getRemainingFreeCalls() { return getFreeCalls(); }
-function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } }
-function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
-function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
-function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
-if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
 
 // ===== DATA =====
 var MODELS = [
@@ -1120,7 +1169,7 @@ function renderDemands(){
       '<h4>' + d.title + '</h4>' +
       '<div class="dm-org">🏢 ' + d.org + '</div>' +
       '<div class="dm-tags">' + d.tags.map(function(t){ return '<span class="dmtag">' + t + '</span>'; }).join('') + '</div>' +
-      '<div class="dm-footer"><span class="dm-budget">🪙 ' + d.points + ' 积分</span><span>📅 ' + d.deadline + '</span></div>' +
+      '<div class="dm-footer"><span>📋 ' + d.category + '</span><span>📅 ' + d.deadline + '</span></div>' +
       '</div>';
   }).join('');
 }
@@ -1153,9 +1202,7 @@ document.getElementById('topNavMenu').addEventListener('click', function(e){
     if (nav === 'home') { window.location.href = 'portal.html'; return; }
     this.querySelectorAll('.top-nav-item').forEach(function(t){t.classList.remove('active');});
     e.target.classList.add('active');
-    if (nav === 'marketplace') {
-      window.location.href = 'model-marketplace.html';
-    } else if (nav === 'data') {
+    if (nav === 'model-platform') { window.location.href = 'model-marketplace.html?view=platform'; return; } else if (nav === 'model-user') { window.location.href = 'model-marketplace.html?view=user'; return; } else if (nav === 'data') {
       window.location.href = 'dataset-management.html';
     } else if (nav === 'dev') {
       window.location.href = 'image-custom-list.html';

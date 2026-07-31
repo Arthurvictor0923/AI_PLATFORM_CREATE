@@ -59,7 +59,7 @@ button { cursor: pointer; border: none; background: none; }
 [data-prefers-color="dark"] .top-nav-item { color: rgba(255,255,255,0.65); }
 [data-prefers-color="dark"] .top-nav-item.active { color: rgb(47,84,235) !important; }
 .header-right { display: flex; align-items: center; gap: 12px; padding-right: 50px; flex-shrink: 0; }
-.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; }
+.header-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: rgba(0,0,0,0.65); font-size: 16px; transition: all 0.2s; cursor: pointer; position: relative; background: none; border: none; }
 .header-btn:hover { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.88); }
 .header-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d4f; border: 1px solid #fff; }
 [data-prefers-color="dark"] .header-btn { color: rgba(255,255,255,0.65); }
@@ -114,6 +114,7 @@ button { cursor: pointer; border: none; background: none; }
 .sync-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .sync-dot.synced { background: #52c41a; }
 .sync-dot.unsynced { background: #fa8c16; }
+.sync-dot.reviewing { background: #2f54eb; }
 /* Action buttons */
 .btn-link { background: transparent; color: #2f54eb; border: none; padding: 4px 8px; height: auto; font-size: 13px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
 .btn-link:hover { color: #597ef7; background: rgba(47,84,235,0.04); }
@@ -329,14 +330,6 @@ button { cursor: pointer; border: none; background: none; }
 .wb-sb-stat-item { text-align: center; flex: 1; }
 .wb-sb-stat-val { font-size: 18px; font-weight: 700; color: rgba(0,0,0,0.88); }
 .wb-sb-stat-lbl { font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 2px; }
-.wb-sb-points { display: flex; gap: 16px; padding-top: 14px; margin-top: 14px; border-top: 1px solid #f0f0f0; cursor: pointer; transition: opacity 0.2s; }
-.wb-sb-points:hover { opacity: 0.8; }
-.wb-sb-points-item { display: flex; align-items: center; gap: 4px; }
-.wb-sb-points-icon { font-size: 14px; }
-.wb-sb-points-item strong { font-size: 15px; font-weight: 700; color: #2f54eb; }
-.wb-sb-points-lbl { font-size: 11px; color: rgba(0,0,0,0.45); }
-[data-prefers-color="dark"] .wb-sb-points { border-top-color: rgba(255,255,255,0.08); }
-[data-prefers-color="dark"] .wb-sb-points-item strong { color: #597ef7; }
 .wb-sb-link {
   display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px;
   border-radius: 6px; font-size: 13px; color: rgba(0,0,0,0.65); cursor: pointer;
@@ -418,11 +411,7 @@ button { cursor: pointer; border: none; background: none; }
 .wb-act-time { font-size: 12px; color: rgba(0,0,0,0.35); white-space: nowrap; }
 
 /* ============================================================
-   POINTS BADGE
    ============================================================ */
-.points-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 20px; font-size: 13px; background: rgba(47,84,235,0.06); color: #2f54eb; cursor: pointer; user-select: none; transition: all 0.2s; white-space: nowrap; }
-.points-badge:hover { background: rgba(47,84,235,0.12); }
-[data-prefers-color="dark"] .points-badge { background: rgba(47,84,235,0.15); color: #85a5ff; }
 
 /* ============================================================
    TOAST
@@ -834,6 +823,59 @@ button { cursor: pointer; border: none; background: none; }
 .dialog-footer .spacer { flex: 1; }
 [data-prefers-color="dark"] .dialog-footer { border-top-color: rgba(255,255,255,0.08); }
 
+/* ===== 我的申报（课题申报制） ===== */
+.ta-app-item{background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:14px 16px;margin-bottom:12px;}
+.ta-app-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.ta-app-name{font-size:15px;font-weight:600;}
+.ta-app-sub{font-size:12.5px;color:rgba(0,0,0,0.45);margin-top:4px;}
+.ta-stepper{display:flex;align-items:flex-start;gap:0;margin-top:14px;flex-wrap:wrap;}
+.ta-step{flex:1;min-width:110px;position:relative;text-align:center;padding:0 4px;}
+.ta-step .dot{width:22px;height:22px;border-radius:50%;background:#f0f0f0;color:rgba(0,0,0,0.45);border:2px solid #e0e0e0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;margin-bottom:6px;position:relative;z-index:2;}
+.ta-step .lbl{font-size:12px;color:rgba(0,0,0,0.45);line-height:1.3;}
+.ta-step::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:#e0e0e0;z-index:1;}
+.ta-step:first-child::before{display:none;}
+.ta-step.done .dot{background:#2f54eb;color:#fff;border-color:#2f54eb;}
+.ta-step.done .lbl{color:rgba(0,0,0,0.65);}
+.ta-step.done::before{background:#2f54eb;}
+.ta-step.current .dot{background:#2f54eb;color:#fff;border-color:#2f54eb;box-shadow:0 0 0 4px rgba(47,84,235,0.18);}
+.ta-step.current .lbl{color:#2f54eb;font-weight:600;}
+.ta-step.current::before{background:#2f54eb;}
+.ta-step.returned .dot{background:#ff4d4f;color:#fff;border-color:#ff4d4f;}
+.ta-step.returned .lbl{color:#ff4d4f;}
+
+/* ===== 申报审批（审核员视角，与「我的申报」同源 ls_topic_applications） ===== */
+.apv-head{margin-bottom:14px;}
+.apv-head h3{font-size:16px;font-weight:600;margin:0 0 4px;}
+.apv-head p{margin:0;font-size:13px;color:rgba(0,0,0,0.45);line-height:1.6;}
+.apv-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.apv-chip{height:30px;padding:0 14px;border:1px solid #e8e8e8;background:#fff;border-radius:16px;font-size:13px;color:rgba(0,0,0,0.65);cursor:pointer;transition:all .2s;}
+.apv-chip:hover{border-color:#2f54eb;color:#2f54eb;}
+.apv-chip.active{background:#2f54eb;border-color:#2f54eb;color:#fff;}
+.apv-search{margin-left:auto;height:32px;padding:0 12px;border:1px solid #e8e8e8;border-radius:6px;font-size:13px;width:200px;outline:none;box-sizing:border-box;}
+.apv-search:focus{border-color:#2f54eb;}
+.apv-item{background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:14px 16px;margin-bottom:12px;transition:border-color .2s;}
+.apv-item.is-returned{border-color:#ffccc7;}
+.apv-item.is-done{border-color:#b7eb8f;}
+.apv-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.apv-name{font-size:15px;font-weight:600;}
+.apv-sub{font-size:12.5px;color:rgba(0,0,0,0.45);margin-top:4px;}
+.apv-action{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.apv-todo{font-size:12.5px;color:#2f54eb;background:#d6e4ff;padding:3px 10px;border-radius:4px;font-weight:500;}
+.apv-done-tag{font-size:12.5px;color:#52c41a;background:#d9f7be;padding:3px 10px;border-radius:4px;}
+.apv-returned-tag{font-size:12.5px;color:#ff4d4f;background:#fff2f0;padding:3px 10px;border-radius:4px;}
+.apv-summary{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin:12px 0;}
+.apv-summary .detail-row{display:flex;margin-bottom:0;}
+.apv-summary .detail-label{width:72px;flex-shrink:0;color:rgba(0,0,0,0.45);font-size:13px;}
+.apv-summary .detail-value{flex:1;color:rgba(0,0,0,0.88);font-size:13px;word-break:break-all;}
+.apv-stage-callout{background:#f0f5ff;border:1px solid #d6e4ff;border-radius:6px;padding:10px 12px;margin:12px 0;font-size:14px;color:#2f54eb;font-weight:600;}
+.apv-decision{margin:14px 0;display:flex;gap:10px;}
+.apv-decision label{flex:1;border:1px solid #e8e8e8;border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:14px;transition:all .2s;}
+.apv-decision label.sel-approve{border-color:#52c41a;background:#f6ffed;}
+.apv-decision label.sel-reject{border-color:#ff4d4f;background:#fff2f0;}
+.apv-decision input{display:none;}
+.apv-note{width:100%;min-height:72px;border:1px solid #e8e8e8;border-radius:6px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;}
+.apv-note:focus{border-color:#2f54eb;}
+
 /* ============================================================
    API DETAIL DIALOG (workbench)
    ============================================================ */
@@ -949,6 +991,50 @@ button { cursor: pointer; border: none; background: none; }
 [data-prefers-color="dark"] .cm-rt-editor { color: rgba(255,255,255,0.85); }
 /* FOOTER */
 .footer{background:#001529;color:rgba(255,255,255,0.65);padding:48px 50px 24px;font-size:13px}.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}.footer-col h4{font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:16px}.footer-col p,.footer-col a{font-size:13px;color:rgba(255,255,255,0.45);line-height:2.2;display:block;text-decoration:none}.footer-col a:hover{color:#597ef7}.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.footer-logo span{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85)}.footer-bot{max-width:1200px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.8}
+
+/* ===== Team Management ===== */
+.tm-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 24px; }
+.tm-info-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 20px; }
+.tm-info-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.tm-info-avatar { width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg,#eef2ff,#d6e4ff); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.tm-info-name { font-size: 18px; font-weight: 700; color: rgba(0,0,0,0.88); }
+.tm-info-sub { font-size: 13px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+.tm-info-body { display: flex; flex-direction: column; gap: 10px; }
+.tm-info-row { display: flex; gap: 12px; font-size: 13px; }
+.tm-label { color: rgba(0,0,0,0.45); min-width: 80px; }
+.tm-quota-card { background: linear-gradient(135deg,#f3f6ff 0%,#eef2ff 100%); border: 1px solid #e6ebff; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.tm-quota-title { font-size: 14px; font-weight: 600; color: rgba(0,0,0,0.65); margin-bottom: 12px; }
+.tm-quota-num { display: flex; align-items: baseline; gap: 4px; margin-bottom: 12px; }
+.tm-quota-used { font-size: 32px; font-weight: 700; color: #2f54eb; }
+.tm-quota-sep { font-size: 18px; color: rgba(0,0,0,0.35); }
+.tm-quota-limit { font-size: 18px; font-weight: 600; color: rgba(0,0,0,0.55); }
+.tm-quota-bar { width: 100%; height: 6px; background: rgba(47,84,235,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.tm-quota-bar-fill { height: 100%; background: #2f54eb; border-radius: 3px; transition: width .3s; }
+.tm-quota-hint { font-size: 12px; color: rgba(0,0,0,0.45); margin-bottom: 14px; line-height: 1.5; }
+.tm-add-btn { width: 100%; }
+.tm-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.tm-section-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.88); margin-bottom: 14px; }
+.tm-section-title .sec-bar { width: 3px; height: 14px; background: #2f54eb; border-radius: 2px; }
+.tm-table-wrap { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; overflow: hidden; }
+.tm-table { width: 100%; border-collapse: collapse; }
+.tm-table th { padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.65); background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+.tm-table td { padding: 12px 16px; font-size: 13px; color: rgba(0,0,0,0.85); border-bottom: 1px solid #f0f0f0; }
+.tm-table tr:last-child td { border-bottom: none; }
+.tm-role-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 12px; font-weight: 500; }
+.tm-role-admin { background: rgba(47,84,235,0.1); color: #2f54eb; }
+.tm-role-member { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.65); }
+.tm-status-active { color: #52c41a; }
+.tm-status-pending { color: #faad14; }
+.tm-action-btn { padding: 2px 10px; font-size: 12px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; color: rgba(0,0,0,0.65); }
+.tm-action-btn:hover { color: #ff4d4f; border-color: #ff4d4f; }
+[data-prefers-color="dark"] .tm-info-card, [data-prefers-color="dark"] .tm-table-wrap { background: #1e1e1e; border-color: #333; }
+[data-prefers-color="dark"] .tm-quota-card { background: linear-gradient(135deg,rgba(47,84,235,0.08),rgba(47,84,235,0.04)); border-color: #333; }
+[data-prefers-color="dark"] .tm-info-name, [data-prefers-color="dark"] .tm-section-title { color: rgba(255,255,255,0.88); }
+[data-prefers-color="dark"] .tm-label, [data-prefers-color="dark"] .tm-info-sub, [data-prefers-color="dark"] .tm-quota-hint { color: rgba(255,255,255,0.45); }
+[data-prefers-color="dark"] .tm-table th { background: #262626; color: rgba(255,255,255,0.65); border-color: #333; }
+[data-prefers-color="dark"] .tm-table td { color: rgba(255,255,255,0.85); border-color: #333; }
+[data-prefers-color="dark"] .tm-role-member { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); }
+@media (max-width: 900px) { .tm-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -972,11 +1058,15 @@ button { cursor: pointer; border: none; background: none; }
         </a>
       </div>
       <div class="top-nav-menu-wrap"><div class="top-nav-menu" id="topNavMenu">        <span class="top-nav-item" data-nav="home" onclick="if(event)event.stopPropagation();location.href='portal.html';">首页</span>
-        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span><span class="top-nav-item" data-nav="marketplace" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html';">模型广场</span>
-        
+        <span class="top-nav-item" data-nav="overview" onclick="if(event)event.stopPropagation();location.href='data-overview.html';">数据概览</span>
+        <span class="top-nav-item" data-nav="cases" onclick="if(event)event.stopPropagation();location.href='case-center.html';">案例中心</span>
+        <span class="top-nav-item" data-nav="model-platform" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=platform';">模型中心</span>
+        <span class="top-nav-item" data-nav="model-user" onclick="if(event)event.stopPropagation();location.href='model-marketplace.html?view=user';">模型社区</span>
         <span class="top-nav-item" data-nav="data" onclick="if(event)event.stopPropagation();location.href='dataset-management.html';">数据中心</span>
+        <span class="top-nav-item" data-nav="topic" onclick="if(event)event.stopPropagation();location.href='topic-center.html';">课题中心</span>
         <span class="top-nav-item" data-nav="demand" onclick="if(event)event.stopPropagation();location.href='demand-hall.html';">需求市场</span>
-        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span></div></div>
+        <span class="top-nav-item" data-nav="devcenter" onclick="if(event)event.stopPropagation();location.href='developer-center.html';">开发者中心</span>
+      </div></div>
 
       <div class="header-right">
         <button class="header-btn" title="搜索" onclick="var s=document.getElementById('searchInput')||document.querySelector('.wb-topbar-search input')||document.getElementById('docSearch');if(s){s.focus();if(s.scrollIntoView)s.scrollIntoView({block:'center'});}else if(typeof toast==='function'){toast('功能开发中','info');}"><svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"/></svg></button>
@@ -1007,12 +1097,11 @@ button { cursor: pointer; border: none; background: none; }
           
 
           <!-- User dropdown -->
-          <span class="points-badge" id="headerPointsBadge" onclick="showPointsRules()" title="查看积分规则">🪙 <strong id="headerPoints">1000</strong></span>
           <div class="dropdown-wrap" id="userDropdownWrap">
             <div class="avatar-sm" id="userAvatarBtn" onclick="toggleUserMenu()">张</div>
             <div class="dropdown-menu" id="userDropdown">
               <div style="padding:8px 12px;border-bottom:1px solid #f0f0f0;margin-bottom:4px">
-                <div style="font-weight:600;font-size:14px">张研究员</div>
+                <div style="font-weight:600;font-size:14px">北大荒智慧农业研发组 · 张研究员（管理员）</div>
                 <div style="font-size:12px;color:rgba(0,0,0,0.45)">全重实验室 · 开发者</div>
               </div>
               <div class="dropdown-item" onclick="goToWorkbench()">👤 个人中心</div>
@@ -1067,17 +1156,13 @@ button { cursor: pointer; border: none; background: none; }
       <div class="wb-sidebar-card">
         <div class="wb-sb-user">
           <div class="wb-sb-avatar">张</div>
-          <div><div class="wb-sb-uname">张研究员</div><div class="wb-sb-urole">开发者</div></div>
+          <div><div class="wb-sb-uname">北大荒智慧农业研发组 · 张研究员（管理员）</div><div class="wb-sb-urole">开发者</div></div>
           <button type="button" class="wb-sb-settings" title="账号设置" onclick="location.href='account-settings.html'">⚙️</button>
         </div>
         <div class="wb-sb-stat">
           <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">12</div><div class="wb-sb-stat-lbl">我的模型</div></div>
           <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">5</div><div class="wb-sb-stat-lbl">数据集</div></div>
           <div class="wb-sb-stat-item"><div class="wb-sb-stat-val">3</div><div class="wb-sb-stat-lbl">进行中</div></div>
-        </div>
-        <div class="wb-sb-points" onclick="showPointsRules()" title="查看积分规则">
-          <div class="wb-sb-points-item"><span class="wb-sb-points-icon">🪙</span><strong id="sbPointsVal">1000</strong><span class="wb-sb-points-lbl">积分</span></div>
-          <div class="wb-sb-points-item"><span class="wb-sb-points-icon">🎁</span><strong id="sbFreeCallsVal">3</strong><span class="wb-sb-points-lbl">免费调用</span></div>
         </div>
       </div>
       <div class="wb-sidebar-card">
@@ -1088,6 +1173,9 @@ button { cursor: pointer; border: none; background: none; }
         <div class="wb-sb-link" data-nav="my-demands" onclick="switchWbTab('my-demands', this)"><span class="si">📝</span> 我的需求</div>
         <div class="wb-sb-link" data-nav="my-tasks" onclick="switchWbTab('my-tasks', this)"><span class="si">📌</span> 我的任务</div>
         <div class="wb-sb-link" data-nav="my-applications" onclick="switchWbTab('my-applications', this)"><span class="si">📋</span> 我的申请</div>
+        <div class="wb-sb-link" data-nav="my-topic-apps" onclick="switchWbTab('my-topic-apps', this)"><span class="si">📑</span> 我的申报</div>
+        <div class="wb-sb-link" data-nav="approval" onclick="switchWbTab('approval', this)"><span class="si">✅</span> 申报审批</div>
+        <div class="wb-sb-link" data-nav="team-management" onclick="switchWbTab('team-management', this)"><span class="si">👥</span> 团队管理</div>
         <!-- <div class="wb-sb-link" data-nav="my-apps" onclick="switchWbTab('my-apps', this)"><span class="si">🤖</span> 我的应用</div> -->
         <a class="wb-sb-link" href="account-settings.html"><span class="si">⚙️</span> 账号设置</a>
       </div>
@@ -1129,6 +1217,9 @@ button { cursor: pointer; border: none; background: none; }
         <button class="wb-tab" data-tab="my-images">镜像管理</button>
         <button class="wb-tab" data-tab="my-notebooks">在线开发</button>
         <button class="wb-tab" data-tab="my-applications">我的申请</button>
+        <button class="wb-tab" data-tab="my-topic-apps">我的申报</button>
+        <button class="wb-tab" data-tab="approval">申报审批</button>
+        <button class="wb-tab" data-tab="team-management">团队管理</button>
       </div>
 
       <!-- Card Grid -->
@@ -1185,6 +1276,55 @@ button { cursor: pointer; border: none; background: none; }
           <div class="empty-icon">📋</div>
           <h4>暂无申请记录</h4>
           <p>你还没有提交过任何数据集或模型使用申请</p>
+        </div>
+      </div>
+
+      <!-- Topic Applications Area (hidden unless my-topic-apps tab) -->
+      <div id="topicAppArea" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:13px;color:rgba(0,0,0,0.45);">课题申报制：在「课题中心」提交申报书后，可在此跟踪 形式审查 / 专家评审 / 立项 / 签订任务书 的全流程进度</span>
+        </div>
+        <div id="topicAppList"></div>
+        <div class="empty-state" id="topicAppEmpty" style="display:none;">
+          <div class="empty-icon">📑</div>
+          <h4>暂无申报记录</h4>
+          <p>你还没有申报任何课题，前往「课题中心」浏览课题指南并提交申报书</p>
+        </div>
+      </div>
+
+      <!-- Approval Center Area (hidden unless approval tab) -->
+      <div id="approvalArea" style="display:none;">
+        <div class="apv-head">
+          <h3>申报审批中心</h3>
+          <p>审核员视角：逐环节处理「形式审查 → 专家评审 → 择优立项 → 签订任务书」各阶段审批；审批结果实时同步至申报人端的「我的申报」进度，二者共用同一份申报数据。</p>
+        </div>
+        <div class="apv-filter" id="apvFilter"></div>
+        <div id="approvalList"></div>
+        <div class="empty-state" id="approvalEmpty" style="display:none;">
+          <div class="empty-icon">✅</div>
+          <h4>暂无可处理审批</h4>
+          <p>当前筛选条件下没有待审批的课题申报</p>
+        </div>
+      </div>
+
+      <!-- Topic Application Detail Dialog -->
+      <div class="dialog-overlay" id="topicAppDetailDialog" onclick="if(event.target===this)closeTopicAppDetail()">
+        <div class="dialog-box" style="width:680px;">
+          <div class="dialog-header"><span class="dialog-title" id="taTitle">申报详情</span><span class="dialog-close" onclick="closeTopicAppDetail()">✕</span></div>
+          <div class="dialog-body" id="taBody"></div>
+          <div class="dialog-footer"><button class="btn btn-default" onclick="closeTopicAppDetail()">关闭</button><button class="btn btn-primary" id="taResubmitBtn" onclick="resubmitTopicApp(curTopicAppId)">修改后重新提交</button></div>
+        </div>
+      </div>
+
+      <!-- Approval Dialog -->
+      <div class="dialog-overlay" id="approvalDialog" onclick="if(event.target===this)closeApproval()">
+        <div class="dialog-box" style="width:680px;">
+          <div class="dialog-header"><span class="dialog-title" id="apvTitle">审批</span><span class="dialog-close" onclick="closeApproval()">✕</span></div>
+          <div class="dialog-body" id="apvBody"></div>
+          <div class="dialog-footer">
+            <button class="btn btn-default" onclick="closeApproval()">取消</button>
+            <button class="btn btn-primary" id="apvSubmitBtn" onclick="submitApproval()">提交审批</button>
+          </div>
         </div>
       </div>
 
@@ -1271,6 +1411,72 @@ print(f"Using device: {DEVICE}")
         </div>
       </div>
 
+      <!-- Team Management Area -->
+      <div id="teamMgmtArea" style="display:none;">
+        <div class="tm-grid">
+          <div class="tm-info-card">
+            <div class="tm-info-header">
+              <div class="tm-info-avatar">🏢</div>
+              <div>
+                <div class="tm-info-name" id="tmTeamName">—</div>
+                <div class="tm-info-sub" id="tmTeamMeta">—</div>
+              </div>
+            </div>
+            <div class="tm-info-body">
+              <div class="tm-info-row"><span class="tm-label">团队管理员</span><span id="tmAdminName">—</span></div>
+              <div class="tm-info-row"><span class="tm-label">创建时间</span><span id="tmCreatedAt">—</span></div>
+              <div class="tm-info-row"><span class="tm-label">团队描述</span><span id="tmDesc">—</span></div>
+            </div>
+          </div>
+          <div class="tm-quota-card">
+            <div class="tm-quota-title">账号配额</div>
+            <div class="tm-quota-num">
+              <span class="tm-quota-used" id="tmQuotaUsed">0</span>
+              <span class="tm-quota-sep">/</span>
+              <span class="tm-quota-limit" id="tmQuotaLimit">0</span>
+            </div>
+            <div class="tm-quota-bar"><div class="tm-quota-bar-fill" id="tmQuotaBar"></div></div>
+            <div class="tm-quota-hint">上限由平台后台管理员设定，团队不可自行修改</div>
+            <button class="btn btn-primary tm-add-btn" id="tmAddBtn" onclick="openAddMemberModal()">＋ 添加成员</button>
+          </div>
+        </div>
+        <div class="tm-section-title"><span class="sec-bar"></span>成员列表</div>
+        <div class="tm-table-wrap">
+          <table class="tm-table">
+            <thead><tr><th>姓名</th><th>账号</th><th>角色</th><th>状态</th><th>添加时间</th><th>操作</th></tr></thead>
+            <tbody id="tmMemberBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Member Modal -->
+      <div class="modal-overlay" id="addMemberModal" style="display:none;">
+        <div class="modal-box" style="max-width:440px;">
+          <div class="modal-header"><h3>添加团队成员</h3><span class="modal-close" onclick="closeAddMemberModal()">✕</span></div>
+          <div class="modal-body">
+            <div class="nb-form-group">
+              <label class="nb-form-label">姓名</label>
+              <input class="nb-form-input" id="tmMemName" placeholder="请输入成员姓名">
+            </div>
+            <div class="nb-form-group">
+              <label class="nb-form-label">账号</label>
+              <input class="nb-form-input" id="tmMemAccount" placeholder="登录账号（字母/数字）">
+            </div>
+            <div class="nb-form-group">
+              <label class="nb-form-label">角色</label>
+              <select class="nb-form-select" id="tmMemRole">
+                <option value="member">普通成员</option>
+                <option value="admin">团队管理员</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default" onclick="closeAddMemberModal()">取消</button>
+            <button class="btn btn-primary" onclick="submitAddMember()">保存</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Activity Feed -->
       <div class="wb-section-title"><span class="sec-bar"></span><span>最近动态</span><span class="more" onclick="toast('功能开发中','info')">查看全部 →</span></div>
       <div class="wb-activity-list" id="wbActivityList"></div>
@@ -1304,20 +1510,6 @@ print(f"Using device: {DEVICE}")
 </div>
 
 <script>
-// ===== 积分系统 =====
-var POINTS = { BASE: 1000, FREE_CALLS: 3, COST_MODEL: 50, COST_DATASET: 30, EARN_CLAIM: 200, EARN_COMPLETE: 500 };
-function getPoints() { try { return parseInt(localStorage.getItem('luoshu_points') || POINTS.BASE); } catch(e) { return POINTS.BASE; } }
-function setPoints(v) { try { localStorage.setItem('luoshu_points', v); } catch(e) {} }
-function addPoints(amount, reason) { var cur = getPoints(), next = cur + amount; setPoints(next); updatePointsDisplay(); showPointsToast('+' + amount + ' 积分', reason); }
-function spendPoints(amount, reason) { var cur = getPoints(); if (cur < amount) { showPointsToast('积分不足！当前 '+cur+'，需要 '+amount, null, true); return false; } setPoints(cur - amount); updatePointsDisplay(); showPointsToast('-' + amount + ' 积分', reason); return true; }
-function getFreeCalls() { try { return parseInt(localStorage.getItem('luoshu_free_calls') || POINTS.FREE_CALLS); } catch(e) { return POINTS.FREE_CALLS; } }
-function useFreeCall() { var free = getFreeCalls(); if (free > 0) { try { localStorage.setItem('luoshu_free_calls', free - 1); } catch(e) {} updatePointsDisplay(); return true; } return false; }
-function getRemainingFreeCalls() { return getFreeCalls(); }
-function updatePointsDisplay() { var el = document.getElementById('headerPoints'); if (el) { el.textContent = getPoints(); } var sb = document.getElementById('sbPointsVal'); if (sb) { sb.textContent = getPoints(); } var fc = document.getElementById('sbFreeCallsVal'); if (fc) { fc.textContent = getFreeCalls(); } }
-function showPointsToast(msg, reason, isError) { var fullMsg = msg + (reason ? ' (' + reason + ')' : ''); if (typeof showToast === 'function') showToast(isError ? 'error' : 'success', fullMsg); else if (typeof toast === 'function') toast(fullMsg, isError ? 'error' : 'success'); }
-function showPointsRules() { var html = '<div style="background:#fff;border-radius:12px;padding:24px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.15)"><h3 style="margin:0 0 16px;font-size:16px">🪙 积分规则</h3><table style="width:100%;font-size:13px;border-collapse:collapse"><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 新用户注册</td><td style="text-align:right;color:#52c41a;font-weight:600">+1000</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🎁 前3次模型调用</td><td style="text-align:right;color:#2f54eb;font-weight:600">免费</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">🧠 模型调用（按模型定价）</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-20 ~ -80</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 数据集申请（按数据定价）</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30 ~ -50</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📦 上传镜像</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-30</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📊 上传数据集</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-20</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">✏️ 发布需求</td><td style="text-align:right;color:#ff4d4f;font-weight:600">-10</td></tr><tr style="border-bottom:1px solid #f0f0f0"><td style="padding:6px 0">📝 接单需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+200</td></tr><tr><td style="padding:6px 0">✅ 完成需求</td><td style="text-align:right;color:#52c41a;font-weight:600">+500</td></tr></table><p style="margin:12px 0 0;font-size:12px;color:rgba(0,0,0,0.45)">剩余免费调用：<strong id="rulesFreeCalls">' + getRemainingFreeCalls() + '</strong> 次</p><div style="text-align:right;margin-top:16px"><button onclick="closePointsRules()" style="padding:4px 15px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;cursor:pointer;font-size:14px">关闭</button></div></div>'; var overlay = document.createElement('div'); overlay.id = 'pointsRulesOverlay'; overlay.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center'; overlay.innerHTML = html; overlay.onclick = function(e){ if(e.target === overlay) closePointsRules(); }; document.body.appendChild(overlay); }
-function closePointsRules() { var el = document.getElementById('pointsRulesOverlay'); if(el) el.remove(); }
-if (isLoggedIn()) { setTimeout(updatePointsDisplay, 100); }
 // Auto-save demands to localStorage so demand-detail can read candidates
 try { if (!localStorage.getItem('luoshu_demands')) localStorage.setItem('luoshu_demands', JSON.stringify(MY_DEMANDS)); } catch(e) {}
 
@@ -1416,6 +1608,84 @@ function typeIcon(t){ switch(t){ case '数据分析':return'📊'; case '模型�
 function findDemandById(id){ return MY_DEMANDS.find(function(d){return d.id===id;}) || MY_TASKS.find(function(d){return d.id===id;}); }
 
 // ===== TAB SWITCHING =====
+
+// ===== Team Management =====
+var TEAM = {
+  name: '北大荒智慧农业研发组',
+  admin: '张研究员',
+  createdAt: '2026-03-15',
+  desc: '聚焦智慧农业模型研发与数据应用的跨学科协同团队',
+  quotaLimit: 20,
+  members: [
+    { name: '张研究员', account: 'zhang', role: 'admin', status: 'active', addedAt: '2026-03-15' },
+    { name: '李工程师', account: 'li', role: 'member', status: 'active', addedAt: '2026-03-20' },
+    { name: '王数据分析', account: 'wang', role: 'member', status: 'active', addedAt: '2026-04-01' },
+    { name: '赵实习生', account: 'zhao', role: 'member', status: 'pending', addedAt: '2026-07-28' }
+  ]
+};
+function renderTeamMgmt(){
+  document.getElementById('tmTeamName').textContent = TEAM.name;
+  document.getElementById('tmTeamMeta').textContent = TEAM.members.length + ' 名成员';
+  document.getElementById('tmAdminName').textContent = TEAM.admin;
+  document.getElementById('tmCreatedAt').textContent = TEAM.createdAt;
+  document.getElementById('tmDesc').textContent = TEAM.desc;
+  var used = TEAM.members.length, limit = TEAM.quotaLimit;
+  document.getElementById('tmQuotaUsed').textContent = used;
+  document.getElementById('tmQuotaLimit').textContent = limit;
+  var pct = Math.min(100, (used/limit)*100);
+  document.getElementById('tmQuotaBar').style.width = pct + '%';
+  var addBtn = document.getElementById('tmAddBtn');
+  if (used >= limit) { addBtn.disabled = true; addBtn.textContent = '已达配额上限'; }
+  else { addBtn.disabled = false; addBtn.textContent = '＋ 添加成员'; }
+  var tbody = document.getElementById('tmMemberBody');
+  tbody.innerHTML = TEAM.members.map(function(m, i){
+    var roleBadge = m.role === 'admin'
+      ? '<span class="tm-role-badge tm-role-admin">管理员</span>'
+      : '<span class="tm-role-badge tm-role-member">成员</span>';
+    var statusBadge = m.status === 'active'
+      ? '<span class="tm-status-active">● 正常</span>'
+      : '<span class="tm-status-pending">● 待激活</span>';
+    var action = m.role === 'admin' ? '—' : '<button class="tm-action-btn" onclick="removeMember('+i+')">移除</button>';
+    return '<tr><td>'+m.name+'</td><td>'+m.account+'</td><td>'+roleBadge+'</td><td>'+statusBadge+'</td><td>'+m.addedAt+'</td><td>'+action+'</td></tr>';
+  }).join('');
+}
+function openAddMemberModal(){
+  if (TEAM.members.length >= TEAM.quotaLimit) { toast('已达账号配额上限，无法添加新成员。如需扩容请联系平台后台管理员。', 'error'); return; }
+  var m = document.getElementById('addMemberModal');
+  if (m) m.style.display = '';
+  if (m) m.classList.add('visible');
+}
+function closeAddMemberModal(){
+  var m = document.getElementById('addMemberModal');
+  if (m) { m.style.display = 'none'; m.classList.remove('visible'); }
+  document.getElementById('tmMemName').value = '';
+  document.getElementById('tmMemAccount').value = '';
+  document.getElementById('tmMemRole').value = 'member';
+}
+function submitAddMember(){
+  var name = document.getElementById('tmMemName').value.trim();
+  var account = document.getElementById('tmMemAccount').value.trim();
+  var role = document.getElementById('tmMemRole').value;
+  if (!name) { toast('请输入成员姓名', 'error'); return; }
+  if (!account) { toast('请输入登录账号', 'error'); return; }
+  if (TEAM.members.some(function(m){ return m.account === account; })) { toast('账号已存在，请更换', 'error'); return; }
+  if (TEAM.members.length >= TEAM.quotaLimit) { toast('已达账号配额上限', 'error'); return; }
+  var now = new Date();
+  var dateStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  TEAM.members.push({ name: name, account: account, role: role, status: 'pending', addedAt: dateStr });
+  closeAddMemberModal();
+  renderTeamMgmt();
+  toast('成员「'+name+'」已添加，待激活。当前配额：'+TEAM.members.length+'/'+TEAM.quotaLimit, 'success');
+}
+function removeMember(idx){
+  var m = TEAM.members[idx];
+  if (!m) return;
+  if (m.role === 'admin') { toast('不能移除团队管理员', 'error'); return; }
+  TEAM.members.splice(idx, 1);
+  renderTeamMgmt();
+  toast('成员「'+m.name+'」已移除', 'info');
+}
+
 function switchWbTab(tab, el){
   currentTab = tab;
   _statusFilter = '';
@@ -1431,19 +1701,28 @@ function switchWbTab(tab, el){
   var isTableTab = (tab === 'my-demands' || tab === 'my-tasks');
   var isNotebookTab = (tab === 'my-notebooks');
   var isAppTab = (tab === 'my-applications');
-  document.getElementById('wbCardGrid').style.display = (isTableTab || isNotebookTab || isAppTab || tab === 'my-models') ? 'none' : '';
+  var isTopicAppTab = (tab === 'my-topic-apps');
+  var isApprovalTab = (tab === 'approval');
+  var isTeamMgmtTab = (tab === 'team-management');
+  document.getElementById('wbCardGrid').style.display = (isTableTab || isNotebookTab || isAppTab || isTopicAppTab || isApprovalTab || isTeamMgmtTab || tab === 'my-models') ? 'none' : '';
   document.getElementById('demandTableArea').style.display = (tab === 'my-demands' || tab === 'my-tasks') ? '' : 'none';
   document.getElementById('deployTableArea').style.display = (tab === 'my-models') ? '' : 'none';
   document.getElementById('notebookArea').style.display = isNotebookTab ? '' : 'none';
   document.getElementById('appTableArea').style.display = isAppTab ? '' : 'none';
+  document.getElementById('topicAppArea').style.display = isTopicAppTab ? '' : 'none';
+  document.getElementById('approvalArea').style.display = isApprovalTab ? '' : 'none';
+  document.getElementById('teamMgmtArea').style.display = isTeamMgmtTab ? '' : 'none';
   // Activity & announcements always visible — consistent across ALL tabs
   document.querySelectorAll('.wb-section-title, .wb-activity-list').forEach(function(s){ s.style.display = ''; });
 
   if (isNotebookTab) { document.getElementById('notebookEditorView').style.display = 'none'; document.getElementById('notebookListView').style.display = ''; renderNotebookList(); }
   else if (isAppTab) { renderApplications(); }
+  else if (isTopicAppTab) { renderTopicApps(); }
+  else if (isApprovalTab) { renderApvFilter(); renderApproval(); }
   else if (tab === 'my-demands' || tab === 'my-tasks') { renderDemandTable(); }
   else if (tab === 'my-models') { renderDeployTable(); }
   else if (tab === 'my-images') { renderImageCards(); }
+  else if (isTeamMgmtTab) { renderTeamMgmt(); }
   else { renderCards(); }
 }
 
@@ -1778,10 +2057,9 @@ function withdrawApplication(id) {
   var app = apps.find(function(a){ return a.id === id; });
   if (app && app.status === 'pending') {
     // Refund points
-    addPoints(app.pointsCost || 0, '撤回申请（退积分）');
     saveApplications(apps.filter(function(a){ return a.id !== id; }));
     renderApplications();
-    toast('申请已撤回，积分已退还。', 'success');
+    toast('申请已撤回。', 'success');
   }
 }
 
@@ -1846,7 +2124,7 @@ function renderApplications() {
   var stText = {pending:'⏳ 待审核', approved:'✅ 已通过', rejected:'❌ 已驳回'};
   var typeText = {dataset:'📊 数据集', model:'🧠 模型部署', api_call:'📡 API调用', notebook:'📓 Notebook', quota:'📈 配额提额'};
 
-  var html = '<thead><tr><th>申请编号</th><th>类型</th><th>目标名称</th><th>消耗积分</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+  var html = '<thead><tr><th>申请编号</th><th>类型</th><th>目标名称</th><th>备注</th><th>申请时间</th><th>状态</th><th>操作</th></tr></thead><tbody>';
   apps.forEach(function(a){
     var typeLabel = typeText[a.type] || a.type;
     var chipCls = stCls[a.status] || 'chip-default';
@@ -1865,7 +2143,7 @@ function renderApplications() {
     } else if (a.status === 'approved' && a.type === 'quota') {
       actions = '<span style="font-size:12px;color:rgba(0,0,0,0.45)">新额度已生效</span>';
     }
-    var costCell = (a.pointsCost > 0) ? ('🪙 -'+a.pointsCost) : '—';
+    var costCell = '—';
     html += '<tr><td>'+a.id+'</td><td>'+typeLabel+'</td><td>'+a.targetTitle+'</td><td>'+costCell+'</td><td>'+a.appliedAt+'</td><td><span class="chip '+chipCls+'">'+chipText+'</span></td><td>'+actions+'</td></tr>';
   });
   html += '</tbody>';
@@ -1885,7 +2163,7 @@ function handleCreate(type){
   toast('功能开发中', 'info');
 }
 
-// ===== CATEGORIES & POINTS =====
+// ===== CATEGORIES =====
 var WB_CATEGORIES = [
   {value:'agriculture',label:'农业种植',icon:'🌾'},
   {value:'livestock',label:'畜牧养殖',icon:'🐄'},
@@ -1895,13 +2173,6 @@ var WB_CATEGORIES = [
   {value:'equipment',label:'农机设备',icon:'🚜'},
   {value:'other',label:'其他',icon:'📦'}
 ];
-function wbGetPoints(){ try{return parseInt(localStorage.getItem('luoshu_points')||'1000');}catch(e){return 1000;} }
-function wbSetPoints(v){ try{localStorage.setItem('luoshu_points',v);}catch(e){} }
-function wbSpendPoints(amount,reason){ var cur=wbGetPoints(); if(cur<amount){ toast('积分不足！当前 '+cur+'，需要 '+amount+' ('+reason+')','error'); return false; } wbSetPoints(cur-amount); wbUpdatePointsDisplay(); return true; }
-function wbUpdatePointsDisplay(){
-  var hdr=document.getElementById('headerPoints'); if(hdr) hdr.textContent=wbGetPoints();
-  var sb=document.getElementById('sbPointsVal'); if(sb) sb.textContent=wbGetPoints();
-}
 
 // ===== DATASET CREATE DRAWER =====
 function openWbDatasetDrawer(){
@@ -1940,9 +2211,7 @@ function submitWbDataset(){
   fields.forEach(function(id){ var el=document.getElementById(id); if(!el.value.trim()){ wbValidateDsField(id); allOk=false; } });
   if(!allOk){ toast('请填写所有必填字段','error'); return; }
   var uploadCost=20;
-  if(!wbSpendPoints(uploadCost,'上传数据集')) return;
   var visEl=document.querySelector('#wbDsVisibility .wb-radio-option.active');
-  var pointsCostVal=parseInt(document.getElementById('wbDsPointsCost').value)||0;
   var newDs={
     id:'WB-DS-0'+(MY_DATASETS.length+1),
     title:document.getElementById('wbDsNameCn').value.trim(),
@@ -1999,7 +2268,6 @@ function submitWbDemand(){
   if(hasError) return;
   var reward=Math.max(50,parseInt(document.getElementById('wbDmReward').value)||200);
   var publishCost=10+reward;
-  if(!wbSpendPoints(publishCost,'发布需求（悬赏 '+reward+'）')) return;
   var today=new Date().toISOString().slice(0,10);
   var newId='DM-'+today.replace(/-/g,'')+'-'+String(MY_DEMANDS.length+MY_TASKS.length+1).padStart(3,'0');
   MY_DEMANDS.unshift({
@@ -2474,7 +2742,7 @@ function openImageCreateModal(mode, id){
   }
   document.getElementById('imageCreateModal').classList.add('visible');
 }
-function closeImageCreateModal(){ document.getElementById('imageCreateModal').classList.remove('visible'); _imageCreateEditId = null; }
+function closeImageCreateModal(){ if (new URLSearchParams(location.search).get('from') === 'model-community') { location.href = 'model-marketplace.html?view=user'; return; } document.getElementById('imageCreateModal').classList.remove('visible'); _imageCreateEditId = null; }
 function toggleGpuSwitch(){ _imageGpuOn = !_imageGpuOn; updateGpuUI(); }
 function updateGpuUI(){ document.getElementById('gpuTrack').className = 'gpu-switch-track' + (_imageGpuOn ? ' on' : ''); document.getElementById('gpuLabel').textContent = _imageGpuOn ? '需要 GPU' : '不需要 GPU'; }
 function submitImageCreate(){
@@ -2556,6 +2824,7 @@ function renderDeployTable(){
       : '<span class="status-chip '+st.cls+(s==='failed'?' clickable':'')+'"'+(s==='failed'?' onclick="openDeployDrawer('+row.id+')" title="点击查看失败原因"':'')+'>'+(s==='failed'?'<span style="font-size:10px">❌</span> ':'')+st.text+'</span>';
     var syncHTML = row.sync === 'synced' ? '<span class="sync-badge"><span class="sync-dot synced"></span>已同步</span>'
       : row.sync === 'unsynced' ? '<span class="sync-badge"><span class="sync-dot unsynced"></span>未同步</span>'
+      : row.sync === 'reviewing' ? '<span class="sync-badge"><span class="sync-dot reviewing"></span>审批中</span>'
       : '<span style="color:rgba(0,0,0,0.25);font-size:13px">—</span>';
     var isUnpublished = s === 'unpublished';
     var isDeployed = s === 'deployed';
@@ -2586,6 +2855,7 @@ function renderDeployTable(){
       : '<button class="btn-link disabled">记录</button>';
     var syncBtn = '';
     if(isDeployed && row.sync === 'synced'){ syncBtn = '<button class="btn-link" onclick="withdrawDeployModel('+row.id+')">撤回</button>'; }
+    else if(isDeployed && row.sync === 'reviewing'){ syncBtn = '<button class="btn-link disabled">审批中</button>'; }
     else if(isDeployed && row.sync !== 'synced'){ syncBtn = '<button class="btn-link" onclick="syncDeployModel('+row.id+', this)">同步</button>'; }
     else { syncBtn = '<button class="btn-link disabled">同步</button>'; }
     var offlineBtn = isDeployed
@@ -2654,10 +2924,16 @@ function simulateDeploy(id){
 }
 function syncDeployModel(id, btn){
   var row = MY_DEPLOYMENTS.find(function(r){ return r.id === id; });
-  if(!row || row.status !== 'deployed') return;
-  openPopconfirm('是否确定同步至模型广场？', '同步后将在模型广场公开展示该服务', function(){
-    row.sync = 'synced'; renderDeployTable();
-    toast('模型「'+row.name+'」已同步至模型广场', 'success');
+  if(!row || row.status !== 'deployed' || row.sync === 'reviewing' || row.sync === 'synced') return;
+  openPopconfirm('是否确定提交审批并同步至模型广场？', '提交后由平台审批服务审核，通过后将在模型广场公开展示该服务', function(){
+    row.sync = 'reviewing'; renderDeployTable();
+    toast('模型「'+row.name+'」已提交审批服务，审核中…', 'info');
+    // 模拟审批服务异步回调：审批通过后自动同步上架
+    setTimeout(function(){
+      if(row.sync !== 'reviewing') return;
+      row.sync = 'synced'; renderDeployTable();
+      toast('审批通过，「'+row.name+'」已同步至模型广场', 'success');
+    }, 4000);
   }, btn);
 }
 function withdrawDeployModel(id){
@@ -2883,6 +3159,7 @@ function buildInfPubHTML(modelOptions, modelName, locked) {
 }
 
 function closeInfPubDrawer() {
+  if (new URLSearchParams(location.search).get('from') === 'model-community') { location.href = 'model-marketplace.html?view=user'; return; }
   document.getElementById('infPubOverlay').classList.remove('visible');
   document.getElementById('infPubDrawer').classList.remove('open');
   _infPubModelId = null;
@@ -3184,7 +3461,96 @@ function showInfApiDoc(modelId) {
       handleCreate(createParam);
     }, 400);
   }
+  // Deep link: workbench.html?create=review → open submit-for-review dialog（复用"我的模型·同步"同一审批服务）
+  if (createParam === 'review') {
+    setTimeout(function() {
+      if (typeof requireAuth === 'function' && !requireAuth()) return;
+      switchWbTab('my-models', document.querySelector('.wb-sb-link[data-nav="my-models"]'));
+      openSubmitReviewModal();
+    }, 400);
+  }
+  // Deep link: workbench.html?tab=my-models|my-applications|... → switch to that sidebar tab
+  var tabParam = qp.get('tab');
+  if (tabParam) {
+    setTimeout(function(){ switchWbTab(tabParam, document.querySelector('.wb-sb-link[data-nav="'+tabParam+'"]')); }, 120);
+  }
+  // 来自模型社区五步上架流程：注入"返回模型社区"入口（顶部栏 + 各 create 弹窗）
+  if (qp.get('from') === 'model-community') {
+    var _cmBack = function(){ location.href = 'model-marketplace.html?view=user'; };
+    // 顶部栏常驻返回入口（覆盖 tab 直达情形，如"我的模型"）
+    var _top = document.querySelector('.wb-topbar');
+    if (_top && !_top.querySelector('.wb-community-back')) {
+      var _ta = document.createElement('a');
+      _ta.className = 'wb-community-back';
+      _ta.textContent = '← 返回模型社区';
+      _ta.href = 'javascript:void(0)';
+      _ta.onclick = _cmBack;
+      _ta.style.marginRight = '12px';
+      _ta.style.color = '#2f54eb';
+      _ta.style.fontSize = '13px';
+      _ta.style.fontWeight = '600';
+      _ta.style.textDecoration = 'none';
+      _ta.style.cursor = 'pointer';
+      _ta.style.alignSelf = 'center';
+      _top.insertBefore(_ta, _top.firstChild);
+    }
+    // 各 create 弹窗内的返回入口
+      [['createModelModal','.modal-header'],['imageCreateModal','.modal-header'],['wbReviewModal','.modal-header'],['infPubDrawer','.inf-pub-header']].forEach(function(cfg){
+      var h = document.querySelector('#'+cfg[0]+' '+cfg[1]);
+      if (h) {
+        var a = document.createElement('a');
+        a.textContent = '← 返回模型社区';
+        a.href = 'javascript:void(0)';
+        a.onclick = _cmBack;
+        a.style.marginRight = 'auto';
+        a.style.color = '#2f54eb';
+        a.style.fontSize = '13px';
+        a.style.fontWeight = '600';
+        a.style.textDecoration = 'none';
+        a.style.cursor = 'pointer';
+        h.insertBefore(a, h.firstChild);
+      }
+    });
+  }
 })();
+
+// ============================================================
+// SUBMIT FOR REVIEW DIALOG (step 4 of 5-step listing flow)
+// ============================================================
+function openSubmitReviewModal(){
+  var sel = document.getElementById('wbReviewModel');
+  if (sel) {
+    var list = (MY_DEPLOYMENTS||[]).filter(function(m){ return m.status === 'deployed' && m.sync !== 'synced' && m.sync !== 'reviewing'; });
+    sel.innerHTML = list.length
+      ? list.map(function(m){ return '<option value="'+m.id+'">'+esc(m.name)+'（'+(m.version||'')+' · '+(m.status||'')+'）</option>'; }).join('')
+      : '<option value="">暂无可提交审核的模型（请先在「我的模型」中部署）</option>';
+  }
+  var ov = document.getElementById('wbReviewModal');
+  if (ov) ov.classList.add('visible');
+}
+function closeSubmitReviewModal(){
+  if (new URLSearchParams(location.search).get('from') === 'model-community') { location.href = 'model-marketplace.html?view=user'; return; }
+  var ov = document.getElementById('wbReviewModal');
+  if (ov) ov.classList.remove('visible');
+}
+function submitReview(){
+  var sel = document.getElementById('wbReviewModel');
+  if (!sel || !sel.value) { toast('请选择要提交审核的模型', 'info'); return; }
+  var m = (MY_DEPLOYMENTS||[]).find(function(x){ return String(x.id) === String(sel.value); });
+  if (!m) { toast('未找到该模型', 'error'); return; }
+  if (m.status !== 'deployed') { toast('「'+m.name+'」尚未部署，请先在「我的模型」中部署后再提交审核', 'info'); return; }
+  if (m.sync === 'synced') { toast('「'+m.name+'」已同步上架，无需重复提交', 'info'); return; }
+  if (m.sync === 'reviewing') { toast('「'+m.name+'」正在审批中，请耐心等待', 'info'); return; }
+  closeSubmitReviewModal();
+  // 与「我的模型 · 同步」共用同一套平台审批服务
+  m.sync = 'reviewing'; renderDeployTable();
+  toast('「'+m.name+'」已提交审批服务，审核中…', 'info');
+  setTimeout(function(){
+    if (m.sync !== 'reviewing') return;
+    m.sync = 'synced'; renderDeployTable();
+    toast('审批通过，「'+m.name+'」已同步至模型广场', 'success');
+  }, 4000);
+}
 
 // ============================================================
 // WORKBENCH API DETAIL DIALOG
@@ -3430,6 +3796,7 @@ function openCreateModelModal() {
 }
 
 function closeCreateModelModal() {
+  if (new URLSearchParams(location.search).get('from') === 'model-community') { location.href = 'model-marketplace.html?view=user'; return; }
   document.getElementById('createModelModal').classList.remove('visible');
 }
 
@@ -3598,6 +3965,211 @@ document.addEventListener('DOMContentLoaded', function(){
   if (dlg) dlg.addEventListener('click', function(e){ if (e.target === this) closeWorkbenchApiDialog(); });
 });
 
+// ===================== 我的申报（课题申报制，数据源自「课题中心」localStorage） =====================
+var TA_STAGE_IDX = {submitted:3, returned:3, review:4, pending_establish:5, established:6, signed:6};
+var TA_STATUS_TEXT = {submitted:'形式审查中', returned:'已退回补正', review:'专家评审中', pending_establish:'待立项', established:'已立项', signed:'执行中（已签任务书）'};
+var TA_STATUS_CHIP = {submitted:'chip-pending', returned:'chip-error', review:'chip-pending', pending_establish:'chip-default', established:'chip-done', signed:'chip-active'};
+var TA_LS_KEY = 'ls_topic_applications';
+var TOPIC_APPS = [];
+var curTopicAppId = null;
+function loadTopicApps(){
+  try{ var d = JSON.parse(localStorage.getItem(TA_LS_KEY)); if(Array.isArray(d)){ TOPIC_APPS = d; return; } }catch(e){}
+  var seed = [
+    {id:'a1', topicId:'t1', topicTitle:'寒地水稻智能育种大模型研发', direction:'智能育种', leader:'李教授', org:'黑龙江八一农垦大学', title:'教授', team:'寒地育种AI组', plan:'融合多组学与气象因子构建育种大模型…', budget:78, scale:9, basis:'已积累 3 年寒地水稻表型数据。', status:'submitted', createdAt:'2026-07-28', history:[{stage:'提交申报书',time:'2026-07-28',action:'提交',note:''}]},
+    {id:'a2', topicId:'t4', topicTitle:'大豆病虫害视觉识别与预警模型', direction:'智能育种', leader:'王研究员', org:'中科院东北地理所', title:'研究员', team:'视觉感知组', plan:'构建叶部病害轻量化识别模型…', budget:48, scale:6, basis:'已有 2 万张标注样本。', status:'review', createdAt:'2026-07-20', history:[{stage:'提交申报书',time:'2026-07-20',action:'提交',note:''},{stage:'形式审查',time:'2026-07-23',action:'通过',note:'材料齐全，资格合规。'}]},
+    {id:'a3', topicId:'t3', topicTitle:'基于多源遥感的作物长势与墒情监测', direction:'遥感监测', leader:'赵老师', org:'东北农业大学', title:'副教授', team:'遥感农业组', plan:'多源遥感同化与近实时产品生成…', budget:60, scale:7, basis:'具备卫星与地面观测网络。', status:'pending_establish', createdAt:'2026-07-10', history:[{stage:'提交申报书',time:'2026-07-10',action:'提交',note:''},{stage:'形式审查',time:'2026-07-13',action:'通过',note:''},{stage:'专家评审',time:'2026-07-18',action:'通过',note:'综合评分 92，建议立项。'}]},
+    {id:'a4', topicId:'t5', topicTitle:'黑土地保护性耕作决策支持平台', direction:'耕地保护', leader:'孙教授', org:'中国农业大学', title:'教授', team:'耕地保护组', plan:'保护性耕作知识图谱与决策推荐…', budget:100, scale:10, basis:'长期黑土地研究基础。', status:'established', createdAt:'2026-06-25', history:[{stage:'提交申报书',time:'2026-06-25',action:'提交',note:''},{stage:'形式审查',time:'2026-06-28',action:'通过',note:''},{stage:'专家评审',time:'2026-07-05',action:'通过',note:'评分 95。'},{stage:'择优立项',time:'2026-07-12',action:'公示并下达批复',note:'公示无异议。'}]}
+  ];
+  TOPIC_APPS = seed; localStorage.setItem(TA_LS_KEY, JSON.stringify(seed));
+}
+function saveTopicApps(){ localStorage.setItem(TA_LS_KEY, JSON.stringify(TOPIC_APPS)); }
+function taStatusChip(st){ return '<span class="chip '+(TA_STATUS_CHIP[st]||'chip-default')+'">'+(TA_STATUS_TEXT[st]||st)+'</span>'; }
+function taStepperHTML(status, rejectStage){
+  var STEPS = ['发布指南','提交申报书','形式审查','专家评审','择优立项','签订任务书'];
+  var cur = TA_STAGE_IDX[status] || 1;
+  var returned = (status==='returned');
+  var rj = (returned ? (rejectStage || 3) : 0);
+  return '<div class="ta-stepper">'+STEPS.map(function(label,i){
+    var idx=i+1; var cls='';
+    if(returned && idx===rj) cls='returned';
+    else if(idx<cur) cls='done';
+    else if(idx===cur) cls='current';
+    var mark = (cls==='done')?'✓':(cls==='returned'?'!':idx);
+    return '<div class="ta-step '+cls+'"><div class="dot">'+mark+'</div><div class="lbl">'+label+'</div></div>';
+  }).join('')+'</div>';
+}
+function renderTopicApps(){
+  loadTopicApps();
+  var box = document.getElementById('topicAppList');
+  var empty = document.getElementById('topicAppEmpty');
+  if(!TOPIC_APPS.length){ box.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  var rows = TOPIC_APPS.slice().reverse().map(function(a){
+    var reapply = (a.status==='returned') ? '<button class="btn btn-sm btn-default" onclick="resubmitTopicApp(\''+a.id+'\')">修改后重新提交</button>' : '';
+    var acts = '<button class="btn btn-sm btn-default" onclick="openTopicAppDetail(\''+a.id+'\')">查看详情</button> '+reapply;
+    return '<tr>'
+      +'<td>'+esc(a.topicTitle)+'</td>'
+      +'<td>'+esc(a.direction||'')+'</td>'
+      +'<td>'+esc(a.leader)+'<br><span style="color:rgba(0,0,0,0.45);font-size:12px">'+esc(a.org)+'</span></td>'
+      +'<td>'+a.budget+' 万</td>'
+      +'<td>'+esc(a.team||'未指定')+'</td>'
+      +'<td>'+esc(a.createdAt)+'</td>'
+      +'<td>'+taStatusChip(a.status)+'</td>'
+      +'<td style="white-space:nowrap">'+acts+'</td>'
+      +'</tr>';
+  }).join('');
+  box.innerHTML = '<div class="data-table-wrap"><table class="data-table"><thead><tr>'
+    +'<th>课题</th><th>方向</th><th>申报人</th><th>预算</th><th>承担团队</th><th>提交时间</th><th>状态</th><th style="text-align:right">操作</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function openTopicAppDetail(id){
+  var a = TOPIC_APPS.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  curTopicAppId = id;
+  document.getElementById('taTitle').textContent = '申报详情 · '+a.topicTitle;
+  var hist = (a.history||[]).map(function(h){ return '<div class="detail-row"><span class="detail-label">'+esc(h.time)+'</span><span class="detail-value">'+esc(h.stage)+'：'+esc(h.action)+(h.note?('（'+esc(h.note)+'）'):'')+'</span></div>'; }).join('');
+  document.getElementById('taBody').innerHTML =
+    '<div style="margin-bottom:12px">'+taStatusChip(a.status)+'</div>'
+    +'<div class="detail-row"><span class="detail-label">课题方向</span><span class="detail-value">'+esc(a.direction||'')+'</span></div>'
+    +'<div class="detail-row"><span class="detail-label">负责人</span><span class="detail-value">'+esc(a.leader)+'（'+esc(a.title||'')+'）· '+esc(a.org)+'</span></div>'
+    +'<div class="detail-row"><span class="detail-label">团队</span><span class="detail-value">'+esc(a.team||'')+'</span></div>'
+    +'<div class="detail-row"><span class="detail-label">预算</span><span class="detail-value">'+a.budget+' 万元</span></div>'
+    +'<div class="detail-row"><span class="detail-label">研究方案</span><span class="detail-value">'+esc(a.plan||'')+'</span></div>'
+    +'<div class="detail-row"><span class="detail-label">前期基础</span><span class="detail-value">'+esc(a.basis||'')+'</span></div>'
+    +'<div class="detail-divider"></div>'
+    +'<div style="font-weight:600;margin:4px 0 8px">审批进度</div>'+taStepperHTML(a.status, a.rejectStage)
+    +'<div class="detail-divider"></div>'
+    +'<div style="font-weight:600;margin:4px 0 8px">进度记录</div>'+hist;
+  document.getElementById('taResubmitBtn').style.display = (a.status==='returned') ? '' : 'none';
+  document.getElementById('topicAppDetailDialog').classList.add('visible');
+}
+function closeTopicAppDetail(){ document.getElementById('topicAppDetailDialog').classList.remove('visible'); }
+function resubmitTopicApp(id){
+  var a = TOPIC_APPS.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  a.status='submitted'; a.rejectStage=null; a.history=a.history||[]; a.history.push({stage:'提交申报书',time:taToday(),action:'重新提交',note:'退回后修改重新提交。'});
+  saveTopicApps(); closeTopicAppDetail(); toast('已重新提交，进入形式审查','success'); renderTopicApps();
+}
+function taToday(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+
+// ===================== 申报审批（审核员视角，与「我的申报」同源 ls_topic_applications） =====================
+// 每个待审状态对应一个审批环节；通过即推进至下一环节，退回补正则置为 returned。
+var APPROVAL_MAP = {
+  submitted:        {label:'形式审查',   next:'review',            rejectable:true,  approveText:'通过形式审查'},
+  review:           {label:'专家评审',   next:'pending_establish', rejectable:true,  approveText:'通过专家评审'},
+  pending_establish:{label:'择优立项',   next:'established',       rejectable:true,  approveText:'批准立项'},
+  established:      {label:'签订任务书', next:'signed',            rejectable:false, approveText:'确认签订任务书'}
+};
+var APV_FILTER = 'all';
+var apvSearchKw = '';
+var curApprovalId = null;
+var curApprovalDecision = 'approve';
+function loadTeamAssign(){ try{ return JSON.parse(localStorage.getItem('ls_topic_team'))||{}; }catch(e){ return {}; } }
+function isReviewable(st){ return APPROVAL_MAP.hasOwnProperty(st); }
+function renderApvFilter(){
+  var tabs = [
+    {k:'all', t:'全部'},
+    {k:'submitted', t:'形式审查中'},
+    {k:'review', t:'专家评审中'},
+    {k:'pending_establish', t:'待立项'},
+    {k:'established', t:'待签任务书'}
+  ];
+  document.getElementById('apvFilter').innerHTML = tabs.map(function(x){
+    return '<button class="apv-chip'+(APV_FILTER===x.k?' active':'')+'" onclick="setApvFilter(\''+x.k+'\')">'+x.t+'</button>';
+  }).join('') + '<input class="apv-search" id="apvSearch" placeholder="搜索课题 / 申报人 / 机构" oninput="onApvSearch(this.value)" />';
+}
+function setApvFilter(k){ APV_FILTER=k; renderApvFilter(); renderApproval(); }
+function onApvSearch(v){ apvSearchKw=v.trim(); renderApproval(); }
+function renderApproval(){
+  loadTopicApps();
+  var teamMap = loadTeamAssign();
+  var list = TOPIC_APPS.slice().reverse().filter(function(a){
+    if(APV_FILTER!=='all' && a.status!==APV_FILTER) return false;
+    if(apvSearchKw){
+      var hay = (a.topicTitle+' '+a.leader+' '+a.org+' '+(a.direction||'')).toLowerCase();
+      if(hay.indexOf(apvSearchKw.toLowerCase())<0) return false;
+    }
+    return true;
+  });
+  var box = document.getElementById('approvalList');
+  var empty = document.getElementById('approvalEmpty');
+  if(!list.length){ box.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  var rows = list.map(function(a){
+    var reviewable = isReviewable(a.status);
+    var team = teamMap[a.topicId] || a.team || '未指定';
+    var todo = reviewable ? '<span class="apv-todo">'+APPROVAL_MAP[a.status].label+'</span>'
+      : (a.status==='signed' ? '<span class="apv-done-tag">已完成</span>' : (a.status==='returned' ? '<span class="apv-returned-tag">已退回</span>' : '—'));
+    var acts = reviewable
+      ? '<button class="btn btn-sm btn-primary" onclick="openApproval(\''+a.id+'\')">处理审批</button>'
+      : '<button class="btn btn-sm btn-default" onclick="openApproval(\''+a.id+'\',true)">查看</button>';
+    return '<tr>'
+      +'<td>'+esc(a.topicTitle)+'</td>'
+      +'<td>'+esc(a.direction||'')+'</td>'
+      +'<td>'+esc(a.leader)+'<br><span style="color:rgba(0,0,0,0.45);font-size:12px">'+esc(a.org)+'</span></td>'
+      +'<td>'+a.budget+' 万</td>'
+      +'<td>'+esc(team)+'</td>'
+      +'<td>'+taStatusChip(a.status)+'</td>'
+      +'<td>'+todo+'</td>'
+      +'<td style="white-space:nowrap">'+acts+'</td>'
+      +'</tr>';
+  }).join('');
+  box.innerHTML = '<div class="data-table-wrap"><table class="data-table"><thead><tr>'
+    +'<th>课题</th><th>方向</th><th>申报人</th><th>预算</th><th>承担团队</th><th>状态</th><th>当前待办</th><th style="text-align:right">操作</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function openApproval(id, readOnly){
+  readOnly = !!readOnly;
+  var a = TOPIC_APPS.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  if(!isReviewable(a.status) && !readOnly){ toast('该申报当前无需审批处理','info'); return; }
+  curApprovalId = id; curApprovalDecision='approve';
+  var m = isReviewable(a.status) ? APPROVAL_MAP[a.status] : null;
+  var teamMap = loadTeamAssign();
+  var team = teamMap[a.topicId] || a.team || '未指定';
+  document.getElementById('apvTitle').textContent = (m?'审批 · ':'申报详情 · ')+a.topicTitle;
+  var decisionHtml = m ? (
+    '<div class="apv-stage-callout">待审批环节：'+m.label+'</div>'
+    +'<div class="apv-decision" id="apvDecision">'
+      +'<label class="sel-approve" id="lblApprove"><input type="radio" name="apvDec" value="approve" checked onchange="setApvDecision(\'approve\')"> ✓ '+m.approveText+'</label>'
+      +'<label class="'+(m.rejectable?'sel-reject':'')+'" id="lblReject"'+(m.rejectable?'':' style="opacity:.45;cursor:not-allowed"')+'><input type="radio" name="apvDec" value="reject" '+(m.rejectable?'onchange="setApvDecision(\'reject\')"':'disabled')+'> ✕ 退回补正</label>'
+    +'</div>'
+    +'<textarea class="apv-note" id="apvNote" placeholder="填写审批意见（选填）"></textarea>'
+  ) : '<div class="apv-stage-callout" style="background:#f6ffed;border-color:#b7eb8f;color:#52c41a">该申报当前无需审批（'+TA_STATUS_TEXT[a.status]+'）</div>';
+  document.getElementById('apvBody').innerHTML =
+    '<div class="apv-summary">'
+      +'<div class="detail-row"><span class="detail-label">课题方向</span><span class="detail-value">'+esc(a.direction||'')+'</span></div>'
+      +'<div class="detail-row"><span class="detail-label">负责人</span><span class="detail-value">'+esc(a.leader)+'（'+esc(a.title||'')+'）· '+esc(a.org)+'</span></div>'
+      +'<div class="detail-row"><span class="detail-label">承担团队</span><span class="detail-value">'+esc(team)+'</span></div>'
+      +'<div class="detail-row"><span class="detail-label">预算</span><span class="detail-value">'+a.budget+' 万元</span></div>'
+      +'<div class="detail-row" style="grid-column:1/3"><span class="detail-label">研究方案</span><span class="detail-value">'+esc(a.plan||'')+'</span></div>'
+      +'<div class="detail-row" style="grid-column:1/3"><span class="detail-label">前期基础</span><span class="detail-value">'+esc(a.basis||'')+'</span></div>'
+    +'</div>'
+    +decisionHtml;
+  document.getElementById('apvSubmitBtn').style.display = m ? '' : 'none';
+  document.getElementById('approvalDialog').classList.add('visible');
+}
+function setApvDecision(d){
+  curApprovalDecision=d;
+  document.getElementById('lblApprove').className = (d==='approve'?'sel-approve':'');
+  document.getElementById('lblReject').className = (d==='reject'?'sel-reject':'');
+}
+function closeApproval(){ document.getElementById('approvalDialog').classList.remove('visible'); }
+function submitApproval(){
+  var a = TOPIC_APPS.filter(function(x){return x.id===curApprovalId;})[0]; if(!a) return;
+  if(!isReviewable(a.status)){ closeApproval(); return; }
+  var m = APPROVAL_MAP[a.status];
+  var note = (document.getElementById('apvNote').value||'').trim();
+  a.history = a.history||[];
+  if(curApprovalDecision==='reject' && m.rejectable){
+    a.rejectStage = TA_STAGE_IDX[a.status];   // 记录被打回的环节序号，供进度条标红
+    a.status = 'returned';
+    a.history.push({stage:m.label, time:taToday(), action:'退回补正', note:note});
+    toast('已退回补正，待申报人修改后重新提交','info');
+  } else {
+    a.status = m.next;
+    a.history.push({stage:m.label, time:taToday(), action:'通过', note:note});
+    toast('已通过「'+m.label+'」，流程推进至下一环节','success');
+  }
+  saveTopicApps(); closeApproval(); renderApproval();
+}
 </script>
 <!-- Deploy Drawer -->
 <div class="deploy-drawer-overlay" id="deployDrawerOverlay" onclick="closeDeployDrawer()"></div>
@@ -3919,8 +4491,6 @@ document.addEventListener('DOMContentLoaded', function(){
       <select class="wb-form-select" id="wbDsCategory"><option value="">-- 请选择类目 --</option></select>
     </div>
     <div class="wb-form-item">
-      <span class="wb-form-label">🪙 使用消耗积分</span>
-      <input class="wb-form-input" type="number" id="wbDsPointsCost" placeholder="其他用户使用此数据集需消耗的积分" min="0" max="100" value="30" style="width:200px">
       <span class="wb-form-hint">设为 0 表示免费公开使用；建议范围 10-50</span>
     </div>
     <div class="wb-form-item">
@@ -3977,8 +4547,6 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="wb-form-error-msg" id="wbDmDeliverablesError">⚠️ 请输入期望交付物</div>
     </div>
     <div class="wb-form-item">
-      <div class="wb-form-label">🪙 积分悬赏</div>
-      <input class="wb-form-input" type="number" id="wbDmReward" placeholder="完成需求后的积分奖励金额" min="50" max="2000" value="200" style="width:200px">
       <span class="wb-form-hint">发布时从余额扣除（含发布费10），需求完成后发放给接单者。最低 50</span>
     </div>
     <div class="wb-advanced-toggle" id="wbDmAdvancedToggle" onclick="toggleWbAdvanced()">
@@ -4035,6 +4603,23 @@ document.addEventListener('DOMContentLoaded', function(){
   </div>
 </div>
 <!-- ==================== FOOTER ==================== -->
-<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flgw" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flgw)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flgw)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flgw)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html">模型广场</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
+<footer class="footer"><div class="footer-inner"><div class="footer-col"><div class="footer-logo"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="flgw" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7566FF"/><stop offset="100%" stop-color="#2F54EB"/></linearGradient></defs><rect x="4" y="3" width="24" height="18" rx="4" fill="url(#flgw)"/><rect x="8" y="21" width="16" height="8" rx="3" fill="url(#flgw)" opacity=".7"/><circle cx="16" cy="12" r="5" fill="#fff" opacity=".9"/><circle cx="16" cy="12" r="2.5" fill="url(#flgw)"/></svg><span>北大荒信息有限公司</span></div><p>北大荒智慧农业协同创新平台<br>汇聚顶尖科研力量，精准对接田间需求</p></div><div class="footer-col"><h4>核心模块</h4><a href="model-marketplace.html?view=platform">模型中心</a><a href="model-marketplace.html?view=user">模型社区</a><a href="case-center.html">案例中心</a><a href="dataset-management.html">数据管理</a><a href="workbench.html">工作台</a></div><div class="footer-col"><h4>关于平台</h4><a href="javascript:void(0)" onclick="toast('功能开发中','info')">平台介绍</a><a href="apply-settlement.html">入驻申请</a><a href="javascript:void(0)" onclick="toast('功能开发中','info')">联系方式</a></div><div class="footer-col"><h4>帮助支持</h4><a href="doc-center.html">使用文档</a><a href="doc-center.html?doc=api-inference">API 参考</a><a href="doc-center.html?doc=faq-points">常见问题</a></div></div><div class="footer-bot">北大荒信息有限公司 · 受邀注册制，不面向社会公众开放<br>© 2026 北大荒智慧农业协同创新平台</div></footer>
+<!-- Submit for Review Modal (step 4 of 5-step listing flow) -->
+<div class="modal-overlay" id="wbReviewModal" onclick="if(event.target===this)closeSubmitReviewModal()">
+  <div class="modal-box" style="width:520px;">
+    <div class="modal-header"><span class="modal-title">提交模型审核</span><span class="modal-close" onclick="closeSubmitReviewModal()">✕</span></div>
+    <div class="modal-body">
+      <p style="margin:0 0 14px">请选择要提交至平台审批服务的模型。提交后将进入审批流程，审批通过后自动同步上架至模型广场，开放检索与 API 调用。</p>
+      <div class="wb-form-item" style="margin-bottom:0">
+        <label class="wb-form-label" style="display:block;margin-bottom:6px;font-size:13px;color:rgba(0,0,0,0.65)">选择模型</label>
+        <select class="wb-form-select" id="wbReviewModel" style="width:100%;height:36px;padding:0 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeSubmitReviewModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitReview()">提交审核</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
