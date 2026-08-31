@@ -134,6 +134,20 @@
   .vs-btn.active{background:#fff;color:var(--primary);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
   .mgr-hint{display:none;align-items:center;gap:8px;margin:8px 0 4px;padding:8px 12px;border-radius:var(--radius);background:rgba(47,84,235,0.06);border:1px solid rgba(47,84,235,0.15);color:var(--primary);font-size:13px;}
   .mgr-hint.show{display:flex;}
+  /* ===== 发布课题（管理者视角） ===== */
+  .pub-actions{display:none;}
+  .pub-actions.show{display:inline-flex;}
+  .f-row{display:grid;grid-template-columns:110px 1fr;gap:8px 14px;margin-bottom:14px;align-items:flex-start;}
+  .f-label{font-size:13.5px;color:var(--text-2);line-height:32px;text-align:right;}
+  .f-label .req{color:var(--red);margin-left:2px;}
+  .f-control input[type="text"],.f-control input[type="number"],.f-control input[type="date"],.f-control select,.f-control textarea{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;padding:0 12px;font-size:14px;color:var(--text-1);background:#fff;transition:border-color .15s,box-shadow .15s;}
+  .f-control textarea{height:78px;padding:8px 12px;resize:vertical;line-height:1.6;}
+  .f-control input:focus,.f-control select:focus,.f-control textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(47,84,235,0.12);}
+  .f-control .hint{font-size:12px;color:var(--text-3);margin-top:4px;line-height:1.5;}
+  .f-upload{display:inline-flex;align-items:center;gap:8px;}
+  .f-upload .up-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;font-size:13px;border:1px dashed var(--primary);color:var(--primary);background:rgba(47,84,235,0.04);border-radius:6px;cursor:pointer;white-space:nowrap;}
+  .f-upload .up-btn:hover{background:rgba(47,84,235,0.10);}
+  .f-upload .up-name{font-size:12.5px;color:var(--text-2);}
   /* ===== 卡片管理区（管理者视角） ===== */
   .tc-manage{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--text-2);align-items:center;justify-content:space-between;gap:8px;}
   .tc-manage.show{display:flex;}
@@ -270,27 +284,37 @@
       <button class="vs-btn active" data-view="applicant" onclick="switchTopicView('applicant')">申报者视角</button>
       <button class="vs-btn" data-view="manager" onclick="switchTopicView('manager')">管理者视角</button>
     </div>
+    <div class="pub-actions" id="pubActions">
+      <button class="btn-primary" onclick="openPublishTopic()">＋ 发布课题</button>
+    </div>
   </div>
 
   <div class="topic-stats" id="topicStats"></div>
-  <div class="mgr-hint" id="mgrHint">🛠 管理者视角：可为每个课题指定承担团队（选择由哪个科研团队来执行该课题）。</div>
+  <div class="mgr-hint" id="mgrHint">🛠 管理者视角：可发布新课题指南（面向科研团队开放申报），并可为已有课题指定承担团队。</div>
 
   <div class="toolbar">
-    <input id="topicSearch" placeholder="搜索课题名称 / 方向…" oninput="renderTopics()" />
-    <select id="topicStatusFilter" onchange="renderTopics()">
+    <input id="topicSearch" placeholder="搜索课题名称 / 方向…" onkeydown="if(event.key==='Enter')applyTopicFilter()" />
+    <select id="topicStatusFilter">
       <option value="">全部状态</option>
       <option value="申报中">申报中</option>
       <option value="评审中">评审中</option>
       <option value="已立项">已立项</option>
       <option value="执行中">执行中</option>
     </select>
-    <select id="topicDirFilter" onchange="renderTopics()">
+    <select id="topicDirFilter">
       <option value="">全部方向</option>
       <option value="智能育种">智能育种</option>
       <option value="智慧农机">智慧农机</option>
       <option value="遥感监测">遥感监测</option>
       <option value="耕地保护">耕地保护</option>
     </select>
+    <select id="topicSort" title="排序方式">
+      <option value="new">最新发布</option>
+      <option value="deadline">截止最近</option>
+      <option value="budget">经费最高</option>
+    </select>
+    <button class="btn btn-primary" onclick="applyTopicFilter()">✓ 确认筛选</button>
+    <button class="btn btn-default" onclick="resetTopicFilter()">↺ 重置</button>
   </div>
   <div class="topic-grid" id="topicGrid"></div>
   <div class="pagination-wrap" id="paginationWrap">
@@ -343,6 +367,66 @@
   </div>
 </div>
 
+<!-- 发布课题（管理者视角） -->
+<div class="dialog-overlay" id="publishTopicModal" onclick="if(event.target===this)closePublishTopic()">
+  <div class="dialog-box">
+    <div class="dialog-header"><span class="dialog-title">📌 发布课题</span><span class="dialog-close" onclick="closePublishTopic()">✕</span></div>
+    <div class="dialog-body">
+      <div class="f-row">
+        <span class="f-label">课题名称<span class="req">*</span></span>
+        <div class="f-control"><input type="text" id="ptTitle" placeholder="如：寒地水稻智能育种大模型研发" /></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">所属方向<span class="req">*</span></span>
+        <div class="f-control">
+          <select id="ptDirection">
+            <option value="">请选择课题方向</option>
+            <option>智能育种</option>
+            <option>智慧农机</option>
+            <option>遥感监测</option>
+            <option>耕地保护</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">经费额度（万元）<span class="req">*</span></span>
+        <div class="f-control"><input type="number" id="ptBudget" min="1" max="500" placeholder="80" /><div class="hint">课题拟资助经费总额，单位：万元。</div></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">申报截止日期<span class="req">*</span></span>
+        <div class="f-control"><input type="date" id="ptDeadline" /><div class="hint">截止后自动停止接收申报，课题进入评审排期。</div></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">课题简介<span class="req">*</span></span>
+        <div class="f-control"><textarea id="ptSummary" placeholder="用 1-2 句话说明课题目标与价值，将展示在课题卡片上"></textarea></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">申报资质门槛<span class="req">*</span></span>
+        <div class="f-control"><textarea id="ptQualification" placeholder="如：高校 / 科研院所课题组；具备相关研究基础；团队不少于 5 人"></textarea></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">主要研究内容<span class="req">*</span></span>
+        <div class="f-control"><textarea id="ptContent" placeholder="研究目标、技术路线、考核指标等（将展示在课题申报指南详情中）"></textarea></div>
+      </div>
+      <div class="f-row">
+        <span class="f-label">申报书模板</span>
+        <div class="f-control">
+          <div class="f-upload">
+            <label class="up-btn" for="ptTemplate">📎 选择申报书模板文件</label>
+            <input type="file" id="ptTemplate" accept=".docx,.doc,.pdf" style="display:none" onchange="showTemplateName(this)" />
+            <span class="up-name" id="ptTemplateName">未选择（发布后申报者可下载，可选）</span>
+          </div>
+        </div>
+      </div>
+      <div class="note-bar" style="margin:0 0 4px">发布后课题将出现在列表「申报中」分组，申报者可在课题详情中查看指南、下载申报文档。</div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-default" onclick="closePublishTopic()">取消</button>
+      <button class="btn-primary" onclick="publishTopic()">🚀 发布课题</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- 退出登录确认 -->
@@ -360,69 +444,83 @@
 <script>
 // ===================== 数据 =====================
 var TOPICS = [
-  {id:'t1', title:'寒地水稻智能育种大模型研发', direction:'智能育种', org:'全重实验室', budget:80, deadline:'2026-08-31', status:'申报中',
+  {id:'t1', publishedAt:'2026-08-01', title:'寒地水稻智能育种大模型研发', direction:'智能育种', org:'全重实验室', budget:80, deadline:'2026-08-31', status:'申报中',
    summary:'面向寒地水稻产量与抗逆性状，研发融合多组学与环境因子的智能育种大模型。',
    qualification:'高校 / 科研院所课题组；具备作物遗传育种或 AI 交叉研究基础；团队不少于 5 人。',
    content:'研究内容：构建寒地水稻表型-基因型联合建模框架；研发产量与抗逆性状预测大模型；形成可复现的育种决策支持能力。考核以模型精度、可解释性及示范应用为准。'},
-  {id:'t2', title:'大马力农机自动驾驶与协同作业系统', direction:'智慧农机', org:'全重实验室', budget:120, deadline:'2026-09-15', status:'申报中',
+  {id:'t2', publishedAt:'2026-08-05', title:'大马力农机自动驾驶与协同作业系统', direction:'智慧农机', org:'全重实验室', budget:120, deadline:'2026-09-15', status:'申报中',
    summary:'面向垦区大马力拖拉机，研发自动驾驶、多机协同与作业质量在线评估系统。',
    qualification:'具备农机装备、控制或自动驾驶研发能力的机构；有田间试验条件优先。',
    content:'研究内容：基于北斗的自动驾驶控制；多机协同路径规划；作业质量在线感知。需提交田间验证方案。'},
-  {id:'t3', title:'基于多源遥感的作物长势与墒情监测', direction:'遥感监测', org:'全重实验室', budget:60, deadline:'2026-08-20', status:'评审中',
+  {id:'t3', publishedAt:'2026-07-20', title:'基于多源遥感的作物长势与墒情监测', direction:'遥感监测', org:'全重实验室', budget:60, deadline:'2026-08-20', status:'评审中',
    summary:'融合卫星、无人机与地面传感，构建作物长势与土壤墒情近实时监测能力。',
    qualification:'具备遥感 / 地理信息或农业气象研究基础。',
    content:'研究内容：多源遥感数据同化；长势与墒情反演模型；近实时产品生成与发布。'},
-  {id:'t4', title:'大豆病虫害视觉识别与预警模型', direction:'智能育种', org:'全重实验室', budget:50, deadline:'2026-09-30', status:'申报中',
+  {id:'t4', publishedAt:'2026-08-10', title:'大豆病虫害视觉识别与预警模型', direction:'智能育种', org:'全重实验室', budget:50, deadline:'2026-09-30', status:'申报中',
    summary:'研发大豆叶部病害与虫害的视觉识别模型，支撑田间早期预警。',
    qualification:'具备计算机视觉或植保研究基础的团队。',
    content:'研究内容：病害虫样本库建设；轻量化识别模型；边缘端部署与预警接口。'},
-  {id:'t5', title:'黑土地保护性耕作决策支持平台', direction:'耕地保护', org:'全重实验室', budget:100, deadline:'2026-10-10', status:'已立项',
+  {id:'t5', publishedAt:'2026-07-05', title:'黑土地保护性耕作决策支持平台', direction:'耕地保护', org:'全重实验室', budget:100, deadline:'2026-10-10', status:'已立项',
    summary:'面向黑土地保护，研发耕作措施推荐与碳汇核算决策支持平台。',
    qualification:'已立项示范课题，面向执行阶段合作机构开放。',
    content:'研究内容：保护性耕作措施知识图谱；决策推荐引擎；碳汇核算模块。'},
-  {id:'t6', title:'农场智能灌溉与水肥一体化优化', direction:'智慧农机', org:'全重实验室', budget:70, deadline:'2026-09-05', status:'申报中',
+  {id:'t6', publishedAt:'2026-07-28', title:'农场智能灌溉与水肥一体化优化', direction:'智慧农机', org:'全重实验室', budget:70, deadline:'2026-09-05', status:'申报中',
    summary:'研发基于土壤-作物-气象耦合的灌溉与水肥一体化优化控制模型。',
    qualification:'具备农业水土工程或优化控制研究基础。',
    content:'研究内容：水肥需求耦合模型；优化控制策略；与现有灌溉设施对接方案。'},
-  {id:'t7', title:'玉米籽粒机收质量在线检测与调控', direction:'智慧农机', org:'全重实验室', budget:65, deadline:'2026-09-20', status:'申报中',
+  {id:'t7', publishedAt:'2026-08-08', title:'玉米籽粒机收质量在线检测与调控', direction:'智慧农机', org:'全重实验室', budget:65, deadline:'2026-09-20', status:'申报中',
    summary:'面向玉米籽粒直收，研发收获质量在线检测与脱粒参数自适应调控方法。',
    qualification:'具备农业机械、机器视觉或自动控制研发能力的机构。',
    content:'研究内容：籽粒破损与杂质在线感知；滚筒转速 / 凹板间隙自适应调控；机收质量评价体系。'},
-  {id:'t8', title:'寒地大豆产量形成机理与精准栽培模型', direction:'智能育种', org:'全重实验室', budget:75, deadline:'2026-08-25', status:'评审中',
+  {id:'t8', publishedAt:'2026-07-18', title:'寒地大豆产量形成机理与精准栽培模型', direction:'智能育种', org:'全重实验室', budget:75, deadline:'2026-08-25', status:'评审中',
    summary:'解析寒地大豆产量形成机理，构建光温水肥耦合的精准栽培决策模型。',
    qualification:'具备作物栽培生理或农业模型研究基础。',
    content:'研究内容：寒地大豆群体构建；光温水肥耦合模型；精准栽培处方生成。'},
-  {id:'t9', title:'基于无人机多光谱的玉米倒伏评估', direction:'遥感监测', org:'全重实验室', budget:45, deadline:'2026-09-12', status:'申报中',
+  {id:'t9', publishedAt:'2026-07-30', title:'基于无人机多光谱的玉米倒伏评估', direction:'遥感监测', org:'全重实验室', budget:45, deadline:'2026-09-12', status:'申报中',
    summary:'利用无人机多光谱影像快速评估风灾后玉米倒伏面积与等级。',
    qualification:'具备遥感或农业灾情评估研究基础。',
    content:'研究内容：倒伏光谱特征提取；倒伏等级分类模型；灾情图件自动出图。'},
-  {id:'t10', title:'黑土地有机质提升与碳汇监测', direction:'耕地保护', org:'全重实验室', budget:90, deadline:'2026-10-20', status:'申报中',
+  {id:'t10', publishedAt:'2026-07-22', title:'黑土地有机质提升与碳汇监测', direction:'耕地保护', org:'全重实验室', budget:90, deadline:'2026-10-20', status:'申报中',
    summary:'面向黑土地有机质提升，研发土壤碳库动态监测与碳汇核算方法。',
    qualification:'具备土壤学或农业碳汇研究基础。',
    content:'研究内容：有机质监测网络；碳汇核算模型；提升措施效果评估。'},
-  {id:'t11', title:'水稻智能叶龄诊断与施肥推荐', direction:'智能育种', org:'全重实验室', budget:55, deadline:'2026-09-08', status:'已立项',
+  {id:'t11', publishedAt:'2026-06-20', title:'水稻智能叶龄诊断与施肥推荐', direction:'智能育种', org:'全重实验室', budget:55, deadline:'2026-09-08', status:'已立项',
    summary:'基于图像的水稻叶龄智能诊断，生成分蘖期精准施肥推荐。',
    qualification:'已立项课题，面向示范应用合作机构开放。',
    content:'研究内容：叶龄图像识别；需肥诊断模型；施肥处方推送接口。'},
-  {id:'t12', title:'农机具智能调度与作业排队优化', direction:'智慧农机', org:'全重实验室', budget:80, deadline:'2026-09-25', status:'评审中',
+  {id:'t12', publishedAt:'2026-07-25', title:'农机具智能调度与作业排队优化', direction:'智慧农机', org:'全重实验室', budget:80, deadline:'2026-09-25', status:'评审中',
    summary:'面向垦区规模化作业，研发农机具智能调度与跨区作业排队优化。',
    qualification:'具备运筹优化或农机管理信息化研究基础。',
    content:'研究内容：作业任务建模；调度优化算法；跨区协同排程。'},
-  {id:'t13', title:'作物病虫害遥感早期预警与扩散预测', direction:'遥感监测', org:'全重实验室', budget:58, deadline:'2026-08-28', status:'已立项',
+  {id:'t13', publishedAt:'2026-07-12', title:'作物病虫害遥感早期预警与扩散预测', direction:'遥感监测', org:'全重实验室', budget:58, deadline:'2026-08-28', status:'已立项',
    summary:'融合气象与遥感，构建病虫害早期预警与空间扩散预测能力。',
    qualification:'已立项课题，面向监测预警合作机构开放。',
    content:'研究内容：病害发生适宜度模型；扩散路径预测；预警信息发布。'},
-  {id:'t14', title:'盐碱地改良与耐盐碱作物筛选模型', direction:'耕地保护', org:'全重实验室', budget:85, deadline:'2026-10-15', status:'申报中',
+  {id:'t14', publishedAt:'2026-08-15', title:'盐碱地改良与耐盐碱作物筛选模型', direction:'耕地保护', org:'全重实验室', budget:85, deadline:'2026-10-15', status:'申报中',
    summary:'面向盐碱地综合利用，研发改良措施推荐与耐盐碱作物筛选模型。',
    qualification:'具备土壤改良或作物抗逆育种研究基础。',
    content:'研究内容：盐碱胁迫评价；改良措施知识库；耐盐碱品种筛选。'},
-  {id:'t15', title:'畜禽养殖环境智能调控与疫病预警', direction:'智能育种', org:'全重实验室', budget:62, deadline:'2026-09-18', status:'执行中',
+  {id:'t15', publishedAt:'2026-06-28', title:'畜禽养殖环境智能调控与疫病预警', direction:'智能育种', org:'全重实验室', budget:62, deadline:'2026-09-18', status:'执行中',
    summary:'面向规模化养殖场，研发环境智能调控与疫病早期预警系统。',
    qualification:'执行中课题，面向养殖示范场开放。',
    content:'研究内容：环境多参数感知；通风温控优化；疫病风险预警。'}
 ];
 
 // 课题公告（只读展示，无主动申报入口）
+// 发布课题的数据合并：从 localStorage 读取本机构已发布课题，保证刷新后课题列表仍可见
+var PUBLISHED_LS = 'ls_topic_published';
+function loadPublishedTopics(){
+  try{ var d=JSON.parse(localStorage.getItem(PUBLISHED_LS)); if(Array.isArray(d)) return d; }catch(e){}
+  return [];
+}
+function savePublishedTopics(list){ try{ localStorage.setItem(PUBLISHED_LS, JSON.stringify(list)); }catch(e){} }
+function mergePublishedTopics(){
+  var published = loadPublishedTopics();
+  if(!published.length) return;
+  var ids = {}; TOPICS.forEach(function(t){ ids[t.id]=1; });
+  published.forEach(function(p){ if(p && p.id && !ids[p.id]){ TOPICS.push(p); ids[p.id]=1; } });
+}
+mergePublishedTopics();
 
 // ===================== 通用 =====================
 function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},1800); }
@@ -480,15 +578,34 @@ var DIR_META = {
 };
 function dirMeta(d){ return DIR_META[d] || {color:'#2f54eb',tint:'#eef2ff',icon:'📌'}; }
 function statusClass(st){
+  if(st==='已截止') return 'st-gray';
   if(st==='已立项') return 'st-teal';
   if(st==='执行中'||st==='已结题') return 'st-green';
   if(st==='评审中') return 'st-orange';
   return 'st-blue';
 }
+function isNewTopic(t){
+  var d = t.publishedAt || ''; if(!d) return false;
+  var now = fmtDate(new Date());
+  if(d > now) return true;
+  return Math.round((new Date(now) - new Date(d)) / 86400000) <= 7;
+}
 function topicStatusChip(t){ return '<span class="st '+statusClass(t.status)+'">'+esc(t.status)+'</span>'; }
 
 // ===================== 课题列表（只读公告展示） =====================
 var topicState = {page:1, pageSize:6};
+
+// ===================== 筛选确认 / 重置 =====================
+function applyTopicFilter(){ topicState.page=1; renderTopics(); }
+function resetTopicFilter(){
+  document.getElementById('topicSearch').value='';
+  document.getElementById('topicStatusFilter').value='';
+  document.getElementById('topicDirFilter').value='';
+  document.getElementById('topicSort').value='new';
+  topicState.page=1;
+  renderTopics();
+  toast('已重置筛选条件');
+}
 
 // ===================== 视角切换（申报者 / 管理者） =====================
 var topicView = 'applicant';
@@ -496,6 +613,7 @@ function switchTopicView(v){
   topicView = v;
   document.querySelectorAll('#viewSwitch .vs-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===v); });
   var hint = document.getElementById('mgrHint'); if(hint) hint.classList.toggle('show', v==='manager');
+  var pub = document.getElementById('pubActions'); if(pub) pub.classList.toggle('show', v==='manager');
   renderTopics();
 }
 
@@ -545,6 +663,55 @@ function confirmTeamAssign(){
 }
 function closeTeamAssign(){ document.getElementById('teamAssignModal').classList.remove('visible'); }
 
+// ===================== 发布课题（管理者视角） =====================
+function fmtDate(d){ var m=d.getMonth()+1, day=d.getDate(); return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day; }
+function openPublishTopic(){
+  document.getElementById('ptTitle').value='';
+  document.getElementById('ptDirection').value='';
+  document.getElementById('ptBudget').value='';
+  var d=new Date(); d.setDate(d.getDate()+30);
+  document.getElementById('ptDeadline').value=fmtDate(d);
+  document.getElementById('ptSummary').value='';
+  document.getElementById('ptQualification').value='';
+  document.getElementById('ptContent').value='';
+  document.getElementById('ptTemplateName').textContent='未选择（发布后申报者可下载，可选）';
+  document.getElementById('ptTemplate').value='';
+  document.getElementById('publishTopicModal').classList.add('visible');
+}
+function closePublishTopic(){ document.getElementById('publishTopicModal').classList.remove('visible'); }
+function showTemplateName(inp){
+  var name = (inp.files && inp.files[0]) ? inp.files[0].name : '未选择（发布后申报者可下载，可选）';
+  document.getElementById('ptTemplateName').textContent = name;
+}
+function nextTopicId(){
+  var max=0; TOPICS.forEach(function(t){ var n=parseInt((t.id||'').replace(/\D/g,''),10); if(!isNaN(n)&&n>max) max=n; });
+  return 't'+(max+1);
+}
+function publishTopic(){
+  var title=document.getElementById('ptTitle').value.trim();
+  var dir=document.getElementById('ptDirection').value;
+  var budget=Number(document.getElementById('ptBudget').value);
+  var deadline=document.getElementById('ptDeadline').value;
+  var summary=document.getElementById('ptSummary').value.trim();
+  var qual=document.getElementById('ptQualification').value.trim();
+  var content=document.getElementById('ptContent').value.trim();
+  if(!title){ toast('请填写课题名称'); return; }
+  if(!dir){ toast('请选择所属方向'); return; }
+  if(!budget || budget<=0){ toast('请填写有效的经费额度（需大于 0 万元）'); return; }
+  if(!deadline){ toast('请选择申报截止日期'); return; }
+  if(deadline < fmtDate(new Date())){ toast('申报截止日期不能早于今天'); return; }
+  if(!summary){ toast('请填写课题简介'); return; }
+  if(!qual){ toast('请填写申报资质门槛'); return; }
+  if(!content){ toast('请填写主要研究内容'); return; }
+  var obj = {id:nextTopicId(), title:title, direction:dir, org:'全重实验室', budget:budget, deadline:deadline, status:'申报中', summary:summary, qualification:qual, content:content, publishedAt:fmtDate(new Date())};
+  TOPICS.unshift(obj);
+  var published = loadPublishedTopics(); published.unshift(obj); savePublishedTopics(published);
+  topicState.page=1;
+  closePublishTopic();
+  renderTopics();
+  toast('🎉 课题已发布，面向科研团队开放申报');
+}
+
 function renderTopics(){
   var kw = (document.getElementById('topicSearch').value||'').trim().toLowerCase();
   var sf = document.getElementById('topicStatusFilter').value;
@@ -554,6 +721,13 @@ function renderTopics(){
     if(df && t.direction!==df) return false;
     if(kw && (t.title+t.direction+t.summary).toLowerCase().indexOf(kw)===-1) return false;
     return true;
+  });
+  // 排序：默认最新发布（publishedAt 倒序），支持截止最近 / 经费最高
+  var sortMode = document.getElementById('topicSort').value;
+  list.sort(function(a,b){
+    if(sortMode==='deadline') return (a.deadline||'').localeCompare(b.deadline||'');
+    if(sortMode==='budget') return (b.budget||0) - (a.budget||0);
+    return ((b.publishedAt||'').localeCompare(a.publishedAt||'')) || ((b.id||'').localeCompare(a.id||''));
   });
   // 统计概览
   var counts={total:TOPICS.length, 申报中:0, 评审中:0, 已立项:0, 执行中:0};
@@ -585,11 +759,11 @@ function renderTopics(){
     return '<div class="topic-card" style="--accent:'+m.color+';--tint:'+m.tint+'" onclick="openTopicDetail(\''+t.id+'\')">'
       +'<div class="tc-banner"><span class="tc-icon">'+m.icon+'</span></div>'
       +'<div class="tc-body">'
-      +'<div class="tc-row1"><span class="tc-dir" style="color:'+m.color+';background:'+m.tint+'">'+esc(t.direction)+'</span>'+topicStatusChip(t)+'</div>'
+      +'<div class="tc-row1"><span class="tc-dir" style="color:'+m.color+';background:'+m.tint+'">'+esc(t.direction)+'</span>'+topicStatusChip(t)+(isNewTopic(t)?'<span class="st st-teal">🆕 最新</span>':'')+'</div>'
       +'<h3 class="tc-title">'+esc(t.title)+'</h3>'
       +'<p class="tc-summary">'+esc(t.summary)+'</p>'
-      +'<div class="tc-meta"><span>💰 经费 '+t.budget+' 万元</span><span>🏛 '+esc(t.org)+'</span></div>'
-      +'<div class="tc-foot"><span class="tc-deadline">⏰ 截止 '+t.deadline+'</span><span class="tc-more">查看指南 →</span></div>'
+      +'<div class="tc-meta"><span>🧭 '+esc(t.direction)+'</span><span>💰 经费 '+t.budget+' 万元</span><span>🏛 '+esc(t.org)+'</span></div>'
+      +'<div class="tc-foot"><span class="tc-deadline">⏰ 截止 '+t.deadline+'</span><span class="tc-date">📅 发布 '+(t.publishedAt||'—')+'</span><span class="tc-more">查看指南 →</span></div>'
       + manageHtml
       +'</div></div>';
   }).join('');
@@ -626,6 +800,7 @@ function openTopicDetail(id){
     +'<div class="detail-block"><h4>课题概要</h4><p>'+esc(t.summary)+'</p></div>'
     +'<div class="detail-block"><h4>申报资质门槛</h4><p>'+esc(t.qualification)+'</p></div>'
     +'<div class="detail-block"><h4>主要研究内容</h4><p>'+esc(t.content)+'</p></div>'
+    +'<div class="kv"><span class="k">课题方向</span><span class="v">'+esc(t.direction)+'</span></div>'
     +'<div class="kv"><span class="k">经费额度</span><span class="v">'+t.budget+' 万元</span></div>'
     +'<div class="kv"><span class="k">发布机构</span><span class="v">'+esc(t.org)+'</span></div>'
     +'<div class="kv"><span class="k">申报截止</span><span class="v">'+t.deadline+'</span></div>'
@@ -688,6 +863,17 @@ function downloadApplyDoc(){
 
 // 当前页 nav 高亮
 (function(){ var el=document.querySelector('[data-nav="topic"]'); if(el) el.classList.add('active'); })();
+
+// 深链支持：?action=publish → 管理者视角打开「发布课题」；?id=xxx → 打开课题详情（供工作台「我的课题」跳转）
+function qsParam(k){
+  var m = location.search.match(new RegExp('[?&]'+k+'=([^&]*)','i'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+(function(){
+  var act = qsParam('action');
+  if(act === 'publish'){ switchTopicView('manager'); openPublishTopic(); }
+  else if(qsParam('id')){ var tp = TOPICS.filter(function(x){ return x.id===qsParam('id'); })[0]; if(tp) openTopicDetail(tp.id); }
+})();
 
 // 初始化
 renderTopics();

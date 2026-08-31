@@ -340,10 +340,11 @@ button { cursor: pointer; border: none; background: none; }
 .wb-sb-link .si { font-size: 15px; width: 18px; text-align: center; }
 
 /* Create Bar */
-.wb-create-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.wb-create-bar { display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; align-items: center; padding-bottom: 2px; }
 .wb-create-btn {
   display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 20px;
   border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0;
   background: #FFFFFF; color: rgba(0,0,0,0.88);
   border: 1px solid rgba(5,5,5,0.08);
   box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s;
@@ -354,10 +355,10 @@ button { cursor: pointer; border: none; background: none; }
 .wb-create-btn.primary:hover { background: #597ef7; border-color: #597ef7; }
 
 /* Content Tabs */
-.wb-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(5,5,5,0.06); }
+.wb-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(5,5,5,0.06); overflow-x: auto; }
 .wb-tab {
   padding: 10px 20px; font-size: 14px; color: rgba(0,0,0,0.65); cursor: pointer;
-  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; flex-shrink: 0;
   transition: all 0.2s; background: none;
 }
 .wb-tab:hover { color: #2f54eb; }
@@ -808,6 +809,27 @@ button { cursor: pointer; border: none; background: none; }
 .dialog-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
 .dialog-overlay.visible { display: flex; }
 [data-prefers-color="dark"] .dialog-overlay { background: rgba(0,0,0,0.65); }
+/* ===== 发布课题弹窗（与课题中心同源样式） ===== */
+.dialog-box{background:#fff;border-radius:10px;width:720px;max-width:100%;max-height:88vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,0.2);}
+.dialog-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(5,5,5,0.06);position:sticky;top:0;background:#fff;z-index:2;}
+.dialog-title{font-size:16px;font-weight:600;}
+.dialog-close{cursor:pointer;color:rgba(0,0,0,0.45);font-size:18px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
+.dialog-close:hover{background:#f0f0f0;color:rgba(0,0,0,0.88);}
+.dialog-body{padding:18px 20px;}
+.dialog-footer{padding:14px 20px;border-top:1px solid rgba(5,5,5,0.06);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff;}
+.f-row{display:grid;grid-template-columns:110px 1fr;gap:8px 14px;margin-bottom:14px;align-items:flex-start;}
+.f-label{font-size:13.5px;color:rgba(0,0,0,0.65);line-height:32px;text-align:right;}
+.f-label .req{color:#ff4d4f;margin-left:2px;}
+.f-control input[type="text"],.f-control input[type="number"],.f-control input[type="date"],.f-control select,.f-control textarea{width:100%;height:34px;border:1px solid rgba(5,5,5,0.08);border-radius:6px;padding:0 12px;font-size:14px;color:rgba(0,0,0,0.88);background:#fff;transition:border-color .15s,box-shadow .15s;}
+.f-control select{cursor:pointer;}
+.f-control textarea{height:78px;padding:8px 12px;resize:vertical;line-height:1.6;}
+.f-control input:focus,.f-control select:focus,.f-control textarea:focus{outline:none;border-color:#2f54eb;box-shadow:0 0 0 2px rgba(47,84,235,0.12);}
+.f-control .hint{font-size:12px;color:rgba(0,0,0,0.45);margin-top:4px;line-height:1.5;}
+.f-upload{display:inline-flex;align-items:center;gap:8px;}
+.f-upload .up-btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;font-size:13px;border:1px dashed #2f54eb;color:#2f54eb;background:rgba(47,84,235,0.04);border-radius:6px;cursor:pointer;white-space:nowrap;}
+.f-upload .up-btn:hover{background:rgba(47,84,235,0.10);}
+.f-upload .up-name{font-size:12.5px;color:rgba(0,0,0,0.65);}
+.note-bar{background:#e6fffb;border:1px solid #b5ebd9;border-radius:6px;padding:8px 12px;color:#0c6b5e;font-size:12.5px;margin:10px 0 18px;}
 .dialog-box { background: #ffffff; border-radius: 8px; box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; max-height: 85vh; }
 [data-prefers-color="dark"] .dialog-box { background: #2b2d30; }
 .dialog-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(5,5,5,0.06); flex-shrink: 0; }
@@ -1174,6 +1196,7 @@ button { cursor: pointer; border: none; background: none; }
         <div class="wb-sb-link" data-nav="my-tasks" onclick="switchWbTab('my-tasks', this)"><span class="si">📌</span> 我的任务</div>
         <div class="wb-sb-link" data-nav="my-applications" onclick="switchWbTab('my-applications', this)"><span class="si">📋</span> 我的申请</div>
         <div class="wb-sb-link" data-nav="my-topic-apps" onclick="switchWbTab('my-topic-apps', this)"><span class="si">📑</span> 我的申报</div>
+        <div class="wb-sb-link" data-nav="my-topics" onclick="switchWbTab('my-topics', this)"><span class="si">🏛</span> 我的课题</div>
         <div class="wb-sb-link" data-nav="approval" onclick="switchWbTab('approval', this)"><span class="si">✅</span> 申报审批</div>
         <div class="wb-sb-link" data-nav="team-management" onclick="switchWbTab('team-management', this)"><span class="si">👥</span> 团队管理</div>
         <!-- <div class="wb-sb-link" data-nav="my-apps" onclick="switchWbTab('my-apps', this)"><span class="si">🤖</span> 我的应用</div> -->
@@ -1204,6 +1227,7 @@ button { cursor: pointer; border: none; background: none; }
         <button class="wb-create-btn" onclick="window.location.href='image-custom-create.html'"><span class="ci">📦</span> 上传镜像</button>
         <button class="wb-create-btn" onclick="handleCreate('dataset')"><span class="ci">📊</span> 上传数据集</button>
         <button class="wb-create-btn" onclick="handleCreate('demand')"><span class="ci">📝</span> 发布需求</button>
+        <button class="wb-create-btn" onclick="openPublishTopic()"><span class="ci">📢</span> 发布课题</button>
         <button class="wb-create-btn" onclick="handleCreate('notebook')"><span class="ci">💻</span> 启动 Notebook</button>
       </div>
 
@@ -1218,6 +1242,7 @@ button { cursor: pointer; border: none; background: none; }
         <button class="wb-tab" data-tab="my-notebooks">在线开发</button>
         <button class="wb-tab" data-tab="my-applications">我的申请</button>
         <button class="wb-tab" data-tab="my-topic-apps">我的申报</button>
+        <button class="wb-tab" data-tab="my-topics">我的课题</button>
         <button class="wb-tab" data-tab="approval">申报审批</button>
         <button class="wb-tab" data-tab="team-management">团队管理</button>
       </div>
@@ -1289,6 +1314,20 @@ button { cursor: pointer; border: none; background: none; }
           <div class="empty-icon">📑</div>
           <h4>暂无申报记录</h4>
           <p>你还没有申报任何课题，前往「课题中心」浏览课题指南并提交申报书</p>
+        </div>
+      </div>
+
+      <!-- My Topics Area (hidden unless my-topics tab) -->
+      <div id="myTopicArea" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:13px;color:rgba(0,0,0,0.45);">本机构发布的课题指南一览；新课题经「课题中心 → 管理者视角 → 发布课题」上架。</span>
+          <button class="btn btn-sm btn-primary" onclick="openPublishTopic()">📢 发布新课题</button>
+        </div>
+        <div id="myTopicList"></div>
+        <div class="empty-state" id="myTopicEmpty" style="display:none;">
+          <div class="empty-icon">🏛</div>
+          <h4>暂无发布的课题</h4>
+          <p>点击上方「发布新课题」，在课题中心发布第一条课题指南</p>
         </div>
       </div>
 
@@ -1477,6 +1516,66 @@ print(f"Using device: {DEVICE}")
         </div>
       </div>
 
+      <!-- Publish Topic Modal（个人中心直发，与课题中心同源 ls_topic_published） -->
+      <div class="dialog-overlay" id="publishTopicModal" onclick="if(event.target===this)closePublishTopic()">
+        <div class="dialog-box">
+          <div class="dialog-header"><span class="dialog-title">📌 发布课题</span><span class="dialog-close" onclick="closePublishTopic()">✕</span></div>
+          <div class="dialog-body">
+            <div class="f-row">
+              <span class="f-label">课题名称<span class="req">*</span></span>
+              <div class="f-control"><input type="text" id="ptTitle" placeholder="如：寒地水稻智能育种大模型研发" /></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">所属方向<span class="req">*</span></span>
+              <div class="f-control">
+                <select id="ptDirection">
+                  <option value="">请选择课题方向</option>
+                  <option>智能育种</option>
+                  <option>智慧农机</option>
+                  <option>遥感监测</option>
+                  <option>耕地保护</option>
+                </select>
+              </div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">经费额度（万元）<span class="req">*</span></span>
+              <div class="f-control"><input type="number" id="ptBudget" min="1" max="500" placeholder="80" /><div class="hint">课题拟资助经费总额，单位：万元。</div></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">申报截止日期<span class="req">*</span></span>
+              <div class="f-control"><input type="date" id="ptDeadline" /><div class="hint">截止后自动停止接收申报，课题进入评审排期。</div></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">课题简介<span class="req">*</span></span>
+              <div class="f-control"><textarea id="ptSummary" placeholder="用 1-2 句话说明课题目标与价值，将展示在课题卡片上"></textarea></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">申报资质门槛<span class="req">*</span></span>
+              <div class="f-control"><textarea id="ptQualification" placeholder="如：高校 / 科研院所课题组；具备相关研究基础；团队不少于 5 人"></textarea></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">主要研究内容<span class="req">*</span></span>
+              <div class="f-control"><textarea id="ptContent" placeholder="研究目标、技术路线、考核指标等（将展示在课题申报指南详情中）"></textarea></div>
+            </div>
+            <div class="f-row">
+              <span class="f-label">申报书模板</span>
+              <div class="f-control">
+                <div class="f-upload">
+                  <label class="up-btn" for="ptTemplate">📎 选择申报书模板文件</label>
+                  <input type="file" id="ptTemplate" accept=".docx,.doc,.pdf" style="display:none" onchange="showTemplateName(this)" />
+                  <span class="up-name" id="ptTemplateName">未选择（发布后申报者可下载，可选）</span>
+                </div>
+              </div>
+            </div>
+            <div class="note-bar" style="margin:0 0 4px">发布后课题将出现在课题中心「申报中」分组与本页「我的课题」列表中，申报者可在课题详情下载申报文档。</div>
+          </div>
+          <div class="dialog-footer">
+            <button class="btn btn-default" onclick="closePublishTopic()">取消</button>
+            <button class="btn btn-primary" onclick="publishTopic()">🚀 发布课题</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Activity Feed -->
       <div class="wb-section-title"><span class="sec-bar"></span><span>最近动态</span><span class="more" onclick="toast('功能开发中','info')">查看全部 →</span></div>
       <div class="wb-activity-list" id="wbActivityList"></div>
@@ -1645,7 +1744,9 @@ function renderTeamMgmt(){
     var statusBadge = m.status === 'active'
       ? '<span class="tm-status-active">● 正常</span>'
       : '<span class="tm-status-pending">● 待激活</span>';
-    var action = m.role === 'admin' ? '—' : '<button class="tm-action-btn" onclick="removeMember('+i+')">移除</button>';
+    var resetBtn = '<button class="tm-action-btn" onclick="resetMemberPwd('+i+')">重置密码</button>';
+    var removeBtn = (m.role === 'admin') ? '' : '<button class="tm-action-btn" style="color:#ff4d4f" onclick="removeMember('+i+')">移除</button>';
+    var action = resetBtn + (removeBtn ? ' ' + removeBtn : '');
     return '<tr><td>'+m.name+'</td><td>'+m.account+'</td><td>'+roleBadge+'</td><td>'+statusBadge+'</td><td>'+m.addedAt+'</td><td>'+action+'</td></tr>';
   }).join('');
 }
@@ -1685,6 +1786,15 @@ function removeMember(idx){
   renderTeamMgmt();
   toast('成员「'+m.name+'」已移除', 'info');
 }
+function resetMemberPwd(idx){
+  var m = TEAM.members[idx];
+  if (!m) return;
+  openPopconfirm('重置成员密码', '将「'+m.name+'」（账号 '+m.account+'）的登录密码重置为初始密码 123456，确认继续？', function(){
+    m.password = '123456';
+    renderTeamMgmt();
+    toast('成员「'+m.name+'」的密码已重置为 123456', 'success');
+  });
+}
 
 function switchWbTab(tab, el){
   currentTab = tab;
@@ -1702,14 +1812,16 @@ function switchWbTab(tab, el){
   var isNotebookTab = (tab === 'my-notebooks');
   var isAppTab = (tab === 'my-applications');
   var isTopicAppTab = (tab === 'my-topic-apps');
+  var isMyTopicTab  = (tab === 'my-topics');
   var isApprovalTab = (tab === 'approval');
   var isTeamMgmtTab = (tab === 'team-management');
-  document.getElementById('wbCardGrid').style.display = (isTableTab || isNotebookTab || isAppTab || isTopicAppTab || isApprovalTab || isTeamMgmtTab || tab === 'my-models') ? 'none' : '';
+  document.getElementById('wbCardGrid').style.display = (isTableTab || isNotebookTab || isAppTab || isTopicAppTab || isMyTopicTab || isApprovalTab || isTeamMgmtTab || tab === 'my-models') ? 'none' : '';
   document.getElementById('demandTableArea').style.display = (tab === 'my-demands' || tab === 'my-tasks') ? '' : 'none';
   document.getElementById('deployTableArea').style.display = (tab === 'my-models') ? '' : 'none';
   document.getElementById('notebookArea').style.display = isNotebookTab ? '' : 'none';
   document.getElementById('appTableArea').style.display = isAppTab ? '' : 'none';
   document.getElementById('topicAppArea').style.display = isTopicAppTab ? '' : 'none';
+  document.getElementById('myTopicArea').style.display = isMyTopicTab ? '' : 'none';
   document.getElementById('approvalArea').style.display = isApprovalTab ? '' : 'none';
   document.getElementById('teamMgmtArea').style.display = isTeamMgmtTab ? '' : 'none';
   // Activity & announcements always visible — consistent across ALL tabs
@@ -1718,6 +1830,7 @@ function switchWbTab(tab, el){
   if (isNotebookTab) { document.getElementById('notebookEditorView').style.display = 'none'; document.getElementById('notebookListView').style.display = ''; renderNotebookList(); }
   else if (isAppTab) { renderApplications(); }
   else if (isTopicAppTab) { renderTopicApps(); }
+  else if (isMyTopicTab) { renderMyTopics(); }
   else if (isApprovalTab) { renderApvFilter(); renderApproval(); }
   else if (tab === 'my-demands' || tab === 'my-tasks') { renderDemandTable(); }
   else if (tab === 'my-models') { renderDeployTable(); }
@@ -3964,6 +4077,101 @@ document.addEventListener('DOMContentLoaded', function(){
   var dlg = document.getElementById('wbApiDialog');
   if (dlg) dlg.addEventListener('click', function(e){ if (e.target === this) closeWorkbenchApiDialog(); });
 });
+
+// ===================== 我的课题（本机构发布的课题，数据源自「课题中心」ls_topic_published） =====================
+var MY_TOPIC_LS = 'ls_topic_published';
+function loadMyTopics(){
+  try{ var d=JSON.parse(localStorage.getItem(MY_TOPIC_LS)); if(Array.isArray(d)) return d; }catch(e){}
+  return [];
+}
+function saveMyTopics(list){ try{ localStorage.setItem(MY_TOPIC_LS, JSON.stringify(list)); }catch(e){} }
+function myTopicApplicantCount(topicId){
+  try{ var d=JSON.parse(localStorage.getItem('ls_topic_applications')); if(Array.isArray(d)) return d.filter(function(a){ return a.topicId===topicId; }).length; }catch(e){}
+  return 0;
+}
+function renderMyTopics(){
+  var list = loadMyTopics();
+  var box = document.getElementById('myTopicList');
+  var empty = document.getElementById('myTopicEmpty');
+  if(!list.length){ box.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  var rows = list.map(function(t){
+    var st = (t.status==='已截止') ? '<span class="chip chip-default">已截止</span>' : '<span class="chip chip-pending">申报中</span>';
+    var view = "location.href='topic-center.html?id=" + encodeURIComponent(t.id) + "'";
+    var acts = '<button class="btn btn-sm btn-default" onclick="' + view + '">查看</button>';
+    if(t.status!=='已截止'){ acts += "<button class=\"btn btn-sm btn-default\" onclick=\"endMyTopic('" + t.id + "')\">结束申报</button>"; }
+    return '<tr>'
+      +'<td>'+esc(t.title)+'</td>'
+      +'<td>'+esc(t.direction||'')+'</td>'
+      +'<td>'+t.budget+' 万</td>'
+      +'<td>'+esc(t.deadline||'')+'</td>'
+      +'<td>'+esc(t.publishedAt||'')+'</td>'
+      +'<td>'+myTopicApplicantCount(t.id)+'</td>'
+      +'<td>'+st+'</td>'
+      +'<td style="white-space:nowrap">'+acts+'</td>'
+      +'</tr>';
+  }).join('');
+  box.innerHTML = '<div class="data-table-wrap"><table class="data-table"><thead><tr>'
+    +'<th>课题</th><th>方向</th><th>经费</th><th>截止</th><th>发布时间</th><th>申报数</th><th>状态</th><th style="text-align:right">操作</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function endMyTopic(id){
+  var list = loadMyTopics();
+  var t = list.filter(function(x){ return x.id===id; })[0];
+  if(!t) return;
+  t.status='已截止';
+  saveMyTopics(list);
+  renderMyTopics();
+  toast('课题「'+t.title+'」已结束申报','success');
+}
+
+// ===================== 发布课题（个人中心直发，数据源与课题中心同源 ls_topic_published） =====================
+function fmtDate(d){ var m=d.getMonth()+1, day=d.getDate(); return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day; }
+function openPublishTopic(){
+  document.getElementById('ptTitle').value='';
+  document.getElementById('ptDirection').value='';
+  document.getElementById('ptBudget').value='';
+  var d=new Date(); d.setDate(d.getDate()+30);
+  document.getElementById('ptDeadline').value=fmtDate(d);
+  document.getElementById('ptSummary').value='';
+  document.getElementById('ptQualification').value='';
+  document.getElementById('ptContent').value='';
+  document.getElementById('ptTemplateName').textContent='未选择（发布后申报者可下载，可选）';
+  document.getElementById('ptTemplate').value='';
+  document.getElementById('publishTopicModal').classList.add('visible');
+}
+function closePublishTopic(){ document.getElementById('publishTopicModal').classList.remove('visible'); }
+function showTemplateName(inp){
+  var name = (inp.files && inp.files[0]) ? inp.files[0].name : '未选择（发布后申报者可下载，可选）';
+  document.getElementById('ptTemplateName').textContent = name;
+}
+function nextTopicId(){
+  var max=0; loadMyTopics().forEach(function(t){ var n=parseInt((t.id||'').replace(/\D/g,''),10); if(!isNaN(n)&&n>max) max=n; });
+  if(max<15) max=15;
+  return 't'+(max+1);
+}
+function publishTopic(){
+  var title=document.getElementById('ptTitle').value.trim();
+  var dir=document.getElementById('ptDirection').value;
+  var budget=Number(document.getElementById('ptBudget').value);
+  var deadline=document.getElementById('ptDeadline').value;
+  var summary=document.getElementById('ptSummary').value.trim();
+  var qual=document.getElementById('ptQualification').value.trim();
+  var content=document.getElementById('ptContent').value.trim();
+  if(!title){ toast('请填写课题名称','error'); return; }
+  if(!dir){ toast('请选择所属方向','error'); return; }
+  if(!budget || budget<=0){ toast('请填写有效的经费额度（需大于 0 万元）','error'); return; }
+  if(!deadline){ toast('请选择申报截止日期','error'); return; }
+  if(deadline < fmtDate(new Date())){ toast('申报截止日期不能早于今天','error'); return; }
+  if(!summary){ toast('请填写课题简介','error'); return; }
+  if(!qual){ toast('请填写申报资质门槛','error'); return; }
+  if(!content){ toast('请填写主要研究内容','error'); return; }
+  var obj = {id:nextTopicId(), title:title, direction:dir, org:'全重实验室', budget:budget, deadline:deadline, status:'申报中', summary:summary, qualification:qual, content:content, publishedAt:fmtDate(new Date())};
+  var published = loadMyTopics(); published.unshift(obj); saveMyTopics(published);
+  closePublishTopic();
+  renderMyTopics();
+  toast('🎉 课题已发布，面向科研团队开放申报','success');
+}
 
 // ===================== 我的申报（课题申报制，数据源自「课题中心」localStorage） =====================
 var TA_STAGE_IDX = {submitted:3, returned:3, review:4, pending_establish:5, established:6, signed:6};
