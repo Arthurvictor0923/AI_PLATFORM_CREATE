@@ -1,0 +1,489 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>课题中心 · 北大荒智慧农业协同创新平台</title><style>
+:root{--ink:#10213a;--muted:#526078;--light:#6b778c;--green:#005653;--pale:#edf6f2;--line:#dce5e9;--bg:#f4f8f5}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font:14px/1.65 "Microsoft YaHei","PingFang SC",Arial,sans-serif}button,input,select{font:inherit;color:inherit}button,select{cursor:pointer}button{background:white;border:1px solid var(--line);border-radius:4px;padding:7px 18px;line-height:1.5;transition:background .15s}button:hover{background:var(--pale)}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #318c80;outline-offset:3px}.primary{background:var(--green);border-color:var(--green);color:white}.primary:hover{background:#006e68}.text-btn{border:0;padding:0;color:var(--green);font-weight:600;background:transparent}.text-btn:hover{background:transparent;color:#138577}h1,h2,h3,p{margin:0}header{height:64px;background:white;border-bottom:1px solid var(--line)}.header-inner{max-width:1480px;padding:0 28px;margin:auto;display:flex;align-items:center;gap:28px;height:100%}.brand{display:flex;align-items:center;gap:10px;font-size:20px;white-space:nowrap;font-weight:700;letter-spacing:.4px}.logo{width:38px;height:42px;flex-shrink:0}nav{display:flex;align-items:center;gap:25px;flex:1;justify-content:center;white-space:nowrap}nav button{border:0;padding:19px 0 16px;color:var(--muted);border-radius:0;font-weight:500;background:none}nav button.active{color:var(--green);font-weight:700;border-bottom:3px solid var(--green)}.account{display:flex;gap:10px;white-space:nowrap}.layout{max-width:1480px;margin:12px auto;display:grid;grid-template-columns:244px minmax(0,1fr);gap:12px;padding:0 28px;min-height:calc(100vh - 214px)}aside,.results{background:#fff;border-radius:8px}.filters{padding:16px;align-self:stretch}.filter-tabs{display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px;border:1px solid var(--line);border-radius:4px;overflow:hidden}.filter-tabs button{border:0;border-radius:0;color:var(--muted);background:#f2f6f7}.filter-tabs button.active{background:var(--green);color:white;font-weight:600}.multi{font-size:12px;color:var(--light);padding-bottom:12px}.filter-section{padding:14px 0;border-top:1px solid var(--line)}.section-toggle{display:flex;justify-content:space-between;width:100%;border:0;padding:0;margin-bottom:12px;font-size:15px;font-weight:700;color:var(--green);background:none}.section-toggle span:first-child{border-left:3px solid var(--green);padding-left:9px}.check{display:flex;align-items:center;gap:10px;cursor:pointer;margin:8px 10px;color:var(--muted)}input[type=checkbox]{appearance:none;width:17px;height:17px;border:1px solid #a9b7c5;border-radius:3px;margin:0;display:grid;place-content:center;flex-shrink:0}input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}input[type=checkbox]:checked:after{content:"";width:8px;height:4px;border:solid white;border-width:0 0 2px 2px;transform:rotate(-45deg) translateY(-1px)}.results{padding:16px;display:flex;flex-direction:column}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:20px}.search{display:flex;gap:10px;flex:1;max-width:660px}.search-box{position:relative;flex:1}.search-box svg{position:absolute;left:12px;top:11px;width:18px;height:18px;stroke:#82909f}.search input{width:100%;height:40px;border:1px solid #bdcbd3;border-radius:4px;padding:0 12px 0 39px;outline-offset:2px}.search input::placeholder{color:#788598}.search button{min-width:92px}.sort{margin-left:auto}select{height:36px;border:1px solid var(--line);border-radius:4px;background:white;padding:0 10px}.sort select{height:40px;min-width:120px}.count{margin-bottom:12px;color:var(--muted)}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{padding:16px 18px 0;border:1px solid var(--line);border-radius:5px;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s}.card:hover{border-color:#96bdb4;box-shadow:0 3px 12px #163f3010}.card h2{font-size:18px;line-height:1.5;margin-bottom:7px;font-weight:700;letter-spacing:.1px}.title-button{padding:0;border:0;text-align:left;background:none;font-size:inherit;font-weight:inherit;line-height:inherit}.title-button:hover{background:none;color:var(--green)}.tag{display:inline-block;background:#eaf6f1;color:var(--green);border-radius:3px;padding:2px 10px;font-size:12px;white-space:nowrap}.card .direction{margin-bottom:7px}.summary{color:var(--muted);font-size:13px;line-height:1.8;min-height:47px;margin-bottom:11px}.service-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px;margin-bottom:8px}.label{color:var(--light)}.publisher{font-size:12px;color:var(--muted);margin-bottom:13px}.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding:11px 0;margin-top:auto;font-size:12px}.date{color:var(--light);display:flex;gap:8px;align-items:center}.date svg{width:17px;height:17px;stroke:var(--green)}.card-bottom button{font-size:13px}.arrow{font-size:20px;margin-left:10px;vertical-align:-1px;font-weight:400}.pagination{display:flex;align-items:center;gap:8px;padding-top:28px;margin-top:auto;color:var(--muted);font-size:13px}.pager-right{margin-left:auto;display:flex;align-items:center;gap:8px}.pager-right .total{margin-right:10px}.pagination button{padding:6px 12px}.pagination .current{background:var(--green);color:white;border-color:var(--green)}.empty{grid-column:1/-1;padding:100px 24px;text-align:center;color:var(--muted)}.empty h3{color:var(--ink);font-size:18px;margin:12px}.empty p{font-size:13px}.topic-card{margin:12px 0;width:100%;padding:14px;text-align:left}.topic-card strong{display:block;color:var(--green);margin-bottom:4px}.topic-card span{font-size:12px;color:var(--muted)}footer{background:#00504e;color:white;margin-top:12px}.footer-inner{max-width:1480px;margin:auto;min-height:126px;padding:22px 42px;display:grid;grid-template-columns:1.7fr .65fr .8fr 1fr;align-items:center;gap:40px}.footer-brand{display:flex;gap:16px;align-items:center}.footer-brand h3{font-size:17px;font-weight:600}.footer-brand p{font-size:12px;opacity:.8;margin-top:4px}.footer-brand .logo{width:45px;height:50px;filter:grayscale(1) brightness(0) invert(1)}.footer-links{font-size:12px;display:flex;flex-direction:column;gap:2px}.footer-links button{border:0;color:#d9e9e5;padding:0;text-align:left;background:none;font-size:12px}.footer-links strong{margin-bottom:3px}.motto{border-left:1px solid #8cb0aa;text-align:center;letter-spacing:5px;font-size:16px;font-family:serif;line-height:1.9}.detail{max-width:1424px;min-height:calc(100vh - 214px);margin:16px auto;padding:0 28px}.back{margin-bottom:12px;font-weight:500}.detail-hero{background:white;border:1px solid var(--line);border-radius:8px;padding:26px 28px;display:flex;gap:28px;justify-content:space-between;align-items:center}.detail h1{font-size:25px;margin-bottom:8px}.detail-hero .tag{margin:0 0 12px}.detail-meta{font-size:13px;color:var(--muted);margin-top:14px}.hero-actions{text-align:center;flex-shrink:0}.hero-actions button{padding:10px 40px}.hero-actions p{font-size:12px;color:var(--light);margin-top:9px}.detail-columns{display:grid;grid-template-columns:2.1fr 1fr;gap:16px;margin-top:16px}.detail-body,.info{background:white;border:1px solid var(--line);border-radius:8px;padding:24px 28px}.detail-section{padding-bottom:24px;margin-bottom:22px;border-bottom:1px solid var(--line)}.detail-section:last-child{border:0;margin:0;padding:0}.detail-section h2,.info h2{font-size:16px;margin-bottom:12px;border-left:3px solid var(--green);padding-left:10px}.detail-section p{color:var(--muted);line-height:1.95}.detail-section ol{color:var(--muted);padding-left:21px;line-height:2.1;margin:0}.info{align-self:start}.info-row{padding:15px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;font-size:13px}.info-row:last-child{border:0}.info-row span:first-child{color:var(--light);flex-shrink:0}.info-row span:last-child{text-align:right}.notice{background:var(--pale);color:var(--muted);border-left:3px solid var(--green);border-radius:4px;padding:13px 18px;font-size:12px;line-height:1.9;margin-top:16px}dialog{position:fixed;inset:0;margin:auto;width:520px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:8px;color:var(--ink);box-shadow:0 18px 65px #0b242529}dialog::backdrop{background:#112a3b66;backdrop-filter:blur(2px)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:18px}.close-x{border:0;padding:0 4px;color:var(--light);font-size:24px;line-height:1}.modal-body{padding:12px 24px 20px}.contact-row{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line);font-size:14px}.contact-row span:first-child{color:var(--light)}.copy{background:var(--pale);color:var(--green);border:0;padding:5px 9px;font-size:12px}.modal-note{font-size:12px;color:var(--light);line-height:1.9;margin-top:20px}.modal-foot{padding:16px 24px;background:#fafcfb;border-top:1px solid var(--line);text-align:right}.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#123a36;color:white;padding:10px 22px;border-radius:5px;z-index:20;font-size:13px;box-shadow:0 4px 14px #0002}.demo-caption{font-size:11px;color:var(--light);margin-top:6px} [hidden]{display:none!important}
+@media(min-width:1550px){.card{padding-top:20px}.card-bottom{padding:14px 0}.summary{min-height:52px}.cards{gap:16px}.layout{margin-top:16px;margin-bottom:16px}}@media(max-width:1250px){.header-inner{gap:18px;padding:0 20px}.brand{font-size:16px}.logo{width:30px}nav{gap:16px;font-size:12px}.account button{padding:6px 12px}.layout{padding:0 20px;grid-template-columns:220px 1fr}.card{padding:14px 14px 0}.card h2{font-size:16px}.footer-inner{gap:24px}.summary{min-height:70px}}@media(max-width:960px){header{height:auto}.header-inner{flex-wrap:wrap;padding-top:10px;gap:8px}.brand{flex:1}.account{order:1}nav{order:2;flex-basis:100%;justify-content:flex-start;overflow:auto}nav button{padding:9px 0}.layout{grid-template-columns:195px 1fr;padding:0 14px}.cards{grid-template-columns:1fr}.summary{min-height:0}.footer-inner{grid-template-columns:1.6fr 1fr;padding:24px}.footer-links{display:none}.detail-columns{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}.search{flex-basis:100%}.sort{margin-left:0}.detail{padding:0 14px}.detail h1{font-size:22px}}@media(max-width:620px){.brand{font-size:14px;gap:5px}.account button{font-size:12px}.account button:last-child{display:none}.layout{grid-template-columns:1fr}.filters{padding:12px}.filter-tabs{max-width:220px}.multi{display:none}.filter-section{padding:10px 0}.checks{display:flex;flex-wrap:wrap}.check{font-size:12px;margin:5px 8px}.section-toggle{margin-bottom:6px}.results{padding:12px}.search input{font-size:12px}.search button{min-width:64px;padding:7px 12px}.pagination{flex-wrap:wrap;gap:10px}.pager-right{margin-left:0;width:100%;justify-content:flex-end}.footer-inner{grid-template-columns:1fr}.motto{display:none}.detail-hero{display:block;padding:20px}.hero-actions{text-align:left;margin-top:18px}.detail-body,.info{padding:20px}.contact-row{grid-template-columns:52px 1fr auto;gap:8px;font-size:13px}}
+
+/* Compact demand cards and visible filter selections. */
+.filter-heading{font-size:16px;color:var(--green);padding:0 0 8px;margin:0;font-weight:700}
+.filters{padding:14px 16px}.filter-section{padding:10px 0}.check{margin:6px 10px;font-size:13px}.multi{padding-bottom:8px}
+.toolbar{margin-bottom:10px}.selected-bar{display:flex;align-items:center;gap:10px;padding:7px 0 10px;border-bottom:1px solid var(--line);margin-bottom:9px;min-height:40px;font-size:12px}.selected-label{color:var(--light);white-space:nowrap}.selected-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}.filter-chip{padding:2px 8px;background:var(--pale);color:var(--green);border:1px solid #d7e9e2;font-size:12px;max-width:100%;overflow-wrap:anywhere}.filter-chip span{margin-left:8px;font-size:15px}.clear-filters{padding:2px 0;border:0;color:var(--green);font-size:12px;white-space:nowrap}.unrestricted{color:var(--light)}.count{margin-bottom:9px;font-size:12px}
+.cards{gap:10px;align-content:start}.card{padding:11px 13px 0}.card h2{font-size:15px;line-height:1.45;margin-bottom:5px}.card .direction{margin-bottom:5px}.card .tag{font-size:11px;padding:1px 7px}.summary{font-size:12px;line-height:1.65;min-height:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}.service-row{gap:5px;font-size:11px;margin-bottom:5px}.publisher{font-size:11px;margin-bottom:7px}.card-bottom{padding:7px 0;font-size:11px}.card-bottom button{font-size:12px}.arrow{font-size:17px}.date svg{width:15px;height:15px}.results{padding:12px 14px}.pagination{position:sticky;bottom:0;z-index:2;background:#fff;border-top:1px solid var(--line);padding:10px 0 0;margin-top:14px;font-size:12px}.pagination button{padding:4px 10px}.pagination select{height:30px}.layout{min-height:calc(100vh - 214px)}
+@media(min-width:961px){.layout{height:calc(100dvh - 214px);min-height:580px}.results{min-height:0;overflow:hidden}.cards{overflow:auto;min-height:0;flex:1;padding-right:3px}.filters{overflow:auto}.pagination{flex-shrink:0}.toolbar,.selected-bar,.count{flex-shrink:0}}
+@media(max-width:620px){.selected-bar{gap:6px}.card h2{font-size:15px}.check{font-size:12px}.pagination{padding-bottom:8px}.summary{min-height:0}}
+
+body{min-height:100vh;display:flex;flex-direction:column;background:#f2f8f5}main{flex:1}.topic-layout{width:100%;max-width:1480px;margin:24px auto; padding:0 28px;display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;min-height:545px}.panel{background:white;border:1px solid var(--line);border-radius:6px;padding:18px;min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.panel h2{font-size:20px}.year-wrap{position:relative}.year-toggle{border-radius:24px;border-color:var(--green);color:var(--green);padding:6px 16px;font-size:13px;white-space:nowrap}.year-toggle{display:inline-flex;align-items:center;justify-content:center;gap:10px;line-height:20px}.year-chevron{display:block;width:16px;height:16px;flex:0 0 16px;transition:transform .15s}.year-toggle[aria-expanded="true"] .year-chevron{transform:rotate(180deg)}.year-menu{position:absolute;right:0;top:43px;width:210px;background:white;box-shadow:0 8px 30px #143c3322;border:1px solid var(--line);border-radius:6px;padding:12px;z-index:10}.year-menu .check{margin:10px 6px}.year-menu small{display:block;color:var(--light);font-size:11px;border-top:1px solid var(--line);padding-top:9px}.guide-card{border:1px solid var(--line);border-left:3px solid #bfd8d2;border-radius:5px;padding:17px;margin-bottom:14px}.guide-card{position:relative}.guide-card.selected{border-color:#78aaa0;border-left-color:var(--green);background:#f5faf7;box-shadow:0 0 0 1px #78aaa015}.guide-card:hover{border-color:#78aaa0}.guide-select{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;padding:0;z-index:1}.guide-select:hover{background:transparent}.guide-select:focus-visible{outline-offset:3px}.guide-actions button{position:relative;z-index:2}.guide-state{float:right;color:var(--green);font-size:11px}.guide-card h3,.guide-card p,.guide-card .tag,.guide-card .label,.guide-state{pointer-events:none}.guide-card h3{font-size:17px;margin:10px 0}.guide-card p{font-size:12px;color:var(--muted);margin:6px 0}.guide-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:24px;font-size:12px}.guide-actions button{font-size:12px}.projects{display:flex;flex-direction:column}.top-actions{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted)}.download{color:var(--green);border-color:var(--green);padding:6px 14px;white-space:nowrap}.project-search{display:flex;gap:10px;max-width:640px;margin-bottom:12px}.project-search input{width:100%;min-width:0;border:1px solid #cdd9e1;border-radius:5px;padding:8px 12px}.project-search button{min-width:80px}.type-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.type-tabs button{font-size:12px;padding:5px 18px}.type-tabs .active{color:var(--green);background:#e2f2eb;border-color:#e2f2eb}.scope{font-size:12px;color:var(--light);margin:4px 0 12px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:5px}table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}th{background:#edf6f3;color:var(--ink);text-align:left;font-weight:600}th,td{padding:10px 12px;border-bottom:1px solid var(--line)}td{color:var(--muted)}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#f8fafb}tbody tr:hover{background:#f0f7f4}td .text-btn{font-size:13px;text-decoration:underline;text-underline-offset:3px;text-align:left;white-space:normal;min-width:180px;font-weight:400}.kind{border-radius:4px;padding:2px 12px;font-size:12px;background:#eaf0ef;color:#586b79}.kind.青年{background:#e2f2e9;color:#26726b}.kind.重点{background:#fff0cf;color:#8a6a26}.project-pager{display:flex;align-items:center;justify-content:space-between;padding-top:16px;margin-top:auto;gap:10px;font-size:12px;color:var(--muted)}.pages{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.pages button{padding:4px 10px}.pages .active{background:var(--green);color:white;border-color:var(--green)}.demo-caption{text-align:right;margin-top:8px}.empty{padding:50px 15px}.detail{width:100%;margin:24px auto;min-height:0}.detail-hero{padding:26px 30px}.detail h1{font-size:25px}.detail-columns{grid-template-columns:minmax(0,2.3fr) minmax(280px,1fr)}.detail-section h2{font-size:17px}.detail-section ul{padding-left:20px;color:var(--muted);line-height:2}.attachment{padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:15px;align-items:center;justify-content:space-between}.attachment:last-child{border:0}.attachment small{display:block;color:var(--light);font-size:12px}.attachment button{font-size:12px;flex-shrink:0}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 30px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}.facts span{color:var(--light);font-size:12px;display:block;margin-bottom:4px}.facts strong{font-size:14px;font-weight:500}.side-stack{display:flex;flex-direction:column;gap:16px}.side-stack .info{width:100%;padding:20px}.side-stack p{color:var(--muted);font-size:13px}.detail-body{padding:26px 30px}.back{margin-bottom:15px}.small-note{font-size:12px;color:var(--light);margin-top:10px}footer{margin-top:auto}.footer-inner{min-height:164px}a{color:var(--green)}
+@media(min-width:1500px){.topic-layout{min-height:calc(100vh - 280px)}}@media(max-width:1150px){.topic-layout{grid-template-columns:310px minmax(0,1fr);padding:0 20px;gap:14px}.panel{padding:14px}.guide-card{padding:13px}.guide-actions{flex-wrap:wrap}.panel h2{font-size:18px}.top-actions{gap:8px}.detail-columns{grid-template-columns:minmax(0,1.8fr) 280px}}@media(max-width:800px){.topic-layout{grid-template-columns:1fr;margin:16px auto}.detail-columns{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}.guide-actions{justify-content:flex-start;gap:20px}.panel-head{flex-wrap:wrap}.detail-hero{padding:20px}.hero-actions{margin-top:15px}.detail h1{font-size:22px}.project-pager{flex-wrap:wrap}.detail-body{padding:20px}.detail-hero{display:block}.footer-inner{min-height:130px}}
+</style>
+<!-- ============================================================
+     统一一级导航 · 口径＝门户页 `.site-header` / `.main-nav`（0924，用户指令）
+     由 _tools_原型对齐/patch_portal_nav_unify_0924.py 注入；
+     追加于本页原有 <style> 之后，用于覆盖页面自有的页头规则。
+     · 七项＝首页｜数据中心｜模型中心｜科研开发空间｜课题中心｜需求中心｜关于平台
+     · 页头 80px（≤1279 收敛 64，与门户页断点一致）；项间距 20px、内边距 0 2px；激活＝整项宽 2px 实心下划线
+     · 品牌 22px/600 + 30×30；动作区「登录」文字按钮 + 「合作咨询」主按钮
+     · ≤1099px 收起为移动端菜单（同门户页）
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+</head><body><header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg class="logo" viewBox="0 0 44 50" fill="none" aria-hidden="true"><path d="M12 46C23 36 23 20 35 5" stroke="#00635a" stroke-width="2.5"/><path d="M23 23C23 8 32 3 43 3C39 14 34 21 23 23" fill="#69a821"/><path d="M20 33C8 32 4 23 5 16C16 17 21 23 20 33" fill="#005653"/><path d="M21 35C26 26 33 24 41 25C35 35 29 38 21 35" fill="#08746d"/><path d="M16 39C7 36 4 40 3 47C11 47 16 45 16 39" fill="#63942d"/></svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="数据中心-数据集列表页.html">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a class="active" id="topicNav" href="课题中心-高保真原型.html" aria-current="page">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="account autharea" id="authArea">
+        <button type="button" class="login-link" data-bdh-login>登录</button>
+        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a href="数据中心-数据集列表页.html">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a class="active" href="课题中心-高保真原型.html" aria-current="page">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header><main id="listView" class="topic-layout"><section class="panel"><div class="panel-head"><h2>开放课题</h2><div class="year-wrap"><button class="year-toggle" id="yearToggle" aria-expanded="false" aria-controls="yearMenu" aria-label="课题年度多选"><span id="yearLabel">全部年度</span><svg class="year-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div id="yearMenu" class="year-menu" hidden><label class="check"><input type="checkbox" id="allYears" checked>全部年度</label><label class="check"><input type="checkbox" class="year" value="2026" checked>2026 年度</label><label class="check"><input type="checkbox" class="year" value="2024" checked>2024 年度</label><small>支持多选，筛选开放课题指南</small></div></div></div><div id="guides"></div></section><section class="panel projects"><div class="panel-head"><h2>立项课题</h2><div class="top-actions"><button class="download" id="export">↓ 下载课题清单</button><span id="count"></span></div></div><form class="project-search" id="searchForm"><input id="query" aria-label="搜索课题" placeholder="搜索课题名称、编号、申请人或单位" type="search"><button class="primary">搜索</button></form><div class="type-tabs" id="types"></div><p class="scope" id="scope"></p><div class="table-wrap"><table><thead><tr><th>课题编号</th><th>课题名称</th><th>申请人</th><th>所属单位</th><th>项目类型</th><th>资助金额</th></tr></thead><tbody id="rows"></tbody></table></div><div class="project-pager"><span id="pageInfo"></span><div id="pages" class="pages"></div></div><p class="demo-caption">课题信息及下载内容为原型示例。</p></section></main><main id="detailView" class="detail" hidden></main><div id="toast" class="toast" role="status" hidden></div><footer><div class="footer-inner"><div class="footer-brand"><svg class="logo" viewBox="0 0 44 50" fill="white" aria-hidden="true"><path d="M23 23C23 8 32 3 43 3C39 14 34 21 23 23M20 33C8 32 4 23 5 16C16 17 21 23 20 33M21 35C26 26 33 24 41 25C35 35 29 38 21 35M16 39C7 36 4 40 3 47C11 47 16 45 16 39"/><path d="M12 46C23 36 23 20 35 5" stroke="white" stroke-width="2"/></svg><div><h3>北大荒智慧农业协同创新平台</h3><p>面向农业研究与生产的开放协同平台</p></div></div><div class="footer-links"><strong>平台资源</strong><button onclick="location.href='数据中心-数据集列表页.html'">数据中心</button><button onclick="location.href='模型中心-模型列表页（调整）.html'">模型中心</button><button onclick="location.href='课题中心-高保真原型.html'">课题中心</button></div><div class="footer-links"><strong>关于平台</strong><button onclick="location.href='关于平台-平台介绍.html'">平台介绍</button><button onclick="location.href='关于平台-开发者接入.html'">开发者区</button><button onclick="location.href='关于平台-使用帮助.html'">使用帮助</button><button onclick="location.href='关于平台-联系支持.html'">联系我们</button></div><div class="motto">耕耘数据沃土<br>共建智慧农业</div></div></footer><script>
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const seed=[['水稻长势多源遥感反演方法研究','张明','南京信息工程大学','面上'],['农田土壤水分智能感知方法研究','李华','中国农业大学','青年'],['农机自主作业决策与控制研究','王强','东北农业大学','重点'],['作物生长机理与产量预测研究','刘洋','南京农业大学','面上'],['农业机器人精准执行技术研究','陈晨','江苏大学','面上'],['农田多源信息融合感知研究','赵宁','东北农业大学','青年'],['智慧农业集成应用技术研究','周敏','中国农业科学院','重点'],['作物病害图像识别方法研究','孙悦','浙江大学','青年'],['农田旱涝监测与风险识别研究','吴昊','武汉大学','面上'],['农业生产数据质量评价研究','郑琳','东北农业大学','面上'],['耕地地力遥感评价方法研究','林青','中国农业大学','青年'],['农机作业路径协同优化研究','许峰','江苏大学','重点']];
+const data=seed.map((r,i)=>({title:r[0],person:r[1],org:r[2],type:r[3],year:i<7?'2026':'2024',guideId:i<7?'guide-2026':'guide-2024',id:`OF${i<7?'2026':'2024'}-${String(i<7?i+1:i-6).padStart(2,'0')}`,amount:r[3]==='青年'?'5 万':r[3]==='重点'?'50 万':'20 万'}));
+const guideData={2026:{id:'guide-2026',deadline:'2026-05-08',published:'2026-03-16',notice:'2026-06-26'},2024:{id:'guide-2024',deadline:'2024-12-25',published:'2024-11-08',notice:'2025-01-24'}};
+let activeGuideId='guide-2026';
+let years=['2026','2024'],type='全部类型',query='',page=1;const size=7;
+function filtered(){return data.filter(x=>x.guideId===activeGuideId&&(type==='全部类型'||x.type===type)&&[x.title,x.id,x.person,x.org].join(' ').toLowerCase().includes(query.toLowerCase()))}
+function render(){const visible=years.slice().sort().reverse();if(!visible.some(y=>guideData[y].id===activeGuideId)){activeGuideId=visible.length?guideData[visible[0]].id:null;page=1}const activeYear=visible.find(y=>guideData[y].id===activeGuideId);const rows=filtered(),n=Math.max(1,Math.ceil(rows.length/size));page=Math.min(page,n);$('guides').innerHTML=years.slice().sort().reverse().map(y=>{const g=guideData[y];return `<article class="guide-card ${g.id===activeGuideId?'selected':''}"><button class="guide-select" data-select-guide="${g.id}" aria-pressed="${g.id===activeGuideId}" aria-label="查看${y}年度指南关联课题"></button><span class="tag">${y} 年度</span><span class="guide-state">${g.id===activeGuideId?'已选中':''}</span><h3>${y} 年度开放课题指南</h3><p>受理截止 ${g.deadline}　公示 ${g.notice}</p><p>资助档位：青年≤5万 / 面上≤20万 / 重点≤50万</p><div class="guide-actions"><span class="label">关联 ${data.filter(x=>x.guideId===g.id).length} 项课题</span><button class="text-btn" data-guide="${y}">查看指南 →</button><button class="text-btn" data-download-guide="${y}">↓ 下载指南</button></div></article>`}).join('')||'<div class="empty"><h3>未选择课题年度</h3><p>请在年度下拉框中勾选年度。</p></div>';
+$('yearLabel').textContent=years.length===2?'全部年度':years.length===1?years[0]+' 年度':'未选年度';$('allYears').checked=years.length===2;$('allYears').indeterminate=years.length===1;document.querySelectorAll('.year').forEach(c=>c.checked=years.includes(c.value));$('types').innerHTML=['全部类型','青年','面上','重点'].map(t=>`<button data-type="${t}" class="${t===type?'active':''}" aria-pressed="${t===type}">${t}</button>`).join('');$('count').textContent=`共 ${rows.length} 项`;$('scope').textContent=activeYear?`当前指南：${activeYear} 年度开放课题指南 · 下载当前筛选的 ${rows.length} 项课题（含全部分页）`:'请先在左侧选择指南';$('export').disabled=!rows.length;
+$('rows').innerHTML=rows.slice((page-1)*size,page*size).map(x=>`<tr><td>${x.id}</td><td><button class="text-btn" data-project="${x.id}">${x.title}</button></td><td>${x.person}</td><td>${x.org}</td><td><span class="kind ${x.type}">${x.type}</span></td><td>${x.amount}</td></tr>`).join('')||'<tr><td colspan="6"><div class="empty"><h3>暂无符合条件的课题</h3><p>请调整年度、类型或搜索关键词。</p></div></td></tr>';$('pageInfo').textContent=`共 ${rows.length} 项 · 每页 ${size} 项`;$('pages').innerHTML=`<button data-page="${page-1}" ${page===1?'disabled':''}>上一页</button>`+Array.from({length:n},(_,i)=>`<button data-page="${i+1}" class="${page===i+1?'active':''}" ${page===i+1?'aria-current="page"':''}>${i+1}</button>`).join('')+`<button data-page="${page+1}" ${page===n?'disabled':''}>下一页</button>`}
+function section(title,body){return `<section class="detail-section"><h2>${title}</h2>${body}</section>`}
+function att(title,action){return `<div class="attachment"><div>${title}<small>示例文本文件 · TXT</small></div><button class="download" ${action}>↓ 下载</button></div>`}
+function fact(k,v){return `<div><span>${k}</span><strong>${v}</strong></div>`}
+function showGuide(y){const g=guideData[y];$('detailView').innerHTML=`<button class="text-btn back" data-home>‹ 返回课题中心</button><section class="detail-hero"><div><span class="tag">${y} 年度 · 开放课题指南</span><h1>${y} 年度开放课题申报指南</h1><p class="detail-meta">发布单位：智慧农业实验室（示例）　 ·　发布日期：${g.published}</p></div><div class="hero-actions"><button class="primary" data-download-guide="${y}">↓ 下载指南</button><p>指南及附件为示例资料</p></div></section><div class="detail-columns"><article class="detail-body">${section('指南概述','<p>围绕智慧农业生产中的关键问题，面向高校、科研院所及相关研究团队征集开放课题，开展基础方法与应用技术研究，促进多源数据、农业模型与智能装备的协同创新。</p>')}${section('研究方向','<ol><li>农业多源感知与数据融合：研究遥感、田间观测及农机数据的协同利用。</li><li>作物生长与产量预测：研究长势反演、机理建模和区域估产方法。</li><li>农业智能装备与自主作业：研究精准执行、路径规划与作业控制。</li><li>智慧农业集成应用：研究农业监测、风险识别与辅助决策技术。</li></ol>')}${section('资助类别与额度','<table><thead><tr><th>项目类型</th><th>资助上限（示例）</th><th>研究定位</th></tr></thead><tbody><tr><td>青年</td><td>5 万元</td><td>探索性方法研究</td></tr><tr><td>面上</td><td>20 万元</td><td>关键技术研究</td></tr><tr><td>重点</td><td>50 万元</td><td>重点方向协同攻关</td></tr></tbody></table>')}${section('申请条件','<p>申请团队应具备与研究方向相适应的研究基础、人员及实施条件；申请内容应目标明确、路线可行，并说明已有成果与预期贡献。具体资格要求以正式指南为准。</p>')}${section('申请材料','<ol><li>开放课题申请书：研究背景、目标、内容、技术路线及工作计划。</li><li>团队与研究基础说明：相关成果、人员分工及研究条件。</li><li>经费预算与依托单位意见。</li></ol>')}${section('受理时间与线下提交',`<p>受理截止：<strong>${g.deadline}</strong>。申请材料由依托单位审核后，按正式指南规定的渠道提交。此原型不提供在线申报。</p><p>示例收件邮箱：research@example.com；纸质材料寄送地址及份数以正式指南为准。</p>`) }${section('指南与附件',att(`${y} 年度开放课题指南（示例）`,`data-download-guide="${y}"`)+att('开放课题申请书模板（示例）',`data-template="${y}"`))}</article><aside class="side-stack"><section class="info"><h2>指南信息</h2>${[['所属年度',y+' 年度'],['发布日期',g.published],['受理截止',g.deadline],['研究方向','4 个'],['申请方式','线下提交']].map(([k,v])=>`<div class="info-row"><span>${k}</span><span>${v}</span></div>`).join('')}</section><section class="info"><h2>咨询联系方式</h2><p>课题事务咨询（示例）<br>research@example.com</p><button class="text-btn" onclick="portalConsult('课题咨询')">填写课题咨询 →</button></section><div class="notice">本页为原型示例，资助条件与提交要求均需以正式发布文件为准。</div></aside></div>`}
+function showProject(x){$('detailView').innerHTML=`<button class="text-btn back" data-home>‹ 返回立项课题列表</button><section class="detail-hero"><div style="width:100%"><span class="tag">${x.year} 年度</span> <span class="kind ${x.type}">${x.type}</span><h1>${x.title}</h1><div class="facts">${fact('课题编号',x.id)+fact('申请人',x.person)+fact('所属单位',x.org)+fact('项目类型',x.type)+fact('资助金额',x.amount+'元')+fact('公示日期',guideData[x.year].notice)}</div></div></section><div class="detail-columns"><article class="detail-body">${section('研究简介',`<p>本课题围绕“${x.title}”开展研究，结合农业生产实际需求，探索适宜的数据处理、方法构建与验证方案，为相关农业监测和技术应用提供研究支撑。</p><p class="small-note">研究内容为展示结构而编写的示例，不代表该团队的实际研究方案。</p>`) }${section('研究目标','<ol><li>明确研究对象、应用条件与核心技术问题。</li><li>形成可验证的方法体系，开展对照分析与适用性评价。</li><li>整理研究过程及成果，为后续复用提供说明。</li></ol>')}${section('主要研究内容','<ol><li>基础资料梳理与数据质量分析，建立研究样本和验证依据。</li><li>方法设计与关键技术研究，记录实验配置及处理流程。</li><li>开展验证与对比，分析误差来源和适用边界。</li><li>汇总研究成果，形成研究报告和必要的技术说明。</li></ol>')}${section('执行期限','<p>示例执行期：立项后24个月。前6个月完成资料整理与方案设计，第7—18个月开展实验与验证，第19—24个月整理成果并办理结题；具体起止日期以任务书为准。</p>')}</article><aside class="side-stack"><section class="info"><h2>对应指南</h2><p>${x.year} 年度开放课题指南</p><div style="display:flex;gap:20px;margin-top:18px"><button class="text-btn" data-guide="${x.year}">查看指南 →</button><button class="text-btn" data-download-guide="${x.year}">↓ 下载指南</button></div></section><section class="info"><h2>公示说明</h2><p>${x.year} 年度开放课题立项公示</p><p class="small-note">查看本年度公示课题的编号、负责人、依托单位与资助类别；下载内容为原型示例。</p><button class="download" style="margin-top:14px" data-notice="${x.year}">↓ 下载公示说明</button></section></aside></div>`}
+function route(){const g=location.hash.match(/^#guide-(2026|2024)$/),p=location.hash.match(/^#project-(.+)$/),x=p&&data.find(x=>x.id===p[1]);$('listView').hidden=!!(g||x);$('detailView').hidden=!(g||x);if(g)showGuide(g[1]);else if(x)showProject(x);document.title=(g?g[1]+' 年度开放课题指南':x?x.title:'课题中心')+' · 北大荒智慧农业协同创新平台';scrollTo(0,0)}
+function save(name,text,mime='text/plain;charset=utf-8'){const u=URL.createObjectURL(new Blob(['\ufeff'+text],{type:mime})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function guideText(y){return `${y} 年度开放课题指南（原型示例）\n\n本文件为示例资料，不是正式申报指南。\n发布单位：智慧农业实验室（示例）\n发布日期：${guideData[y].published}\n受理截止：${guideData[y].deadline}\n\n研究方向\n1.农业多源感知与数据融合\n2.作物生长与产量预测\n3.农业智能装备与自主作业\n4.智慧农业集成应用\n\n资助上限（示例）：青年5万元、面上20万元、重点50万元。\n申请材料：申请书、团队与研究基础说明、经费预算、依托单位意见。\n通过正式指南指定的线下渠道提交。\n示例咨询邮箱：research@example.com\n具体资格、资助及提交要求以正式文件为准。`}
+let timer;function toast(t){$('toast').textContent=t;$('toast').hidden=false;clearTimeout(timer);timer=setTimeout(()=>$('toast').hidden=true,2600)}
+$('yearToggle').onclick=()=>{const show=$('yearMenu').hidden;$('yearMenu').hidden=!show;$('yearToggle').setAttribute('aria-expanded',String(show))};$('allYears').onchange=e=>{years=e.target.checked?['2026','2024']:[];page=1;render()};document.querySelectorAll('.year').forEach(c=>c.onchange=()=>{years=[...document.querySelectorAll('.year:checked')].map(x=>x.value);page=1;render()});$('searchForm').onsubmit=e=>{e.preventDefault();query=$('query').value.trim();page=1;render()};$('query').oninput=()=>{if(!$('query').value){query='';page=1;render()}};$('export').onclick=()=>{const cells=v=>'"'+String(v).replace(/"/g,'""')+'"';const rows=[['课题编号','课题名称','申请人','所属单位','项目类型','资助金额','所属年度'],...filtered().map(x=>[x.id,x.title,x.person,x.org,x.type,x.amount+'元',x.year])];save(`${activeGuideId}-立项课题清单-当前筛选-示例.csv`,rows.map(r=>r.map(cells).join(',')).join('\r\n'),'text/csv;charset=utf-8');toast(`已下载全部 ${filtered().length} 项筛选结果（示例）`)};
+document.addEventListener('click',e=>{if(!e.target.closest('.year-wrap')){$('yearMenu').hidden=true;$('yearToggle').setAttribute('aria-expanded','false')}const b=e.target.closest('button');if(!b)return;const d=b.dataset;if(d.selectGuide){activeGuideId=d.selectGuide;page=1;render()}if(d.guide)location.hash='guide-'+d.guide;if(d.project)location.hash='project-'+d.project;if('home'in d||b.id==='topicNav')location.hash='';if(d.type){type=d.type;page=1;render()}if(d.page){page=+d.page;render()}if(d.downloadGuide)save(`${d.downloadGuide}年度开放课题指南-示例.txt`,guideText(d.downloadGuide));if(d.template)save(`${d.template}年度开放课题申请书模板-示例.txt`,'开放课题申请书模板（原型示例）\n课题名称：\n项目类型：\n申请人：\n依托单位：\n一、研究背景\n二、研究目标\n三、研究内容及技术路线\n四、工作计划\n五、研究基础与人员分工\n六、经费预算\n七、依托单位意见\n\n请以正式发布模板为准。');if(d.notice)save(`${d.notice}年度立项公示说明-示例.txt`,'立项公示说明（原型示例）\n正式公示原文未提供。以下为原型演示课题清单，不能作为正式公示依据。\n\n'+data.filter(x=>x.year===d.notice).map(x=>`${x.id} ${x.title} | ${x.person} | ${x.org} | ${x.type} | ${x.amount}元`).join('\n'));if(b.id==='login')window.bdhSignIn&&window.bdhSignIn()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('yearMenu').hidden=true;$('yearToggle').setAttribute('aria-expanded','false')}});addEventListener('hashchange',route);render();route();
+
+</script><style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body></html>

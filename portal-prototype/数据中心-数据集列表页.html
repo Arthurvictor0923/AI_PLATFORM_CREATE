@@ -1,0 +1,1555 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="lU8xBd4L4OfIQt9z4PJo4j">
+<head data-page-node-id="VCAaWE4pNADzCvOJZHkmdO">
+<meta charset="UTF-8" data-page-node-id="Gsy9zWUnqZ1G0bTsbmXKSn">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="UY9CHEWf0wrhcQRRIxWM1U">
+<title>数据中心 — 北大荒智慧农业协同创新平台</title>
+<!--
+数据中心 · v16.1（2026-09-15 · 落地《数据中心三类页面前端样式规范》V1.0）
+本次只改「数据列表页」的样式与版式，业务逻辑（筛选/专题、搜索、排序、分页、申请使用、登录态）全部保留：
+  · 公共导航 + 左筛选与右搜索结果 + 公共页脚；无「首页 / 数据中心」面包屑、无页面标题说明区；
+  · 视觉变量统一为深墨青绿体系（--brand #005653 / --page-bg #f4f8f5 / --border #dce5e9 / --footer-bg #00504e）；
+  · 左栏 272px（窄桌面 240px，≤1199px 收为抽屉），右栏 minmax(0,1fr)，间距 16px；
+  · 图标全部换成同一套线性 SVG（原 emoji 图标已清除，规范禁止 emoji 与彩色剪贴图）；
+  · 页脚按规范四区 38% / 15% / 19% / 28%，禁止版权区、备案、邮箱、二维码。
+  · v16.1：卡片内一句话简介按要求去掉（DS.desc 字段保留备用）。
+-->
+<style>
+:root{
+  /* —— 设计变量（规范 §基础视觉变量）—— */
+  --brand:#005653; --brand-hover:#004542;
+  --brand-soft:#edf6f2; --page-bg:#f4f8f5;
+  --surface:#fff; --text:#10213a;
+  --text-secondary:#526078; --text-muted:#6b778c;
+  --border:#dce5e9; --footer-bg:#00504e;
+  --error:#b42318; --disabled-bg:#f1f3f5;
+  --radius-sm:4px; --radius-md:8px;
+  --control-height:36px; --header-height:64px;
+  --content-max:1800px; --layout-gap:16px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --shadow:0 2px 8px rgba(16,33,58,.06);
+  --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-serif:"Source Han Serif SC","Noto Serif SC","STSong","SimSun",serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-ui);font-size:14px;line-height:22px;color:var(--text);
+  background:var(--page-bg);-webkit-font-smoothing:antialiased;
+  min-height:100dvh;display:flex;flex-direction:column;
+}
+a{color:var(--brand);text-decoration:none;}
+a:hover{color:var(--brand-hover);}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+input,select{font:inherit;color:inherit;}
+.ico{width:16px;height:16px;flex-shrink:0;display:block;}
+.container{width:100%;max-width:var(--content-max);margin:0 auto;padding-inline:clamp(24px,3.65vw,56px);}
+.app-main{flex:1;min-width:0;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+
+/* ==================== 公共导航 ==================== */
+.site-header{position:sticky;top:0;z-index:100;height:var(--header-height);background:var(--surface);border-bottom:1px solid var(--border);}
+.header-inner{display:flex;align-items:center;gap:var(--s5);height:var(--header-height);}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.brand span{font-size:22px;line-height:30px;font-weight:600;color:var(--text);white-space:nowrap;}
+.main-nav{display:flex;align-items:center;height:var(--header-height);margin-left:var(--s4);flex:1;min-width:0;overflow:hidden;}
+.main-nav a,.main-nav button{
+  position:relative;display:inline-flex;align-items:center;height:var(--header-height);
+  padding:0 16px;font-size:14px;line-height:22px;color:var(--text-secondary);
+  white-space:nowrap;background:none;border:0;cursor:pointer;transition:color .2s;
+}
+.main-nav a:hover,.main-nav button:hover{color:var(--brand);}
+.main-nav .active{color:var(--brand);font-weight:600;}
+.main-nav .active::after{content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:3px;border-radius:2px 2px 0 0;background:var(--brand);}
+.header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.btn-login{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 16px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--text);white-space:nowrap;transition:all .2s;}
+.btn-login:hover{color:var(--brand);border-color:var(--brand);}
+.btn-brand{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 16px;font-size:14px;font-weight:500;border-radius:var(--radius-sm);background:var(--brand);color:#fff;white-space:nowrap;transition:background .2s;}
+.btn-brand:hover{background:var(--brand-hover);color:#fff;}
+/* 登录态 */
+.u-box{display:flex;align-items:center;gap:8px;position:relative;}
+.u-avatar{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+.u-name{font-size:14px;color:var(--text);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.u-name .u-chev{width:13px;height:13px;color:var(--text-muted);}
+.u-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:176px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);padding:var(--s1);z-index:200;}
+.u-menu.open{display:block;}
+.u-mi{display:block;padding:8px 12px;font-size:14px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;}
+.u-mi:hover{background:var(--brand-soft);color:var(--brand);}
+.u-mi.out{color:var(--error);}
+.u-mi.out:hover{background:#fdf6f4;color:var(--error);}
+
+/* ==================== 主体骨架 ==================== */
+.market-layout{
+  display:grid;grid-template-columns:272px minmax(0,1fr);gap:var(--layout-gap);
+  align-items:start;padding:16px 0 var(--s6);
+}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);}
+
+/* ==================== 左栏：筛选 / 专题 ==================== */
+.filter-side{
+  position:sticky;top:calc(var(--header-height) + 16px);
+  max-height:calc(100dvh - var(--header-height) - 16px);overflow-y:auto;
+}
+.filter-inner{padding:var(--s4) var(--s4) var(--s5);}
+.ltabs{display:flex;align-items:center;gap:12px;margin-bottom:var(--s4);}
+.lt-seg{flex:1;display:flex;height:34px;border-radius:var(--radius-sm);overflow:hidden;background:var(--disabled-bg);}
+.ltab{flex:1;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-secondary);cursor:pointer;border:0;background:transparent;transition:all .15s;}
+.ltab:hover{color:var(--brand);}
+.ltab.on{background:var(--brand);color:#fff;font-weight:600;}
+/* ⭐0917 已移除 .lt-clear 规则（左栏"清空"按钮删除，见 HTML 注释） */
+
+.fgroup{padding-bottom:var(--s3);border-bottom:1px solid var(--border);margin-bottom:var(--s3);}
+.fgroup:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0;}
+.fgroup-title{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;background:none;border:0;padding:2px 0;}
+.fgroup-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--brand);flex-shrink:0;}
+.fgroup-title .chev{margin-left:auto;width:14px;height:14px;color:var(--text-muted);transition:transform .2s;}
+.fgroup.collapsed .chev{transform:rotate(-90deg);}
+.fgroup.collapsed .fgroup-body{display:none;}
+.fgroup-body{padding-top:2px;}
+
+.fitem{display:flex;align-items:center;gap:10px;width:100%;min-height:32px;padding:4px 4px 4px 16px;border-radius:var(--radius-sm);font-size:14px;line-height:22px;color:var(--text-secondary);cursor:pointer;text-align:left;background:none;border:0;transition:background .12s,color .12s;}
+.fitem:hover{background:var(--brand-soft);color:var(--brand);}
+.fitem .cbx{position:relative;width:16px;height:16px;flex-shrink:0;border:1px solid #c4d0d5;border-radius:3px;background:#fff;transition:all .12s;}
+.fitem.on{color:var(--brand);font-weight:600;}
+.fitem.on .cbx{background:var(--brand);border-color:var(--brand);}
+.fitem.on .cbx::after{content:'';position:absolute;left:5px;top:2px;width:4px;height:8px;border:2px solid #fff;border-top:0;border-left:0;transform:rotate(45deg);}
+.fitem .cnt{margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:400;}
+.fitem.on .cnt{color:var(--brand);}
+.fitem.more-hide{display:none;}
+.more-btn{display:flex;align-items:center;gap:6px;margin-left:16px;min-height:32px;font-size:14px;color:var(--text);background:none;border:0;padding:0;}
+.more-btn:hover{color:var(--brand);}
+.more-btn .chev{width:14px;height:14px;transition:transform .2s;}
+.more-btn.expanded .chev{transform:rotate(180deg);}
+.fsel{position:relative;margin:2px 0 0 16px;}
+.fsel select{width:100%;height:var(--control-height);padding:0 34px 0 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text);appearance:none;cursor:pointer;}
+.fsel select:focus{outline:none;border-color:var(--brand);}
+.fsel::after{content:'';position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:1.6px solid var(--text-muted);border-bottom:1.6px solid var(--text-muted);transform:translateY(-70%) rotate(45deg);pointer-events:none;}
+
+/* 专题 Tab */
+.zone-list{padding-top:2px;}
+.zitem{display:flex;align-items:center;gap:10px;width:100%;padding:10px;margin:2px 0;border-radius:var(--radius-sm);cursor:pointer;text-align:left;background:none;border:1px solid transparent;transition:all .12s;}
+.zitem:hover{background:var(--brand-soft);}
+.zitem.on{background:var(--brand-soft);border-color:var(--brand);}
+.zitem .zi{width:32px;height:32px;border-radius:var(--radius-sm);background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.zitem .zi svg{width:20px;height:20px;}
+.zitem.on .zi{background:var(--brand);color:#fff;}
+.zitem .zn{flex:1;font-size:14px;font-weight:600;color:var(--text);}
+.zitem.on .zn{color:var(--brand);}
+.zitem .zc{font-size:12px;color:var(--text-muted);}
+.zone-ft{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--border);font-size:12px;line-height:18px;color:var(--text-muted);}
+
+/* ==================== 右栏：搜索结果 ==================== */
+.result-panel{padding:var(--s4);}
+.tool-row{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;}
+.drawer-toggle{display:none;align-items:center;gap:6px;height:var(--control-height);padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text-secondary);}
+.search-wrap{position:relative;flex:1 1 240px;min-width:180px;max-width:580px;}
+.search-wrap .s-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-muted);pointer-events:none;}
+.search-wrap .kw{width:100%;height:var(--control-height);padding:0 12px 0 36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text);}
+.search-wrap .kw::placeholder{color:var(--text-muted);}
+.search-wrap .kw:focus{outline:none;border-color:var(--brand);}
+.btn-search{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 22px;font-size:14px;font-weight:500;border-radius:var(--radius-sm);background:var(--brand);color:#fff;flex-shrink:0;}
+.btn-search:hover{background:var(--brand-hover);}
+.tool-right{margin-left:auto;display:flex;align-items:center;gap:var(--s2);flex-shrink:0;}
+.seg-switch{display:inline-flex;align-items:stretch;height:var(--control-height);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:#fff;}
+.seg-switch .vs{display:inline-flex;align-items:center;gap:6px;padding:0 14px;font-size:14px;color:var(--text-secondary);background:#fff;border:0;transition:all .15s;}
+.seg-switch .vs+.vs{border-left:1px solid var(--border);}
+.seg-switch .vs:hover{color:var(--brand);}
+.seg-switch .vs.on{background:var(--brand);color:#fff;font-weight:500;}
+.seg-switch .vs .ico{width:15px;height:15px;}
+.sort-wrap{position:relative;}
+.sortbtn{display:inline-flex;align-items:center;gap:8px;height:var(--control-height);padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text-secondary);}
+.sortbtn:hover{color:var(--brand);border-color:var(--brand);}
+.sortbtn .chev{width:14px;height:14px;transition:transform .2s;}
+.sortbtn.open .chev{transform:rotate(180deg);}
+.sortmenu{display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:176px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);padding:var(--s1);z-index:200;}
+.sortmenu.open{display:block;}
+.sm-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;font-size:14px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer;}
+.sm-item:hover{background:var(--brand-soft);color:var(--brand);}
+.sm-item.on{color:var(--brand);font-weight:600;}
+.sm-item .ck{opacity:0;display:inline-flex;align-items:center;}
+.sm-item .ck svg{width:14px;height:14px;}
+.sm-item.on .ck{opacity:1;}
+.sm-sep{height:1px;background:var(--border);margin:var(--s1) 0;}
+.sm-dir{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;font-size:14px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer;}
+.sm-dir:hover{background:var(--brand-soft);color:var(--brand);}
+.sm-dir .dv{color:var(--text);font-weight:500;}
+
+/* 已选条件条 */
+.contextbar{display:none;align-items:center;gap:var(--s2);flex-wrap:wrap;padding-top:var(--s3);}
+.contextbar.show{display:flex;}
+.contextbar .cb-label{font-size:12px;line-height:18px;color:var(--text-muted);white-space:nowrap;}
+.contextbar .ctx-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;font-size:12px;line-height:18px;color:var(--brand);background:var(--brand-soft);border:1px solid #cfe3dc;border-radius:var(--radius-sm);white-space:nowrap;}
+.contextbar .ctx-chip .x{display:inline-flex;align-items:center;cursor:pointer;opacity:.6;padding:0 1px;}
+.contextbar .ctx-chip .x svg{width:11px;height:11px;}
+.contextbar .ctx-chip .x:hover{opacity:1;}
+.contextbar .ctx-all{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;font-size:12px;color:var(--brand);background:none;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;}
+.contextbar .ctx-all:hover{border-color:var(--brand);background:var(--brand-soft);}
+/* ⭐0917 「清空」带垃圾桶图标（对齐 0916 参考示意图）；图标 14px 线性、随文字色 */
+.contextbar .ctx-all svg{width:14px;height:14px;flex:0 0 14px;}
+
+.count-line{margin:var(--s3) 0;font-size:14px;color:var(--text);}
+.count-line b{font-weight:600;color:var(--brand);}
+
+  /* 卡片视图（⭐0916 v17.0：按用户新参考示意图，改为「缩略图 / 纯信息图标 + 标题 / 简介 / 元数据行 / 底部操作行」四段式） */
+.view-grid{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--layout-gap);}
+.view-grid.active{display:grid;}
+.ds-card{display:flex;flex-direction:column;min-height:196px;padding:var(--s4);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:border-color .2s,box-shadow .2s;}
+.ds-card:hover{border-color:#c2d2d2;box-shadow:var(--shadow);}
+.ds-top{display:flex;gap:14px;align-items:flex-start;}
+/* 缩略图：与右侧内容同高、统一 16:9，object-fit:cover 裁切 */
+.ds-thumb{position:relative;flex:0 0 168px;width:168px;height:112px;border-radius:var(--radius-md);overflow:hidden;background:var(--brand-soft);border:1px solid var(--border);}
+.ds-thumb img,.ds-thumb svg.tt{width:100%;height:100%;object-fit:cover;display:block;}
+/* 降级态（无影像素材时）：浅绿底 + 居中线性图标 */
+.ds-thumb.thumb-tinted{display:flex;align-items:center;justify-content:center;}
+.ds-thumb.thumb-tinted .ico-fallback{width:32px;height:32px;color:var(--brand);opacity:.32;}
+/* 缩略图内嵌示意表（数据形态＝地面实测 / 业务申报数据 / 结构化表） */
+.ds-thumb.tt-tab{background:var(--surface);padding:6px;}
+.ds-thumb.tt-tab table{width:100%;border-collapse:collapse;font-size:8px;line-height:13px;table-layout:fixed;}
+.ds-thumb.tt-tab th,.ds-thumb.tt-tab td{border:1px solid #e3eced;padding:1px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ds-thumb.tt-tab th{background:var(--brand-soft);color:var(--text-secondary);font-weight:400;text-align:left;}
+.ds-thumb.tt-tab td{color:var(--text-muted);}
+.ds-thumb.tt-tab td.em{color:var(--text);}
+/* 缩略图图例（数据形态＝遥感反演产品） */
+.ds-thumb .tt-leg{display:flex;gap:8px;width:100%;height:100%;padding:10px;background:#f1f6ee;}
+.ds-thumb .tt-leg-bar{display:flex;flex-direction:column;flex:0 0 22px;border-radius:3px;overflow:hidden;}
+.ds-thumb .tt-leg-bar i{flex:1;}
+.ds-thumb .tt-leg-lab{display:flex;flex-direction:column;justify-content:space-between;font-size:9px;line-height:12px;color:var(--text-secondary);}
+/* 无缩略图素材时退回纯信息图标（56×56） */
+.ds-ic{width:56px;height:56px;border-radius:var(--radius-md);background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ds-ic svg{width:28px;height:28px;}
+.ds-hd{flex:1;min-width:0;}
+.ds-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:16px;line-height:24px;font-weight:600;color:var(--text);}
+.ds-card:hover .ds-name{color:var(--brand);}
+/* v17.0：恢复卡片一句话简介（规范 §两列数据卡片「简介」行；0915 曾去除，按新示意图恢复） */
+.ds-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:14px;line-height:22px;color:var(--text-secondary);}
+.ds-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.tag{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:var(--radius-sm);background:var(--brand-soft);color:#0f4a45;font-size:12px;line-height:18px;white-space:nowrap;}
+/* 元数据行：区域 · 覆盖时间（按数据形态给对应取值，不虚构精度） */
+.ds-fields{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;margin-top:8px;font-size:14px;line-height:22px;color:var(--text-secondary);}
+.ds-fields .ff{display:inline-flex;align-items:center;gap:6px;min-width:0;}
+.ds-fields .ff .k{color:var(--text-muted);white-space:nowrap;}
+.ds-fields .ff .vv{color:var(--text);overflow-wrap:anywhere;}
+.ds-meta{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);}
+.ds-meta .mi{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;min-width:0;}
+.m-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:18px;color:var(--text-muted);white-space:nowrap;}
+.m-item .ico{width:15px;height:15px;color:var(--text-muted);}
+.m-item b{font-weight:500;color:var(--text-secondary);}
+.ds-acts{margin-left:auto;display:flex;align-items:center;gap:var(--s4);flex-shrink:0;}
+.text-link{display:inline-flex;align-items:center;gap:2px;font-size:14px;color:var(--brand);background:none;border:0;padding:0;white-space:nowrap;}
+.text-link .ico{width:14px;height:14px;}
+.text-link:hover{text-decoration:underline;}
+.apply-btn{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 16px;font-size:14px;font-weight:500;border-radius:var(--radius-sm);background:var(--brand);color:#fff;flex-shrink:0;transition:background .2s;}
+.apply-btn:hover{background:var(--brand-hover);}
+
+/* 列表视图 */
+.view-list{display:none;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
+.view-list.active{display:block;}
+.ds-row{display:flex;gap:var(--s4);align-items:flex-start;padding:var(--s4);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.ds-row:last-child{border-bottom:0;}
+.ds-row:hover{background:var(--brand-soft);}
+.ds-row .ds-thumb{flex:0 0 96px;width:96px;height:64px;}
+.ds-row .ds-ic{width:48px;height:48px;}
+.ds-row .ds-ic svg{width:24px;height:24px;}
+.ds-row .ds-hd{flex:1;min-width:0;}
+.ds-row .ds-name{-webkit-line-clamp:1;}
+.ds-row .ds-desc{-webkit-line-clamp:1;}
+.ds-right{flex-shrink:0;display:flex;align-items:center;gap:var(--s4);padding-left:var(--s4);border-left:1px solid var(--border);}
+.ds-right .ds-acts{margin-left:0;}
+
+/* 空态 */
+.empty{display:none;padding:72px 20px;text-align:center;}
+.empty.show{display:block;}
+.empty .e-ic{width:48px;height:48px;margin:0 auto 12px;color:#c3d0d0;}
+.empty .e-ic svg{width:48px;height:48px;}
+.empty .e-t{font-size:14px;color:var(--text-secondary);}
+.empty .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);margin-top:var(--s4);padding:0 16px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--text);}
+.empty .btn-ghost:hover{color:var(--brand);border-color:var(--brand);}
+
+/* 分页 */
+.pager{display:none;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s4);padding-top:var(--s4);border-top:1px solid var(--border);flex-wrap:wrap;}
+.pager.show{display:flex;}
+.pager .psize{display:flex;align-items:center;gap:var(--s2);font-size:14px;color:var(--text-secondary);}
+.pager .psize select{height:32px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b778c' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;cursor:pointer;}
+.pager .pbtns{display:flex;align-items:center;gap:6px;}
+.page-btn{min-width:32px;height:32px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;font-size:14px;color:var(--text-secondary);cursor:pointer;transition:all .15s;}
+.page-btn:hover{color:var(--brand);border-color:var(--brand);}
+.page-btn.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600;}
+.page-btn.disabled{color:#b7c2c7;cursor:default;}
+.page-btn.disabled:hover{color:#b7c2c7;border-color:var(--border);}
+.pg-gap{min-width:20px;text-align:center;font-size:14px;color:var(--text-muted);}
+
+/* ==================== 公共页脚 ==================== */
+.site-footer{position:relative;background:var(--footer-bg);color:rgba(255,255,255,.78);overflow:hidden;margin-top:var(--s6);}
+/* v16.2 修正：百分比列 + gap 会溢出（100% + 48px），改用 fr 先扣间距再按 38/15/19/28 分配 */
+.footer-inner{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,38fr) minmax(0,15fr) minmax(0,19fr) minmax(0,28fr);gap:var(--s4);min-height:140px;padding:28px 0;}
+.f-brand{display:flex;align-items:flex-start;gap:12px;min-width:0;}
+.f-brand .f-logo{flex-shrink:0;}
+.f-brand .f-name{font-size:18px;line-height:26px;font-weight:600;color:#fff;}
+.f-brand .f-desc{margin-top:4px;font-size:12px;line-height:20px;color:rgba(255,255,255,.7);}
+.f-col h4{font-size:14px;line-height:22px;font-weight:600;color:#fff;margin-bottom:var(--s2);}
+.f-col a{display:block;font-size:13px;line-height:22px;color:rgba(255,255,255,.78);margin-bottom:6px;}
+.f-col a:hover{color:#fff;text-decoration:underline;}
+.f-about-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--s5);}
+.f-slogan{display:flex;align-items:center;justify-content:flex-end;gap:var(--s5);}
+.f-slogan .divider{width:1px;height:56px;background:rgba(255,255,255,.28);flex-shrink:0;}
+.f-slogan .lines{font-family:var(--font-serif);font-size:15px;line-height:26px;color:#fff;letter-spacing:.06em;white-space:nowrap;}
+.f-wave{position:absolute;right:-8px;bottom:-16px;opacity:.16;pointer-events:none;}
+
+#toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(12px);max-width:min(560px,calc(100% - 32px));padding:10px 20px;background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:var(--radius-sm);opacity:0;pointer-events:none;transition:all .25s;z-index:500;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* 抽屉（窄屏筛选） */
+.drawer-mask{display:none;position:fixed;inset:0;background:rgba(16,33,58,.42);z-index:290;}
+.drawer-mask.open{display:block;}
+
+/* ==================== 响应式 ==================== */
+@media (max-width:1439px){
+  .market-layout{grid-template-columns:240px minmax(0,1fr);}
+}
+@media (max-width:1199px){
+  .market-layout{grid-template-columns:minmax(0,1fr);}
+  .search-wrap{max-width:420px;}
+  .filter-side{position:fixed;left:0;top:0;bottom:0;width:300px;max-height:none;z-index:300;border:0;border-radius:0;transform:translateX(-102%);transition:transform .25s ease;}
+  .filter-side.open{transform:none;box-shadow:var(--shadow);}
+  .drawer-toggle{display:inline-flex;}
+  .footer-inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s5);}
+  .f-slogan{justify-content:flex-start;}
+}
+@media (max-width:1099px){
+  .main-nav{display:none;}
+  .header-inner{gap:var(--s4);}
+}
+@media (max-width:899px){
+  .view-grid{grid-template-columns:minmax(0,1fr);}
+  .search-wrap{flex:1 1 auto;min-width:0;max-width:none;}
+  .tool-right{margin-left:0;width:100%;justify-content:space-between;}
+}
+@media (max-width:767px){
+  .header-inner{gap:12px;}
+  .brand span{font-size:17px;line-height:26px;}
+  .main-nav{margin-left:0;}
+  .header-actions .btn-brand{display:none;}
+  .ds-row{flex-wrap:wrap;}
+  .ds-right{width:100%;padding-left:0;border-left:0;justify-content:space-between;}
+  /* 窄屏卡片：缩略图改为整幅 16:9 满宽，信息区下移，避免右侧内容被压到 200px 以下 */
+  .ds-card .ds-top{flex-wrap:wrap;}
+  .ds-card .ds-thumb{flex:1 1 100%;width:100%;height:auto;aspect-ratio:16/9;}
+  .ds-row .ds-thumb{flex:0 0 132px;width:132px;height:88px;}
+  .footer-inner{grid-template-columns:minmax(0,1fr);}
+  .f-slogan{flex-wrap:wrap;gap:var(--s4);}
+  .f-slogan .lines{white-space:normal;}
+  .pager{justify-content:center;}
+}
+@media (max-width:480px){
+  .brand span{font-size:16px;}
+  .brand{min-width:0;}
+  .brand span{overflow:hidden;text-overflow:ellipsis;}
+}
+</style>
+
+<!-- ============================================================
+     统一一级导航 · 口径＝门户页 `.site-header` / `.main-nav`（0924，用户指令）
+     由 _tools_原型对齐/patch_portal_nav_unify_0924.py 注入；
+     追加于本页原有 <style> 之后，用于覆盖页面自有的页头规则。
+     · 七项＝首页｜数据中心｜模型中心｜科研开发空间｜课题中心｜需求中心｜关于平台
+     · 页头 80px（≤1279 收敛 64，与门户页断点一致）；项间距 20px、内边距 0 2px；激活＝整项宽 2px 实心下划线
+     · 品牌 22px/600 + 30×30；动作区「登录」文字按钮 + 「合作咨询」主按钮
+     · ≤1099px 收起为移动端菜单（同门户页）
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+</head>
+<body data-page-node-id="d7Y2HJhz2sd86AKBNF7Ix2">
+
+<!-- ==================== 公共导航（规范 §顶部导航） ==================== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+        <path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/>
+        <path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/>
+        <path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/>
+      </svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="autharea" id="authArea">
+        <button type="button" class="login-link" data-bdh-login>登录</button>
+        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header>
+
+<div class="drawer-mask" id="drawerMask" onclick="openDrawer(false)"></div>
+
+<main class="app-main">
+  <div class="container">
+    <div class="market-layout">
+
+      <!-- ============ 左栏：筛选｜专题 ============ -->
+      <aside class="filter-side panel" id="filterSide" data-page-node-id="6IHqVA46Ey61HNZzS914CW">
+        <div class="filter-inner">
+          <div class="ltabs" data-page-node-id="4xg7pBqPz2bWdCYQQ0ro5E">
+            <div class="lt-seg">
+              <button type="button" class="ltab on" data-ltab="filter" onclick="switchLTab('filter')" data-page-node-id="pQ23oBJDgy7Dmt8rWvDrX7">筛选</button>
+              <button type="button" class="ltab" data-ltab="zone" onclick="switchLTab('zone')" data-page-node-id="p6B3BPjUHi5cR4XsdWW0YF">专题</button>
+            </div>
+            <!-- ⭐0917 移除左栏"清空"按钮：与结果区「已选条件」行的「清空」功能重复（同调 clearAllCond()），
+                 且参考示意图左栏仅「筛选 | 专题」两个 Tab、无清空入口。
+                 清空统一由「已选条件」行承载（有条件时才出现，位置语义正确），空态另有「清空筛选条件」。 -->
+          </div>
+
+          <!-- Tab1 筛选：分组多选 -->
+          <div id="filtersBox" data-page-node-id="QjA6LgyUm0bmuyb5vgEAaF">
+            <div class="fgroup" data-page-node-id="vtJMJkX14BlXPXaz10a2Ru">
+              <button type="button" class="fgroup-title" onclick="toggleGroup(this)" aria-expanded="true" data-page-node-id="KP6QfP0AQXIHAPC9o87ppb">作物类型<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <div class="fgroup-body">
+                <button type="button" class="fitem" data-g="crop" data-v="水稻" data-page-node-id="4Pu87kqCuho68rhWJVlnBT"><span class="cbx"></span><span>水稻</span><span class="cnt" data-page-node-id="VloBlognPxU5xGiEwEdZaJ">0</span></button>
+                <button type="button" class="fitem" data-g="crop" data-v="大豆" data-page-node-id="nKNMZYzfG0mrYMZNcIqZKg"><span class="cbx"></span><span>大豆</span><span class="cnt" data-page-node-id="3lFbiNWKZ3w45Ye2z3xyzH">0</span></button>
+                <button type="button" class="fitem" data-g="crop" data-v="玉米" data-page-node-id="zV3n1AbEGj4w51D75Hppp3"><span class="cbx"></span><span>玉米</span><span class="cnt" data-page-node-id="wCp38A9Rwz4k2RfKecXCbx">0</span></button>
+                <button type="button" class="fitem" data-g="crop" data-v="林草湿地" data-page-node-id="hChfuhJgDYuKGTeZmQxN1X"><span class="cbx"></span><span>林草湿地</span><span class="cnt" data-page-node-id="XvbJVSxBx3auQI3s3UyFxJ">0</span></button>
+              </div>
+            </div>
+            <div class="fgroup" data-page-node-id="4cPzlL7RNDAXN1PHt1Fig5">
+              <button type="button" class="fgroup-title" onclick="toggleGroup(this)" aria-expanded="true" data-page-node-id="AGIC7Z9rWGXbu0ia5cV0nD">数据形态<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <div class="fgroup-body">
+                <button type="button" class="fitem" data-g="form" data-v="地面实测" data-page-node-id="z44lAs9dYXBDuySGiAHUQq"><span class="cbx"></span><span>地面实测</span><span class="cnt" data-page-node-id="95RTynVLHad5J1SuHHSAZT">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="无人机影像" data-page-node-id="VCzOTC8VXGNWkju8LanD7M"><span class="cbx"></span><span>无人机影像</span><span class="cnt" data-page-node-id="edrvqxf0ocvLeeYNwpuLam">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="卫星影像" data-page-node-id="x9GuhmGXeBr84KaCO4w3GF"><span class="cbx"></span><span>卫星影像</span><span class="cnt" data-page-node-id="42PtLfbxJBhPYkoFdtk2QM">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="遥感反演产品" data-page-node-id="vv7CM8sG6rkvxCxqnFkDFB"><span class="cbx"></span><span>遥感反演产品</span><span class="cnt" data-page-node-id="WR632YbURMJcRtMsrccBvG">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="遥感解译产品" data-page-node-id="ixKCJ2MRMTpsqvMvUAzeT3"><span class="cbx"></span><span>遥感解译产品</span><span class="cnt" data-page-node-id="xGfjXAUrVqD6UuViKc1ZM5">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="业务申报数据" data-page-node-id="hLPez5FSWvvlak0YxRp7So"><span class="cbx"></span><span>业务申报数据</span><span class="cnt" data-page-node-id="RzGiGHE9YbVokbEBmE44l8">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="栅格影像合集" data-page-node-id="FORM007"><span class="cbx"></span><span>栅格影像合集</span><span class="cnt" data-page-node-id="FORM007c">0</span></button>
+                <button type="button" class="fitem" data-g="form" data-v="结构化表" data-page-node-id="FORM008"><span class="cbx"></span><span>结构化表</span><span class="cnt" data-page-node-id="FORM008c">0</span></button>
+              </div>
+            </div>
+            <div class="fgroup" data-page-node-id="hHlDUwCBaVIvoAEqF3oQt4">
+              <button type="button" class="fgroup-title" onclick="toggleGroup(this)" aria-expanded="true" data-page-node-id="LmZZi9jXmWeMBq8JUGKqZK">数据年份<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <div class="fgroup-body">
+                <button type="button" class="fitem" data-g="year" data-v="2026" data-page-node-id="HDAzyNj0A9HqtnrgLHvCsf"><span class="cbx"></span><span>2026</span><span class="cnt" data-page-node-id="NgzgyPCCANLf0KTwFYkIHX">0</span></button>
+                <button type="button" class="fitem" data-g="year" data-v="2025" data-page-node-id="pM7lzjDAV2uIKSDwAn8Aod"><span class="cbx"></span><span>2025</span><span class="cnt" data-page-node-id="AdFPkaxVTV3g2ugAMEhRtv">0</span></button>
+              </div>
+            </div>
+            <div class="fgroup" data-page-node-id="REGIONGP001">
+              <button type="button" class="fgroup-title" onclick="toggleGroup(this)" aria-expanded="true" data-page-node-id="REGIONTT001">区域<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <div class="fgroup-body" id="regionBody">
+                <button type="button" class="fitem" data-g="region" data-v="建三江分公司" data-page-node-id="REGION001"><span class="cbx"></span><span>建三江分公司</span><span class="cnt" data-page-node-id="REGION001c">0</span></button>
+                <button type="button" class="fitem" data-g="region" data-v="红兴隆分公司" data-page-node-id="REGION002"><span class="cbx"></span><span>红兴隆分公司</span><span class="cnt" data-page-node-id="REGION002c">0</span></button>
+                <button type="button" class="fitem" data-g="region" data-v="牡丹江分公司" data-page-node-id="REGION003"><span class="cbx"></span><span>牡丹江分公司</span><span class="cnt" data-page-node-id="REGION003c">0</span></button>
+                <button type="button" class="fitem" data-g="region" data-v="宝泉岭分公司" data-page-node-id="REGION004"><span class="cbx"></span><span>宝泉岭分公司</span><span class="cnt" data-page-node-id="REGION004c">0</span></button>
+                <button type="button" class="fitem more-hide" data-g="region" data-v="绥化分公司" data-page-node-id="REGION005"><span class="cbx"></span><span>绥化分公司</span><span class="cnt" data-page-node-id="REGION005c">0</span></button>
+                <button type="button" class="fitem more-hide" data-g="region" data-v="北安分公司" data-page-node-id="REGION006"><span class="cbx"></span><span>北安分公司</span><span class="cnt" data-page-node-id="REGION006c">0</span></button>
+                <button type="button" class="fitem more-hide" data-g="region" data-v="九三分公司" data-page-node-id="REGION007"><span class="cbx"></span><span>九三分公司</span><span class="cnt" data-page-node-id="REGION007c">0</span></button>
+                <button type="button" class="fitem more-hide" data-g="region" data-v="哈尔滨有限公司" data-page-node-id="REGION008"><span class="cbx"></span><span>哈尔滨有限公司</span><span class="cnt" data-page-node-id="REGION008c">0</span></button>
+                <button type="button" class="fitem more-hide" data-g="region" data-v="佳木斯市" data-page-node-id="REGION009"><span class="cbx"></span><span>佳木斯市</span><span class="cnt" data-page-node-id="REGION009c">0</span></button>
+                <button type="button" class="more-btn" id="regionMore" onclick="toggleRegionMore(this)" aria-expanded="false">展开更多<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              </div>
+            </div>
+            <div class="fgroup" data-page-node-id="SQgocrXX2FgbL0XZ6XBPeF">
+              <div class="fgroup-title" data-page-node-id="UvTqtcm13bFQkIozhxfriA">更新时间</div>
+              <div class="fgroup-body">
+                <div class="fsel">
+                  <select id="timeSel" onchange="setTime(this.value)" aria-label="更新时间">
+                    <option value="all">全部时间</option>
+                    <option value="30">近 30 天</option>
+                    <option value="90">近 90 天</option>
+                    <option value="365">近一年</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab2 专题：分组列表（单选） -->
+          <div id="zonesBox" style="display:none;" data-page-node-id="TKREfMsHP9knKEknqkLEoh">
+            <div class="zone-list" id="zoneList" data-page-node-id="tBa011Of5vUn7CIcdFeqGY"></div>
+            <div class="zone-ft" data-page-node-id="QUvZBNEs8hpgAc3Bq9aAx6">数据专题；点专题查看其下数据，可逐项或一键申请。专题专区的治理由运营管理后台统一维护。</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============ 右栏：搜索结果 ============ -->
+      <section class="result-panel panel" data-page-node-id="K5gcn5VOdiAauEQqmB45aj">
+
+        <!-- 搜索工具行 -->
+        <div class="tool-row" data-page-node-id="Tc6wvHqvMNJaXXDL2Q90cY">
+          <button type="button" class="drawer-toggle" onclick="openDrawer(true)">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            筛选
+          </button>
+          <div class="search-wrap" data-page-node-id="jPPUI4QsBJ0NCNmiUMILBA">
+            <svg class="s-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input class="kw" id="kwInput" placeholder="搜索数据名称、作物或关键词" onkeydown="if(event.key==='Enter')doSearch()" data-page-node-id="cJZ2zFH5WnK0E5m9PGfYLO">
+          </div>
+          <button type="button" class="btn-search" onclick="doSearch()" data-page-node-id="MvoGgTrHh92eAFyDJHbwde">搜索</button>
+          <div class="tool-right" data-page-node-id="5JjDGg8q6EFNMlG6PR5Hyq">
+            <div class="seg-switch" data-page-node-id="ZmNNeOELE5HX7i6KW0xK4d">
+              <button type="button" class="vs on" id="vsGrid" onclick="setView('grid')" data-page-node-id="2RAxcmzorXzhnw2NZx23r7">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+                卡片</button>
+              <button type="button" class="vs" id="vsList" onclick="setView('list')" data-page-node-id="knX0xEkzQWyAGdkjmMrIpW">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                列表</button>
+            </div>
+            <div class="sort-wrap" data-page-node-id="qfQDgCsm8XzqaVQWBqDtT">
+              <button type="button" class="sortbtn" id="sortBtn" onclick="toggleSort(event)" aria-haspopup="true" aria-expanded="false" data-page-node-id="AzSJfnmDkd6EVVmh1gH62G">
+                <span id="sortLabel" data-page-node-id="BmAhOZ50t4OxbvfEGmKlPv">综合排序</span>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="sortmenu" id="sortMenu" role="menu" data-page-node-id="oFtLMmz6ykrHxDGKQXbYtK">
+                <div class="sm-item on" data-sort="default" onclick="pickSort(event,'default','综合排序')" data-page-node-id="W2VKVbq8SEGp1pp2ZpgHwT"><span>综合排序</span><span class="ck" data-page-node-id="ahA3N5ThyZerBcTlMVAp9L"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></div>
+                <div class="sm-item" data-sort="update" onclick="pickSort(event,'update','最近更新')" data-page-node-id="qOLXvLJdpomgHw0dgE3QW1"><span>最近更新</span><span class="ck" data-page-node-id="4cISWa4UCqGxPA3vOSGnKN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></div>
+                <div class="sm-item" data-sort="apply" onclick="pickSort(event,'apply','申请次数排序')" data-page-node-id="36inFO2zuUUs8jCGpTmWci"><span>申请次数排序</span><span class="ck" data-page-node-id="owHwikgGCZm4idE0KpHKPS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></div>
+                <div class="sm-sep"></div>
+                <div class="sm-dir" id="dirRow" onclick="toggleDir(event)"><span>排序方向</span><span class="dv" id="dirArrow">降序</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 已选条件条 -->
+        <div class="contextbar" id="ctxBar" data-page-node-id="ObfWu5q4ejhQD36XpKhNsd"></div>
+
+        <!-- 结果总数 -->
+        <div class="count-line">共 <b id="countText" data-page-node-id="LimW9kWEfrpNyLuzcNwAzm">0</b> 项数据</div>
+
+        <div class="view-grid active" id="viewGrid" data-page-node-id="OhUQSO7AcgiroNAGSkhM9H"></div>
+        <div class="view-list" id="viewList" data-page-node-id="KfHNbzsH3bP2yHdRFCqK8J"></div>
+
+        <div class="pager" id="pager" data-page-node-id="XHsbAxGk3K7bTS0jWxUWFs"></div>
+
+        <div class="empty" id="emptyBox" data-page-node-id="BqXUuKQCgEqZK7CpFPTLU6">
+          <div class="e-ic" data-page-node-id="GcEse0YEBA14AYnlGWcv7q">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="21" cy="21" r="13"/><path d="m31 31 8 8"/><path d="M16 21h10"/></svg>
+          </div>
+          <div class="e-t" data-page-node-id="V0jNE1ZBUQK6YySN18ApaU">未找到符合条件的数据</div>
+          <button type="button" class="btn-ghost" onclick="clearAllCond()">清空筛选条件</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== 公共页脚（规范 §公共页脚精确内容） ==================== -->
+<footer class="site-footer" data-page-node-id="8nIcC5kMQE6f8txqJYHkkN">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="f-brand" data-page-node-id="0rmrV3PyKoaA6JFqswrcq2">
+        <svg class="f-logo" width="34" height="42" viewBox="0 0 34 42" fill="none" aria-hidden="true">
+          <path d="M17 40V17" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M16.6 17.5C16.6 10 11.7 4 4.8 4c0 7.5 4.9 13.5 11.8 13.5Z" fill="#FFFFFF"/>
+          <path d="M17.4 21.2c0-6.6 4.5-12 10.2-12 0 6.6-4.5 12-10.2 12Z" fill="#FFFFFF" fill-opacity=".82"/>
+        </svg>
+        <div>
+          <div class="f-name">北大荒智慧农业协同创新平台</div>
+          <div class="f-desc">面向农业研究与生产的开放协同平台</div>
+        </div>
+      </div>
+      <div class="f-col">
+        <h4>平台资源</h4>
+        <a href="数据中心-数据集列表页.html">数据中心</a>
+        <a href="课题中心-高保真原型.html">课题中心</a>
+      </div>
+      <div class="f-col">
+        <h4>关于平台</h4>
+        <div class="f-about-grid">
+          <a href="关于平台-平台介绍.html">平台介绍</a>
+          <a href="关于平台-开发者接入.html">开发者区</a>
+          <a href="关于平台-使用帮助.html">使用帮助</a>
+          <a href="关于平台-联系支持.html">联系我们</a>
+        </div>
+      </div>
+      <div class="f-slogan">
+        <div class="divider"></div>
+        <div class="lines">耕耘数据沃土<br>共建智慧农业</div>
+      </div>
+    </div>
+  </div>
+  <svg class="f-wave" width="220" height="180" viewBox="0 0 220 180" fill="none" aria-hidden="true">
+    <path d="M60 176C70 120 96 72 150 28" stroke="#E4EEE8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M96 96c-14-4-24-14-28-28 14 2 24 10 28 28Zm10-20c-2-14 2-27 12-37 5 13 2 26-12 37Zm16 10c12-8 26-9 39-4-9 11-23 14-39 4Zm-22 32c-14-3-24-12-29-26 14 1 25 9 29 26Zm8-24c-1-14 4-27 14-36 4 13 0 26-14 36Zm16 12c12-7 26-8 38-2-8 10-22 12-38 2Z" fill="#E4EEE8"/>
+  </svg>
+</footer>
+
+<div id="toast" role="status" aria-live="polite" data-page-node-id="6MfKbRtyKDUnv3Y8oGC7GI"></div>
+<script>
+/* ===== 统一线性图标集（同一套线性 SVG，禁止 emoji） ===== */
+var ICO_OPEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+function ico(paths,cls){return '<svg class="'+(cls||'ico')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths+'</svg>';}
+var ICONS={
+  /* 数据形态 */
+  '地面实测':'<rect x="4.5" y="4" width="15" height="17" rx="2"/><path d="M9 4V2.6h6V4"/><path d="m8.6 13 2.2 2.2 4.2-4.6"/>',
+  '无人机影像':'<rect x="9.4" y="9.4" width="5.2" height="5.2" rx="1.2"/><circle cx="4.6" cy="11" r="2.2"/><circle cx="19.4" cy="11" r="2.2"/><path d="M6.8 11h2.6M14.6 11h2.6M5.6 9.4 8 7M18.4 9.4 16 7"/><path d="M10.4 14.6 8.8 19M13.6 14.6 15.2 19"/>',
+  '卫星影像':'<circle cx="12" cy="12" r="3.6"/><ellipse cx="12" cy="12" rx="8.8" ry="4.4" transform="rotate(-30 12 12)"/><circle cx="18.6" cy="8.4" r="1.3"/>',
+  '遥感反演产品':'<path d="M9 4.6 4 6.6v12.8l5-2 6 2 5-2V4.6l-5 2-6-2Z"/><path d="M9 4.6v12.8M15 6.6v12.8"/>',
+  '遥感解译产品':'<path d="M12 3.2 3.4 7.4 12 11.6l8.6-4.2L12 3.2Z"/><path d="M3.4 12.2 12 16.4l8.6-4.2"/><path d="M3.4 16.6 12 20.8l8.6-4.2"/>',
+  '业务申报数据':'<path d="M14 3.2H7.4a2 2 0 0 0-2 2v13.6a2 2 0 0 0 2 2h9.2a2 2 0 0 0 2-2V8l-4.6-4.8Z"/><path d="M14 3.2V8h4.6"/><path d="M9 13h6M9 17h4"/>',
+  '栅格影像合集':'<rect x="3.6" y="3.6" width="7" height="7" rx="1.4"/><rect x="13.4" y="3.6" width="7" height="7" rx="1.4"/><rect x="3.6" y="13.4" width="7" height="7" rx="1.4"/><rect x="13.4" y="13.4" width="7" height="7" rx="1.4"/>',
+  '结构化表':'<rect x="3.2" y="4.4" width="17.6" height="15.2" rx="2"/><path d="M3.2 9.4h17.6M3.2 14.4h17.6M9.2 4.4v15.2"/>',
+  /* 专题 */
+  'growth':'<path d="M12 20.5v-8"/><path d="M12 12.5c-3.7 0-6.6-2.5-6.6-5.7 3.7 0 6.6 2.5 6.6 5.7Z"/><path d="M12 12.5c0-3.2 2.9-5.7 6.6-5.7 0 3.2-2.9 5.7-6.6 5.7Z"/><path d="M8 20.5h8"/>',
+  'soil':'<path d="M3.6 9.6h16.8M3.6 14.6h16.8"/><circle cx="8.2" cy="19" r="1.1"/><circle cx="14.2" cy="19" r="1.1"/>',
+  'subsidy':'<path d="M12 3.4 5.6 6v6c0 4.2 2.8 7.3 6.4 8.6 3.6-1.3 6.4-4.4 6.4-8.6V6L12 3.4Z"/><path d="m9.4 12.2 2 2 3.5-3.8"/>',
+  'yield':'<path d="M4 19.6h16"/><path d="M7.6 19.6V14M12 19.6V9.4M16.4 19.6V5.2"/>',
+  'eco':'<path d="M12 3.2 6.4 12h3.2l-3.4 5.6h11.6L14.4 12h3.2L12 3.2Z"/><path d="M12 17.6v3.2"/>',
+  /* 通用 UI */
+  'calendar':'<rect x="3.6" y="5" width="16.8" height="15.4" rx="2"/><path d="M3.6 10h16.8M8.4 3.4v3.2M15.6 3.4v3.2"/>',
+  'apply':'<path d="M12 3.6v11"/><path d="m7.6 10.6 4.4 4.4 4.4-4.4"/><path d="M4.6 19.4h14.8"/>',
+  'chev':'<path d="m9 6 6 6-6 6"/>'
+};
+function iconOf(form){return ico(ICONS[form]||ICONS['结构化表']);}
+function zoneIconOf(z){return ico(ICONS[z]||ICONS['growth']);}
+
+/* ===== 消息提示 ===== */
+function toast(msg){
+  var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2200);
+}
+
+/* ===== 登录态 ===== */
+var LOGGED=false;
+/* ===== 0924 角色权限分级（§九 三类业务统一高权限免申请） =====
+   数据 / 模型 / 资源 三类走同一套口径：高权限免申请、直接用；低权限需提交申请。
+   原型用演示开关切换角色；正式系统由登录态与授权数据判定，不在前端写死。 */
+var ROLE='low';
+function isHighRole(){return ROLE==='high';}
+function roleName(){return isHighRole()?'平台管理员':'张研究员';}
+function roleAvatar(){return isHighRole()?'管':'张';}
+function requireAuth(){if(!LOGGED){toast('请先登录/入驻平台（受邀制）');return false;}return true;}
+
+/* ===== 申请使用：写入 localStorage，与「数据中心·我的数据授权」联动 ===== */
+var AUTH_LS_KEY='LS_AUTH_APPS';
+function getApps(){
+  try{var a=JSON.parse(localStorage.getItem(AUTH_LS_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}
+}
+function applyZoneAll(zone){
+  if(isHighRole()){toast('当前角色已获授权，无需申请');return;}
+  if(!requireAuth())return;
+  var list=DS.filter(function(d){return d.zone===zone;});
+  if(!list.length){toast('该专题暂无数据集');return;}
+  var apps=getApps();var added=0;
+  list.forEach(function(d){
+    var ex=apps.some(function(a){return a.name===d.name&&a.status==='pending';});
+    if(!ex){apps.push({appId:'A'+Date.now()+'_'+added,name:d.name,form:d.form,use:'专题批量申请',note:'专题「'+zoneNameOf(zone)+'」批量申请',submittedAt:new Date().toISOString().slice(0,10),status:'pending'});added++;}
+  });
+  try{localStorage.setItem(AUTH_LS_KEY,JSON.stringify(apps));}catch(e){toast('本地存储不可用，申请未保存');return;}
+  toast('已提交专题「'+zoneNameOf(zone)+'」'+added+' 个数据集的使用申请，可在「我的数据授权」查看');
+}
+function renderAuthArea(){
+  var area=document.getElementById('authArea');if(!area)return;
+  if(!LOGGED){
+    area.innerHTML='<a class="btn-login" data-bdh-login href="javascript:void(0)" onclick="doLogin()">登录</a>'+
+      '<a class="btn-brand" href="javascript:void(0)" onclick="portalConsult()">合作咨询</a>';
+    if(window.bdhSyncAuth)window.bdhSyncAuth();
+    return;
+  }
+  area.innerHTML='<div class="u-box">'+
+    '<span class="u-avatar">'+roleAvatar()+'</span><span class="u-name" onclick="toggleUserMenu()">'+roleName()+'<svg class="u-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>'+
+    '<div class="u-menu" id="userMenu">'+
+      '<div class="u-mi" onclick="switchRole()">切换为'+(isHighRole()?'低权限科研人员':'高权限（免申请）')+'</div>'+
+      '<div class="u-mi" onclick="location.href=\'个人中心-高保真原型.html\'">我的数据授权</div>'+
+      '<div class="u-mi" onclick="location.href=\'个人中心-高保真原型.html\'">我的数据</div>'+
+      '<div class="u-mi out" onclick="doLogout()">退出登录</div>'+
+    '</div></div>';
+  if(window.bdhSyncAuth)window.bdhSyncAuth();
+}
+function doLogin(){
+  LOGGED=true;
+  renderAuthArea();
+  renderAll();
+}
+function switchRole(){
+  ROLE=isHighRole()?'low':'high';
+  renderAuthArea();
+  renderAll();
+  toast(isHighRole()?'已切换为高权限角色：免申请，可直接使用':'已切换为低权限科研人员：需提交申请');
+}
+function doLogout(){
+  LOGGED=false;ROLE='low';
+  renderAuthArea();
+  renderAll();
+  toast('已退出登录');
+}
+function toggleUserMenu(){var m=document.getElementById('userMenu');if(m)m.classList.toggle('open');}
+
+/* ===== 数据 ===== */
+var ZONES=[
+ {zone:'growth',name:'作物长势',desc:'长势监测 · 胁迫识别 · 产量趋势'},
+ {zone:'soil',name:'土壤',desc:'养分实测与反演 · 施肥分区'},
+ {zone:'subsidy',name:'作物补贴核查',desc:'申报比对 · 面积核查'},
+ {zone:'yield',name:'作物产量',desc:'测产真值 · 产量反演'},
+ {zone:'eco',name:'林草湿地变化监测',desc:'两期对比 · 变化图斑'}
+];
+/* 数据：desc（一句话简介）自 v16.1 起不在列表卡片内展示，字段保留供详情页 / 后续复用 */
+var DS=[
+ {name:'作物长势 · 地面实测数据',desc:'基于农田地面调查获取的作物长势实测数据，包含株高、叶面积等指标。',crop:['水稻','大豆','玉米'],src:'zone',form:'地面实测',year:2026,upd:'2026-06-30',apply:47,zone:'growth',region:'建三江分公司'},
+ {name:'作物长势 · 无人机正射影像',desc:'基于无人机航测获取的高分辨率正射影像数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'无人机影像',year:2026,upd:'2026-06-29',apply:32,zone:'growth',region:'建三江分公司'},
+ {name:'作物长势 · 卫星影像',desc:'多源卫星遥感影像，包含光学影像数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'卫星影像',year:2026,upd:'2026-06-30',apply:38,zone:'growth',region:'建三江分公司'},
+ {name:'作物长势 · 遥感反演长势分布',desc:'基于遥感影像反演的作物长势空间分布数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'遥感反演产品',year:2026,upd:'2026-06-28',apply:29,zone:'growth',region:'建三江分公司'},
+ {name:'土壤 · 网格实测数据',desc:'基于土壤网格采样的实测数据，包含土壤理化性质指标。',crop:['水稻','大豆','玉米'],src:'zone',form:'地面实测',year:2026,upd:'2026-06-28',apply:35,zone:'soil',region:'红兴隆分公司'},
+ {name:'土壤 · 无人机正射影像',desc:'基于无人机获取的土壤表面影像数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'无人机影像',year:2026,upd:'2026-06-27',apply:24,zone:'soil',region:'红兴隆分公司'},
+ {name:'土壤 · 卫星影像',desc:'多源卫星遥感影像，包含土壤相关遥感数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'卫星影像',year:2026,upd:'2026-06-28',apply:27,zone:'soil',region:'红兴隆分公司'},
+ {name:'土壤 · 遥感反演养分分布',desc:'基于遥感影像反演的土壤养分空间分布数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'遥感反演产品',year:2026,upd:'2026-06-26',apply:19,zone:'soil',region:'红兴隆分公司'},
+ {name:'补贴核查 · 多时相卫星影像',desc:'覆盖申报期的多时相卫星影像，用于作物种植情况比对。',crop:['水稻','大豆','玉米'],src:'zone',form:'卫星影像',year:2026,upd:'2026-05-12',apply:22,zone:'subsidy',region:'牡丹江分公司'},
+ {name:'补贴核查 · 遥感解译作物分布',desc:'经解译形成的作物种植分布数据，以地块为单元。',crop:['水稻','大豆','玉米'],src:'zone',form:'遥感解译产品',year:2026,upd:'2026-05-14',apply:16,zone:'subsidy',region:'牡丹江分公司'},
+ {name:'补贴核查 · 申报记录（脱敏）',desc:'脱敏后的种植申报记录，包含作物与地块信息。',crop:['水稻','大豆','玉米'],src:'zone',form:'业务申报数据',year:2026,upd:'2026-05-15',apply:11,zone:'subsidy',region:'牡丹江分公司'},
+ {name:'作物产量 · 地面测产数据',desc:'田间实收测产记录，以地块为单位登记产量。',crop:['水稻','大豆','玉米'],src:'zone',form:'地面实测',year:2026,upd:'2026-06-30',apply:41,zone:'yield',region:'宝泉岭分公司'},
+ {name:'作物产量 · 无人机多期影像',desc:'生育期多期无人机影像，按航次整理。',crop:['水稻','大豆','玉米'],src:'zone',form:'无人机影像',year:2026,upd:'2026-06-29',apply:26,zone:'yield',region:'宝泉岭分公司'},
+ {name:'作物产量 · 卫星多时相影像',desc:'覆盖生育期的多时相卫星影像数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'卫星影像',year:2026,upd:'2026-06-30',apply:30,zone:'yield',region:'宝泉岭分公司'},
+ {name:'作物产量 · 遥感反演产量分布',desc:'基于遥感影像反演的产量空间分布数据。',crop:['水稻','大豆','玉米'],src:'zone',form:'遥感反演产品',year:2026,upd:'2026-06-28',apply:22,zone:'yield',region:'宝泉岭分公司'},
+ {name:'林草湿 · 基准/监测期卫星影像',desc:'基准期与监测期的两期卫星影像，用于变化比对。',crop:['林草湿地'],src:'zone',form:'卫星影像',year:2025,upd:'2025-08-10',apply:9,zone:'eco',region:'北安分公司'},
+ {name:'林草湿 · 变化图斑数据',desc:'两期影像比对提取的变化图斑数据。',crop:['林草湿地'],src:'zone',form:'遥感解译产品',year:2025,upd:'2025-08-12',apply:6,zone:'eco',region:'北安分公司'},
+ {name:'遥感植被指数产品（NDVI/EVI）',desc:'由卫星影像计算生成的植被指数栅格产品。',crop:['水稻','大豆','玉米'],src:'catalog',form:'遥感反演产品',year:2026,upd:'2026-06-20',apply:15,region:'哈尔滨有限公司'},
+ {name:'耕地地块遥感底图（县域）',desc:'以县域为范围的耕地地块遥感底图数据。',crop:['水稻','大豆','玉米'],src:'catalog',form:'遥感解译产品',year:2025,upd:'2025-11-02',apply:20,region:'佳木斯市'},
+ {name:'农田气象观测记录（站网）',desc:'观测站网记录的气象要素数据，按日整理。',crop:['水稻','大豆','玉米'],src:'catalog',form:'地面实测',year:2026,upd:'2026-07-01',apply:12,region:'绥化分公司'},
+ {name:'标准影像产品（Sentinel 系列）',desc:'Sentinel 系列标准影像产品，按景整理。',crop:['林草湿地'],src:'catalog',form:'卫星影像',year:2026,upd:'2026-06-15',apply:8,region:'九三分公司'},
+ {name:'作物长势 · 多时相栅格影像合集',form:'栅格影像合集',crop:['水稻','大豆','玉米'],src:'zone',year:2026,upd:'2026-06-30',apply:138,zone:'growth',owner:'全重实验室 · 数据建设组',scale:'1000 景',title:'作物长势多时相栅格影像合集',desc:'覆盖 2026 年作物生育期的多时相栅格影像合集，逐景带时间戳与地块编码等属性，支撑长势时序分析与地块级对照。',relNote:'本合集与「地块产量属性表」关联，连接键为「地块编码 + 年份」。需联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。',region:'建三江分公司'},
+ {name:'地块产量属性表',form:'结构化表',crop:['水稻','大豆','玉米'],src:'zone',year:2026,upd:'2026-07-01',apply:54,zone:'growth',owner:'全重实验室 · 数据建设组',scale:'2.1 万行',title:'地块产量属性表（结构化）',desc:'以地块为粒度的产量属性表，含地块编码、年份、作物、实测产量与对应影像时间戳等字段，可作独立查询与建模输入。',relNote:'本表与「作物长势 · 多时相栅格影像合集」关联，连接键为「地块编码 + 年份」。需与影像联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。',region:'宝泉岭分公司'}
+];
+
+/* ===== 筛选计数（按 DS 动态计算，保证与目录一致） ===== */
+function refreshFilterCounts(){
+  var groups=[
+    ['crop',function(d,v){return d.crop&&d.crop.indexOf(v)>=0;}],
+    ['form',function(d,v){return d.form===v;}],
+    ['year',function(d,v){return String(d.year)===v;}],
+    ['region',function(d,v){return d.region===v;}]
+  ];
+  groups.forEach(function(gp){
+    document.querySelectorAll('.fitem[data-g="'+gp[0]+'"]').forEach(function(it){
+      var v=it.getAttribute('data-v');
+      var c=it.querySelector('.cnt');
+      if(c)c.textContent=DS.filter(function(d){return gp[1](d,v);}).length;
+    });
+  });
+}
+
+/* ===== 状态 ===== */
+var state={crop:new Set(),form:new Set(),year:new Set(),region:new Set(),time:new Set(['all'])};
+var kw='',mode='grid',sortKey='default',sortDir='desc'; /* sortDir: asc|desc */
+var NOW=new Date('2026-07-01T00:00:00'); /* 原型基准时间，演示用 */
+
+function inDays(u,d){
+  var t=new Date(u+'T00:00:00');
+  return Math.round((NOW-t)/86400000);
+}
+var LTab='filter';        /* filter | zone */
+var activeZone=null;      /* 专题 Tab 单选 */
+
+function switchLTab(t){
+  LTab=t;
+  document.querySelectorAll('.ltab').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-ltab')===t);});
+  document.getElementById('filtersBox').style.display=t==='filter'?'':'none';
+  document.getElementById('zonesBox').style.display=t==='zone'?'':'none';
+  if(t==='zone')renderZoneList();
+  renderAll();
+}
+function renderZoneList(){
+  var box=document.getElementById('zoneList');box.innerHTML='';
+  ZONES.forEach(function(z){
+    var n=DS.filter(function(d){return d.zone===z.zone;}).length;
+    var it=document.createElement('button');
+    it.type='button';
+    it.className='zitem'+(activeZone===z.zone?' on':'');
+    it.innerHTML='<span class="zi">'+zoneIconOf(z.zone)+'</span><span class="zn">'+z.name+'</span><span class="zc">'+n+'</span>';
+    it.onclick=function(){
+      activeZone=(activeZone===z.zone)?null:z.zone;
+      renderZoneList();
+      renderAll();
+    };
+    box.appendChild(it);
+  });
+}
+
+/* ===== 左栏交互：分组收起 / 区域展开更多 / 更新时间下拉 / 抽屉 ===== */
+function toggleGroup(btn){
+  var g=btn.closest('.fgroup');
+  var col=g.classList.toggle('collapsed');
+  btn.setAttribute('aria-expanded',col?'false':'true');
+}
+function toggleRegionMore(btn){
+  var body=document.getElementById('regionBody');
+  var open=body.classList.toggle('expanded');
+  document.querySelectorAll('#regionBody .more-hide').forEach(function(el){
+    el.style.display=open?'flex':'';
+  });
+  btn.classList.toggle('expanded',open);
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  btn.childNodes[0].nodeValue=open?'收起':'展开更多';
+}
+function setTime(v){
+  state.time.clear();state.time.add(v||'all');
+  renderAll();
+}
+function openDrawer(open){
+  var f=document.getElementById('filterSide'),m=document.getElementById('drawerMask');
+  f.classList.toggle('open',!!open);
+  m.classList.toggle('open',!!open);
+}
+
+/* ===== 过滤 ===== */
+function filtered(){
+  var arr=[];
+  DS.forEach(function(d){
+    var ok=true;
+    if(LTab==='zone'&&activeZone){ok=ok&&d.zone===activeZone;}
+    else{
+      ok=ok&&(!state.crop.size||d.crop.some(function(x){return state.crop.has(x);}));
+      ok=ok&&(!state.form.size||state.form.has(d.form));
+      ok=ok&&(!state.year.size||state.year.has(String(d.year)));
+      ok=ok&&(!state.region.size||state.region.has(d.region));
+      if(ok&&state.time.size&&!state.time.has('all')){
+        var maxD=999999;
+        if(state.time.has('30'))maxD=Math.min(maxD,30);
+        if(state.time.has('90'))maxD=Math.min(maxD,90);
+        if(state.time.has('365'))maxD=Math.min(maxD,365);
+        ok=ok&&(inDays(d.upd,NOW)<=maxD);
+      }
+    }
+    if(ok&&kw){var hay=(d.name).toLowerCase();if(hay.indexOf(kw)<0)ok=false;}
+    if(ok)arr.push(d);
+  });
+  var dir=sortDir==='asc'?1:-1;
+  if(sortKey==='update')arr.sort(function(a,b){return (a.upd<b.upd?1:(a.upd>b.upd?-1:0))*dir;});
+  else if(sortKey==='apply')arr.sort(function(a,b){return (b.apply-a.apply)*dir;});
+  return arr;
+}
+
+/* ===== 渲染 ===== */
+function zoneNameOf(z){var t=ZONES.filter(function(x){return x.zone===z;})[0];return t?t.name:'';}
+
+/* ⭐0916 v17.0 卡片缩略图：按用户新参考示意图，卡片左侧由「纯图标」改为「缩略图」。
+   原则（与规范「已确认业务与文案 > 共用组件一致性 > 本文实施数值 > 示意图局部细节」一致）：
+     ① 原图为示意图，其失真文字与数字不作数据源，故不直接复刻原图的当季日期（如 2026-07-25），
+        日期一律取自 DS 的静态观测数据，避免出现"未来日期"这类自相矛盾；
+     ② 数据形态决定缩略图形态：地面实测 / 业务申报数据 / 结构化表 → 内嵌示意表；
+        无人机影像 / 卫星影像 / 栅格影像合集 → 影像缩略图；遥感反演产品 → 分级图例条；
+        遥感解译产品 → 图斑示意。影像素材待正式素材（`数据中心参考示意图设计/`）就位后替换 img src。*/
+
+/* 影像缩略图的少量装饰性渐变（原型占位，非真实影像）
+   —— 观感目标：一眼可读为"遥感/航拍影像"，故铺不规则田块拼接 + 道路沟渠线 + 色阶差异，
+      不使用任何真实地理轮廓与行政边界。正式素材就位后替换 img src。 */
+var TT_VAR={
+  /* 无人机正射：田块边界清晰、有道路与沟渠 */
+  '无人机影像':'<defs><linearGradient id="ttU" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9c98c"/><stop offset="1" stop-color="#6f9c5d"/></linearGradient></defs>'+
+    '<rect width="288" height="192" fill="url(#ttU)"/>'+
+    '<g opacity=".92">'+
+      '<path d="M0 0h96v54H0Z" fill="#8fb573"/><path d="M96 0h82v54H96Z" fill="#a3c684"/><path d="M178 0h110v54H178Z" fill="#7ea864"/>'+
+      '<path d="M0 54h64v52H0Z" fill="#9dc17c"/><path d="M64 54h114v52H64Z" fill="#84ab66"/><path d="M178 54h110v52H178Z" fill="#93b876"/>'+
+      '<path d="M0 106h122v46H0Z" fill="#7ba25e"/><path d="M122 106h70v46h-70Z" fill="#a0c481"/><path d="M192 106h96v46h-96Z" fill="#88af6a"/>'+
+      '<path d="M0 152h78v40H0Z" fill="#94b978"/><path d="M78 152h126v40H78Z" fill="#7aa35d"/><path d="M204 152h84v40h-84Z" fill="#9ec17f"/>'+
+    '</g>'+
+    '<g stroke="#f2f7ea" stroke-width="2.4" opacity=".8"><path d="M0 54h288M0 106h288M0 152h288M96 0v192M178 0v192M64 54v98M192 106v86"/></g>'+
+    '<g stroke="#c8b25e" stroke-width="3.4" opacity=".75"><path d="M122 106v86M0 152h288"/></g>'+
+    '<g fill="#5d8a45" opacity=".45"><circle cx="46" cy="82" r="7"/><circle cx="248" cy="30" r="6"/><circle cx="150" cy="128" r="7"/></g>',
+  /* 卫星影像：分辨率低、地块边界模糊、有整幅色偏 */
+  '卫星影像':'<defs><linearGradient id="ttS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ea07a"/><stop offset="1" stop-color="#496b52"/></linearGradient>'+
+    '<filter id="ttBlur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="4"/></filter></defs>'+
+    '<rect width="288" height="192" fill="url(#ttS)"/>'+
+    '<g opacity=".7" filter="url(#ttBlur)">'+
+      '<rect x="0" y="0" width="150" height="76" fill="#8fae83"/><rect x="150" y="0" width="138" height="76" fill="#6d8f6c"/>'+
+      '<rect x="0" y="76" width="112" height="62" fill="#6a8a67"/><rect x="112" y="76" width="176" height="62" fill="#87a77c"/>'+
+      '<rect x="0" y="138" width="170" height="54" fill="#7d9d76"/><rect x="170" y="138" width="118" height="54" fill="#5f8060"/>'+
+    '</g>'+
+    '<g stroke="#4b6b50" stroke-width="5" opacity=".5"><path d="M150 0v192M0 76h288M112 76v116"/></g>'+
+    '<g stroke="#cfd9c4" stroke-width="1.6" opacity=".35"><path d="M0 138h288M170 138v54"/></g>'+
+    '<rect width="288" height="192" fill="#3f5c48" opacity=".12"/>',
+  /* 栅格影像合集：多个小影像切片拼合 */
+  '栅格影像合集':'<defs><linearGradient id="ttG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8bb073"/><stop offset="1" stop-color="#5b8656"/></linearGradient></defs>'+
+    '<rect width="288" height="192" fill="url(#ttG)"/>'+
+    '<g>'+
+      '<g><rect x="6" y="6" width="132" height="84" fill="#7ea565"/><path d="M6 52h132M72 6v84" stroke="#e6f0dc" stroke-width="1.6" opacity=".55"/></g>'+
+      '<g><rect x="150" y="6" width="132" height="84" fill="#96ba79"/><path d="M150 48h132M216 6v84" stroke="#e6f0dc" stroke-width="1.6" opacity=".55"/></g>'+
+      '<g><rect x="6" y="102" width="132" height="84" fill="#a2c481"/><path d="M6 146h132M74 102v84" stroke="#e6f0dc" stroke-width="1.6" opacity=".55"/></g>'+
+      '<g><rect x="150" y="102" width="132" height="84" fill="#6d9459"/><path d="M150 144h132M214 102v84" stroke="#e6f0dc" stroke-width="1.6" opacity=".55"/></g>'+
+    '</g>'+
+    '<g fill="#fff" opacity=".16"><rect x="6" y="6" width="60" height="14"/><rect x="150" y="6" width="46" height="14"/><rect x="6" y="102" width="52" height="14"/><rect x="150" y="102" width="64" height="14"/></g>',
+  /* 遥感解译产品：彩色图斑矢量化结果 */
+  '遥感解译产品':'<defs><linearGradient id="ttV" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fbf74"/><stop offset="1" stop-color="#4a7f4b"/></linearGradient></defs>'+
+    '<rect width="288" height="192" fill="url(#ttV)"/>'+
+    '<g opacity=".55"><rect x="0" y="0" width="112" height="98" fill="#6f9b57"/><rect x="112" y="98" width="176" height="94" fill="#5c8a4d"/></g>'+
+    '<g fill="#e8a94a" opacity=".82"><path d="M22 34h58v40H22z"/><path d="M46 130h62v36H46z"/></g>'+
+    '<g fill="#8ec9de" opacity=".82"><path d="M126 18h62v40h-62z"/><path d="M196 122h70v44h-70z"/></g>'+
+    '<g fill="none" stroke="#f4f9ee" stroke-width="2.4"><path d="M22 34h58v40H22z"/><path d="M126 18h62v40h-62z"/><path d="M46 130h62v36H46z"/><path d="M196 122h70v44h-70z"/></g>',
+  '遥感反演产品':''
+};
+/* 遥感反演的图例条：由高到低，配色随专题基调（仅示意，不代表真实分级标准） */
+var TT_LEGEND='<div class="tt-leg"><span class="tt-leg-bar"><i style="background:#2f6b3a"></i><i style="background:#5d9147"></i><i style="background:#93b95c"></i><i style="background:#c9c96d"></i><i style="background:#e0a35c"></i></span>'+
+  '<span class="tt-leg-lab"><b>高</b><b>较高</b><b>中</b><b>较低</b><b>低</b></span></div>';
+var TT_ROW={};
+TT_ROW['地面实测']=TT_VAR['地面实测'];
+/* 内嵌示意表：数据形态 -> {表头, 行（值取自各自数据的预览样例，示意）} */
+var TT_TABLE={
+  '地面实测':{cols:['日期','株高cm','叶面积','长势'],rows:[['2026-06-01','32.4','3.1','良好'],['2026-06-05','34.2','3.5','良好'],['2026-06-10','36.8','3.8','良好'],['2026-06-15','37.1','4.0','优']]},
+  '业务申报数据':{cols:['观测日期','生育期','株高','长势'],rows:[['2026-06-12','分蘖期','35.2 cm','良好'],['2026-06-15','分蘖期','—','长势整齐']]},
+  '结构化表':{cols:['地块编码','年份','作物','产量kg'],rows:[['DK-001','2026','水稻','612.4'],['DK-002','2026','玉米','738.9'],['DK-003','2026','大豆','418.5']]}
+};
+function thumbTable(form){
+  var t=TT_TABLE[form];if(!t)return '';
+  var h='<table><thead><tr>';
+  t.cols.forEach(function(c){h+='<th>'+c+'</th>';});
+  h+='</tr></thead><tbody>';
+  t.rows.forEach(function(r){
+    h+='<tr>';
+    r.forEach(function(c){h+='<td'+(c==='—'?'':' class="em"')+'>'+c+'</td>';});
+    h+='</tr>';
+  });
+  return h+'</tbody></table>';
+}
+/* 卡片缩略图 HTML：table 优先，其次影像占位，最后退回纯图标 */
+function thumbHtml(d){
+  var form=d.form;
+  if(TT_TABLE[form]) return '<div class="ds-thumb tt-tab">'+thumbTable(form)+'</div>';
+  if(form==='遥感反演产品') return '<div class="ds-thumb">'+TT_LEGEND+'</div>';
+  var v=TT_VAR[form];
+  if(v) return '<div class="ds-thumb thumb-tinted"><svg class="tt" viewBox="0 0 288 192" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+v+'</svg></div>';
+  return '<div class="ds-thumb thumb-tinted"><svg class="ico-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+iconPathOf(form)+'</svg></div>';
+}
+/* 取数据形态的线性图标 path（不含外层 svg 标签），供缩略图降级态复用 */
+function iconPathOf(form){
+  var m=(ICONS[form]||ICONS['结构化表']).match(/<svg[^>]*>([\s\S]*)<\/svg>/);
+  return m?m[1]:(ICONS['结构化表']);
+}
+/* 卡片元数据行：区域 · 覆盖时间（无覆盖时间字段的退回采集年份，不虚构） */
+function fieldsHtml(d){
+  var h='<div class="ds-fields">';
+  if(d.region)h+='<span class="ff"><span class="k">区域：</span><span class="vv">'+d.region+'</span></span>';
+  h+='<span class="ff"><span class="k">覆盖时间：</span><span class="vv">'+d.year+'</span></span>';
+  return h+'</div>';
+}
+/* 元数据标签顺序统一为：专题、区域、数据形态、作物、年份 */
+function tagsOf(d){
+  var zn=zoneNameOf(d.zone);
+  var h='';
+  if(zn)h+='<span class="tag">'+zn+'</span>';
+  if(d.region)h+='<span class="tag">'+d.region+'</span>';
+  h+='<span class="tag">'+d.form+'</span>';
+  h+='<span class="tag">'+d.crop.join('/')+'</span><span class="tag">'+d.year+'</span>';
+  return h;
+}
+function metaHtml(d){
+  return '<div class="mi">'+
+    '<span class="m-item">'+ico(ICONS['calendar'])+'更新 <b>'+d.upd+'</b></span>'+
+    '<span class="m-item">'+ico(ICONS['apply'])+'申请 <b>'+d.apply+'</b> 次</span>'+
+    '</div>';
+}
+function actsHtml(){
+  var high=isHighRole();
+  return '<div class="ds-acts"><button type="button" class="text-link">查看详情'+ico(ICONS['chev'])+'</button>'+
+    '<span class="apply-btn" data-act="'+(high?'use':'apply')+'">'+(high?'开始使用':'申请使用')+'</span></div>';
+}
+function bindClick(row,d){
+  row.onclick=function(e){
+    if(e&&e.target&&e.target.closest&&e.target.closest('.apply-btn'))return;
+    location.href='数据中心-数据集详情.html#n='+encodeURIComponent(d.name);
+  };
+  var ab=row.querySelector('.apply-btn');
+  if(ab)ab.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(!requireAuth())return;
+    location.href='数据中心-数据集详情.html#n='+encodeURIComponent(d.name)+(ab.getAttribute('data-act')==='use'?'&use=1':'&apply=1');
+  });
+}
+function setView(m){
+  mode=m;
+  document.getElementById('vsGrid').classList.toggle('on',m==='grid');
+  document.getElementById('vsList').classList.toggle('on',m==='list');
+  document.getElementById('viewGrid').classList.toggle('active',m==='grid');
+  document.getElementById('viewList').classList.toggle('active',m==='list');
+  renderAll();
+}
+function renderCtx(){
+  var bar=document.getElementById('ctxBar');bar.innerHTML='';
+  var conds=[];
+  if(activeZone){
+    var z=ZONES.filter(function(x){return x.zone===activeZone;})[0];
+    conds.push({label:'专题：'+z.name,kind:'zone'});
+  }
+  if(state.crop.size)state.crop.forEach(function(v){conds.push({label:'作物：'+v,kind:'crop',v:v});});
+  if(state.form.size)state.form.forEach(function(v){conds.push({label:'形态：'+v,kind:'form',v:v});});
+  if(state.year.size)state.year.forEach(function(v){conds.push({label:'年份：'+v,kind:'year',v:v});});
+  if(state.region.size)state.region.forEach(function(v){conds.push({label:'区域：'+v,kind:'region',v:v});});
+  if(state.time.size&&!state.time.has('all')){
+    var tv=state.time.has('365')?'近一年':(state.time.has('90')?'近90天':(state.time.has('30')?'近30天':''));
+    if(tv)conds.push({label:'更新：'+tv,kind:'time'});
+  }
+  if(kw)conds.push({label:'搜索：'+kw,kind:'kw'});
+
+  if(!conds.length){bar.classList.remove('show');return;}
+  bar.classList.add('show');
+  var html='<span class="cb-label">已选条件</span>';
+  conds.forEach(function(c){
+    html+='<span class="ctx-chip" data-k="'+c.kind+'" data-v="'+(c.v||'')+'">'+c.label+'<span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span></span>';
+  });
+  /* ⭐0917 「清空」＝全站唯一清空入口（左栏同名按钮已删除），带垃圾桶图标 */
+  html+='<span class="ctx-all" onclick="clearAllCond()" title="清空全部筛选与搜索条件">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>清空</span>';
+  if(activeZone){
+    if(!isHighRole()){html+='<span class="ctx-all" onclick="applyZoneAll(\''+activeZone+'\')">申请本专题全部 →</span>';}
+  }
+  bar.innerHTML=html;
+  bar.querySelectorAll('.ctx-chip').forEach(function(ch){
+    ch.querySelector('.x').addEventListener('click',function(){
+      var k=ch.getAttribute('data-k'),v=ch.getAttribute('data-v');
+      if(k==='zone'){activeZone=null;renderZoneList();}
+      else if(k==='time'){state.time.clear();state.time.add('all');document.getElementById('timeSel').value='all';}
+      else if(k==='kw'){kw='';document.getElementById('kwInput').value='';}
+      else if(state[k])state[k].delete(v);
+      renderAll();
+    });
+  });
+}
+function clearAllCond(){
+  activeZone=null;
+  Object.keys(state).forEach(function(k){state[k].clear();});
+  state.time.add('all');
+  kw='';document.getElementById('kwInput').value='';
+  document.getElementById('timeSel').value='all';
+  document.querySelectorAll('.fitem.on').forEach(function(it){it.classList.remove('on');});
+  document.getElementById('ctxBar').classList.remove('show');
+  if(LTab==='zone')renderZoneList();
+  renderAll();
+}
+function doSearch(){
+  kw=(document.getElementById('kwInput').value||'').trim().toLowerCase();
+  renderAll();
+}
+/* ===== 分页状态 ===== */
+var page=1,pageSize=8;
+function gotoPage(p){page=p;renderAll();}
+
+function renderAll(){
+  var all=filtered(),g=document.getElementById('viewGrid'),l=document.getElementById('viewList');
+  renderCtx();
+  var totalPages=Math.max(1,Math.ceil(all.length/pageSize));
+  if(page>totalPages)page=totalPages;
+  var arr=all.slice((page-1)*pageSize,page*pageSize);
+  g.innerHTML='';l.innerHTML='';
+  arr.forEach(function(d){
+    var tg=tagsOf(d);
+    var card=document.createElement('article');
+    card.className='ds-card';
+    card.tabIndex=0;
+    card.innerHTML='<div class="ds-top">'+thumbHtml(d)+
+      '<div class="ds-hd"><div class="ds-name">'+d.name+'</div>'+
+      (d.desc?'<p class="ds-desc">'+d.desc+'</p>':'')+
+      '<div class="ds-tags">'+tg+'</div>'+
+      fieldsHtml(d)+'</div></div>'+
+      '<div class="ds-meta">'+metaHtml(d)+actsHtml()+'</div>';
+    bindClick(card,d);
+    g.appendChild(card);
+
+    var row=document.createElement('div');
+    row.className='ds-row';
+    row.innerHTML=thumbHtml(d)+
+      '<div class="ds-hd"><div class="ds-name">'+d.name+'</div>'+
+      (d.desc?'<p class="ds-desc">'+d.desc+'</p>':'')+
+      '<div class="ds-tags">'+tg+'</div></div>'+
+      '<div class="ds-right">'+metaHtml(d)+actsHtml()+'</div>';
+    bindClick(row,d);
+    l.appendChild(row);
+  });
+  document.getElementById('countText').textContent=all.length;
+  document.getElementById('emptyBox').classList.toggle('show',!all.length);
+  document.getElementById('viewGrid').style.display=(all.length&&mode==='grid')?'grid':'none';
+  document.getElementById('viewList').style.display=(all.length&&mode==='list')?'block':'none';
+  renderPager(all.length,totalPages);
+}
+
+function renderPager(total,totalPages){
+  var p=document.getElementById('pager');p.innerHTML='';
+  if(!total){p.classList.remove('show');return;}
+  p.classList.add('show');
+  var html='<div class="psize">每页'+
+    '<select onchange="pageSize=parseInt(this.value);page=1;renderAll()" aria-label="每页条数">'+
+      '<option value="8"'+(pageSize===8?' selected':'')+'>8</option>'+
+      '<option value="12"'+(pageSize===12?' selected':'')+'>12</option>'+
+      '<option value="24"'+(pageSize===24?' selected':'')+'>24</option>'+
+    '</select>条</div>';
+  html+='<div class="pbtns">';
+  html+='<span class="page-btn'+(page<=1?' disabled':'')+'" onclick="if(page>1)gotoPage(page-1)">‹ 上一页</span>';
+  for(var i=1;i<=totalPages;i++){
+    if(totalPages>7&&i>2&&i<totalPages-1&&Math.abs(i-page)>1){
+      if(html.charAt(html.length-1)!=='…')html+='<span class="pg-gap">…</span>';
+      continue;
+    }
+    html+='<span class="page-btn'+(i===page?' on':'')+'" onclick="gotoPage('+i+')">'+i+'</span>';
+  }
+  html+='<span class="page-btn'+(page>=totalPages?' disabled':'')+'" onclick="if(page<totalPages)gotoPage(page+1)">下一页 ›</span>';
+  html+='</div>';
+  p.innerHTML=html;
+}
+
+/* ===== 排序 / 筛选 ===== */
+function toggleSort(e){
+  e.stopPropagation();
+  var m=document.getElementById('sortMenu');
+  var open=m.classList.toggle('open');
+  document.getElementById('sortBtn').classList.toggle('open',open);
+  document.getElementById('sortBtn').setAttribute('aria-expanded',open?'true':'false');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest||!e.target.closest('.sort-wrap')){
+    var sm=document.getElementById('sortMenu');
+    if(sm){sm.classList.remove('open');document.getElementById('sortBtn').classList.remove('open');}
+  }
+  if(!e.target.closest||!e.target.closest('.u-box')){var m=document.getElementById('userMenu');if(m)m.classList.remove('open');}
+});
+function pickSort(e,key,label){
+  e.stopPropagation();
+  sortKey=key;
+  document.getElementById('sortLabel').textContent=label;
+  document.querySelectorAll('.sm-item').forEach(function(it){it.classList.toggle('on',it.getAttribute('data-sort')===key);});
+  document.getElementById('sortMenu').classList.remove('open');
+  document.getElementById('sortBtn').classList.remove('open');
+  renderAll();
+}
+function toggleDir(e){
+  if(e)e.stopPropagation();
+  if(sortKey==='default'){toast('综合排序无升降方向');return;}
+  sortDir=sortDir==='desc'?'asc':'desc';
+  document.getElementById('dirArrow').textContent=sortDir==='desc'?'降序':'升序';
+  renderAll();
+}
+document.querySelectorAll('.fitem').forEach(function(it){
+  it.addEventListener('click',function(){
+    var g=it.getAttribute('data-g'),v=it.getAttribute('data-v');
+    if(state[g].has(v)){state[g].delete(v);it.classList.remove('on');}
+    else{state[g].add(v);it.classList.add('on');}
+    renderAll();
+  });
+});
+refreshFilterCounts();
+renderAll();
+</script>
+<style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body>
+</html>

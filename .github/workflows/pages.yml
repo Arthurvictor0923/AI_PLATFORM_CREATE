@@ -18,8 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v4
+      # 只把「入口页 + 门户端原型」组装成发布产物；
+      # legacy/ 旧版归档、规范文件/、仓库文档一律不进站点。
+      - name: Assemble site
+        run: |
+          set -e
+          rm -rf _site
+          mkdir -p _site
+          cp index.html _site/index.html
+          cp .nojekyll _site/.nojekyll
+          cp -R portal-prototype _site/portal-prototype
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
       - id: deployment
         uses: actions/deploy-pages@v4

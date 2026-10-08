@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="bSmO2yfkca43QKT8wAAjSC">
+<head data-page-node-id="zVA1j3QuUIpkB49jL0JBS1">
+<meta charset="UTF-8" data-page-node-id="Gi3UPjlBlBD17nL4Rp4idH">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="ctIPn2bckEwqn2QzvLFcgr">
+<title>遥感影像检索 · 地图引擎 — 北大荒智慧农业协同创新平台</title>
+<style>
+  /* ==========================================================================
+     数据中心 · 数据查询地图页样式
+     依据《数据中心三类页面前端样式规范》V1.0
+     公共导航七项 → 48px 工具行 → 工作区（左查询栏 / 右地图）→ 公共页脚
+     ========================================================================== */
+  :root{
+    --brand:#005653; --brand-hover:#004542;
+    --brand-soft:#edf6f2; --page-bg:#f4f8f5;
+    --surface:#fff; --text:#10213a;
+    --text-secondary:#526078; --text-muted:#6b778c;
+    --border:#dce5e9; --footer-bg:#00504e;
+    --error:#b42318; --disabled-bg:#f1f3f5;
+    --radius-sm:4px; --radius-md:8px;
+    --control-height:36px; --header-height:64px;
+    --content-max:1800px; --layout-gap:16px;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+    --shadow:0 2px 8px rgba(16,33,58,.06);
+    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --font-serif:"Source Han Serif SC","Noto Serif SC","STSong","SimSun",serif;
+    /* 地图语义色：检索结果框（金）——右侧图例与检索结果缩略图同色，保持一致 */
+    --map-result:#b49839; --map-result-soft:rgba(180,152,57,.14);
+    /* 工作区高度：视口高 - 页头64 - 工具行48 - 页脚140 = 252；低高度窗口取 640 保底并允许整页滚动 */
+    --toolbar-height:48px; --footer-height:140px;
+    --workspace-h:max(640px, calc(100dvh - var(--header-height) - var(--toolbar-height) - var(--footer-height)));
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{margin:0;}
+  body{
+    margin:0; font-family:var(--font-ui); font-size:14px; line-height:22px; color:var(--text);
+    background:var(--page-bg); -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brand); text-decoration:none;}
+  a:hover{color:var(--brand-hover);}
+  button{font:inherit; color:inherit; cursor:pointer; border:0; background:none;}
+  input,select,textarea{font:inherit; color:inherit;}
+  h1,h2,h3,h4{margin:0; font-weight:600;}
+  .ico{width:16px; height:16px; flex-shrink:0; display:block;}
+  .container{width:100%; max-width:var(--content-max); margin:0 auto; padding-inline:clamp(24px,3.65vw,56px);}
+
+  /* ==================== 公共导航 ==================== */
+  .site-header{position:sticky; top:0; z-index:100; height:var(--header-height); background:var(--surface); border-bottom:1px solid var(--border);}
+  .header-inner{display:flex; align-items:center; gap:var(--s5); height:var(--header-height);}
+  .brand{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .brand span{font-size:22px; line-height:30px; font-weight:600; color:var(--text); white-space:nowrap;}
+  .main-nav{display:flex; align-items:center; height:var(--header-height); margin-left:var(--s4); flex:1; min-width:0; overflow:hidden;}
+  .main-nav button{
+    position:relative; display:inline-flex; align-items:center; height:var(--header-height);
+    padding:0 16px; font-size:14px; line-height:22px; color:var(--text-secondary);
+    white-space:nowrap; transition:color .2s;
+  }
+  .main-nav button:hover{color:var(--brand);}
+  .main-nav .active{color:var(--brand); font-weight:600;}
+  .main-nav .active::after{content:''; position:absolute; left:16px; right:16px; bottom:-1px; height:3px; border-radius:2px 2px 0 0; background:var(--brand);}
+  .header-actions{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+  .btn-login{display:inline-flex; align-items:center; justify-content:center; height:var(--control-height); padding:0 16px; font-size:14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:#fff; color:var(--text); white-space:nowrap; transition:all .2s;}
+  .btn-login:hover{color:var(--brand); border-color:var(--brand);}
+  .btn-brand{display:inline-flex; align-items:center; justify-content:center; height:var(--control-height); padding:0 16px; font-size:14px; font-weight:500; border-radius:var(--radius-sm); background:var(--brand); color:#fff; white-space:nowrap; transition:background .2s;}
+  .btn-brand:hover{background:var(--brand-hover); color:#fff;}
+
+  /* ==================== 工具行（48px） ==================== */
+  .me-toolbar{height:var(--toolbar-height); flex:0 0 auto; background:var(--surface); border-bottom:1px solid var(--border);}
+  .me-toolbar-inner{display:flex; align-items:center; justify-content:space-between; gap:var(--s4); height:var(--toolbar-height);}
+  .me-tb-left{display:flex; align-items:center; gap:var(--s3); min-width:0;}
+  .me-back{
+    display:inline-flex; align-items:center; gap:4px; height:28px; padding:0 10px 0 6px; font-size:13px; line-height:20px;
+    color:var(--text-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); background:#fff; white-space:nowrap; transition:all .2s;
+  }
+  .me-back .ico{width:14px; height:14px;}
+  .me-back:hover{color:var(--brand); border-color:var(--brand);}
+  .me-tb-divider{width:1px; height:16px; background:var(--border); flex-shrink:0;}
+  .me-tb-title{font-size:16px; line-height:24px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .me-tb-right{display:flex; align-items:center; gap:8px; min-width:0; font-size:13px;}
+  .me-tb-label{color:var(--text-muted); white-space:nowrap;}
+  .me-sub{color:var(--text); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:clamp(180px,32vw,560px);}
+
+  /* ==================== 工作区：左查询栏 + 右地图 ==================== */
+  .me-workspace{display:flex; height:var(--workspace-h); min-height:0; background:#eef0e6; overflow:hidden;}
+
+  /* —— 左查询栏（320px；≥1600 宽屏 340px）—— */
+  .me-left{
+    width:320px; flex:0 0 320px; background:var(--surface); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; min-height:0; overflow:hidden;
+  }
+  /* 上：查询条件 / 查询结果 页签 */
+  .me-tabs{display:flex; align-items:center; height:44px; flex:0 0 44px; padding:0 var(--s4); border-bottom:1px solid var(--border); background:var(--surface);}
+  .me-tab{
+    position:relative; height:44px; display:inline-flex; align-items:center; justify-content:center; flex:1;
+    font-size:14px; color:var(--text-secondary); transition:color .2s; white-space:nowrap;
+  }
+  .me-tab:hover{color:var(--brand);}
+  .me-tab.active{color:var(--brand); font-weight:600;}
+  .me-tab.active::after{content:''; position:absolute; left:0; right:0; bottom:-1px; height:3px; border-radius:2px 2px 0 0; background:var(--brand);}
+  .me-tab-panel{display:none;}
+  .me-tab-panel.active{display:block;}
+  /* 中：表单/结果，唯一滚动区（min-height:0 保证底部工具条不被挤出） */
+  .me-tab-scroll{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:var(--s4) 18px var(--s3);}
+  .me-left-title{font-size:14px; line-height:22px; font-weight:600; color:var(--text); margin-bottom:var(--s3);}
+  .me-hint{font-size:11px; line-height:18px; color:var(--text-muted); margin-bottom:var(--s3);}
+
+  .me-field{margin-bottom:14px; min-width:0;}
+  .me-field label{display:block; font-size:12px; line-height:18px; color:var(--text-secondary); margin-bottom:5px;}
+  .me-field .req{color:var(--error);}
+  .me-input,.me-select{
+    width:100%; min-width:0; height:var(--control-height); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:0 10px; font-size:13px; color:var(--text); background:#fff; outline:none; transition:border-color .2s, box-shadow .2s;
+  }
+  .me-input:focus,.me-select:focus{border-color:var(--brand); box-shadow:0 0 0 2px rgba(0,86,83,.12);}
+  .me-readonly{
+    width:100%; height:var(--control-height); padding:0 12px; font-size:13px; color:var(--text);
+    background:var(--disabled-bg); border:1px solid var(--border); border-radius:var(--radius-sm);
+    display:flex; align-items:center; gap:8px;
+  }
+  .me-readonly .tag{display:inline-flex; align-items:center; height:20px; padding:0 8px; border-radius:var(--radius-sm); font-size:11px; color:#0f4a45; background:var(--brand-soft); white-space:nowrap;}
+  .me-range{display:flex; gap:8px; min-width:0;}
+  .me-range .me-input{flex:1 1 0; min-width:0;}
+  .me-cloud-opts{display:flex; gap:6px; flex-wrap:wrap;}
+  .me-cloud-opts label{
+    flex:1 1 64px; min-width:0; text-align:center; font-size:12px; line-height:18px; padding:8px 0;
+    border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; color:var(--text-secondary); user-select:none; transition:all .2s;
+  }
+  .me-cloud-opts input{display:none;}
+  .me-cloud-opts label:has(input:checked){border-color:var(--brand); color:var(--brand); background:var(--brand-soft); font-weight:600;}
+  .me-submit{
+    width:100%; height:40px; margin-top:2px; font-size:14px; font-weight:500; border-radius:6px;
+    background:var(--brand); color:#fff; transition:background .2s;
+  }
+  .me-submit:hover{background:var(--brand-hover);}
+  .me-seg{display:flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; margin-bottom:8px;}
+  .me-seg button{flex:1; padding:8px 0; font-size:12px; color:var(--text-secondary); background:#fff; border-right:1px solid var(--border); transition:all .2s;}
+  .me-seg button:last-child{border-right:none;}
+  .me-seg button:hover{color:var(--brand);}
+  .me-seg button.on{background:var(--brand); color:#fff;}
+  .me-seg-hint{font-size:11px; line-height:18px; color:var(--text-muted); margin-top:6px;}
+
+  /* —— 查询结果列表 —— */
+  .me-results-tools{display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 var(--s3);}
+  .me-tools-tip{flex:1; font-size:11px; line-height:18px; color:var(--text-muted);}
+  .me-sel-all{display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text-secondary); cursor:pointer; user-select:none;}
+  .me-sel-all input{accent-color:var(--brand);}
+  .me-batch-btn{height:30px; padding:0 14px; font-size:12px; border-radius:var(--radius-sm); background:var(--brand); color:#fff; transition:background .2s;}
+  .me-batch-btn:hover{background:var(--brand-hover);}
+  .me-batch-btn:disabled{background:#c8d3d0; cursor:not-allowed;}
+  .me-result-item{
+    position:relative; display:flex; align-items:flex-start; gap:10px; padding:10px 12px; margin-bottom:8px;
+    border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; cursor:pointer; transition:border-color .15s, box-shadow .15s;
+  }
+  .me-result-item:hover{border-color:var(--brand); box-shadow:var(--shadow);}
+  .me-result-item.active{border-color:var(--brand); background:var(--brand-soft);}
+  .me-ri-check{position:absolute; top:10px; left:10px; width:15px; height:15px; accent-color:var(--brand); cursor:pointer;}
+  .me-ri-thumb{
+    width:64px; height:64px; flex:0 0 64px; border-radius:6px; overflow:hidden; position:relative;
+    background:linear-gradient(135deg,#254741,#0f2823);
+  }
+  .me-ri-thumb .grid{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px); background-size:13px 13px;}
+  .me-ri-thumb .foot{position:absolute; inset:18px 14px; border:1px solid var(--map-result); border-radius:2px; background:var(--map-result-soft);}
+  .me-ri-main{flex:1; min-width:0;}
+  .me-ri-top{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px;}
+  .me-ri-id{font-size:12px; line-height:18px; font-weight:600; color:var(--brand); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .me-ri-prod{flex-shrink:0; font-size:10px; line-height:16px; color:#fff; background:var(--map-result); padding:1px 6px; border-radius:10px;}
+  .me-ri-row{display:flex; justify-content:space-between; gap:8px; font-size:11px; line-height:17px; color:var(--text-secondary);}
+  .me-ri-row span{color:var(--text-muted); white-space:nowrap;}
+  .me-ri-row b{font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .me-ri-meta{font-size:12px; line-height:20px; color:var(--text-secondary);}
+  .me-ri-meta span{color:var(--text-muted);}
+  .me-ri-actions{display:flex; flex-direction:column; gap:6px; flex:0 0 auto; padding-top:2px;}
+  .me-ri-act{font-size:11px; line-height:18px; color:var(--brand); white-space:nowrap;}
+  .me-ri-act.detail{color:var(--text-muted);}
+  .me-ri-act:hover{text-decoration:underline;}
+  .me-ri-apply{display:inline-block; margin-top:6px; font-size:12px; color:var(--brand);}
+  .me-ri-apply:hover{text-decoration:underline;}
+  .me-empty{font-size:12px; line-height:20px; color:var(--text-muted); text-align:center; padding:24px 0;}
+
+  .me-pagination{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:var(--s3) 0 2px; margin-top:6px; border-top:1px solid var(--border); font-size:12px; color:var(--text-secondary);}
+  .me-pg-total{white-space:nowrap;}
+  .me-pg-pages{display:flex; gap:4px;}
+  .me-pg-page{min-width:26px; height:26px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-sm); border:1px solid var(--border); cursor:pointer; transition:all .2s;}
+  .me-pg-page:hover{border-color:var(--brand); color:var(--brand);}
+  .me-pg-page.active{background:var(--brand); border-color:var(--brand); color:#fff;}
+  .me-pg-size{height:26px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; padding:0 4px; outline:none; background:#fff;}
+
+  /* 下：申请说明与按钮（独立于页签，始终可见，不被滚动区挤出）
+     说明在上、操作在下两行，避免 320px 窄栏里三元素挤成一行把说明压成竖排 */
+  .me-bottom-bar{
+    flex:0 0 auto; border-top:1px solid var(--border); background:var(--surface);
+    padding:var(--s3) 18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .me-bottom-note{font-size:12px; line-height:18px; color:var(--text-muted);}
+  .me-bottom-note b{color:var(--brand); font-weight:600;}
+  .me-bottom-actions{display:flex; align-items:center; justify-content:space-between; gap:var(--s3);}
+  .me-bottom-bar .me-apply-btn{flex:0 0 auto; height:40px; padding:0 20px; font-size:13px; font-weight:500; border-radius:6px; background:var(--brand); color:#fff; white-space:nowrap; transition:background .2s;}
+  .me-bottom-bar .me-apply-btn:hover{background:var(--brand-hover);}
+  .me-bottom-bar .me-myauth{font-size:12px; color:var(--brand); white-space:nowrap;}
+  .me-bottom-bar .me-myauth:hover{text-decoration:underline;}
+  .me-apply-btn{height:32px; padding:0 16px; font-size:12px; border-radius:var(--radius-sm); background:var(--brand); color:#fff; white-space:nowrap; transition:background .2s;}
+  .me-apply-btn:hover{background:var(--brand-hover);}
+
+  /* ==================== 右侧地图（工作区主体） ==================== */
+  .me-map-wrap{flex:1 1 auto; position:relative; min-width:0; background:#e9ede3; overflow:hidden;}
+  .me-map{position:absolute; inset:0; z-index:1; cursor:grab;}
+  .me-map.dragging{cursor:grabbing;}
+  .me-farm-label{font-size:12px; font-weight:600; color:#005653; text-shadow:0 0 3px #fff,0 0 3px #fff; white-space:nowrap;}
+
+  /* ① 左上：经纬度 */
+  .me-coord{
+    position:absolute; top:16px; left:16px; z-index:10; padding:5px 10px; font-size:12px; line-height:18px;
+    color:var(--text-secondary); background:rgba(255,255,255,.92); border:1px solid var(--border); border-radius:var(--radius-sm);
+    font-variant-numeric:tabular-nums; box-shadow:var(--shadow);
+  }
+  /* ② 右上：底图切换 */
+  .me-layer-toggle{
+    position:absolute; top:16px; right:16px; z-index:10; display:flex; overflow:hidden;
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow);
+  }
+  .me-layer-toggle button{padding:8px 14px; font-size:13px; line-height:20px; color:var(--text-secondary); border-right:1px solid var(--border); transition:all .2s;}
+  .me-layer-toggle button:last-child{border-right:none;}
+  .me-layer-toggle button:hover{color:var(--brand);}
+  .me-layer-toggle button.active{background:var(--brand); color:#fff;}
+  /* ③ 右上（底图切换下方）：结果透明度 */
+  .me-opacity{
+    position:absolute; top:64px; right:16px; z-index:10; width:190px; display:flex; align-items:center; gap:8px;
+    padding:8px 10px; font-size:11px; line-height:18px; color:var(--text-secondary);
+    background:rgba(255,255,255,.94); border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow);
+  }
+  .me-opacity input[type=range]{flex:1; min-width:0; accent-color:var(--brand);}
+  .me-opacity .ov{width:34px; text-align:right; font-variant-numeric:tabular-nums;}
+  /* ④ 右下（图例之上）：缩放 */
+  .me-zoom{
+    position:absolute; right:16px; bottom:88px; z-index:10; display:flex; flex-direction:column; overflow:hidden;
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow);
+  }
+  .me-zoom button{width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text); border-bottom:1px solid var(--border); transition:all .2s;}
+  .me-zoom button:last-child{border-bottom:none;}
+  .me-zoom button:hover{background:var(--brand-soft); color:var(--brand);}
+  .me-zoom .ico{width:18px; height:18px;}
+  /* ⑤ 右下：图例（与真实图层同色） */
+  .me-legend{
+    position:absolute; right:16px; bottom:16px; z-index:10; padding:8px 10px; font-size:11px; line-height:1.8; color:var(--text-secondary);
+    background:rgba(255,255,255,.94); border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow);
+  }
+  .me-legend .lg{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+  /* ⑥ 左下：比例尺 */
+  .me-scale{position:absolute; left:16px; bottom:16px; z-index:10; display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary);}
+  .me-scale .bar{height:8px; border:1px solid #526078; border-top:none; background:rgba(255,255,255,.88);}
+  /* ⑦ 左上（经纬度下方）：点选框信息浮层 */
+  .me-info-pop{
+    position:absolute; left:16px; top:60px; z-index:11; width:280px; display:none;
+    padding:14px 16px; background:#fff; border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 4px 20px rgba(16,33,58,.16);
+  }
+  .me-info-pop.show{display:block;}
+  .me-info-pop h4{margin:0 0 8px; font-size:14px; line-height:22px; color:var(--brand);}
+  .me-info-pop .row{display:flex; justify-content:space-between; gap:10px; font-size:12px; line-height:20px; color:var(--text-secondary);}
+  .me-info-pop .row b{color:var(--text); font-weight:600;}
+  .me-info-close{position:absolute; top:8px; right:8px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-sm); color:var(--text-muted);}
+  .me-info-close .ico{width:14px; height:14px;}
+  .me-info-close:hover{background:var(--brand-soft); color:var(--brand);}
+
+  /* ==================== 提示 ==================== */
+  .toast{
+    position:fixed; left:50%; top:calc(var(--header-height) + var(--toolbar-height) + 16px); transform:translateX(-50%) translateY(-8px);
+    max-width:min(560px,calc(100% - 32px)); padding:10px 20px; background:rgba(16,33,58,.92); color:#fff;
+    font-size:13px; line-height:20px; border-radius:var(--radius-sm); z-index:999; opacity:0; pointer-events:none; transition:all .25s;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ==================== 公共页脚 ==================== */
+  .site-footer{position:relative; background:var(--footer-bg); color:rgba(255,255,255,.78); overflow:hidden;}
+  .footer-inner{position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,38fr) minmax(0,15fr) minmax(0,19fr) minmax(0,28fr); gap:var(--s4); min-height:140px; padding:28px 0;}
+  .f-brand{display:flex; align-items:flex-start; gap:12px; min-width:0;}
+  .f-brand .f-logo{flex-shrink:0;}
+  .f-brand .f-name{font-size:18px; line-height:26px; font-weight:600; color:#fff;}
+  .f-brand .f-desc{margin-top:4px; font-size:12px; line-height:20px; color:rgba(255,255,255,.7);}
+  .f-col h4{font-size:14px; line-height:22px; font-weight:600; color:#fff; margin-bottom:var(--s2);}
+  .f-col a{display:block; font-size:13px; line-height:22px; color:rgba(255,255,255,.78); margin-bottom:6px;}
+  .f-col a:hover{color:#fff; text-decoration:underline;}
+  .f-about-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 var(--s5);}
+  .f-slogan{display:flex; align-items:center; justify-content:flex-end; gap:var(--s5);}
+  .f-slogan .divider{width:1px; height:56px; background:rgba(255,255,255,.28); flex-shrink:0;}
+  .f-slogan .lines{font-family:var(--font-serif); font-size:15px; line-height:26px; color:#fff; letter-spacing:.06em; white-space:nowrap;}
+  .f-wave{position:absolute; right:-8px; bottom:-16px; opacity:.16; pointer-events:none;}
+
+  /* ==================== 响应式 ==================== */
+  @media (min-width:1600px){
+    .me-left{width:340px; flex:0 0 340px;}
+  }
+  @media (max-width:1099px){
+    .main-nav{display:none;}
+    .header-inner{gap:var(--s4);}
+    .brand span{font-size:20px; line-height:28px;}
+  }
+  @media (max-width:1199px){
+    .footer-inner{grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--s5);}
+    .f-slogan{justify-content:flex-start;}
+  }
+  /* 窄屏：查询栏在上、地图在下（低高度窗口允许整页滚动） */
+  @media (max-width:899px){
+    .me-workspace{flex-direction:column; height:auto; overflow:visible;}
+    .me-left{width:auto; flex:0 0 auto; max-height:520px; border-right:none; border-bottom:1px solid var(--border);}
+    .me-map-wrap{flex:0 0 auto; height:440px;}
+    .me-opacity{width:170px;}
+    .me-sub{max-width:34vw;}
+  }
+  @media (max-width:767px){
+    .header-inner{gap:12px;}
+    .brand span{font-size:17px; line-height:26px;}
+    .main-nav{margin-left:0;}
+    .header-actions .btn-brand{display:none;}
+    .me-toolbar-inner{gap:var(--s3);}
+    .me-tb-title{font-size:15px;}
+    .me-tb-label{display:none;}
+    .me-sub{max-width:44vw;}
+    .me-info-pop{width:min(280px,calc(100% - 32px));}
+    .footer-inner{grid-template-columns:minmax(0,1fr);}
+    .f-slogan{flex-wrap:wrap; gap:var(--s4);}
+    .f-slogan .lines{white-space:normal;}
+  }
+  @media (max-width:480px){
+    .brand span{font-size:16px; overflow:hidden; text-overflow:ellipsis;}
+    .brand{min-width:0;}
+    .me-tb-title{display:none;}
+    .me-opacity{display:none;}
+  }
+
+</style>
+  <script src="https://api.tianditu.gov.cn/api?v=4.0&tk=3c09577ba4730ed9d8b3fe778dfa0271" type="text/javascript"></script>
+
+<!-- ============================================================
+     统一一级导航 · 口径＝门户页 `.site-header` / `.main-nav`（0924，用户指令）
+     由 _tools_原型对齐/patch_portal_nav_unify_0924.py 注入；
+     追加于本页原有 <style> 之后，用于覆盖页面自有的页头规则。
+     · 七项＝首页｜数据中心｜模型中心｜科研开发空间｜课题中心｜需求中心｜关于平台
+     · 页头 80px（≤1279 收敛 64，与门户页断点一致）；项间距 20px、内边距 0 2px；激活＝整项宽 2px 实心下划线
+     · 品牌 22px/600 + 30×30；动作区「登录」文字按钮 + 「合作咨询」主按钮
+     · ≤1099px 收起为移动端菜单（同门户页）
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+</head>
+<body>
+  <header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/><path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/><path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/><path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/></svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="autharea" id="authArea">
+        <button type="button" class="login-link" data-bdh-login>登录</button>
+        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header>
+
+  <div class="me-toolbar">
+    <div class="container me-toolbar-inner">
+      <div class="me-tb-left">
+        <a class="me-back" id="meBack" href="数据中心-数据集列表页.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>返回数据中心</a>
+        <span class="me-tb-divider" aria-hidden="true"></span>
+        <h1 class="me-tb-title">遥感影像检索</h1>
+      </div>
+      <div class="me-tb-right">
+        <span class="me-tb-label">当前数据集</span>
+        <span class="me-sub">全部样例</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="me-workspace" data-page-node-id="wXFZzbF7JUw2NPcG8BWWIl">
+    <!-- Left: search form -->
+    <aside class="me-left" data-page-node-id="XM9kCPpGgaTJAb7lWUi8s8">
+      <div class="me-tabs">
+        <button type="button" class="me-tab active" data-tab="condition">查询条件</button>
+        <button type="button" class="me-tab" data-tab="result">查询结果</button>
+      </div>
+      <div class="me-tab-scroll" data-page-node-id="L5gvhdcFfbLVWNYYyTCyvS">
+        <div class="me-tab-panel active" id="tabCondition">
+        <div class="me-left-title">影像检索条件</div>
+        <div class="me-hint" data-page-node-id="Fs9hGlA7yOb57qzi32bgiG">适用于含地理位置的遥感影像（卫星/无人机/多光谱），检索后将在右侧地图引擎定位并查看影像图层。</div>
+
+        <div class="me-field">
+          <label>数据类型</label>
+          <div class="me-readonly" id="meTypeLabel"><span class="tag">由来源决定</span>卫星影像</div>
+        </div>
+
+
+        <div id="satFields">
+        <div class="me-field" data-page-node-id="KQ7OqhXCrcOS0ZmA4mTBHn">
+          <label data-page-node-id="Yrnd2ZfCmaqPMfpEtbiTLV">卫星 / 传感器 <span class="req" data-page-node-id="5JNbV7AbITHgz8OipBATVv">*</span></label>
+          <select class="me-select" id="fProduct" data-page-node-id="W489BsBn0akWjudlowYG7I">
+            <option value="all" data-page-node-id="CEWOwFcBqwCEzeSYlivALP">全部产品</option>
+            <option value="GF-1" data-page-node-id="Y0zUPyXVS8vndzlHexxPR4">高分一号 GF-1</option>
+            <option value="GF-2" data-page-node-id="O10BLa6efgxz4uMcQFQrNK">高分二号 GF-2</option>
+            <option value="GF-6" data-page-node-id="2rgBwfhx9QWs2uP8rIlUNE">高分六号 GF-6</option>
+            <option value="ZY-3" data-page-node-id="xigzbJQJXwYY7NCUDlc0tJ">资源三号 ZY-3</option>
+            <option value="S2" data-page-node-id="TTIf8JcVVd1mxrj9RHAYoG">Sentinel-2</option>
+            <option value="L8" data-page-node-id="PC1WFswHR67zLUHJLSdJfC">Landsat-8</option>
+          </select>
+          <div class="me-seg-hint" style="margin-top:6px">按卫星 / 传感器筛选（如 高分二号 GF-2、Sentinel-2、Landsat-8）</div>
+        </div>
+
+        <div class="me-field" data-page-node-id="0DyUT0oMz43GLRYZBrm5ln">
+          <label data-page-node-id="lKXwAmuBPH9SPsphBjJ1tP">检索区域 <span class="req" data-page-node-id="wi5bMkoLGTdW1KfCVJByfj">*</span></label>
+          <div class="me-seg" id="meRegionMode">
+            <button type="button" class="on" data-mode="preset">预设区域</button>
+            <button type="button" data-mode="draw">地图框选</button>
+            <button type="button" data-mode="view">当前视图</button>
+          </div>
+          <select class="me-select" id="fRegion" data-page-node-id="kMH6nSU5Hkd99p2xwzrEi5">
+            <option value="all" data-page-node-id="hWGM3NHXUigMZq4eWxfWQO">全部垦区</option>
+            <option value="jiansanjiang" data-page-node-id="XWSyOBPXriUDb8DWSc7xjy">建三江</option>
+            <option value="youyi" data-page-node-id="sIKCtlRi1ifyyXggCnjlGh">友谊农场</option>
+            <option value="hongxinglong" data-page-node-id="NcKy5P3Ly1IN3SCXhGHglC">红兴隆</option>
+            <option value="baoquanling" data-page-node-id="U71Ic7evRjQHpElL4w84uj">宝泉岭</option>
+            <option value="mudanjiang" data-page-node-id="dj8gNxkckpGdhO9ETa99by">牡丹江</option>
+            <option value="nenjiang" data-page-node-id="zauTwDnostBjLr8Rj0muvl">嫩江</option>
+          </select>
+          <div class="me-seg-hint" id="meRegionHint">按预设垦区检索</div>
+        </div>
+
+        <div class="me-field" data-page-node-id="boYFPBXZJ15n5JqOhEv7bU">
+          <label data-page-node-id="ZDO0IXPogaEw6EuVRzUMQS">时间范围</label>
+          <div class="me-range" data-page-node-id="IDCU1BpvGKHVEnQXMxlj3U">
+            <input class="me-input" type="date" id="fStart" value="2025-01-01" data-page-node-id="WsSZXgT1n25elz87GiTwcb">
+            <input class="me-input" type="date" id="fEnd" value="2026-12-31" data-page-node-id="Rv9ifdUKgGhiebeFVlhxB9">
+          </div>
+        </div>
+
+        <div class="me-field" data-page-node-id="aQemGBRNKjhv6JfRU6YVmc">
+          <label data-page-node-id="T7np4esPZAPqX3NeO2VnMI">云量</label>
+          <div class="me-cloud-opts" id="fCloud" data-page-node-id="DJoMfrt6VeFL0IaQhNepFl">
+            <label data-page-node-id="Clu0gse4hGPGtsagQ8Dg9d"><input type="radio" name="cloud" value="0" data-page-node-id="VVAcepfk6LPYRHpBUsFr13"><span data-page-node-id="MpJQLVYrHGUEaoy9hEmplw">不限</span></label>
+            <label data-page-node-id="xLKGBrV26fylTsmgs0uOAV"><input type="radio" name="cloud" value="10" data-page-node-id="F0dzqXAEKe4EDwcmOaoTYM"><span data-page-node-id="zZXLVuz1Aw5JEZPCbczsif">≤10%</span></label>
+            <label data-page-node-id="IPqhl0YcA4VF4c2f9QQ0TL"><input type="radio" name="cloud" value="20" checked data-page-node-id="YJC43QDG8AKwN2CTj2xlkL"><span data-page-node-id="QMMNHFs0Bp9yrYszCUUux9">≤20%</span></label>
+            <label data-page-node-id="XvLgEnrmpXHSGz27y0qRXo"><input type="radio" name="cloud" value="30" data-page-node-id="rqeCaPEZOLI40HsYbBrq8d"><span data-page-node-id="KO799nNtnWtyf5e86TIBvD">≤30%</span></label>
+          </div>
+        </div>
+
+        <div class="me-field" data-page-node-id="1JEaHF6DxoBK0NeFeFj8ts">
+          <label data-page-node-id="xYiNIRqVchEK5iosvxeKCJ">影像标识</label>
+          <input class="me-input" type="text" id="fMark" placeholder="如 GF2_PMS1_20260612_建三江" data-page-node-id="hjhHczeczRnEYYLdRz65NB">
+        </div>
+
+        <div class="me-field" data-page-node-id="VhN2HNa1eBGMJyt6S2WhYW">
+          <label data-page-node-id="PZmVVHiIX7nRu4HApFGSB7">影像文件名</label>
+          <input class="me-input" type="text" id="fFile" placeholder="如 *.tif / GF2_*.tif" data-page-node-id="ChAnyN1WCWuG216BCUH0wU">
+        </div>
+
+        <div class="me-field" data-page-node-id="fmZ5NEyEySiKuluCRgRNC8">
+          <label data-page-node-id="vgqYDa4k31VhGcydrQnFi1">影像 ID</label>
+          <input class="me-input" type="text" id="fId" placeholder="如 IMG-20260612-001" data-page-node-id="DHYhlmXIsQaLVKyY2PZgAJ">
+        </div>
+      </div>
+
+                <div id="uavFields" style="display:none">
+          <div class="me-field">
+            <label>光谱类型</label>
+            <select class="me-select" id="fSpectrum">
+              <option value="all">全部</option>
+              <option value="多光谱">多光谱</option>
+              <option value="可见光">可见光</option>
+              <option value="热红外">热红外</option>
+            </select>
+          </div>
+          <div class="me-field">
+            <label>分辨率 / 航高</label>
+            <select class="me-select" id="fUavRes">
+              <option value="all">全部</option>
+              <option value="≥3 cm">≥3 cm</option>
+              <option value="≥5 cm">≥5 cm</option>
+              <option value="≥10 cm">≥10 cm</option>
+              <option value="航高≤100m">航高≤100m</option>
+              <option value="航高≤300m">航高≤300m</option>
+            </select>
+          </div>
+          <div class="me-field">
+            <label>覆盖地块</label>
+            <input class="me-input" type="text" id="fFarm" placeholder="如 建三江 / 友谊农场">
+          </div>
+          <div class="me-field">
+            <label>采集日期</label>
+            <div class="me-range">
+              <input class="me-input" type="date" id="fUavStart" value="2025-01-01">
+              <input class="me-input" type="date" id="fUavEnd" value="2026-12-31">
+            </div>
+          </div>
+        </div>
+
+        <div id="vecFields" style="display:none">
+          <div class="me-field">
+            <label>要素类型</label>
+            <select class="me-select" id="fFeature">
+              <option value="all">全部</option>
+              <option value="农田地块">农田地块</option>
+              <option value="道路">道路</option>
+              <option value="沟渠">沟渠</option>
+              <option value="建筑">建筑</option>
+              <option value="林带">林带</option>
+            </select>
+          </div>
+          <div class="me-field">
+            <label>行政区</label>
+            <select class="me-select" id="fAdmin">
+              <option value="all">全部垦区</option>
+              <option value="建三江">建三江</option>
+              <option value="友谊农场">友谊农场</option>
+              <option value="红兴隆">红兴隆</option>
+              <option value="宝泉岭">宝泉岭</option>
+              <option value="牡丹江">牡丹江</option>
+              <option value="嫩江">嫩江</option>
+            </select>
+          </div>
+          <div class="me-field">
+            <label>面积（亩）</label>
+            <div class="me-range">
+              <input class="me-input" type="number" id="fAreaMin" placeholder="最小" min="0">
+              <input class="me-input" type="number" id="fAreaMax" placeholder="最大" min="0">
+            </div>
+          </div>
+          <div class="me-field">
+            <label>年份</label>
+            <select class="me-select" id="fYear">
+              <option value="all">全部</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+          <div class="me-field">
+            <label>坐标系</label>
+            <select class="me-select" id="fCrs">
+              <option value="all">全部</option>
+              <option value="CGCS2000">CGCS2000</option>
+              <option value="WGS84">WGS84</option>
+              <option value="地方坐标系">地方坐标系</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary me-submit" id="meSubmit" data-page-node-id="z9AlHYU0Tt8leCa29Wxa4j">提交查询</button>
+      </div>
+
+      <div class="me-tab-panel" id="tabResult">
+        <div class="me-results-tools" id="meTools" style="display:none">
+          <span class="me-tools-tip" id="meToolsTip"></span>
+        </div>
+        <div class="me-results" id="meResults" data-page-node-id="eKvDZNEo26GR1wz0Qr3xHF"></div>
+        <div class="me-pagination" id="mePagination" style="display:none"></div>
+      </div>
+      </div>
+      <div class="me-bottom-bar">
+        <p class="me-bottom-note">申请范围为 <b>当前数据集全部样例</b>（非检索结果）。提交后可在「数据中心 · 我的数据授权」查看进度</p>
+        <div class="me-bottom-actions">
+          <button class="me-apply-btn" id="meApply">申请全量数据</button>
+          <a class="me-myauth" href="个人中心-高保真原型.html">查看我的授权 →</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right: map engine -->
+    <main class="me-map-wrap" data-page-node-id="grcN9ieeNLEK8HcheUIckZ">
+      <div class="me-coord" id="meCoord" data-page-node-id="NWZn194p8JyNsE7N1SF47j">经度 — , 纬度 —</div>
+      <div class="me-layer-toggle" data-page-node-id="E2hBf2xEwgavdjIJIBShGf">
+        <button data-layer="vector" id="btnVector" data-page-node-id="kXq88lF3m6sDr4rPM9FEDm">矢量图</button>
+        <button data-layer="imagery" class="active" id="btnImagery" data-page-node-id="SvLJSQNKADtIDtWWJVbp4e">影像图</button>
+      </div>
+      <div class="me-map" id="meMap" data-page-node-id="vjttgdaScbpCZnszbMsQt8"></div>
+      <div class="me-zoom" data-page-node-id="Q8Ed62wN9se9MOvbHsMCeE">
+        <button id="meZoomIn" data-page-node-id="X3Wi0s2QBIVqTA6J64TTlQ" aria-label="放大"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></button>
+        <button id="meZoomOut" data-page-node-id="jvoXaPK9bWlZc8EXgUK7G4" aria-label="缩小"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5.5 12h13"/></svg></button>
+      </div>
+      <div class="me-scale" id="meScale" data-page-node-id="1HZYRsTJNp0GvtFC1pGZoE"></div>
+      <div class="me-legend" data-page-node-id="HgF15IlbOe279uRsPTxiak">
+        <div data-page-node-id="8SNUcQ7BgUVg78wUhNQF6G"><span class="lg" style="background:rgba(180,152,57,0.45);border:1px solid #b49839" data-page-node-id="CRCpXc8JdPfbxvH8RSlTl1"></span>检索结果（命中）</div>
+        <div data-page-node-id="38NL7AboGgw0cDNt6zxOXl"><span class="lg" style="background:rgba(180,152,57,0.12);border:1px solid #b49839" data-page-node-id="nNrpb0pUyWTevtqd0K5v7K"></span>检索结果（全部）</div>
+      </div>
+      <div class="me-opacity">
+        <span>结果透明度</span>
+        <input type="range" id="meOpacity" min="0" max="100" value="35">
+        <span class="ov" id="meOpacityVal">35%</span>
+      </div>
+      <div class="me-info-pop" id="meInfoPop">
+        <button type="button" class="me-info-close" onclick="closeInfoPop()" aria-label="关闭"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <h4 id="ipTitle">数据信息</h4>
+        <div id="ipRows"></div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="f-brand">
+          <svg class="f-logo" width="34" height="42" viewBox="0 0 34 42" fill="none" aria-hidden="true">
+            <path d="M17 40V17" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M16.6 17.5C16.6 10 11.7 4 4.8 4c0 7.5 4.9 13.5 11.8 13.5Z" fill="#FFFFFF"/>
+            <path d="M17.4 21.2c0-6.6 4.5-12 10.2-12 0 6.6-4.5 12-10.2 12Z" fill="#FFFFFF" fill-opacity=".82"/>
+          </svg>
+          <div>
+            <div class="f-name">北大荒智慧农业协同创新平台</div>
+            <div class="f-desc">面向农业研究与生产的开放协同平台</div>
+          </div>
+        </div>
+        <div class="f-col">
+          <h4>平台资源</h4>
+          <a href="数据中心-数据集列表页.html">数据中心</a>
+          <a href="课题中心-高保真原型.html">课题中心</a>
+        </div>
+        <div class="f-col">
+          <h4>关于平台</h4>
+          <div class="f-about-grid">
+            <a href="关于平台-平台介绍.html">平台介绍</a>
+            <a href="关于平台-开发者接入.html">开发者区</a>
+            <a href="关于平台-使用帮助.html">使用帮助</a>
+            <a href="关于平台-联系支持.html">联系我们</a>
+          </div>
+        </div>
+        <div class="f-slogan">
+          <div class="divider"></div>
+          <div class="lines">耕耘数据沃土<br>共建智慧农业</div>
+        </div>
+      </div>
+    </div>
+    <svg class="f-wave" width="220" height="180" viewBox="0 0 220 180" fill="none" aria-hidden="true">
+      <path d="M60 176C70 120 96 72 150 28" stroke="#E4EEE8" stroke-width="3" stroke-linecap="round"/>
+      <path d="M96 96c-14-4-24-14-28-28 14 2 24 10 28 28Zm10-20c-2-14 2-27 12-37 5 13 2 26-12 37Zm16 10c12-8 26-9 39-4-9 11-23 14-39 4Zm-22 32c-14-3-24-12-29-26 14 1 25 9 29 26Zm8-24c-1-14 4-27 14-36 4 13 0 26-14 36Zm16 12c12-7 26-8 38-2-8 10-22 12-38 2Z" fill="#E4EEE8"/>
+    </svg>
+  </footer>
+
+  <div class="toast" id="meToast" data-page-node-id="5gQInBSe1aks3S0Ubs1d5u"></div>
+
+<script>
+/* ============================================================
+   天地图 key（用户提供的 Tianditu key；仅本原型前端演示用，生产环境请到
+   天地图开放平台为域名配置 Referer 白名单，避免 key 被盗用）
+   ============================================================ */
+var BACK_ICON_HTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>';
+
+var TDT_KEY = '3c09577ba4730ed9d8b3fe778dfa0271';
+
+/* 地图类型常量：天地图 4.0 的 TMAP_NORMAL_MAP / TMAP_HYBRID_MAP 在首次 setMapType 时
+   才被赋成真实 MapType 对象（解析期拿到的是 null），故必须“用时再取”，不可缓存。 */
+function getMapType(kind){
+  var n = (typeof TMAP_NORMAL_MAP !== 'undefined' && TMAP_NORMAL_MAP) ? TMAP_NORMAL_MAP
+          : (window.T && T.MapType && T.MapType.TMAP_NORMAL_MAP ? T.MapType.TMAP_NORMAL_MAP : null);
+  var h = (typeof TMAP_HYBRID_MAP !== 'undefined' && TMAP_HYBRID_MAP) ? TMAP_HYBRID_MAP
+          : (window.T && T.MapType && T.MapType.TMAP_HYBRID_MAP ? T.MapType.TMAP_HYBRID_MAP : null);
+  return kind === 'imagery' ? h : n;
+}
+
+/* ============================================================
+   数据：检索区域预设（中心 + 边界 + 适配缩放）
+   ============================================================ */
+var REGIONS = {
+  all:          {label:'全部垦区', cLon:132.2, cLat:47.0, minLon:124.5, minLat:44.0, maxLon:135.0, maxLat:49.5, zoom:7},
+  jiansanjiang: {label:'建三江',   cLon:133.6, cLat:47.2, minLon:132.6, minLat:46.6, maxLon:134.4, maxLat:47.9, zoom:10},
+  youyi:        {label:'友谊农场', cLon:131.55,cLat:46.72,minLon:131.2, minLat:46.5, maxLon:131.9, maxLat:46.95,zoom:11},
+  hongxinglong: {label:'红兴隆',   cLon:130.85,cLat:46.55,minLon:130.5, minLat:46.3, maxLon:131.2, maxLat:46.8, zoom:11},
+  baoquanling:  {label:'宝泉岭',   cLon:130.40,cLat:47.55,minLon:130.0, minLat:47.3, maxLon:130.8, maxLat:47.8, zoom:11},
+  mudanjiang:   {label:'牡丹江',   cLon:129.60,cLat:44.60,minLon:129.2, minLat:44.3, maxLon:130.0, maxLat:44.9, zoom:11},
+  nenjiang:     {label:'嫩江',     cLon:125.20,cLat:49.00,minLon:124.6, minLat:48.6, maxLon:125.8, maxLat:49.4, zoom:11}
+};
+var PRODUCT_LABEL = {'GF-1':'高分一号','GF-2':'高分二号','GF-6':'高分六号','ZY-3':'资源三号','S2':'Sentinel-2','L8':'Landsat-8'};
+
+/* 模拟影像景（覆盖各区域 / 产品 / 时间 / 云量） */
+var SCENES = [
+  {id:'IMG-20260612-001', product:'GF-2', region:'jiansanjiang', cLon:133.62, cLat:47.22, sLon:0.16, sLat:0.12, time:'2026-06-12', cloud:8,  file:'GF2_PMS1_20260612_L1A_1336_4722.tif', mark:'GF2_PMS1_20260612_建三江'},
+  {id:'IMG-20260528-014', product:'GF-6', region:'jiansanjiang', cLon:133.85, cLat:47.05, sLon:0.18, sLat:0.13, time:'2026-05-28', cloud:12, file:'GF6_WFV_20260528_L1A_1338_4705.tif', mark:'GF6_WFV_20260528_建三江'},
+  {id:'IMG-20260415-007', product:'S2',   region:'jiansanjiang', cLon:133.40, cLat:47.45, sLon:0.20, sLat:0.15, time:'2026-04-15', cloud:5,  file:'S2_MSIL2A_20260415_T50TLK.tif', mark:'S2_L2A_20260415_建三江'},
+  {id:'IMG-20260330-022', product:'GF-2', region:'jiansanjiang', cLon:134.10, cLat:46.85, sLon:0.15, sLat:0.11, time:'2026-03-30', cloud:18, file:'GF2_PMS2_20260330_L1A_1341_4685.tif', mark:'GF2_PMS2_20260330_建三江'},
+  {id:'IMG-20260218-009', product:'GF-1', region:'jiansanjiang', cLon:133.75, cLat:47.35, sLon:0.22, sLat:0.16, time:'2026-02-18', cloud:25, file:'GF1_WFV_20260218_L1A_1337_4735.tif', mark:'GF1_WFV_20260218_建三江'},
+  {id:'IMG-20260109-003', product:'ZY-3', region:'jiansanjiang', cLon:133.55, cLat:46.75, sLon:0.14, sLat:0.10, time:'2026-01-09', cloud:9,  file:'ZY3_NAD_20260109_L1A_1335_4675.tif', mark:'ZY3_NAD_20260109_建三江'},
+  {id:'IMG-20260605-031', product:'GF-2', region:'youyi',        cLon:131.55, cLat:46.72, sLon:0.12, sLat:0.09, time:'2026-06-05', cloud:6,  file:'GF2_PMS1_20260605_L1A_1315_4672.tif', mark:'GF2_PMS1_20260605_友谊'},
+  {id:'IMG-20260422-018', product:'GF-6', region:'youyi',        cLon:131.45, cLat:46.80, sLon:0.13, sLat:0.10, time:'2026-04-22', cloud:14, file:'GF6_WFV_20260422_L1A_1314_4680.tif', mark:'GF6_WFV_20260422_友谊'},
+  {id:'IMG-20260530-041', product:'GF-2', region:'hongxinglong', cLon:130.85, cLat:46.55, sLon:0.12, sLat:0.09, time:'2026-05-30', cloud:11, file:'GF2_PMS1_20260530_L1A_1308_4655.tif', mark:'GF2_PMS1_20260530_红兴隆'},
+  {id:'IMG-20260312-026', product:'S2',   region:'hongxinglong', cLon:130.95, cLat:46.48, sLon:0.16, sLat:0.12, time:'2026-03-12', cloud:20, file:'S2_MSIL2A_20260312_T50SKD.tif', mark:'S2_L2A_20260312_红兴隆'},
+  {id:'IMG-20260620-052', product:'GF-2', region:'baoquanling',  cLon:130.40, cLat:47.55, sLon:0.12, sLat:0.09, time:'2026-06-20', cloud:7,  file:'GF2_PMS1_20260620_L1A_1304_4755.tif', mark:'GF2_PMS1_20260620_宝泉岭'},
+  {id:'IMG-20260408-037', product:'GF-1', region:'baoquanling',  cLon:130.55, cLat:47.48, sLon:0.15, sLat:0.11, time:'2026-04-08', cloud:16, file:'GF1_WFV_20260408_L1A_1305_4748.tif', mark:'GF1_WFV_20260408_宝泉岭'},
+  {id:'IMG-20260515-063', product:'L8',   region:'mudanjiang',   cLon:129.60, cLat:44.60, sLon:0.18, sLat:0.13, time:'2026-05-15', cloud:13, file:'LC08_L1TP_20260515_MU.tif', mark:'L8_L1TP_20260515_牡丹江'},
+  {id:'IMG-20260226-071', product:'GF-6', region:'nenjiang',      cLon:125.20, cLat:49.00, sLon:0.17, sLat:0.13, time:'2026-02-26', cloud:22, file:'GF6_WFV_20260226_L1A_1252_4900.tif', mark:'GF6_WFV_20260226_嫩江'},
+  {id:'IMG-20251218-088', product:'S2',   region:'jiansanjiang', cLon:133.90, cLat:47.30, sLon:0.19, sLat:0.14, time:'2025-12-18', cloud:4,  file:'S2_MSIL2A_20251218_T50TLK.tif', mark:'S2_L2A_20251218_建三江'},
+  {id:'IMG-20251109-095', product:'GF-2', region:'hongxinglong', cLon:130.78, cLat:46.62, sLon:0.13, sLat:0.10, time:'2025-11-09', cloud:28, file:'GF2_PMS2_20251109_L1A_1307_4662.tif', mark:'GF2_PMS2_20251109_红兴隆'}
+];
+/* 影像景元信息：分辨率 / 轨道号 / 覆盖度 / 产品名称（前端演示用，真实系统由元数据字段提供） */
+var SCENE_META = {
+  'IMG-20260612-001':{res:'0.8 m',  pathRow:'1336/4722', coverage:96, prodName:'GF2_PMS1_L1A'},
+  'IMG-20260528-014':{res:'16 m',   pathRow:'1338/4705', coverage:91, prodName:'GF6_WFV_L1A'},
+  'IMG-20260415-007':{res:'10 m',   pathRow:'T50TLK',    coverage:94, prodName:'S2_MSIL2A'},
+  'IMG-20260330-022':{res:'0.8 m',  pathRow:'1341/4685', coverage:88, prodName:'GF2_PMS2_L1A'},
+  'IMG-20260218-009':{res:'16 m',   pathRow:'1337/4735', coverage:90, prodName:'GF1_WFV_L1A'},
+  'IMG-20260109-003':{res:'2.1 m',  pathRow:'1335/4675', coverage:97, prodName:'ZY3_NAD_L1A'},
+  'IMG-20260605-031':{res:'0.8 m',  pathRow:'1315/4672', coverage:95, prodName:'GF2_PMS1_L1A'},
+  'IMG-20260422-018':{res:'16 m',   pathRow:'1314/4680', coverage:89, prodName:'GF6_WFV_L1A'},
+  'IMG-20260530-041':{res:'0.8 m',  pathRow:'1308/4655', coverage:93, prodName:'GF2_PMS1_L1A'},
+  'IMG-20260312-026':{res:'10 m',   pathRow:'T50SKD',    coverage:92, prodName:'S2_MSIL2A'},
+  'IMG-20260620-052':{res:'0.8 m',  pathRow:'1304/4755', coverage:96, prodName:'GF2_PMS1_L1A'},
+  'IMG-20260408-037':{res:'16 m',   pathRow:'1305/4748', coverage:87, prodName:'GF1_WFV_L1A'},
+  'IMG-20260515-063':{res:'30 m',   pathRow:'122/027',    coverage:99, prodName:'LC08_C02_L2'},
+  'IMG-20260226-071':{res:'16 m',   pathRow:'1252/4900', coverage:90, prodName:'GF6_WFV_L1A'},
+  'IMG-20251218-088':{res:'10 m',   pathRow:'T50TLK',    coverage:95, prodName:'S2_MSIL2A'},
+  'IMG-20251109-095':{res:'0.8 m',  pathRow:'1307/4662', coverage:85, prodName:'GF2_PMS2_L1A'}
+};
+SCENES.forEach(function(s){ var m=SCENE_META[s.id]; if(m){ s.res=m.res; s.pathRow=m.pathRow; s.coverage=m.coverage; s.prodName=m.prodName; } });
+SCENES.forEach(function(s){ if(!s.type) s.type='satellite'; });
+var UAV_SCENES=[
+  {id:'UAV-20260611-001',type:'uav',spectrum:'多光谱',res:'≥5 cm',farm:'建三江',region:'jiansanjiang',cLon:133.63,cLat:47.21,sLon:0.06,sLat:0.05,time:'2026-06-11'},
+  {id:'UAV-20260609-002',type:'uav',spectrum:'可见光',res:'≥3 cm',farm:'友谊农场',region:'youyi',cLon:131.55,cLat:46.72,sLon:0.05,sLat:0.04,time:'2026-06-09'},
+  {id:'UAV-20260520-003',type:'uav',spectrum:'热红外',res:'≥5 cm',farm:'红兴隆',region:'hongxinglong',cLon:130.85,cLat:46.55,sLon:0.05,sLat:0.04,time:'2026-05-20'},
+  {id:'UAV-20260615-004',type:'uav',spectrum:'多光谱',res:'≥5 cm',farm:'宝泉岭',region:'baoquanling',cLon:130.40,cLat:47.55,sLon:0.05,sLat:0.04,time:'2026-06-15'},
+  {id:'UAV-20260430-005',type:'uav',spectrum:'可见光',res:'≥3 cm',farm:'建三江',region:'jiansanjiang',cLon:133.70,cLat:47.30,sLon:0.05,sLat:0.04,time:'2026-04-30'},
+  {id:'UAV-20260602-006',type:'uav',spectrum:'多光谱',res:'≥5 cm',farm:'友谊农场',region:'youyi',cLon:131.50,cLat:46.75,sLon:0.05,sLat:0.04,time:'2026-06-02'}
+];
+var VEC_SCENES=[
+  {id:'VEC-耕地地块-建三江-001',type:'vector',feature:'农田地块',admin:'建三江',area:12500,year:2026,crs:'CGCS2000',region:'jiansanjiang',cLon:133.62,cLat:47.22,sLon:0.10,sLat:0.08,time:'2026'},
+  {id:'VEC-沟渠-友谊-002',type:'vector',feature:'沟渠',admin:'友谊农场',area:320,year:2026,crs:'CGCS2000',region:'youyi',cLon:131.55,cLat:46.72,sLon:0.06,sLat:0.05,time:'2026'},
+  {id:'VEC-道路-红兴隆-003',type:'vector',feature:'道路',admin:'红兴隆',area:85,year:2025,crs:'CGCS2000',region:'hongxinglong',cLon:130.85,cLat:46.55,sLon:0.05,sLat:0.04,time:'2025'},
+  {id:'VEC-林带-宝泉岭-004',type:'vector',feature:'林带',admin:'宝泉岭',area:210,year:2026,crs:'CGCS2000',region:'baoquanling',cLon:130.40,cLat:47.55,sLon:0.05,sLat:0.04,time:'2026'},
+  {id:'VEC-建筑-牡丹江-005',type:'vector',feature:'建筑',admin:'牡丹江',area:45,year:2025,crs:'WGS84',region:'mudanjiang',cLon:129.60,cLat:44.60,sLon:0.04,sLat:0.03,time:'2025'},
+  {id:'VEC-耕地地块-嫩江-006',type:'vector',feature:'农田地块',admin:'嫩江',area:9800,year:2026,crs:'CGCS2000',region:'nenjiang',cLon:125.20,cLat:49.00,sLon:0.08,sLat:0.06,time:'2026'}
+];
+SCENES = SCENES.concat(UAV_SCENES, VEC_SCENES);
+
+
+var FARM_LABELS = [
+  {name:'建三江', lon:133.6, lat:47.2}, {name:'友谊农场', lon:131.55, lat:46.72},
+  {name:'红兴隆', lon:130.85, lat:46.55}, {name:'宝泉岭', lon:130.40, lat:47.55},
+  {name:'牡丹江', lon:129.6, lat:44.6}, {name:'嫩江', lon:125.2, lat:49.0}
+];
+
+/* ============================================================
+   地图（真实底图：天地图）
+   ============================================================ */
+var map = null;
+var ZOOM_MIN = 6, ZOOM_MAX = 16;
+var mapState = { layer:null };
+var matchedIds = [];
+var activeId = null;
+var selectedIds = [];
+var resultFillOpacity = 0.35;
+var pageSize = 10;
+var currentPage = 1;
+var lastMatched = [];
+var regionMode = 'preset';
+var dataType = 'satellite';
+var ME_DS_NAME='', ME_DS_PROD='', ME_DS_REGION='';
+var drawBbox = null;
+var drawStep = 0;
+var drawStart = null;
+var drawOverlay = null;
+
+function clampZoom(z){ return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z))); }
+
+function initMap(){
+  if(typeof T === 'undefined'){ showToast('天地图 API 未加载（请检查网络 / key）'); return; }
+  map = new T.Map('meMap');
+  var r = REGIONS.all;
+  map.centerAndZoom(new T.LngLat(r.cLon, r.cLat), r.zoom);
+  setLayer('imagery'); // 默认影像图（若 key 无影像权限会自动回退矢量）
+  map.enableScrollWheelZoom();
+  map.enableDoubleClickZoom();
+  try { map.removeControl(map.zoomControl); } catch(e){}
+  map.addEventListener('mousemove', function(e){
+    var ll = e.lnglat;
+    if(!ll && e.containerPoint) ll = map.containerPointToLngLat(e.containerPoint);
+    if(ll) document.getElementById('meCoord').textContent = '经度 '+ll.getLng().toFixed(4)+'°E , 纬度 '+ll.getLat().toFixed(4)+'°N';
+  });
+  map.addEventListener('click', onMapClickForRegion);
+  map.addEventListener('zoomend', updateScale);
+  map.addEventListener('moveend', updateScale);
+  renderOverlays();
+  updateScale();
+}
+
+/* 绘制影像足迹 + 农场标注（叠加在真实底图之上） */
+function renderOverlays(){
+  if(!map) return;
+  map.clearOverLays();
+  FARM_LABELS.forEach(function(f){
+    var lbl = new T.Label({ position:new T.LngLat(f.lon,f.lat), text:f.name, offset:new T.Point(-18,-12), className:'me-farm-label' });
+    map.addOverLay(lbl);
+  });
+  SCENES.filter(function(s){return s.type===dataType;}).forEach(function(s){
+    var isMatch = matchedIds.indexOf(s.id) >= 0;
+    var isAct = (s.id===activeId);
+    var pts = [
+      new T.LngLat(s.cLon - s.sLon, s.cLat + s.sLat),
+      new T.LngLat(s.cLon + s.sLon, s.cLat + s.sLat),
+      new T.LngLat(s.cLon + s.sLon, s.cLat - s.sLat),
+      new T.LngLat(s.cLon - s.sLon, s.cLat - s.sLat),
+      new T.LngLat(s.cLon - s.sLon, s.cLat + s.sLat)
+    ];
+    var poly = new T.Polygon(pts, {
+      color: isAct ? '#005653' : '#b49839',
+      weight: isAct ? 3 : (isMatch ? 2 : 1),
+      opacity: (isMatch || isAct) ? 1 : 0.4,
+      fillColor: '#b49839',
+      fillOpacity: (isMatch || isAct) ? resultFillOpacity : 0.10
+    });
+    poly.addEventListener('click', function(){
+      flyTo(s.cLon, s.cLat, Math.max(safeZoom(), 12));
+      showInfoPop(s); setActive(s.id);
+    });
+    map.addOverLay(poly);
+  });
+}
+
+function updateScale(){
+  if(!map) return;
+  var z = map.getZoom();
+  var lat = map.getCenter().getLat();
+  var mpp = 156543.03392 * Math.cos(lat*Math.PI/180) / Math.pow(2, z);
+  var target = 100 * mpp;
+  var nice = niceNum(target);
+  var barPx = nice / mpp;
+  var label = nice >= 1000 ? (nice/1000)+' km' : nice+' m';
+  document.getElementById('meScale').innerHTML = '<span class="bar" style="width:'+barPx.toFixed(0)+'px"></span>'+label;
+}
+function niceNum(v){
+  var exp = Math.floor(Math.log10(v));
+  var base = Math.pow(10, exp);
+  var f = v / base;
+  var nf = f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10;
+  return nf * base;
+}
+
+/* ============================================================
+   视图控制
+   ============================================================ */
+function flyTo(lon, lat, zoom){
+  if(!map) return;
+  if(!isFinite(lon) || !isFinite(lat) || !isFinite(zoom)) return; // 防止 NaN 污染导致地图跳到北极
+  map.centerAndZoom(new T.LngLat(lon, lat), clampZoom(zoom));
+  updateScale();
+}
+function setView(lon, lat, zoom){ flyTo(lon, lat, zoom); }
+function fitBbox(minLon, minLat, maxLon, maxLat){
+  if(!map) return;
+  if(!(maxLon>minLon) || !(maxLat>minLat)) return; // 退化框不处理
+  var cLon=(minLon+maxLon)/2, cLat=(minLat+maxLat)/2;
+  if(!isFinite(cLon) || !isFinite(cLat)) return; // 中心坐标无效直接跳过
+  var sz = map.getSize();
+  var W = sz && isFinite(sz.width) ? sz.width : 0;
+  var H = sz && isFinite(sz.height) ? sz.height : 0;
+  if(!W || !H){
+    // 尺寸无效（容器未布局）：退化为平移到中心，缩放保持当前（safe 化）
+    flyTo(cLon, cLat, safeZoom());
+    return;
+  }
+  var cosF=Math.cos(cLat*Math.PI/180);
+  if(!isFinite(cosF) || cosF<=0){ flyTo(cLon, cLat, safeZoom()); return; } // 极区 cos→0/负，跳过 fit
+  var ppdLon=(W*0.8)/((maxLon-minLon)*cosF);
+  var ppdLat=(H*0.8)/((maxLat-minLat));
+  if(!isFinite(ppdLon) || !isFinite(ppdLat)){ flyTo(cLon, cLat, safeZoom()); return; }
+  var ppd=Math.min(ppdLon, ppdLat);
+  var zoom=clampZoom(Math.log2(ppd/0.711));
+  flyTo(cLon, cLat, zoom);
+}
+function safeZoom(){
+  if(!map) return 7;
+  var z = map.getZoom();
+  return isFinite(z) ? z : 7;
+}
+
+/* ============================================================
+   交互：缩放按钮 / 图层切换
+   ============================================================ */
+document.getElementById('meZoomIn').onclick = function(){ if(map){ map.zoomIn(); updateScale(); } };
+document.getElementById('meZoomOut').onclick = function(){ if(map){ map.zoomOut(); updateScale(); } };
+
+function setLayer(layer){
+  if(map && mapState.layer===layer){ try{ renderOverlays(); }catch(e){} return; } // 已在目标类型：避免重复 setMapType 致底图闪烁/重置
+  mapState.layer = layer;
+  document.getElementById('btnVector').classList.toggle('active', layer==='vector');
+  document.getElementById('btnImagery').classList.toggle('active', layer==='imagery');
+  if(map){
+    var __mt = getMapType(layer);
+    if(__mt){
+      try{
+        map.setMapType(__mt);
+      }catch(e){
+        showToast('影像底图加载失败，已自动切回矢量图');
+        mapState.layer = 'vector';
+        document.getElementById('btnVector').classList.add('active');
+        document.getElementById('btnImagery').classList.remove('active');
+        try{ map.setMapType(getMapType('vector')); }catch(e2){}
+      }
+    }
+    else { showToast('地图类型尚未就绪，请稍候重试'); }
+  }
+  try{ renderOverlays(); }catch(e){}
+}
+document.getElementById('btnVector').onclick = function(){ setLayer('vector'); };
+document.getElementById('btnImagery').onclick = function(){ setLayer('imagery'); };
+
+/* ============================================================
+   检索区域多方式选择（预设 / 地图框选 / 当前视图）
+   ============================================================ */
+function intersect(s, b){
+  if(!b) return false;
+  var sminLon=s.cLon-s.sLon, smaxLon=s.cLon+s.sLon, sminLat=s.cLat-s.sLat, smaxLat=s.cLat+s.sLat;
+  return !(smaxLon < b.minLon || sminLon > b.maxLon || smaxLat < b.minLat || sminLat > b.maxLat);
+}
+function clearDraw(){
+  if(drawOverlay && map){ try{ map.removeOverLay(drawOverlay); }catch(e){} drawOverlay=null; }
+  drawBbox=null;
+}
+function onMapClickForRegion(e){
+  if(regionMode!=='draw') return;
+  var ll = e.lnglat;
+  if(!ll && e.containerPoint) ll = map.containerPointToLngLat(e.containerPoint);
+  if(!ll) return;
+  if(drawStep===0){
+    drawStart = ll; drawStep=1;
+    showToast('已选起点，再点击地图选终点完成框选');
+  } else {
+    var end = ll; drawStep=0;
+    var minLon=Math.min(drawStart.getLng(),end.getLng()), maxLon=Math.max(drawStart.getLng(),end.getLng());
+    var minLat=Math.min(drawStart.getLat(),end.getLat()), maxLat=Math.max(drawStart.getLat(),end.getLat());
+    drawBbox={minLon:minLon,minLat:minLat,maxLon:maxLon,maxLat:maxLat};
+    drawOverlay = new T.Polygon([
+      new T.LngLat(minLon,minLat), new T.LngLat(maxLon,minLat),
+      new T.LngLat(maxLon,maxLat), new T.LngLat(minLon,maxLat), new T.LngLat(minLon,minLat)
+    ], {color:'#005653', weight:2, opacity:0.9, fillColor:'#005653', fillOpacity:0.12});
+    try{ map.addOverLay(drawOverlay); }catch(e){}
+    showToast('已框选区域，点击「提交查询」检索该范围内影像');
+  }
+}
+function setRegionMode(m){
+  regionMode = m;
+  document.querySelectorAll('#meRegionMode button').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-mode')===m);
+  });
+  var fRegion = document.getElementById('fRegion');
+  var hint = document.getElementById('meRegionHint');
+  if(m==='preset'){
+    fRegion.disabled=false; fRegion.style.opacity='1';
+    if(hint) hint.textContent='按预设垦区检索';
+    clearDraw();
+  } else if(m==='view'){
+    fRegion.disabled=true; fRegion.style.opacity='0.5';
+    if(hint) hint.textContent='将使用当前地图视图范围作为检索区域';
+    clearDraw();
+    showToast('已选「当前视图」：提交查询时按当前地图可见范围检索');
+  } else if(m==='draw'){
+    fRegion.disabled=true; fRegion.style.opacity='0.5';
+    if(hint) hint.textContent='点击地图两点框选检索区域';
+    drawStep=0; drawStart=null; clearDraw();
+    showToast('「地图框选」：在右侧地图上点击两点画矩形框选范围');
+  }
+}
+
+/* ============================================================
+   检索提交
+   ============================================================ */
+function doQuery(){
+  var region = document.getElementById('fRegion').value;
+
+  if(regionMode==='draw' && !drawBbox){ showToast('请先在地图上点击两点框选检索区域'); return; }
+  var viewBbox = null;
+  if(regionMode==='view' && map){
+    try{
+      var __b = map.getBounds();
+      var __w = __b.getWest?__b.getWest():__b.minLng, __e = __b.getEast?__b.getEast():__b.maxLng;
+      var __s = __b.getSouth?__b.getSouth():__b.minLat, __n = __b.getNorth?__b.getNorth():__b.maxLat;
+      viewBbox = {minLon:__w, maxLon:__e, minLat:__s, maxLat:__n};
+    }catch(err){ viewBbox = null; }
+  }
+  var matched = [];
+  if(dataType==='satellite'){
+    var product = document.getElementById('fProduct').value;
+    var start = document.getElementById('fStart').value;
+    var end = document.getElementById('fEnd').value;
+    var cloudEl = document.querySelector('input[name=cloud]:checked');
+    var cloud = cloudEl ? parseInt(cloudEl.value,10) : 0;
+    var mark = document.getElementById('fMark').value.trim().toLowerCase();
+    var file = document.getElementById('fFile').value.trim().toLowerCase();
+    var idq = document.getElementById('fId').value.trim().toLowerCase();
+    matched = SCENES.filter(function(s){
+      if(s.type!=='satellite') return false;
+      if(product!=='all' && s.product!==product) return false;
+      if(regionMode==='preset'){ if(region!=='all' && s.region!==region) return false; }
+      else if(regionMode==='draw'){ if(!intersect(s, drawBbox)) return false; }
+      else if(regionMode==='view'){ if(!intersect(s, viewBbox)) return false; }
+      if(start && s.time < start) return false;
+      if(end && s.time > end) return false;
+      if(cloud>0 && s.cloud > cloud) return false;
+      if(mark && s.mark.toLowerCase().indexOf(mark)<0) return false;
+      if(file && s.file.toLowerCase().indexOf(file)<0) return false;
+      if(idq && s.id.toLowerCase().indexOf(idq)<0) return false;
+      return true;
+    });
+  } else if(dataType==='uav'){
+    var spectrum = document.getElementById('fSpectrum').value;
+    var uavRes = document.getElementById('fUavRes').value;
+    var farm = document.getElementById('fFarm').value.trim().toLowerCase();
+    var uStart = document.getElementById('fUavStart').value;
+    var uEnd = document.getElementById('fUavEnd').value;
+    matched = SCENES.filter(function(s){
+      if(s.type!=='uav') return false;
+      if(regionMode==='preset'){ if(region!=='all' && s.region!==region) return false; }
+      else if(regionMode==='draw'){ if(!intersect(s, drawBbox)) return false; }
+      else if(regionMode==='view'){ if(!intersect(s, viewBbox)) return false; }
+      if(spectrum!=='all' && s.spectrum!==spectrum) return false;
+      if(uavRes!=='all' && s.res!==uavRes) return false;
+      if(farm && (s.farm||'').toLowerCase().indexOf(farm)<0) return false;
+      if(uStart && s.time < uStart) return false;
+      if(uEnd && s.time > uEnd) return false;
+      return true;
+    });
+  } else {
+    var feature = document.getElementById('fFeature').value;
+    var admin = document.getElementById('fAdmin').value;
+    var aMin = document.getElementById('fAreaMin').value;
+    var aMax = document.getElementById('fAreaMax').value;
+    var year = document.getElementById('fYear').value;
+    var crs = document.getElementById('fCrs').value;
+    matched = SCENES.filter(function(s){
+      if(s.type!=='vector') return false;
+      if(regionMode==='preset'){ if(region!=='all' && s.region!==region) return false; }
+      else if(regionMode==='draw'){ if(!intersect(s, drawBbox)) return false; }
+      else if(regionMode==='view'){ if(!intersect(s, viewBbox)) return false; }
+      if(feature!=='all' && s.feature!==feature) return false;
+      if(admin!=='all' && s.admin!==admin) return false;
+      if(aMin!=='' && s.area < parseFloat(aMin)) return false;
+      if(aMax!=='' && s.area > parseFloat(aMax)) return false;
+      if(year!=='all' && String(s.year)!==year) return false;
+      if(crs!=='all' && s.crs!==crs) return false;
+      return true;
+    });
+  }
+
+  matchedIds = matched.map(function(s){return s.id;});
+  activeId = null;
+  closeInfoPop();
+  try{ if(map && typeof map.checkResize==='function') map.checkResize(); }catch(e){}
+
+  if(regionMode==='draw' && drawBbox){
+    fitBbox(drawBbox.minLon, drawBbox.minLat, drawBbox.maxLon, drawBbox.maxLat);
+  } else if(regionMode==='preset' && region!=='all'){
+    var r = REGIONS[region];
+    fitBbox(r.minLon, r.minLat, r.maxLon, r.maxLat);
+  } else if(matched.length){
+    var mnLon=999,mxLon=-999,mnLat=999,mxLat=-999;
+    matched.forEach(function(s){
+      mnLon=Math.min(mnLon,s.cLon-s.sLon); mxLon=Math.max(mxLon,s.cLon+s.sLon);
+      mnLat=Math.min(mnLat,s.cLat-s.sLat); mxLat=Math.max(mxLat,s.cLat+s.sLat);
+    });
+    fitBbox(mnLon,mnLat,mxLon,mxLat);
+  }
+  lastMatched = matched;
+  currentPage = 1;
+  renderResults(matched);
+  renderPagination(matched.length);
+  switchTab('result');
+  renderOverlays(); // 在现有底图上叠加检索足迹，不再重启/重置底图类型（影像图保持不变）
+  if(matched.length){
+    showToast('检索到 '+matched.length+' '+DATA_TYPE_UNIT[dataType]+'，已在地图定位');
+  }else{
+    showToast('未检索到符合条件的影像，请放宽条件');
+  }
+}
+document.getElementById('meSubmit').onclick = doQuery;
+document.getElementById('meApply').addEventListener('click', onApplyAll);
+document.getElementById('meOpacity').addEventListener('input', onOpacityInput);
+/* 页签切换 */
+function switchTab(tab){
+  document.getElementById('tabCondition').style.display = (tab==='condition'?'block':'none');
+  document.getElementById('tabResult').style.display = (tab==='result'?'block':'none');
+  document.querySelectorAll('.me-tab').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-tab')===tab);
+  });
+  if(map && typeof map.checkResize === 'function'){
+    setTimeout(function(){ try{ map.checkResize(); }catch(e){} }, 60);
+  }
+}
+document.querySelectorAll('.me-tab').forEach(function(el){
+  el.addEventListener('click', function(){ switchTab(this.getAttribute('data-tab')); });
+});
+document.querySelectorAll('#meRegionMode button').forEach(function(el){
+  el.addEventListener('click', function(){ setRegionMode(this.getAttribute('data-mode')); });
+});
+setRegionMode('preset');
+
+var DATA_TYPE_LABEL = { satellite:'卫星影像', uav:'无人机影像', vector:'矢量数据' };
+var DATA_TYPE_UNIT = { satellite:'景', uav:'架次', vector:'个' };
+function mapProductToType(prod){
+  if(prod==='无人机影像') return 'uav';
+  if(prod==='遥感解译产品' || prod==='矢量底图' || prod==='遥感底图') return 'vector';
+  return 'satellite'; // 卫星影像 / 栅格影像合集 / 遥感反演产品 / 默认
+}
+/* 数据类型由进入来源（数据集详情页）决定，页内不再提供切换控件 */
+function setDataType(t, label){
+  dataType = t;
+  var lbl=document.getElementById('meTypeLabel');
+  if(lbl) lbl.innerHTML='<span class="tag">由来源决定</span>'+(label||DATA_TYPE_LABEL[t]);
+  document.getElementById('satFields').style.display = (t==='satellite')?'':'none';
+  document.getElementById('uavFields').style.display = (t==='uav')?'':'none';
+  document.getElementById('vecFields').style.display = (t==='vector')?'':'none';
+  matchedIds=[]; activeId=null; closeInfoPop(); lastMatched=[]; currentPage=1;
+  var rb=document.getElementById('meResults'); if(rb) rb.innerHTML='<div class="me-empty">已按「'+(label||DATA_TYPE_LABEL[t])+'」过滤，请设置条件并提交查询</div>';
+  var pg=document.getElementById('mePagination'); if(pg) pg.style.display='none';
+  var tools=document.getElementById('meTools'); if(tools) tools.style.display='none';
+  /* 底部「申请全量数据」按当前数据类型的总数更新标签（与检索结果无关） */
+  var __total = SCENES.filter(function(s){return s.type===t;}).length;
+  var __ab = document.getElementById('meApply');
+  if(__ab) __ab.textContent = '申请全量数据（'+__total+' '+DATA_TYPE_UNIT[t]+'）';
+  renderOverlays();
+}
+
+
+function metaRows(s){
+  if(s.type==='satellite'){
+    return [['产品名称', s.prodName||'—'],['分辨率', s.res||'—'],['云量', s.cloud+'%'],['采集时间', s.time],['覆盖度', (s.coverage!=null?s.coverage+'%':'—')]];
+  } else if(s.type==='uav'){
+    return [['光谱类型', s.spectrum||'—'],['分辨率/航高', s.res||'—'],['覆盖地块', s.farm||'—'],['采集时间', s.time]];
+  } else {
+    return [['要素类型', s.feature||'—'],['行政区', s.admin||'—'],['面积', (s.area!=null?s.area+' 亩':'—')],['年份', s.year||'—'],['坐标系', s.crs||'—']];
+  }
+}
+function badgeOf(s){
+  if(s.type==='satellite') return PRODUCT_LABEL[s.product]||s.product;
+  if(s.type==='uav') return '无人机影像';
+  return '矢量数据';
+}
+function renderResults(list){
+  var box = document.getElementById('meResults');
+  var tools = document.getElementById('meTools');
+  var pg = document.getElementById('mePagination');
+  var unit = DATA_TYPE_UNIT[dataType];
+  if(!list.length){ box.innerHTML = '<div class="me-empty">未检索到结果，请调整条件</div>'; tools.style.display='none'; pg.style.display='none'; return; }
+  tools.style.display='flex';
+  pg.style.display='flex';
+  var start = (currentPage-1)*pageSize;
+  var page = list.slice(start, start+pageSize);
+  var html = '<div class="me-results-head">检索结果 <span class="cnt">'+list.length+' '+unit+'</span></div>';
+  page.forEach(function(s){
+    var rows = metaRows(s);
+    var rowHtml = rows.map(function(r){return '<div class="me-ri-row"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>';}).join('');
+    html += '<div class="me-result-item" data-id="'+s.id+'" onclick="onResultClick(&quot;'+s.id+'&quot;)">'+      '<div class="me-ri-thumb"><div class="grid"></div><div class="foot"></div></div>'+      '<div class="me-ri-main">'+        '<div class="me-ri-top"><span class="me-ri-id">'+s.id+'</span><span class="me-ri-prod">'+badgeOf(s)+'</span></div>'+        rowHtml+      '</div>'+      '<div class="me-ri-actions">'+        '<span class="me-ri-act detail" onclick="event.stopPropagation();onResultClick(&quot;'+s.id+'&quot;)">详情</span>'+      '</div>'+    '</div>';
+  });
+  var tip = document.getElementById('meToolsTip');
+  if(tip) tip.textContent = '共 '+list.length+' '+unit+' · 已在地图定位（申请以「当前数据集全部样例」为准，见底部按钮）';
+  box.innerHTML = html;
+}
+/* 分页 */
+function renderPagination(total){
+  var pg = document.getElementById('mePagination');
+  if(!total){ pg.style.display='none'; return; }
+  pg.style.display='flex';
+  var pages = Math.ceil(total/pageSize);
+  var html = '<span class="me-pg-total">共 '+total+' 条</span>';
+  html += '<span class="me-pg-pages">';
+  for(var i=1;i<=pages;i++){
+    html += '<span class="me-pg-page'+(i===currentPage?' active':'')+'" onclick="goPage('+i+')">'+i+'</span>';
+  }
+  html += '</span>';
+  html += '<select class="me-pg-size" onchange="setPageSize(this.value)">'+
+    '<option value="10"'+(pageSize==10?' selected':'')+'>10条/页</option>'+
+    '<option value="20"'+(pageSize==20?' selected':'')+'>20条/页</option>'+
+    '<option value="50"'+(pageSize==50?' selected':'')+'>50条/页</option>'+
+    '</select>';
+  pg.innerHTML = html;
+}
+function goPage(p){
+  currentPage = p;
+  renderResults(lastMatched);
+  renderPagination(lastMatched.length);
+  document.getElementById('meResults').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function setPageSize(n){
+  pageSize = parseInt(n,10);
+  currentPage = 1;
+  renderResults(lastMatched);
+  renderPagination(lastMatched.length);
+}
+/* 全量申请：申请当前数据集（当前数据类型）的全部样例，与检索筛选无关 */
+function onApplyAll(){
+  var all = SCENES.filter(function(s){return s.type===dataType;});
+  if(!all.length){ showToast('暂无可申请的影像'); return; }
+  var n = all.length;
+  var name = ME_DS_NAME || ('数据合集（'+DATA_TYPE_LABEL[dataType]+'）');
+  var apps = getAppsME();
+  var exists = apps.some(function(a){return a.name===name && a.status==='pending';});
+  if(exists){ showToast('「'+name+'」已提交申请，等待审批；可在「我的数据授权」查看'); return; }
+  apps.push({appId:'A'+Date.now(), name:name, form:ME_DS_PROD||DATA_TYPE_LABEL[dataType], use:'影像查询 · 全量申请', note:'来自影像查询页的全量申请 · 共 '+n+' '+DATA_TYPE_UNIT[dataType], submittedAt:new Date().toISOString().slice(0,10), status:'pending'});
+  try{ localStorage.setItem('LS_AUTH_APPS', JSON.stringify(apps)); }catch(e){ showToast('本地存储不可用，申请未保存'); return; }
+  showToast('已提交全量申请：'+n+' '+DATA_TYPE_UNIT[dataType]+'，可在「数据中心 · 我的数据授权」查看进度');
+}
+function getAppsME(){
+  try{var a=JSON.parse(localStorage.getItem('LS_AUTH_APPS')||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}
+}
+function onOpacityInput(){
+  var v = parseInt(document.getElementById('meOpacity').value,10);
+  resultFillOpacity = v/100;
+  document.getElementById('meOpacityVal').textContent = v+'%';
+  if(map) renderOverlays();
+}
+function onResultClick(id){
+  var s = SCENES.find(function(x){return x.id===id;});
+  if(!s) return;
+  flyTo(s.cLon, s.cLat, Math.max(safeZoom(), 12));
+  showInfoPop(s);
+  setActive(id);
+  document.getElementById('meResults').querySelectorAll('.me-result-item').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-id')===id);
+  });
+}
+function setActive(id){
+  activeId = id;
+  if(map) renderOverlays();
+  document.querySelectorAll('.me-result-item').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-id')===id);
+  });
+}
+function showInfoPop(s){
+  document.getElementById('ipTitle').textContent = (s.type==='satellite'?'影像信息':(s.type==='uav'?'无人机影像信息':'矢量信息'));
+  var rows = metaRows(s).slice();
+  rows.unshift(['区域', REGIONS[s.region].label]);
+  document.getElementById('ipRows').innerHTML = rows.map(function(r){return '<div class="row"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>';}).join('');
+  document.getElementById('meInfoPop').classList.add('show');
+}
+function closeInfoPop(){ document.getElementById('meInfoPop').classList.remove('show'); }
+
+/* Toast */
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('meToast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200);
+}
+
+/* ============================================================
+   入口：来自数据中心"查看示例数据"的预填（?ds=&product=&region=）
+   ============================================================ */
+(function init(){
+  var p = new URLSearchParams(window.location.search.slice(1) || window.location.hash.slice(1));
+  var __ds = p.get('ds');
+  var __sub = document.querySelector('.me-sub');
+  if(__ds && __sub) __sub.textContent = __ds;
+  var backLink = document.getElementById('meBack');
+  if (p.get('ds')) {
+    backLink.href = '数据中心-数据集详情.html#n=' + encodeURIComponent(p.get('ds'));
+    backLink.innerHTML = BACK_ICON_HTML + '返回数据详情';
+  } else {
+    backLink.href = '数据中心-数据集列表页.html';
+    backLink.innerHTML = BACK_ICON_HTML + '返回数据中心';
+  }
+  var prod = p.get('product'); var region = p.get('region');
+  ME_DS_NAME = __ds || ''; ME_DS_PROD = prod || ''; ME_DS_REGION = region || '';
+  if(prod && document.getElementById('fProduct').querySelector('option[value="'+prod+'"]')){
+    document.getElementById('fProduct').value = prod;
+  }
+  if(region && document.getElementById('fRegion').querySelector('option[value="'+region+'"]')){
+    document.getElementById('fRegion').value = region;
+  }
+  /* 数据类型由进入来源（详情页传入的 product=数据形态）确定，页内不提供切换 */
+  var __type = mapProductToType(prod);
+  var __label = prod || DATA_TYPE_LABEL[__type];
+  initMap();
+  setDataType(__type, __label);
+})();
+
+window.addEventListener('resize', function(){ if(map){ updateScale(); try{ map.checkResize(); }catch(e){} } });
+
+</script>
+<style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body>
+</html>

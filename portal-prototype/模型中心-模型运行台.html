@@ -1,0 +1,2513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模型运行台 — 北大荒智慧农业协同创新平台</title>
+<!--
+⭐2026-09-15 变更（按《看板取数溯源与业务闭环检查》断点清单，只改断点涉及条目，未动皮肤）：
+   · B3 密钥生成节点：SPEC「鉴权」「限流与配额」写明"审批通过 → 系统自动签发个人密钥 + 生效默认配额"；
+     权限带「未授权」提示补开通节点、「已授权」提示补密钥查看位置；
+   · B4 调用计量口径：权限带写明"本页运行计入被调用次数（热度）、不占用 API 配额"，与详情页口径一致；
+   · 悬空引用修正：运行失败提示原指向已移出的"试用区"，改指本页「可调参数」面板。
+模型中心 · 模型运行台 v1.0（2026-09-10）
+【定位（用户拍板）】原「模型详情页 · 在线试用 Tab」与「个人中心 · 我的试用任务承接页」是同一件事的两半，
+  本页把两者合并为**一个运行台**：
+    左列 = 运行记录（该用户在该模型下的历次运行）｜右主区 = 选中那条运行的内容｜底部 = 输入区（控件由该模型入参 schema 决定）。
+【状态机（唯一一套）】同步运行只是"耗时极短的异步运行"（排队/处理中几乎瞬间跳过），不写两条代码路径；
+  提交即写入运行记录（localStorage，键沿用 dsh_trial_tasks_v1）——**同步运行也落库，关页不丢**；
+  页面刷新时会继续推进未完成的运行（running 记录自动续跑）。
+【左列命名口径】标题用「运行记录」、左列顶部是全页唯一的新建按钮（文案＝「+ 新建」＋运行/对话）；**仅当模型是文本问答类才叫"对话"**——
+  本项目 14 个模型都不是多轮对话模型，故脚本里保留 CHAT_MODELS=[]（空数组），左列标题与按钮文案按它判断。
+【按用户隔离】原型统一用张研究员一个账号：localStorage 承担"某个用户的运行记录"，
+  账号维度的隔离在真实系统中由登录态决定，本页只演示口径（左列底部有明示）。
+【入口】模型中心卡片/详情页 → ?n=<模型名>（本次不改任何入口文件）；?v=<版本号> 直达历史版本（只读）。
+【权限演示】照搬模型详情页机制：LOGGED / DEMO_AUTH 两个演示开关 +
+  「演示：模拟授权通过 / 回到未授权态」；历史版本只读（不支持试用与运行）。
+【v1.1 修正（2026-09-10 · 用户过目后 4 条）】
+  ① 全高应用外壳：body 100vh + overflow:hidden，header/面包屑/页头信息条不滚动，
+     .bench 吃掉剩余高度 → 左列 .rec-list 内部滚动、右区 .bmain-bd 内部滚动、
+     #inputArea 固定在右区最下沿（flex:0 0 auto）——整页不出现纵向滚动。
+  ② 面包屑改为平级正确写法「模型中心 / <模型名> / 运行台」（原写法把"首页"摆在最前，属上下级假层级；首页与模型中心本是平级一级导航项）。
+  ③ 右区标题行去重：删除右区标题行的两个按钮（模型说明跳转、新建入口——新建入口只留左列那一处）；模型名改为内联下拉框（14 个模型，切换走 ?n= 深链）。
+  ④ 运行台不做"申请"：权限带未授权态删除申请按钮，只留一句提示文字 + 一个纯导航链接「前往模型详情页」；未登录态只提示登录（页头已有登录入口）。
+     该申请动作只在模型详情页发生。原「演示：模拟授权通过 / 回到未授权态」开关保留。
+【v1.2 比例修正（2026-09-10 · 用户反馈「运行记录框小一点、输出区放大；输入区不该占那么高」）】
+  ① 左列 300 → 220px；记录项文字一律单行截断 + title 兜底，不换行、不挤压。
+  ② 底部输入区 44vh（418px）→ 148px 紧凑结构：状态条（原面板标题行 + 权限带合并为一行）
+     + 行1（左＝文件区横向排列、右＝参数 label 内联横向排列 + 换行）+ 行2（左＝提示、右＝主按钮）。
+     参数不折叠、不隐藏：最多两行全展开，第 3 行起 #paramBody 内部滚动。
+  ③ 右区输出 .bmain-bd 吃掉全部剩余高度（1440×950 ≈472px、1280×800 ≈322px）。
+  ④ 面包屑 / 右区标题行（无按钮 + 模型下拉 + 版本芯片 + 状态芯片）/ ?n= ?v= ?run= 深链逻辑均未改动。
+     全部行高用显式 px + nowrap/ellipsis，与字体度量无关，故高度是确定值；两档视口均无页面级纵向滚动。
+【原型基准时间 NOW=2026-07-01】运行号沿用 TRY-2026-0701-00NN 格式，**新运行用 0100+ 段**避免与现有 mock 冲突。
+【单文件】内联 CSS/JS、零外部依赖、全中文；未实现动作一律 toast('…（占位）')。
+【复用来源】壳（header/顶部导航/面包屑/页脚/toast/CSS 变量与公共类）+ 结果渲染 6 形态 + MD/VERS/SPEC
+  自 `模型中心-模型详情.html`；状态芯片 5 色与空态自 `个人中心-我的运行记录.html`（现名「我的运行记录」）；
+  时间线 / 文件清单 / 参数表 / 结果区分流的样式口径沿原「个人中心-试用任务详情」承接页（该页已于 v1.5 收敛为跳转桩）。
+-->
+<style>
+/* ===== 一、V7 壳与结果渲染公共类（自 模型中心-模型详情.html 原样注入） ===== */
+:root{
+  /* —— 设计变量（对齐《数据中心三类页面前端样式规范》V1.0）—— */
+  --brand:#005653; --brand-hover:#004542;
+  --brand-soft:#edf6f2; --page-bg:#f4f8f5;
+  --surface:#fff; --text:#10213a;
+  --text-secondary:#526078; --text-muted:#6b778c;
+  --border:#dce5e9; --footer-bg:#00504e;
+  --error:#b42318; --disabled-bg:#f1f3f5;
+  --radius-sm:4px; --radius-md:8px;
+  --control-height:36px; --header-height:64px;
+  --content-max:1800px; --layout-gap:16px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --shadow:0 2px 8px rgba(16,33,58,.06);
+  --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-serif:"Source Han Serif SC","Noto Serif SC","STSong","SimSun",serif;
+  /* —— 旧变量名保留为别名，避免页面内既有引用断链（值已换为规范色）—— */
+  --blue:var(--brand); --blue-hover:var(--brand-hover); --blue-active:#004542;
+  --gold:#927021;
+  --bg:var(--surface); --band:var(--page-bg); --card:var(--surface);
+  --line:var(--border); --line-strong:var(--border);
+  --t1:var(--text); --t2:var(--text-secondary); --t3:var(--text-muted);
+  --warn:var(--error); --ok:#2e7d5b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-ui);font-size:15px;line-height:1.65;color:var(--text);background:var(--page-bg);-webkit-font-smoothing:antialiased;}
+a{color:var(--blue-hover);text-decoration:none;transition:color .2s;} a:hover{color:var(--blue);text-decoration:underline;}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+
+
+/* ==================== 公共头尾（对齐数据中心规范 V1.0） ==================== */
+.container{width:100%;max-width:var(--content-max);margin:0 auto;padding:0 clamp(24px,3.65vw,56px);}
+.site-header{position:sticky;top:0;z-index:100;height:var(--header-height);background:var(--surface);border-bottom:1px solid var(--border);}
+.header-inner{display:flex;align-items:center;gap:var(--s5);height:var(--header-height);}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.brand span{font-size:22px;line-height:30px;font-weight:600;color:var(--text);white-space:nowrap;}
+.main-nav{display:flex;align-items:center;height:var(--header-height);margin-left:var(--s4);flex:1;min-width:0;overflow:hidden;}
+.main-nav a,.main-nav button{position:relative;display:inline-flex;align-items:center;height:var(--header-height);padding:0 16px;font-size:14px;line-height:22px;color:var(--text-secondary);white-space:nowrap;background:none;border:0;cursor:pointer;transition:color .2s;}
+.main-nav a:hover,.main-nav button:hover{color:var(--brand);}
+.main-nav .active{color:var(--brand);font-weight:600;}
+.main-nav .active::after{content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:3px;border-radius:var(--radius-sm) 2px 0 0;background:var(--brand);}
+.header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.btn-login{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 16px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--text);white-space:nowrap;transition:all .2s;}
+.btn-login:hover{color:var(--brand);border-color:var(--brand);}
+.btn-brand{display:inline-flex;align-items:center;justify-content:center;height:var(--control-height);padding:0 16px;font-size:14px;font-weight:500;border-radius:var(--radius-sm);background:var(--brand);color:#fff;white-space:nowrap;transition:background .2s;}
+.btn-brand:hover{background:var(--brand-hover);color:#fff;}
+/* 登录态 */
+.u-box{display:flex;align-items:center;gap:8px;position:relative;}
+.u-avatar{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+.u-name{font-size:14px;color:var(--text);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.u-name .u-chev{width:13px;height:13px;color:var(--text-muted);}
+.u-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:176px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);padding:var(--s1);z-index:200;}
+.u-menu.open{display:block;}
+.u-mi{display:block;padding:8px 12px;font-size:14px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;}
+.u-mi:hover{background:var(--brand-soft);color:var(--brand);}
+.u-mi.out{color:var(--error);}
+.u-mi.out:hover{background:#fdf6f4;color:var(--error);}
+
+/* 页脚（四区：品牌 / 平台资源 / 关于平台 / 书法标语） */
+.site-footer{position:relative;background:var(--footer-bg);color:rgba(255,255,255,.78);overflow:hidden;margin-top:var(--s6);}
+.footer-inner{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,38fr) minmax(0,15fr) minmax(0,19fr) minmax(0,28fr);gap:var(--s4);min-height:140px;padding:28px 0;}
+.f-brand{display:flex;align-items:flex-start;gap:12px;min-width:0;}
+.f-brand .f-logo{flex-shrink:0;}
+.f-brand .f-name{font-size:18px;line-height:26px;font-weight:600;color:#fff;}
+.f-brand .f-desc{margin-top:4px;font-size:12px;line-height:20px;color:rgba(255,255,255,.7);}
+.f-col h4{font-size:14px;line-height:22px;font-weight:600;color:#fff;margin-bottom:var(--s2);}
+.f-col a{display:block;font-size:13px;line-height:22px;color:rgba(255,255,255,.78);margin-bottom:6px;}
+.f-col a:hover{color:#fff;text-decoration:underline;}
+.f-about-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--s5);}
+.f-slogan{display:flex;align-items:center;justify-content:flex-end;gap:var(--s5);}
+.f-slogan .divider{width:1px;height:56px;background:rgba(255,255,255,.28);flex-shrink:0;}
+.f-slogan .lines{font-family:var(--font-serif);font-size:15px;line-height:26px;color:#fff;letter-spacing:.06em;white-space:nowrap;}
+.f-wave{position:absolute;right:-8px;bottom:-16px;opacity:.16;pointer-events:none;}
+/* ===== 面包屑 ===== */
+.crumb{padding:18px 0 16px;font-size:13px;color:var(--t3);}
+.crumb a{color:var(--t2);}
+.crumb a:hover{color:var(--blue-hover);}
+.crumb .cur{color:var(--t1);font-weight:600;}
+
+/* ===== 页头信息条 ===== */
+.head{padding-bottom:18px;border-bottom:1px solid var(--line-strong);display:flex;align-items:flex-start;justify-content:space-between;gap:18px;}
+.head-left{flex:1;min-width:0;}
+.head-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.head-ic{width:46px;height:46px;border-radius:var(--radius-sm);background:var(--band);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;}
+.head-top h1{font-size:24px;font-weight:700;font-family:var(--serif);color:var(--t1);}
+.mk{font-size:11.5px;padding:0 7px;border-radius:var(--radius-sm);line-height:20px;white-space:nowrap;}
+.mk.core{color:var(--blue);border:1px solid var(--blue);background:rgba(0,86,83,.05);}
+.mk.zone{color:var(--t2);border:1px solid var(--line-strong);background:var(--band);}
+.mk.ver{color:var(--gold);border:1px solid rgba(146,112,33,.55);background:rgba(146,112,33,.07);}
+.head-sub{font-size:13px;color:var(--t2);margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.head-sub .at{color:var(--t3);}
+.head-sub b{color:var(--blue);font-weight:600;}
+.head-meta{display:flex;align-items:center;gap:14px;margin-top:8px;flex-wrap:wrap;font-size:13px;color:var(--t2);}
+.hm-item{display:inline-flex;align-items:baseline;gap:5px;}
+.hm-item .h-v{font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums;}
+.hm-item .h-l{color:var(--t3);}
+.hm-sep{color:var(--line-strong);}
+.head-right{flex-shrink:0;padding-top:6px;display:flex;align-items:center;gap:8px;}
+.btn-apply{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 20px;font-size:14px;font-weight:600;border-radius:var(--radius-sm);background:var(--blue);color:#fff;transition:background .2s;white-space:nowrap;}
+.btn-apply:hover{background:var(--blue-active);text-decoration:none;}
+.btn-try{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;font-size:14px;font-weight:600;border-radius:var(--radius-sm);background:#fff;color:var(--blue);border:1px solid var(--blue);transition:all .2s;white-space:nowrap;}
+.btn-try:hover{background:rgba(0,86,83,.06);text-decoration:none;}
+
+/* ===== 版本切换 / 版本历史 / 历史版本只读 ===== */
+.ver-wrap{position:relative;display:inline-block;}
+.mk.ver.vsel{cursor:pointer;}
+.mk.ver.vsel:hover{background:rgba(146,112,33,.18);}
+.ver-menu{position:absolute;left:0;top:calc(100% + 6px);min-width:250px;background:#fff;border:1px solid var(--line-strong);border-radius:var(--radius-sm);box-shadow:0 8px 22px rgba(0,0,0,.09);z-index:80;padding:6px 0;display:none;text-align:left;}
+.ver-menu.open{display:block;}
+.ver-mi{padding:8px 12px;font-size:12.5px;color:var(--t2);cursor:pointer;display:flex;gap:8px;align-items:baseline;white-space:nowrap;}
+.ver-mi:hover{background:var(--band);color:var(--blue);}
+.ver-mi.on{color:var(--blue);font-weight:600;background:rgba(0,86,83,.05);}
+.ver-mi .vv{font-weight:700;color:var(--t1);flex-shrink:0;}
+.ver-mi.on .vv{color:var(--blue);}
+.ver-mi .vd{font-size:11px;color:var(--t3);margin-left:auto;flex-shrink:0;}
+.ver-mi .cta{font-size:10.5px;color:var(--ok);border:1px solid rgba(46,125,91,.4);border-radius:var(--radius-sm);padding:0 4px;line-height:15px;flex-shrink:0;}
+.ver-menu-ft{padding:8px 12px;border-top:1px dashed var(--line);font-size:11px;color:var(--t3);line-height:1.65;white-space:normal;max-width:280px;}
+.vh-item{padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.5px;color:var(--t2);line-height:1.7;}
+.vh-item:last-child{border-bottom:none;padding-bottom:0;}
+.vh-hd{display:flex;align-items:center;gap:8px;}
+.vh-hd .vv{font-weight:700;color:var(--t1);}
+.vh-hd .vd{font-size:11px;color:var(--t3);margin-left:auto;}
+.vh-hd .cta{font-size:10.5px;color:var(--ok);border:1px solid rgba(46,125,91,.4);border-radius:var(--radius-sm);padding:0 4px;line-height:15px;}
+.vh-item.cur .vv{color:var(--blue);}
+.vh-note{color:var(--t3);margin-top:3px;}
+.vh-link{font-size:11.5px;color:var(--blue);cursor:pointer;display:inline-block;margin-top:4px;}
+.vh-link:hover{text-decoration:underline;}
+.vh-item.sel{background:rgba(0,86,83,.03);}
+.vt-now{font-size:10.5px;color:var(--blue);border:1px solid rgba(0,86,83,.35);background:rgba(0,86,83,.06);border-radius:var(--radius-sm);padding:0 5px;line-height:15px;}
+
+/* ===== 主体两栏 ===== */
+.detail{display:flex;gap:30px;align-items:flex-start;padding:24px 0 8px;}
+.main-col{flex:1;min-width:0;}
+.side-col{width:300px;flex-shrink:0;position:sticky;top:84px;display:flex;flex-direction:column;gap:14px;}
+
+.doc-hd{display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+.doc-hd .doc-n{font-size:16px;font-weight:700;color:var(--t1);}
+.doc-hd .doc-t{font-size:12px;color:var(--t3);}
+.sec-title{font-size:14px;font-weight:700;color:var(--t1);margin:18px 0 8px;}
+.sec-title .sub{font-size:11.5px;color:var(--t3);font-weight:400;margin-left:6px;}
+.para{font-size:13.5px;color:var(--t2);line-height:1.9;margin-bottom:8px;}
+.para b{color:var(--t1);}
+.role-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.role{font-size:12px;padding:3px 10px;border-radius:var(--radius-sm);background:var(--band);color:var(--t2);}
+.role b{color:var(--blue);}
+
+/* 规格清单（输入/输出/适用条件） */
+.spec-list{list-style:none;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;padding:4px 0;}
+.spec-list li{position:relative;padding:8px 16px 8px 30px;font-size:13px;color:var(--t1);line-height:1.75;border-bottom:1px dashed var(--line);}
+.spec-list li:last-child{border-bottom:none;}
+.spec-list li::before{content:'';position:absolute;left:16px;top:16px;width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:.55;}
+.spec-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.spec-2col .sec-title{margin-top:0;}
+.io-tag{display:inline-block;font-size:11px;line-height:16px;padding:0 6px;border-radius:var(--radius-sm);margin-right:6px;vertical-align:1px;}
+.io-tag.in{color:var(--blue);background:rgba(0,86,83,.07);border:1px solid rgba(0,86,83,.25);}
+.io-tag.out{color:var(--ok);background:rgba(46,125,91,.07);border:1px solid rgba(46,125,91,.25);}
+
+.rel-note{margin-top:14px;padding:12px 14px;border-left:3px solid var(--gold);background:rgba(146,112,33,.06);border-radius:var(--radius-sm);font-size:13px;line-height:1.7;color:var(--t2);}
+.rel-note b{color:var(--gold);}
+
+/* ===== 右栏卡片 ===== */
+.meta-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px;}
+.meta-card .sec-title{margin-top:0;}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+.kv:last-child{border-bottom:none;}
+.kv .k{color:var(--t3);white-space:nowrap;}
+.kv .v{color:var(--t1);text-align:right;}
+.redline{border-left:3px solid var(--warn);background:#fdf6f4;border-radius:var(--radius-sm);padding:12px 14px;font-size:12.5px;color:var(--t2);line-height:1.8;}
+.redline b{color:var(--warn);}
+.redline ul{list-style:none;margin-top:6px;}
+.redline li{position:relative;padding-left:12px;}
+.redline li::before{content:'·';position:absolute;left:2px;color:var(--warn);font-weight:700;}
+
+/* ===== 页头 CTA 状态芯片（v1.5：试用已移出本页，仅保留权限/版本状态芯片） ===== */
+.ta-chip{font-size:12px;padding:2px 9px;border-radius:var(--radius-sm);line-height:18px;font-weight:600;white-space:nowrap;}
+.ta-chip.no{color:var(--warn);border:1px solid rgba(176,58,46,.4);background:rgba(176,58,46,.06);}
+.ta-chip.ok{color:var(--ok);border:1px solid rgba(46,125,91,.4);background:rgba(46,125,91,.07);}
+
+/* ===== 试用入口块（v1.5：在线试用已改由独立「模型运行台」页承接，本页只留入口） ===== */
+
+.pm-hint{font-size:11.5px;color:var(--t3);margin-top:5px;line-height:1.6;}
+.res-empty{font-size:13px;color:var(--t3);text-align:center;padding:26px 10px;line-height:1.9;}
+.res-hero{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px dashed var(--line);margin-bottom:14px;}
+.res-hero .big{font-size:32px;font-weight:700;color:var(--blue);font-family:var(--serif);font-variant-numeric:tabular-nums;line-height:1.2;}
+.res-hero .unit{font-size:13px;color:var(--t3);}
+.res-hero .lg{font-size:12.5px;color:var(--t2);}
+.res-hero .flag{font-size:11.5px;padding:1px 7px;border-radius:var(--radius-sm);line-height:18px;}
+.res-hero .flag.ok{color:var(--ok);background:rgba(46,125,91,.08);border:1px solid rgba(46,125,91,.3);}
+.res-hero .flag.warn{color:var(--warn);background:rgba(176,58,46,.06);border:1px solid rgba(176,58,46,.3);}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12.5px;}
+.bar-row .bl{width:110px;color:var(--t2);text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-row .bt{flex:1;height:10px;background:var(--band);border-radius:var(--radius-sm);overflow:hidden;}
+.bar-row .bt i{display:block;height:100%;background:var(--blue);border-radius:var(--radius-sm);}
+.bar-row .bt i.g{background:var(--gold);}
+.bar-row .bv{width:56px;text-align:right;color:var(--t1);font-variant-numeric:tabular-nums;flex-shrink:0;}
+
+.r-tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+.r-tbl th{background:var(--band);color:var(--t2);font-weight:600;text-align:left;padding:7px 10px;border:1px solid var(--line);white-space:nowrap;}
+.r-tbl td{padding:7px 10px;border:1px solid var(--line);color:var(--t1);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.r-tbl td.num{text-align:right;}
+
+/* 目标检测示意框 */
+.det-canvas{position:relative;height:210px;border:1px solid var(--line);border-radius:var(--radius-sm);background:
+  linear-gradient(0deg,rgba(0,86,83,.05),rgba(0,86,83,.05)),
+  repeating-linear-gradient(45deg,#f4f8f5 0 12px,#edf6f2 12px 24px);overflow:hidden;margin-bottom:12px;}
+.det-canvas .hint{position:absolute;left:10px;bottom:8px;font-size:11px;color:var(--t3);}
+.dbox{position:absolute;border:2px solid var(--gold);background:rgba(146,112,33,.12);border-radius:var(--radius-sm);}
+.dbox span{position:absolute;left:-2px;top:-19px;font-size:10.5px;line-height:16px;padding:0 5px;background:var(--gold);color:#fff;border-radius:var(--radius-sm) 2px 0 0;white-space:nowrap;}
+
+/* 分割色带 */
+.seg-strip{display:flex;height:16px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line);margin:4px 0 12px;}
+.seg-strip i{display:block;height:100%;}
+.seg-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--t2);margin-bottom:12px;}
+.seg-legend .sw{display:inline-block;width:10px;height:10px;border-radius:var(--radius-sm);margin-right:5px;vertical-align:0;}
+
+/* 折线图 */
+.chart-box{border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px 6px;background:#fff;margin-bottom:12px;}
+.chart-box svg{display:block;width:100%;height:170px;}
+.chart-lg{display:flex;gap:16px;font-size:11.5px;color:var(--t2);padding:2px 0 6px;flex-wrap:wrap;}
+.chart-lg .sw{display:inline-block;width:14px;height:3px;border-radius:var(--radius-sm);margin-right:5px;vertical-align:3px;}
+
+/* 静态「输出示例」框（v1.5 保留：介绍页用 renderResult 静态渲染，不占算力） */
+.example-box{border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;padding:14px 16px;}
+.ex-note{font-size:11.5px;color:var(--t3);line-height:1.7;margin-top:8px;}
+
+/* ===== 页脚 / toast ===== */
+#toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:rgba(16,33,58,.92);color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;}
+#toast.show{opacity:1;}
+
+/* ===== 二、运行台布局 ===== */
+.mono{font-variant-numeric:tabular-nums;font-family:Consolas,"Courier New",monospace;font-size:12.5px;color:var(--t2);}
+
+/* ⭐0916 卡片化：由 flex/gap18 改为与数据中心列表页同款 grid 272px + 1fr
+   ⭐0917 文档流改写：去掉 `grid-template-rows:minmax(0,1fr)`。
+      该轨道是"全高外壳"配套（要求行至少撑满 .bench 的确定高度）。
+      回文档流后 .bench 高度不确定，这条 minmax(0,1fr) 会生成一条"至少剩余空间"的行，
+      把页脚挤出首屏；且会让 sticky 左列失去参照。 */
+.bench{display:grid;grid-template-columns:272px minmax(0,1fr);
+  gap:var(--layout-gap);align-items:start;
+  /* ⭐0916 修复③：底部内距 32px → 0 —— 全高外壳下输入区要贴住视口底沿，
+     原来这 32px 让输入区下方空出一条，看起来「没贴底」
+     ⭐0917：文档流下底部改留 32px，把主区与页脚之间撑开（页脚本身还有 margin-top:--s6） */
+  padding:16px 0 32px;}
+/* ⭐0916 卡片化：左列改为 white panel + sticky（对齐数据中心 .filter-side）
+   ⭐0917 文档流改写：高度上限原用 `calc(100% - 1px)`（依赖父级 grid 行高确定）；
+      文档流下父级行高由内容决定，100% 无意义 → 改为视口约束，
+      保证"sticky 元素高度 < 视口"这一必要条件成立（0915 详情页右栏踩过此坑）。 */
+.bench-side{width:auto;flex-shrink:0;display:flex;flex-direction:column;gap:var(--layout-gap);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+  position:sticky;top:calc(var(--header-height) + var(--s4));
+  max-height:calc(100vh - var(--header-height) - var(--s5));overflow:hidden;}
+.side-inner{padding:var(--s4) var(--s4) 0;display:flex;flex-direction:column;gap:var(--layout-gap);min-height:0;flex:1 1 auto;}
+.btn-newrun{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:38px;border-radius:var(--radius-sm);background:var(--blue);color:#fff;font-size:14px;font-weight:600;transition:background .2s;}
+.btn-newrun:hover{background:var(--blue-active);}
+/* ⭐0916 卡片化：左列已是白卡，记录盒不再重复描边，改为浅底分区 */
+.rec-box{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);}
+.rec-hd{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--border);background:var(--page-bg);font-size:13px;font-weight:700;color:var(--text);}
+.rec-hd .rec-n{margin-left:auto;font-size:11.5px;font-weight:400;color:var(--t3);}
+/* ⭐0917 文档流改写：去掉 max-height:556px 死值 —— 左列卡已改为 sticky + 视口限高，
+   记录区高度应由「卡高 − 按钮 − 记录头 − 记录脚」的 flex 链条决定（见 §12.2），
+   写死 556px 会在小视口下顶破卡壳、大视口下留出空白。 */
+.rec-list{padding:7px;}
+.rec{border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;padding:9px 11px;margin-bottom:7px;cursor:pointer;transition:border-color .12s,background .12s;}
+.rec:last-child{margin-bottom:0;}
+.rec:hover{border-color:var(--blue);background:rgba(0,86,83,.03);}
+.rec.on{border-color:var(--blue);background:rgba(0,86,83,.06);box-shadow:inset 3px 0 0 var(--blue);}
+.rec-h{display:flex;align-items:baseline;gap:8px;}
+.rec-no{font-size:11.5px;color:var(--t2);font-variant-numeric:tabular-nums;font-family:Consolas,"Courier New",monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rec-at{margin-left:auto;font-size:11px;color:var(--t3);white-space:nowrap;flex-shrink:0;}
+.rec-tag{margin-top:6px;}
+.rec .tchip{font-size:11.5px;padding:1px 8px;line-height:17px;}
+.rec-s{font-size:12px;color:var(--t2);line-height:1.62;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.rec-s.warn{color:var(--warn);}
+.prog-mini{height:4px;background:var(--band);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;margin-top:6px;}
+.prog-mini i{display:block;height:100%;background:var(--blue);transition:width .2s linear;}
+.rec-ft{padding:9px 13px;border-top:1px dashed var(--line);font-size:11px;color:var(--t3);line-height:1.85;}
+.rec-ft .demo-link{color:var(--blue);cursor:pointer;}
+.rec-ft .demo-link:hover{text-decoration:underline;}
+
+.bench-main{flex:1;min-width:0;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);min-height:620px;display:flex;flex-direction:column;}
+/* ⭐0916 卡片化：面板标题行对齐数据中心（--s4 内距 + --page-bg 底） */
+.bmain-hd{display:flex;align-items:flex-start;gap:10px;padding:var(--s4);border-bottom:1px solid var(--border);background:var(--page-bg);}
+.bh-l{flex:1;min-width:0;}
+.bh-row1{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.bh-ic{font-size:18px;line-height:1;}
+.bh-n{font-size:15px;font-weight:700;color:var(--t1);}
+.bh-sub{font-size:11.5px;color:var(--t3);margin-top:5px;line-height:1.6;word-break:break-all;}
+.bh-r{flex-shrink:0;display:flex;align-items:center;gap:8px;padding-top:2px;}
+.bmain-bd{padding:16px;flex:1;min-width:0;}
+.bsec{margin-bottom:16px;}
+.bsec:last-child{margin-bottom:0;}
+.bstate{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--t2);line-height:1.75;}
+.bstate .dot{width:8px;height:8px;border-radius:50%;background:var(--t3);display:inline-block;flex-shrink:0;margin-top:7px;}
+.bstate.run .dot{background:var(--gold);animation:pulse 1s infinite;}
+.bstate.done .dot{background:var(--ok);}
+.bstate.err .dot{background:var(--warn);}
+.bstate b{color:var(--t1);}
+.welcome{text-align:center;padding:38px 18px 30px;color:var(--t2);}
+.welcome .w-ic{font-size:36px;line-height:1;opacity:.85;}
+.welcome .w-t{font-size:16px;font-weight:700;color:var(--t1);margin:12px 0 10px;}
+.welcome .w-l{font-size:13px;color:var(--t2);line-height:2;max-width:660px;margin:0 auto;text-align:left;}
+.welcome .w-l b{color:var(--blue);}
+.welcome .w-btn{margin-top:18px;}
+
+/* ===== 三、状态芯片（5 色，同「我的运行记录」） ===== */
+.tchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:2px 9px;border-radius:var(--radius-sm);white-space:nowrap;line-height:18px;}
+.tchip .tdot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0;}
+.t-wait{color:var(--gold);border:1px solid rgba(146,112,33,.45);background:rgba(146,112,33,.08);}
+.t-run{color:var(--blue);border:1px solid rgba(0,86,83,.3);background:rgba(0,86,83,.06);}
+.t-run .tdot{animation:pulse 1s infinite;}
+.t-done{color:#3b6d11;border:1px solid rgba(90,122,43,.35);background:rgba(90,122,43,.07);}
+.t-fail{color:var(--warn);border:1px solid #e5d5d2;background:#faf6f5;}
+.t-cancel{color:var(--t3);border:1px solid var(--line-strong);background:var(--band);}
+.tchip.lg{font-size:12.5px;padding:2px 10px;line-height:19px;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes slide{to{background-position:16px 0;}}
+
+/* ===== 四、权限带（未登录 / 未授权 / 已授权 / 历史只读） ===== */
+.try-auth{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--band);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;}
+.ta-note{font-size:12.5px;color:var(--t2);line-height:1.7;flex:1;min-width:0;}
+.ta-note b{color:var(--t1);}
+.ta-demo{font-size:12px;color:var(--blue);cursor:pointer;border-bottom:1px dashed var(--blue);white-space:nowrap;}
+.ta-demo:hover{text-decoration:none;}
+
+/* ===== 五、面板 / 按钮 / 提示条 ===== */
+.panel{border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:#fff;}
+.panel-hd{padding:12px 16px;font-size:14px;font-weight:600;color:var(--t1);border-bottom:1px solid var(--line);background:var(--band);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.panel-hd .sub{font-size:12px;font-weight:400;color:var(--t3);}
+.panel-hd .hd-extra{margin-left:auto;font-size:12px;font-weight:400;color:var(--t3);}
+.panel-bd{padding:16px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 15px;font-size:13px;border-radius:var(--radius-sm);white-space:nowrap;transition:all .2s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:var(--blue-active);text-decoration:none;}
+.btn-default{background:#fff;color:var(--t1);border:1px solid #dce5e9;}
+.btn-default:hover{color:var(--blue-hover);border-color:var(--blue-hover);text-decoration:none;}
+.btn-sm{height:26px;padding:0 11px;font-size:12.5px;}
+.btn.warn{color:var(--warn);border-color:#e0c8c4;}
+.btn.warn:hover{color:#b42318;border-color:var(--warn);background:#fdf6f4;}
+.btn-mini{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 13px;font-size:12.5px;font-weight:600;border-radius:var(--radius-sm);background:#fff;color:var(--blue);border:1px solid var(--blue);transition:all .2s;}
+.btn-mini:hover{background:rgba(0,86,83,.06);text-decoration:none;}
+.para{font-size:13.5px;color:var(--t2);line-height:1.9;}
+.para b{color:var(--t1);}
+.sandbox-note{margin-top:14px;padding:11px 14px;border-left:3px solid var(--gold);background:rgba(146,112,33,.06);border-radius:var(--radius-sm);font-size:12.5px;color:var(--t2);line-height:1.75;}
+.sandbox-note b{color:var(--gold);}
+.err-box{border:1px solid rgba(176,58,46,.35);background:#fdf6f4;border-radius:var(--radius-sm);padding:13px 15px;font-size:13px;color:var(--t2);line-height:1.85;}
+.err-box b{color:var(--warn);}
+.err-box .hint{font-size:12.5px;color:var(--t3);margin-top:8px;padding-top:8px;border-top:1px dashed #e5d5d2;}
+.info-box{border:1px solid var(--line);background:var(--band);border-radius:var(--radius-sm);padding:13px 15px;font-size:13px;color:var(--t2);line-height:1.85;}
+.info-box b{color:var(--t1);}
+.act-bar{padding:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.act-bar .ab-note{margin-left:auto;font-size:12px;color:var(--t3);}
+
+/* ===== 六、进度条 / 时间线（口径沿「试用任务详情」承接页） ===== */
+.prog{height:8px;background:var(--band);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:4px 0 10px;}
+.prog i{display:block;height:100%;background:var(--blue);background-image:linear-gradient(90deg,rgba(255,255,255,.45) 0 8px,transparent 8px 16px);background-size:16px 100%;animation:slide 1s linear infinite;}
+.prog-static{height:8px;background:var(--band);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:4px 0 10px;}
+.prog-static i{display:block;height:100%;background:var(--blue);}
+
+/* ===== 七、文件清单 / 参数回显表 ===== */
+.file-list{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;}
+.file-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px;}
+.file-row:last-child{border-bottom:none;}
+.file-row:hover{background:var(--band);}
+.file-ic{width:26px;height:26px;border-radius:var(--radius-sm);background:var(--band);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.file-nm{flex:1;min-width:0;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-meta{font-size:12px;color:var(--t3);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.file-tag{font-size:11px;line-height:16px;padding:0 6px;border-radius:var(--radius-sm);color:var(--blue);background:rgba(0,86,83,.07);border:1px solid rgba(0,86,83,.25);white-space:nowrap;}
+.file-tag.zip{color:var(--gold);background:rgba(146,112,33,.07);border-color:rgba(146,112,33,.4);}
+.kv-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.kv-tbl th{background:var(--band);color:var(--t2);font-weight:600;text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);font-size:12.5px;white-space:nowrap;}
+.kv-tbl td{padding:10px 14px;border-bottom:1px solid var(--line);color:var(--t1);vertical-align:top;}
+.kv-tbl tr:last-child td{border-bottom:none;}
+.kv-tbl td.k{color:var(--t2);width:190px;}
+.kv-tbl td.v{font-weight:600;width:200px;}
+.kv-tbl td.d{color:var(--t3);font-size:12.5px;}
+
+/* ===== 八、底部输入区（控件由模型入参 schema 决定） ===== */
+.ia-panel{margin-top:20px;}
+.ia-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;}
+.ia-col{min-width:0;}
+.ia-col.dis{opacity:.55;pointer-events:none;user-select:none;}
+.ia-ft{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.ia-ft .btn-run{width:auto;min-width:196px;padding:0 28px;flex-shrink:0;}
+.ia-ft .run-tip{margin:0;text-align:left;flex:1;min-width:280px;}
+.blk-ttl{font-size:12.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.blk-ttl .req{font-size:10.5px;font-weight:600;color:var(--warn);border:1px solid rgba(176,58,46,.4);background:rgba(176,58,46,.06);border-radius:var(--radius-sm);padding:0 5px;line-height:15px;}
+.blk-ttl .opt{font-size:10.5px;font-weight:600;color:var(--t3);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:0 5px;line-height:15px;}
+.blk-ttl .blk-note{font-size:10.5px;font-weight:400;color:var(--t3);margin-left:auto;}
+.src-hint{font-size:11.5px;color:var(--t3);line-height:1.7;padding:6px 0 2px;}
+.src-hint b{color:var(--t2);}
+.adv{margin-left:8px;font-size:11.5px;color:var(--blue);cursor:pointer;border-bottom:1px dashed var(--blue);font-weight:400;white-space:nowrap;}
+.adv:hover{text-decoration:underline;}
+.drop{border:1px dashed var(--line-strong);border-radius:var(--radius-sm);background:var(--band);padding:14px 12px;text-align:center;cursor:pointer;margin:8px 0 4px;}
+.drop:hover{border-color:var(--blue);background:rgba(0,86,83,.04);}
+.drop .ic{font-size:19px;line-height:1;}
+.drop .dt{font-size:12.5px;color:var(--t1);font-weight:600;margin-top:5px;}
+.drop .dh{font-size:11px;color:var(--t3);margin-top:5px;line-height:1.7;}
+.flist{margin-top:8px;}
+.flist .fi{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;margin-bottom:6px;}
+.flist .fi .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1);}
+.flist .fi .fsz{color:var(--t3);flex-shrink:0;font-variant-numeric:tabular-nums;}
+.flist .fi .rm{color:var(--t3);cursor:pointer;flex-shrink:0;}
+.flist .fi .rm:hover{color:var(--warn);}
+.pm-row{padding:10px 0;border-bottom:1px dashed var(--line);}
+.pm-row:last-child{border-bottom:none;}
+.pm-lb{display:flex;align-items:center;font-size:12.5px;color:var(--t2);margin-bottom:6px;}
+.pm-in{width:100%;height:32px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:#fff;padding:0 9px;font-size:13px;color:var(--t1);font-family:inherit;}
+.pm-in:focus{outline:none;border-color:var(--blue);}
+.pm-range{display:flex;align-items:center;gap:10px;}
+.pm-rg{flex:1;accent-color:var(--blue);}
+.pm-rv{font-size:12.5px;color:var(--blue);font-weight:600;min-width:54px;text-align:right;font-variant-numeric:tabular-nums;}
+.pm-tag{font-size:10.5px;color:var(--t3);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:0 5px;line-height:15px;margin-left:6px;font-weight:400;}
+.pm-in[disabled],.pm-rg[disabled]{background:#f4f8f5;cursor:not-allowed;}
+.pm-hint{font-size:11.5px;color:var(--t3);margin-top:5px;line-height:1.65;}
+.btn-run{display:flex;align-items:center;justify-content:center;gap:8px;height:38px;border-radius:var(--radius-sm);background:var(--blue);color:#fff;font-size:14px;font-weight:600;transition:background .2s;}
+.btn-run:hover{background:var(--blue-active);}
+.btn-run[disabled]{background:#c3cdd8;cursor:not-allowed;}
+.run-tip{font-size:11.5px;color:var(--t3);line-height:1.75;}
+
+/* ===== 九、空态 ===== */
+.empty{text-align:center;padding:56px 20px;color:var(--t3);}
+.empty .e-ic{font-size:38px;opacity:.3;margin-bottom:10px;}
+.empty .e-t{font-size:14px;color:var(--t2);}
+.empty .e-s{font-size:12.5px;margin-top:6px;}
+.empty.sm{padding:26px 12px;}
+.empty.sm .e-ic{font-size:26px;margin-bottom:6px;}
+.empty.sm .e-t{font-size:13px;}
+.empty.sm .e-s{font-size:11.5px;line-height:1.7;}
+.panel-bd .sec-title:first-child{margin-top:0;}
+
+/* ===== 十、文档流外壳（⭐0917 改写：放弃全高外壳，页脚恢复显示） =====
+   ⚠️ 背景：本页原先用「整页不滚动」的全高外壳（body height:100vh + overflow:hidden）换"三区各自内滚"，
+   代价是站点页脚必须被隐藏（否则占掉约 133px 首屏）。用户 0916 明确要求**页脚正常显示在页面底部**，
+   且列表页／详情页页脚本就正常显示 → 三页必须一致。
+   → 0917 按**方案 A** 改写：运行台回普通文档流（与列表页 / 详情页同构），页脚正常显示在内容末尾。
+
+   新的高度分配（不再是"唯一一条视口高度链"，改为普通文档流 + 局部 sticky）：
+     body（正常滚动，无 height/overflow 限制）
+       ├ header              普通静态块（站点头 64px）
+       └ .portal             仅作包裹，无 flex/overflow 约束
+           └ .portal>.wrap   只做宽度收口（max-width + 左右内距），与 .container 同规格
+               ├ .crumb      普通块
+               └ .bench      grid：左列 272px 固定 + 右主区自适应
+                   ├ .bench-side 白卡，★sticky(top:80px) + 自身 max-height 内滚 → 左列记录多时只滚左列
+                   └ .bench-main 普通块，内部 .bmain-bd / #inputArea 不再强制裁切
+     footer                 正常文档流元素，显示在页面最底部
+   保留的体验：左列吸顶（翻右区时记录区常驻）；右区结果长时随页面滚动。
+   失去的体验：输入区不再"永远贴视口底"（改为内容末尾；窄屏与普通长页面一致）。 */
+html,body{height:auto;min-height:100%;}
+body{display:block;overflow:visible;}
+.app-header{position:relative;flex:0 0 auto;}
+.portal{padding-top:0;display:block;overflow:visible;}
+.portal>.wrap{width:100%;max-width:var(--content-max);margin:0 auto;padding:0 clamp(24px,3.65vw,56px);}
+.crumb{flex:0 0 auto;}
+/* ⭐0916 卡片化：该行原为 flex 时代的高度链，grid 下 align-items 由 ② 接管
+   ⭐0917：文档流下不再需要 min-height:0（已无裁切链） */
+.bench{min-height:0;}
+.bench-side{min-height:0;}
+.btn-newrun,.bmain-hd,.rec-hd,.rec-ft{flex:0 0 auto;}
+/* ⭐0917 文档流改写：以下三条原为"全高外壳下的内部滚动"链条（min-height:0 + flex:1 + overflow:hidden
+   互相咬合）。文档流下必须解开裁切，否则右区/左列会被钳死在某个高度而内容看不全。
+   - .rec-box 保留 flex 列（左列内部仍是"头 + 列表 + 脚"），但取消 overflow:hidden
+   - .rec-list 改由 .side-inner 的高度约束（sticky 卡内滚，见 §12.2 / §12.7）
+   - .bench-main / .bmain-bd 取消 flex:1 与 overflow 钳制，高度由内容决定 */
+.rec-box{display:flex;flex-direction:column;}
+.rec-list{max-height:none;}
+.bench-main{min-height:0;}
+.bmain-bd{}
+/* ⭐0916 修复②③：输入区与结果区之间明确分隔。
+   - 输入区顶边用 --border 实线（原 --line 过浅，滚动内容贴上来时看不出界）
+   ⭐0917：去掉 margin-top:auto 与 44vh 钳制 —— 那两个属性是为"全高外壳下贴视口底沿"服务的，
+   文档流下会把输入区从内容流里脱开，改为自然高度、跟随结果区之后。 */
+#inputArea{border-top:1px solid var(--border);}
+/* 结果区与输入区之间的留白：由 .bmain-bd 的下内距承担（原 16px → 28px），
+   让结果区滚动内容与分隔线之间始终有一段呼吸空间 */
+#inputArea .ia-panel{margin-top:0;border:none;padding-top:var(--s3);}
+.bmain-bd{padding-bottom:28px;}
+/* ⭐0917 页脚恢复（用户拍板「方案 A：放弃全高外壳」）：
+   运行台此前用 `.site-footer{display:none}` 隐藏了站点页脚，但用户要的是页脚**正常显示在页面底部**
+   ——那是网站该有的内容，不是"偷高度的干扰项"。且列表页／详情页页脚一直正常显示，仅运行台缺失＝三页不一致。
+   现改为：运行台放弃「整页不滚动」的全高外壳，回普通文档流（见 §十 改写），页脚按 .site-footer 原始规则
+   正常显示在内容末尾，三页形态统一。（原隐藏规则整条删除，勿再恢复） */
+
+/* ===== 十一、v1.2 比例修正（反馈：输入区/左列占位过大、右区输出被压得极小） =====
+   修复口径：该大的是「输出」，该小的是「输入区」与「左列」。
+   两档视口下 .wrap 内容宽恒为 1136px（body min-width:1200 + wrap max-width:1200），
+   故横向度量一致，纵向分配如下（全部用显式高度 + nowrap/ellipsis，不依赖字体度量，
+   因此高度是确定值而非估算值）：
+
+     站点头 64 + 面包屑 55.5 + 页头信息条 112.4 = 231.9 →  .bench 内容高 = vh − 231.9 − 20
+     .bench 内容 = .bmain-hd 78.4 + #inputArea 148 + .bmain-bd（flex:1，剩余全给它）
+
+     #inputArea 内部（box-sizing:border-box，逐行显式高度）：
+        上边框 1 + 状态条 18 + 上内边距 2 + 行1 76 + 行2 48 + 下内边距 2 = 147（+上边框 = 148）
+        行1 = max(#colIn 68, #colParam 76)；行2 = 外边距 3 + 上边框 1 + 上内边距 2 + 内容 42
+        #colParam = 小标题 16 + 间隔 2 + #paramBody 58（= 两行 26 + 行距 6，第 3 行起内部滚动）
+
+   结果（核算见 §④）：1440×950 → 左列 220 ｜ 输入区 148 ｜ 输出 ≈472
+                     1280×800 → 左列 220 ｜ 输入区 148 ｜ 输出 ≈322
+   长文案一律单行截断（ellipsis）+ title 兜底，不换行、不挤压；两档均无页面级纵向滚动。
+   注：§十 里 `#inputArea{max-height:44vh}` 一行由本节后写覆盖（44vh → 22vh，另加窄高视口 150px 补丁）。 */
+
+/* ---- 11.1 左列缩窄 300 → 220，记录项文字单行截断（title 兜底） ---- */
+/* ⭐0916 卡片化：grid 下由 grid-template-columns 决定左列宽（272px），gap 用 --layout-gap */
+.bench{gap:var(--layout-gap);}
+.bench>.bench-side{width:auto;}
+.bench-side .rec-hd{padding:8px 10px;font-size:12px;}
+.bench-side .rec-list{padding:5px;}
+/* ⭐0916 修复：记录项再压一档 —— 目标是把 8 条总高压进可视区（此前 714px 只能露 5~7 条） */
+.bench-side .rec{padding:6px 8px;margin-bottom:4px;}
+.bench-side .rec-h{gap:6px;}
+.bench-side .rec-no{flex:1 1 auto;min-width:0;font-size:10.5px;}
+.bench-side .rec-at{font-size:10px;}
+.bench-side .rec-tag{margin-top:3px;}
+.bench-side .rec .tchip{font-size:10.5px;padding:0 6px;line-height:16px;}
+.bench-side .rec-s{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;font-size:11px;line-height:15px;}
+.bench-side .prog-mini{margin-top:5px;}
+/* ⭐0916 修复：.rec-ft 压到最紧（line-height 1.4、padding 3px 10px），
+   把左列高度让给记录项，使示例记录尽可能无需列内滚动即可全部看到 */
+.bench-side .rec-ft{padding:3px 10px;font-size:10.5px;line-height:1.4;}
+.bench-side .rec-ft .demo-link{font-size:10.5px;}
+.bench-side .empty.sm{padding:22px 8px;}
+
+/* ---- 11.2 输入区：44vh/418px → 148px 紧凑两行（状态条 + 行1 + 行2）
+   ⭐0917 文档流改写：去掉 max-height 钳制（22vh / 150px 两档）。
+   这两档是"全高外壳下不许输入区吃掉首屏"的配套；文档流下输入区在内容末尾，
+   钳住它只会让参数区出现内部滚动条（用户看不到全部参数），改为自然高度。 */
+#inputArea{border-top:1px solid var(--line);}
+#inputArea .ia-panel{margin:0;border:none;border-radius:0;}
+#inputArea .panel-bd{padding:2px 12px 2px;}
+
+/* 状态条（原面板标题行 + 原权限带合并为一条 18px）：说明性长句截断 + title 提示 */
+#inputArea .panel-hd{height:18px;padding:0 12px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow:hidden;font-size:11px;line-height:14px;border-bottom:1px solid var(--line);background:var(--band);}
+#inputArea .panel-hd .ia-hd-t{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--t1);}
+#inputArea .panel-hd .sub{flex:0 1 auto;min-width:0;flex-shrink:30;font-size:11px;font-weight:400;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#inputArea .panel-hd .hd-extra{flex:0 1 auto;min-width:0;flex-shrink:30;margin-left:0;font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#inputArea .panel-hd .try-auth{flex:1 1 auto;min-width:0;margin:0;padding:0;border:none;background:transparent;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow:hidden;}
+#inputArea .panel-hd .ta-note{flex:1 1 auto;min-width:0;font-size:11px;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#inputArea .panel-hd .ta-chip{flex:0 0 auto;font-size:10.5px;line-height:16px;height:16px;padding:0 7px;}
+#inputArea .panel-hd .ta-demo,#inputArea .panel-hd .try-auth a{flex:0 0 auto;font-size:11px;line-height:14px;white-space:nowrap;}
+
+/* 行 1：左＝文件区（选择文件 + chips 横向排列、内部截断）｜右＝参数区（label 内联、横向排列 + 换行） */
+#inputArea .ia-grid{display:flex;gap:10px;align-items:flex-start;min-width:0;}
+#inputArea .blk-ttl{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden;white-space:nowrap;height:16px;line-height:16px;}
+#inputArea .blk-ttl .blk-note{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#inputArea .blk-ttl .req,#inputArea .blk-ttl .opt{font-size:10px;line-height:14px;padding:0 4px;}
+#inputArea .blk-ttl .adv{flex:0 0 auto;margin-left:auto;font-size:11px;line-height:14px;}
+
+#colIn{flex:0 0 250px;display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden;}
+#colIn .drop{flex:0 0 auto;display:flex;align-items:center;gap:6px;height:26px;margin:0;padding:0 8px;text-align:left;border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:var(--band);cursor:pointer;min-width:0;overflow:hidden;}
+#colIn .drop:hover{border-color:var(--blue);background:rgba(0,86,83,.04);}
+#colIn .drop .ic{flex:0 0 auto;font-size:12px;line-height:1;margin:0;}
+#colIn .drop .dt{flex:0 0 auto;font-size:11.5px;line-height:16px;font-weight:600;margin:0;}
+#colIn .drop .dh{flex:1 1 auto;min-width:0;height:14px;margin:0;font-size:10.5px;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#colIn .flist{height:22px;margin:0;display:flex;flex-wrap:nowrap;align-items:center;gap:5px;min-width:0;overflow:hidden;}
+#colIn .flist .fi{flex:0 1 auto;min-width:0;max-width:118px;height:22px;margin:0;padding:0 6px;gap:5px;font-size:11px;}
+#colIn .flist .fi .nm{min-width:0;}
+#colIn .flist .pm-hint{flex:1 1 auto;min-width:0;margin:0;font-size:10.5px;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+#colParam{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+#paramBody{display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;max-height:58px;overflow-y:auto;overflow-x:hidden;}
+#paramBody .pm-row{flex:1 1 250px;min-width:0;max-width:100%;height:26px;overflow:hidden;margin:0;padding:0 8px;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;}
+#paramBody .pm-lb{flex:0 0 auto;display:flex;align-items:center;margin:0;font-size:11.5px;line-height:16px;color:var(--t2);white-space:nowrap;}
+#paramBody .pm-lb .pm-tag{margin-left:4px;font-size:10px;line-height:14px;padding:0 4px;}
+#paramBody .pm-in{flex:1 1 60px;width:auto;min-width:0;height:20px;font-size:11.5px;padding:0 6px;border-color:var(--line);}
+#paramBody .pm-range{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:6px;}
+#paramBody .pm-rg{flex:1 1 auto;min-width:40px;}
+#paramBody .pm-rv{flex:0 0 auto;min-width:34px;font-size:11px;line-height:16px;}
+#paramBody .pm-hint{flex:1 1 60px;min-width:0;margin:0;font-size:10.5px;line-height:14px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---- 11.3 右区输出：标题行固定为一行（不因元信息文案长短伸缩），剩余高度全给 .bmain-bd ---- */
+.bmain-hd .bh-row1{flex-wrap:nowrap;}
+.bmain-hd .bh-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---- 11.4 行 2：左＝一行提示（允许介质 / 平台内执行 / 仅用于本次运行）｜右＝主按钮 ---- */
+#inputArea .ia-ft{margin-top:3px;padding-top:2px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:12px;flex-wrap:nowrap;min-width:0;}
+#inputArea .ia-tips{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:0;}
+#inputArea .ia-tips .src-hint{min-width:0;margin:0;padding:0;font-size:10.5px;line-height:14px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#inputArea .ia-tips .run-tip{flex:0 0 auto;min-width:0;margin:0;font-size:10.5px;line-height:14px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#inputArea .ia-ft .btn-run{flex:0 0 auto;width:auto;min-width:150px;height:28px;padding:0 20px;font-size:12.5px;}
+
+/* 线性图标（规范 §图标：同一套线性 SVG，禁 emoji） */
+.ic-svg{width:1em;height:1em;display:inline-block;vertical-align:-.14em;flex-shrink:0;}
+.md-ic .ic-svg,.head-ic .ic-svg{width:22px;height:22px;}
+.md-ic,.head-ic{color:var(--brand);}
+.e-ic .ic-svg{width:28px;height:28px;color:var(--text-muted);}
+.m-item .ic-svg,.md-upd .ic-svg,.md-meta2 .ic-svg,.file-ic .ic-svg{width:13px;height:13px;vertical-align:-.12em;}
+.file-ic{color:var(--text-secondary);}
+.u-mi .ic-svg{width:13px;height:13px;vertical-align:-.12em;margin-right:2px;}
+
+
+/* 读屏专用 + 标题重置（规范 §键盘与读屏） */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+h1,h2,h3{margin:0;font-weight:inherit;font-size:inherit;line-height:inherit;}
+
+
+/* ===== 十二、⭐0916 卡片化对齐数据中心（列表页／详情页同批） =====
+   背景：运行台原为「全宽贴边 + 裸两栏」平铺结构；数据中心与模型中心其余两页
+   已统一为「容器收口 1800 + 左右双白卡」范式。本节把运行台并入同一范式。
+
+   结构链（与数据中心列表页一致）：
+     .portal
+       └ .wrap          ← 收口 1800px + clamp 内距（Step1 已补）
+           ├ .crumb     面包屑（36px 行高，与详情页同）
+           └ .bench     grid 272px + 1fr，gap 16
+               ├ .bench-side.panel（白卡 + sticky）→ .side-inner（内距 16）
+               │     ├ .btn-newrun
+               │     └ .rec-box（记录盒，浅描边分区）
+               └ .bench-main（白卡，圆角 8）
+                     ├ .bmain-hd（底 --page-bg，--s4 内距）
+                     ├ .bmain-bd（flex:1，内部滚动）
+                     └ #inputArea（底沿固定） */
+
+/* 12.1 面包屑：与详情页统一 36px 行高、14px 字号 */
+.wrap>.crumb{display:flex;align-items:center;gap:var(--s2);height:36px;padding:0;
+  font-size:14px;color:var(--text-muted);}
+.wrap>.crumb a{color:var(--text-secondary);}
+.wrap>.crumb a:hover{color:var(--brand);text-decoration:none;}
+.wrap>.crumb .cur{color:var(--text);font-weight:600;}
+
+/* 12.2 左列白卡内的容器
+   ⭐0917 文档流改写：全高外壳下 .side-inner 是"撑满 + 内部滚动"的一环；
+   文档流下改为「左列 card 自身 sticky + 自身限高内滚」——记录多时只滚左列，翻右区时左列常驻。
+   ⚠️ sticky 隐藏前提：元素高度必须小于视口，否则吸顶不生效（0915 已在详情页右栏踩过一次）。
+      此处给出 max-height:calc(100vh - 站点头 64 - 上下呼吸 48)，并让 .rec-box/.rec-list 承接内滚。 */
+.bench-side{position:sticky;top:calc(var(--header-height) + var(--s4));
+  max-height:calc(100vh - var(--header-height) - var(--s5));overflow:hidden;}
+.bench-side>.side-inner{min-height:0;max-height:100%;}
+.bench-side>.side-inner>.rec-box{flex:1 1 auto;min-height:0;overflow:hidden;}
+.bench-side>.side-inner>.rec-box>.rec-list{flex:1 1 auto;min-height:0;overflow-y:auto;}
+
+/* 12.3 「新建运行」按钮：与白卡同宽、规范高度 */
+.btn-newrun{width:100%;height:var(--control-height);padding:0 var(--s4);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-size:14px;font-weight:500;color:#fff;background:var(--brand);
+  border:0;border-radius:var(--radius-sm);cursor:pointer;transition:background .2s;}
+.btn-newrun:hover{background:var(--brand-hover);}
+
+/* 12.4 记录盒内的头／脚统一 --border 描边色 */
+.rec-hd{background:var(--page-bg);border-bottom:1px solid var(--border);}
+.rec-ft{border-top:1px dashed var(--border);}
+
+/* 12.5 右主区：面板标题行与内容区对齐数据中心内距 */
+.bmain-bd{padding:var(--s4);}
+
+/* 12.6 左列白卡圆角：与数据中心 .filter-side 统一 8px
+   （.panel 写在 .bench-side 之后会把它压回 4px，故在此显式提升） */
+.bench-side.panel{border-radius:var(--radius-md);}
+
+/* 12.8 高度链（⭐0917 文档流改写后已大幅简化）
+   ⚠️ 原注释说"运行台是全高外壳，必须显式给出可压缩行轨道 + 让右栏拉伸填满该行"——
+      现已回文档流，grid 行为回到与数据中心列表页一致：
+      左列按内容高（align-self:start，sticky 才有效）／右栏按内容自然高。
+   ⚠️ 此前写死的 `grid-template-rows:minmax(0,1fr)` 必须去掉：文档流下它会生成一条
+      "至少撑满剩余空间"的轨道，页脚会被顶出首屏（且 .bench-side 的 sticky 会失去参照）。 */
+.bench{grid-template-rows:auto;}
+.bench-side{align-self:start;}     /* 左列按内容高，sticky 才有效 */
+.bench-main{align-self:start;}     /* 右栏按内容高（原 stretch 是外壳配套，已不适用） */
+
+/* 12.9 窄屏（<1200）：左列改全宽堆叠，取消 sticky，主体不再横向溢出
+   ⭐0917：桌面已回文档流，本块与桌面形态一致，仅保留"改单列 + 取消 sticky"的差异。 */
+@media (max-width:1199px){
+  html,body{height:auto;min-height:100%;}
+  body{height:auto;overflow:visible;}
+  .portal{overflow:visible;}
+  .wrap{display:block;}
+  .bench{display:block;grid-template-columns:none;grid-template-rows:none;}
+  /* 左列：取消 sticky 与裁切，按内容自然高 */
+  .bench-side{position:static;max-height:none;overflow:visible;margin-bottom:var(--layout-gap);}
+  .bench-side>.side-inner{display:block;max-height:none;}
+  .bench-side>.side-inner>.btn-newrun{margin-bottom:var(--layout-gap);}
+  /* ⭐0916 修复：窄屏左列记录必须保留内部滚动语义。
+     原写法与同块内的 `.rec-list{overflow:visible;}` 自相矛盾（压到 320px 又禁止滚动
+     → 内容溢出被 .bench-side{overflow:hidden} 裁掉，表现为记录「消失」）。 */
+  .bench-side>.side-inner>.rec-box{overflow:visible;display:block;}
+  .bench-side>.side-inner>.rec-box .rec-list{max-height:none;overflow-y:visible;}
+  /* 右栏：取消面板内滚动，改由页面滚动承载 */
+  .bench-main{display:block;min-height:0;overflow:visible;}
+  .bmain-bd{overflow:visible;}
+  #inputArea{max-height:none;overflow:visible;}
+  /* ⭐0916 修复：删去 `.rec-list{overflow:visible;}` —— 窄屏记录区改为自然高度，
+     由页面整体滚动承载（配合上面的 max-height:none） */
+}
+@media (max-width:899px){
+  .wrap{padding:0 clamp(16px,3.65vw,32px);}
+}
+/* ⭐0916 修复④：页头响应式折叠 —— 口径照抄数据中心列表页（767/480 断点）。
+   缺了这两块，414px 下 .brand(330px, nowrap 站名) + .header-actions(162px)
+   会把文档撑到 580px → 页面出现 166px 横向滚动。 */
+@media (max-width:767px){
+  .header-inner{gap:12px;}
+  .brand span{font-size:17px;line-height:26px;}
+  .main-nav{margin-left:0;}
+  .header-actions .btn-brand{display:none;}
+  .footer-inner{grid-template-columns:minmax(0,1fr);}
+  .f-slogan{flex-wrap:wrap;gap:var(--s4);}
+  .f-slogan .lines{white-space:normal;}
+}
+@media (max-width:480px){
+  .brand{min-width:0;}
+  .brand span{font-size:16px;overflow:hidden;text-overflow:ellipsis;}
+}
+/* ⭐0916 修复⑤：<=640px 输入区栅格改单列。
+   根因：.ia-grid 多列时每列仅 ~81px，而列内 .pm-lb(91px,nowrap,不收缩)
+   + .pm-range 内 .pm-rg(min-width:40px) + .pm-rv(min-width:54px) 的固有宽度超出列宽
+   → 子项溢出父列 → 页面残留 33px 横向滚动。单列堆叠后各列占满整行即消除。 */
+@media (max-width:640px){
+  /* .ia-grid 是 flex 容器：让它换行，各列占满整行，参数行便有整行宽度可用 */
+  .ia-grid{flex-wrap:wrap;gap:var(--layout-gap);}
+  .ia-col,.ia-col.dis{flex:1 1 100%;min-width:0;}
+  /* 参数名行：允许收缩换行（否则 nowrap 的 91px 宽度会溢出 81px 的列） */
+  .pm-lb{min-width:0;white-space:normal;}
+  .blk-ttl{flex-wrap:wrap;min-width:0;}
+  .adv{margin-left:0;}
+  /* 覆盖 §11.3 的 .bmain-hd .bh-row1{flex-wrap:nowrap}（桌面口径），
+     必须用同特异性选择器，否则被其压制 → 状态芯片溢出 */
+  .bmain-hd .bh-row1{flex-wrap:wrap;}
+  .bmain-hd .bh-sub{white-space:normal;overflow:visible;text-overflow:clip;}
+  /* 参数行与滑杆区：允许在整行内收缩 */
+  .pm-row{flex:1 1 auto;min-width:0;}
+  .pm-range{min-width:0;}
+  .pm-rg{min-width:0;}
+}
+/* ⭐0916 修复③：<=640px 极窄屏，bench 内部横排收口（否则参数行/状态行横向溢出） */
+@media (max-width:640px){
+  /* 运行状态行：芯片 + 高级参数开关允许换行（见 640 块的同特异性覆盖） */
+  .bh-r{flex-wrap:wrap;padding-top:0;}
+  .adv{margin-left:0;}
+  /* 参数行：滑杆区可收缩，数值不再被挤出 */
+  .pm-range{gap:8px;}
+  .pm-rg{min-width:0;}
+  .pm-rv{min-width:44px;}
+  /* 参数名行允许换行，类型 tag 不撑破 */
+  .pm-lb{flex-wrap:wrap;}
+  .pm-in{padding:0 7px;}
+  /* 页脚品牌 logo 固定 220px 会横向溢出，窄屏收窄 */
+  .f-logo{width:26px;height:auto;}
+  /* 结果区表格可横向滚动，不撑破面板 */
+  .bmain-bd{overflow-x:auto;}
+}
+</style>
+
+<!-- ============================================================
+     统一一级导航 · 口径＝门户页 `.site-header` / `.main-nav`（0924，用户指令）
+     由 _tools_原型对齐/patch_portal_nav_unify_0924.py 注入；
+     追加于本页原有 <style> 之后，用于覆盖页面自有的页头规则。
+     · 七项＝首页｜数据中心｜模型中心｜科研开发空间｜课题中心｜需求中心｜关于平台
+     · 页头 80px（≤1279 收敛 64，与门户页断点一致）；项间距 20px、内边距 0 2px；激活＝整项宽 2px 实心下划线
+     · 品牌 22px/600 + 30×30；动作区「登录」文字按钮 + 「合作咨询」主按钮
+     · ≤1099px 收起为移动端菜单（同门户页）
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+        <path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/>
+        <path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/>
+        <path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/>
+      </svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="数据中心-数据集列表页.html">数据中心</a>
+      <a class="active" href="模型中心-模型列表页（调整）.html" aria-current="page">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="autharea" id="authArea">
+        <button type="button" class="login-link" data-bdh-login>登录</button>
+        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a href="数据中心-数据集列表页.html">数据中心</a>
+    <a class="active" href="模型中心-模型列表页（调整）.html" aria-current="page">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header>
+
+<div class="portal">
+  <div class="wrap">
+    <div class="crumb">
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a> /
+      <a id="crumbModel" href="模型中心-模型列表页（调整）.html">模型</a> /
+      <span class="cur">运行台</span>
+    </div>
+
+    
+    <div class="bench">
+      <aside class="bench-side panel">
+        <div class="side-inner">
+        <button class="btn-newrun" id="btnNew" onclick="newRun()">+ 新建运行</button>
+        <div class="rec-box">
+          <h2 class="rec-hd"><span id="recTitle">运行记录</span><span class="rec-n" id="recCount"></span></h2>
+          <div class="rec-list" id="recList"></div>
+          <div class="rec-ft">
+            仅显示你的运行记录（按账号隔离）<br>
+            <span class="demo-link" onclick="clearModelRuns()">演示：清空本模型记录</span>
+            <span class="demo-link" onclick="goMyRuns()" style="margin-left:10px;">我的运行记录（全部模型）→</span>
+          </div>
+        </div>
+        </div>
+      </aside>
+
+      <main class="bench-main">
+        <h2 class="sr-only">运行结果区</h2>
+        <div class="bmain-hd" id="bmainHd"></div>
+        <div class="bmain-bd" id="bmainBody"></div>
+        <div id="inputArea"></div>
+      </main>
+    </div>
+  </div>
+</div>
+
+  <footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="f-brand">
+        <svg class="f-logo" width="34" height="42" viewBox="0 0 34 42" fill="none" aria-hidden="true">
+          <path d="M17 40V17" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M16.6 17.5C16.6 10 11.7 4 4.8 4c0 7.5 4.9 13.5 11.8 13.5Z" fill="#FFFFFF"/>
+          <path d="M17.4 21.2c0-6.6 4.5-12 10.2-12 0 6.6-4.5 12-10.2 12Z" fill="#FFFFFF" fill-opacity=".82"/>
+        </svg>
+        <div>
+          <div class="f-name">北大荒智慧农业协同创新平台</div>
+          <div class="f-desc">面向农业研究与生产的开放协同平台</div>
+        </div>
+      </div>
+      <div class="f-col">
+        <h4>平台资源</h4>
+        <a href="数据中心-数据集列表页.html">数据中心</a>
+        <a href="课题中心-高保真原型.html">课题中心</a>
+      </div>
+      <div class="f-col">
+        <h4>关于平台</h4>
+        <div class="f-about-grid">
+          <a href="关于平台-平台介绍.html">平台介绍</a>
+          <a href="关于平台-开发者接入.html">开发者区</a>
+          <a href="关于平台-使用帮助.html">使用帮助</a>
+          <a href="关于平台-联系支持.html">联系我们</a>
+        </div>
+      </div>
+      <div class="f-slogan">
+        <div class="divider"></div>
+        <div class="lines">耕耘数据沃土<br>共建智慧农业</div>
+      </div>
+    </div>
+  </div>
+  <svg class="f-wave" width="220" height="180" viewBox="0 0 220 180" fill="none" aria-hidden="true">
+    <path d="M60 176C70 120 96 72 150 28" stroke="#E4EEE8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M96 96c-14-4-24-14-28-28 14 2 24 10 28 28Zm10-20c-2-14 2-27 12-37 5 13 2 26-12 37Zm16 10c12-8 26-9 39-4-9 11-23 14-39 4Zm-22 32c-14-3-24-12-29-26 14 1 25 9 29 26Zm8-24c-1-14 4-27 14-36 4 13 0 26-14 36Zm16 12c12-7 26-8 38-2-8 10-22 12-38 2Z" fill="#E4EEE8"/>
+  </svg>
+</footer>
+<div id="toast"></div>
+
+<script>
+/* ===================================================================
+   本页新增说明（非复制）
+   ① 左列命名口径：CHAT_MODELS 只放"文本问答类"模型名。本项目 14 个模型
+      （估产/长势/病虫害/分割/检测/反演…）都不是多轮对话模型，故为空数组；
+      一旦有文本问答类模型上架，把它加进来，左列标题与按钮文案会自动切成"对话"口径。
+   ② 运行记录落库结构沿用个人中心承接页字段，个人中心「我的运行记录」页可直接读同一份数据。
+   =================================================================== */
+var CHAT_MODELS=[];
+function isChatModel(m){return CHAT_MODELS.indexOf(m&&m.name)>=0;}
+function recTitleText(){return isChatModel(CUR)?'对话':'运行记录';}
+function newRunText(){return isChatModel(CUR)?'+ 新建对话':'+ 新建运行';}
+
+/* ---------- 登录态与权限（演示开关，与模型详情页同源） ---------- */
+var LOGGED=false;
+var DEMO_AUTH=false; /* 原型演示开关：模拟"使用审批通过"后的已授权态 */
+var USER_NAME='张研究员';
+function toast(msg){
+  var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2200);
+}
+function toReg(){portalConsult();}
+function doLogin(){
+  LOGGED=true;
+  document.getElementById('authArea').innerHTML='<div class="u-box">'+
+    '<span class="u-avatar">张</span><span class="u-name" onclick="toggleUserMenu()">'+USER_NAME+' ▾</span>'+
+    '<div class="u-menu" id="userMenu">'+
+      '<div class="u-mi" onclick="goMyRuns()"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7 15h10"/></svg> 我的运行记录</div>'+
+      '<div class="u-mi" onclick="goMyPersonal()">个人中心</div>'+
+      '<div class="u-mi" onclick="goMyCalls()">我的调用记录与密钥</div>'+
+      '<div class="u-mi" onclick="goMyApply()">我的申请</div>'+
+      '<div class="u-mi out" onclick="doLogout()">退出登录</div>'+
+    '</div></div>';
+  renderAll();toast('已登录：'+USER_NAME+'（演示）');
+}
+function doLogout(){
+  LOGGED=false;DEMO_AUTH=false;
+  document.getElementById('authArea').innerHTML='<a class="header-btn-login" href="javascript:void(0)" onclick="doLogin()">登录</a>'+
+    '<a class="header-btn-register" href="javascript:void(0)" onclick="toReg()">入驻申请</a>';
+  renderAll();toast('已退出登录');
+}
+function toggleUserMenu(){var m=document.getElementById('userMenu');if(m)m.classList.toggle('open');}
+document.addEventListener('click',function(e){
+  if(!e.target.closest||!e.target.closest('.u-box')){var m=document.getElementById('userMenu');if(m)m.classList.remove('open');}
+});
+function goMyRuns(){document.getElementById('recList')?.scrollIntoView({behavior:'smooth'});}
+function goMyPersonal(){location.href='个人中心-高保真原型.html';}
+function goMyCalls(){location.href='关于平台-开发者接入.html#docs';}
+function goMyApply(){location.href='个人中心-高保真原型.html#models?tab=applications';}
+function goModelList(){location.href='模型中心-模型列表页（调整）.html';}
+function toggleDemoAuth(){
+  if(!LOGGED){toast('请先登录/入驻平台（受邀制）');return;}
+  DEMO_AUTH=!DEMO_AUTH;
+  toast(DEMO_AUTH?'演示：模拟审批通过，已授权可提交运行':'演示：回到未授权态');
+  renderAuth();
+}
+function lockReason(){
+  if(!isCurVer(CUR))return '历史版本仅供复现，不支持运行';
+  if(!LOGGED)return '请先登录/入驻平台（受邀制）';
+  if(!DEMO_AUTH)return '该模型尚未授权，无法运行';
+  return '';
+}
+function canRun(){
+  var lr=lockReason();
+  if(lr){toast(lr);return false;}
+  return true;
+}
+
+/* ===================================================================
+   模型数据 / 版本 / 服务与接入信息（自 模型中心-模型详情.html 复制，原型允许重复）
+   =================================================================== */
+var MD=[
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V9"/><path d="M12 12c0-4 2.5-7 6-8 0 4-2.5 7-6 8Z"/><path d="M12 15c0-3.5-2.2-6.2-5.3-7 0 3.5 2.2 6.2 5.3 7Z"/></svg>',name:'水稻估产模型（卫星+气象多源）',crop:['水稻'],scenes:['产量预测'],type:'回归估测',owner:'全重实验室 · 作物建模组',upd:'2026-06-18',calls:286,ver:'v2.3',
+  abbr:'RiceYield-SatWx v2.3',author:'全重实验室 · 作物建模组',
+  abstract:'以多时相卫星植被指数与农田气象观测为输入，采用梯度提升回归估测地块级水稻产量，全生育期中后期可滚动出数，支撑测产预估与区域产量统计。',
+  task:'由卫星时序影像 + 气象特征估测水稻地块产量（kg/亩），并汇总区域产量（吨）。适合生长季中后期的产量预估、收获前的区域统计核对。',
+  ins:['多时相卫星影像植被指数（NDVI / EVI / LAI，≥6 期，统一 CGCS2000）','农田气象站网观测序列（平均气温 / 累计降水 / 太阳辐射）','地块矢量边界（含地块编码、作物、年份属性）'],
+  outs:['地块级产量估测值（kg/亩）','估测置信区间（80%）','区域汇总产量（吨）与特征贡献度'],
+  reqs:['影像期数 ≥6 且覆盖抽穗—灌浆关键期，云量影响需先行剔除','地块矢量须与影像时相配准，地块编码唯一','单地块面积建议 ≥5 亩，过小地块误差上升'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'value',sample:'样例输入：DK-2026-0451 地块 2026 年生育期卫星时序 + 气象序列（预填，可改）',
+    base:{v:612.4,u:'kg/亩',label:'估测产量',extra:'区域汇总 3,846 吨',
+      feat:[['灌浆期 LAI',0.34],['累计降水',0.22],['抽穗期 NDVI',0.19],['有效积温',0.13],['其他',0.12]]},
+    params:[
+      {id:'stage',label:'生育期阶段',type:'select',def:'灌浆期',options:['抽穗期','灌浆期','成熟期'],hint:'阶段越靠后，估测越接近实测真值'},
+      {id:'periods',label:'影像期数',type:'range',min:6,max:12,step:1,def:8,unit:' 期',hint:'少于 6 期不满足模型输入要求'},
+      {id:'wx',label:'气象观测',type:'select',def:'含气象序列',options:['含气象序列','不含气象序列']},
+      {id:'plot',label:'地块编码',type:'text',def:'DK-2026-0451',ph:'如 DK-2026-0451',hint:'仅字母数字与连字符（演示输入校验）'}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-3.3 0-6-2.7-6-6V9c0-3.3 2.7-6 6-6s6 2.7 6 6v6c0 3.3-2.7 6-6 6Z"/><path d="M12 3v18M8 7h8M8 12h8M8 17h8"/></svg>',name:'玉米产量预测模型（时序）',crop:['玉米'],scenes:['产量预测'],type:'时序预测',owner:'东北农业大学 · 遥感团队',upd:'2026-06-10',calls:174,ver:'v1.8',
+  abbr:'MaizeYield-TS v1.8',author:'东北农业大学 · 遥感团队',
+  abstract:'基于 LSTM 的生育期时序建模，输入逐期植被指数与积温序列，输出产量预测值与全生育期产量形成曲线，可比对预测与实测真值走势。',
+  task:'按预测时点输出玉米地块产量预测值（kg/亩），并给出产量形成时序曲线，用于生长季内多时点滚动预估。',
+  ins:['逐期植被指数序列（NDVI / EVI，等间隔重采样）','逐日积温与降水量序列','地块矢量与作物属性（玉米、年份）'],
+  outs:['产量预测值（kg/亩）','产量形成时序曲线（预测 vs 实测真值）','预测相对误差（有真值回填时）'],
+  reqs:['序列长度 ≥8 期，缺失期需插值补齐','预测时点越早，置信区间越宽','同一年份同一地块重复预测以最后一次为准'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'series',sample:'样例输入：DK-2026-0782 玉米地块逐期 NDVI + 积温序列（预填，可改）',
+    base:{v:738.9,u:'kg/亩',label:'预测产量',extra:'平均相对误差 6.8%'},
+    params:[
+      {id:'point',label:'预测时点',type:'select',def:'出苗后 90 天',options:['出苗后 60 天','出苗后 90 天','出苗后 120 天']},
+      {id:'len',label:'序列长度',type:'range',min:8,max:24,step:2,def:16,unit:' 期'},
+      {id:'curve',label:'输出产量曲线',type:'select',def:'输出',options:['输出','不输出']},
+      {id:'plot',label:'地块编码',type:'text',def:'DK-2026-0782',ph:'如 DK-2026-0782'}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="6" ry="8"/><path d="M12 4v16M9 9c1 1 1 2 0 3M15 12c-1 1-1 2 0 3"/></svg>',name:'大豆估产与长势联动模型',crop:['大豆'],scenes:['产量预测','长势监测'],type:'回归估测',owner:'哈工大 · 智慧农业团队',upd:'2026-05-28',calls:131,ver:'v1.5',
+  abbr:'SoyYield-LAI v1.5',author:'哈工大 · 智慧农业团队',
+  abstract:'将长势监测结果（LAI / 生物量）作为中间特征参与产量回归，先出长势再出产量，两级结果可解释、便于农艺人员核对。',
+  task:'由大豆生育期影像估测长势等级与地块产量（kg/亩），长势结果作为产量估测的可解释中间量一并输出。',
+  ins:['生育期无人机正射影像或卫星切片（≥5cm 或对应切片精度）','地块矢量与作物属性（大豆、年份）','可选：土壤养分实测值（提升精度）'],
+  outs:['长势等级（七级）与 LAI 估测值','地块产量估测值（kg/亩）','长势→产量联动贡献说明'],
+  reqs:['建议覆盖开花—鼓粒期影像','启用长势联动需影像与地块配准一致','未提供土壤实测值时精度下降约 5%'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'value',sample:'样例输入：DK-2026-0337 大豆地块结荚期影像 + 地块属性（预填，可改）',
+    base:{v:168.5,u:'kg/亩',label:'估测产量',extra:'长势等级：好（第 6 级 / 共 7 级）',
+      feat:[['鼓粒期 LAI',0.38],['结荚期 NDVI',0.24],['土壤有效磷',0.16],['其他',0.22]]},
+    params:[
+      {id:'stage',label:'生育期阶段',type:'select',def:'结荚期',options:['开花期','结荚期','鼓粒期']},
+      {id:'periods',label:'影像期数',type:'range',min:6,max:12,step:1,def:7,unit:' 期'},
+      {id:'link',label:'长势联动',type:'select',def:'启用',options:['启用','不启用']},
+      {id:'plot',label:'地块编码',type:'text',def:'DK-2026-0337',ph:'如 DK-2026-0337'}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V11"/><path d="M12 14c-4 0-6-2-6-6 4 0 6 2 6 6Z"/><path d="M12 11c0-3 2-5 5-5 0 3-2 5-5 5Z"/></svg>',name:'水稻长势动态监测模型',crop:['水稻'],scenes:['长势监测'],type:'图像分类',owner:'全重实验室 · 长势监测组',upd:'2026-06-22',calls:412,ver:'v3.1',
+  abbr:'RiceGrowth-Cls v3.1',author:'全重实验室 · 长势监测组',
+  abstract:'对作物影像做长势等级分类，输出与数据中心长势反演产品一致的七级分级（极差—极好），可用于地块长势巡查与胁迫早期发现。',
+  task:'输入单景或一组作物影像，输出该地块的长势等级（七级，与数据中心反演产品分级一致）及各类别概率，低置信度时提示人工复核。',
+  ins:['无人机正射影像（≥5cm）或卫星切片（多光谱）','地块范围（影像自动裁切或人工框选）'],
+  outs:['长势等级（七级：极差 / 差 / 较差 / 中等 / 较好 / 好 / 极好）','类别置信度与 Top-3 概率分布','低置信度标记（建议人工复核）'],
+  reqs:['影像需在作物生育期内，休耕期影像不适用','建议单景覆盖单一作物地块，混合地块精度下降','正射影像需做辐射校正'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'classify',sample:'样例输入：DX-2026-0611 水稻地块无人机正射影像（预填，可改）',
+    base:{labels:['极差','差','较差','中等','较好','好','极好'],main:'好',conf:0.87},
+    params:[
+      {id:'src',label:'影像来源',type:'select',def:'无人机正射影像',options:['无人机正射影像','卫星切片影像']},
+      {id:'thr',label:'置信度阈值',type:'range',min:0.30,max:0.90,step:0.05,def:0.60,hint:'低于阈值判定为不确定，提示人工复核'},
+      {id:'top3',label:'输出 Top-3 概率',type:'select',def:'输出',options:['输出','不输出']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c0-9 6-15 16-15 0 10-6 16-16 15Z"/><path d="M4 20c4-4 8-6 12-7"/></svg>',name:'玉米长势异常识别模型',crop:['玉米'],scenes:['长势监测'],type:'图像分类',owner:'东北农业大学 · 遥感团队',upd:'2026-06-05',calls:98,ver:'v1.2',
+  abbr:'MaizeStress-Cls v1.2',author:'东北农业大学 · 遥感团队',
+  abstract:'面向玉米长势胁迫的四级识别（正常 / 轻度 / 中度 / 重度），用较早的胁迫信号触发农事干预，输出可读的胁迫等级与置信度。',
+  task:'识别玉米地块长势是否异常并给出胁迫等级（四级），用于巡田筛查与胁迫预警。',
+  ins:['玉米生育期影像（无人机正射或卫星切片）','地块范围与作物属性'],
+  outs:['胁迫等级（正常 / 轻度胁迫 / 中度胁迫 / 重度胁迫）','类别置信度','建议复核标记'],
+  reqs:['影像需覆盖玉米拔节至灌浆期','受极端天气影响的影像建议先剔除','阴雨云雾影像置信度下降'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'classify',sample:'样例输入：DX-2026-0092 玉米地块无人机影像（预填，可改）',
+    base:{labels:['正常','轻度胁迫','中度胁迫','重度胁迫'],main:'轻度胁迫',conf:0.79},
+    params:[
+      {id:'src',label:'影像来源',type:'select',def:'无人机正射影像',options:['无人机正射影像','卫星切片影像']},
+      {id:'thr',label:'置信度阈值',type:'range',min:0.30,max:0.90,step:0.05,def:0.60},
+      {id:'top3',label:'输出 Top-3 概率',type:'select',def:'输出',options:['输出','不输出']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="8" height="11" rx="4"/><path d="M12 8V4M9 4 7 2M15 4l2-2M8 12H4M20 12h-4M8 17l-3 3M16 17l3 3"/></svg>',name:'稻瘟病识别模型',crop:['水稻'],scenes:['病虫害识别'],type:'图像分类',owner:'植保与病理方向课题组',upd:'2026-06-15',calls:203,ver:'v2.0',
+  abbr:'RiceBlast-Cls v2.0',author:'植保与病理方向课题组',
+  abstract:'基于叶部与穗部影像识别水稻稻瘟病类型（健康 / 叶瘟 / 穗颈瘟 / 节瘟），辅助病害普查与防治决策，输出可读病类与置信度。',
+  task:'识别水稻叶片或穗部影像中的稻瘟病类型，输出病类标签与置信度，用于田间病害普查与分级防治。',
+  ins:['水稻叶部 / 穗部近景影像（建议 ≥1000 万像素）','影像采集时期与地块信息'],
+  outs:['病类标签（健康 / 叶瘟 / 穗颈瘟 / 节瘟）','置信度与 Top-3 概率','疑似病斑区域范围（辅助说明）'],
+  reqs:['建议顺光拍摄、单叶片或单穗为主体','严重失焦或过曝影像不适用','多病混发时以面积占比最大病类为主标签'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'classify',sample:'样例输入：水稻叶部近景影像 YD-2026-2201（预填，可改）',
+    base:{labels:['健康','叶瘟','穗颈瘟','节瘟'],main:'叶瘟',conf:0.91},
+    params:[
+      {id:'part',label:'影像部位',type:'select',def:'叶部',options:['叶部','穗部','节部']},
+      {id:'thr',label:'置信度阈值',type:'range',min:0.30,max:0.90,step:0.05,def:0.60},
+      {id:'top3',label:'输出 Top-3 概率',type:'select',def:'输出',options:['输出','不输出']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="8" height="11" rx="4"/><path d="M12 8V4M9 4 7 2M15 4l2-2M8 12H4M20 12h-4M8 17l-3 3M16 17l3 3"/></svg>',name:'玉米大斑病检测模型',crop:['玉米'],scenes:['病虫害识别'],type:'目标检测',owner:'东北农业大学 · 植保团队',upd:'2026-05-20',calls:87,ver:'v1.4',
+  abbr:'MaizeLeafBlight-Det v1.4',author:'东北农业大学 · 植保团队',
+  abstract:'目标检测方式定位玉米叶片大斑病病斑位置并给出置信度，输出病斑数量与位置列表，支撑病级评定与防治效果对比。',
+  task:'在玉米叶片影像中定位大斑病病斑，输出病斑数量、位置与置信度，用于病级评定与打药效果对比。',
+  ins:['玉米叶片影像（建议俯拍、单叶为主体）','可选：地块与品种信息'],
+  outs:['病斑检出框列表（类别 / 置信度 / 归一化坐标）','病斑检出数量与平均置信度','病斑面积占比估算'],
+  reqs:['置信度阈值越低检出越多但误检上升（默认 0.50）','叶片重叠严重时检出率下降','建议在自然光下拍摄'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'boxes',sample:'样例输入：玉米叶片影像 YM-2026-0417（预填，可改）',
+    base:{label:'大斑病斑',count:9,area:'12.4%'},
+    params:[
+      {id:'thr',label:'置信度阈值',type:'range',min:0.20,max:0.80,step:0.05,def:0.50,hint:'阈值降低 → 检出增多、误检上升'},
+      {id:'nms',label:'NMS IoU',type:'range',min:0.30,max:0.70,step:0.05,def:0.50},
+      {id:'max',label:'最大检出数',type:'select',def:'20',options:['10','20','50']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z"/><path d="M9 3v15M15 6v15"/></svg>',name:'补贴核查 · 种植面积比对模型',crop:['水稻','大豆','玉米'],scenes:['补贴核查'],type:'语义分割',owner:'业务数据与核查课题组',upd:'2026-06-08',calls:156,ver:'v2.6',
+  abbr:'SubsidyArea-Seg v2.6',author:'业务数据与核查课题组',
+  abstract:'语义分割提取作物种植范围并与补贴申报面积比对，输出各作物分割面积与差异清单，支撑面积虚报筛查。',
+  task:'从多时相影像中分割水稻 / 大豆 / 玉米种植范围，输出分类面积，用于与补贴申报面积比对核查。',
+  ins:['补贴核查多时相卫星影像（覆盖作物识别关键物候期）','申报地块矢量（含地块编码与申报面积）'],
+  outs:['分割掩膜与各作物面积（亩）','分类面积占比','与申报面积的差异清单（差异率）'],
+  reqs:['影像需覆盖作物识别关键物候期，期数 ≥4','地块矢量需与影像配准，边界误差影响面积精度','分割阈值默认 0.50，边界破碎区建议上调'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  exec:'async',eta:'约 3–8 分钟',
+  trial:{out:'mask',sample:'样例输入：2026 年补贴核查影像 + 申报地块 DK-2026-0451（预填，可改）',
+    base:{classes:[['水稻',112.4],['大豆',86.7],['玉米',94.2],['其他',46.5]],unit:'亩'},
+    params:[
+      {id:'thr',label:'分割阈值',type:'range',min:0.30,max:0.80,step:0.05,def:0.50},
+      {id:'area',label:'输出面积统计',type:'select',def:'输出',options:['输出','不输出']},
+      {id:'plot',label:'地块编码',type:'text',def:'DK-2026-0451',ph:'如 DK-2026-0451'}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7 15h10"/></svg>',name:'土壤养分反演模型（五项）',crop:['水稻','大豆','玉米'],scenes:['土壤养分'],type:'回归估测',owner:'全重实验室 · 土壤组',upd:'2026-06-20',calls:145,ver:'v1.9',
+  abbr:'SoilNutrient-Reg v1.9',author:'全重实验室 · 土壤组',
+  abstract:'以土壤遥感光谱与采样真值为基础，反演碱解氮、有效磷、速效钾、有机质、pH 五项养分指标，遵循国家耕地土壤养分分级标准。',
+  task:'由土壤遥感光谱反演五项养分指标数值，输出地块级养分结果，用于精准施肥分区与耕地质量评价。',
+  ins:['土壤遥感光谱影像（裸土期 / 播前，多光谱）','采样点真值（可选，参与标定提升精度）','地块矢量与作物属性'],
+  outs:['五项养分指标反演值（碱解氮 / 有效磷 / 速效钾 / 有机质 / pH）','各指标国家分级等级','地块级养分空间分布'],
+  reqs:['建议使用裸土期或播前影像，植被覆盖会显著干扰光谱','含采样点真值时精度提升明显','单地块面积建议 ≥5 亩'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  exec:'async',eta:'约 2–5 分钟',
+  trial:{out:'multi',sample:'样例输入：DK-2026-0451 地块土壤光谱影像（预填，可改）',
+    base:{rows:[['碱解氮','mg/kg',128.4,'中等'],['有效磷','mg/kg',24.6,'中等'],['速效钾','mg/kg',156.2,'较丰富'],['有机质','g/kg',32.1,'丰富'],['pH','—',6.3,'中性']]},
+    params:[
+      {id:'season',label:'影像时期',type:'select',def:'播前裸土期',options:['播前裸土期','收获后裸土期']},
+      {id:'sample',label:'采样点真值',type:'select',def:'含采样点标定',options:['含采样点标定','不含采样点标定']},
+      {id:'plot',label:'地块编码',type:'text',def:'DK-2026-0451',ph:'如 DK-2026-0451'}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg>',name:'作物种植结构识别模型',crop:['水稻','大豆','玉米'],scenes:['作物与地块识别'],type:'图像分类',owner:'遥感解译与样本标注组',upd:'2026-05-30',calls:167,ver:'v2.1',
+  abbr:'CropStruct-Cls v2.1',author:'遥感解译与样本标注组',
+  abstract:'按影像识别作物种植结构类型（水稻 / 大豆 / 玉米 / 其他），输出主导作物与各作物占比估计，支撑种植结构统计与轮作分析。',
+  task:'识别地块主导作物类型并估计各作物面积占比，用于种植结构统计、轮作模式分析。',
+  ins:['生育期影像切片（多光谱，建议 ≥3 期）','地块范围（影像裁切或框选）'],
+  outs:['主导作物类型（水稻 / 大豆 / 玉米 / 其他）','各作物面积占比估计','类别置信度'],
+  reqs:['建议覆盖作物特征最明显的生育期','单景混合多作物时按占比最大者为主导类型','需与地块矢量配合使用'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'classify',sample:'样例输入：县域影像切片 QX-2026-0031（预填，可改）',
+    base:{labels:['水稻','大豆','玉米','其他'],main:'水稻',conf:0.84},
+    params:[
+      {id:'periods',label:'影像期数',type:'range',min:3,max:9,step:1,def:5,unit:' 期'},
+      {id:'thr',label:'置信度阈值',type:'range',min:0.30,max:0.90,step:0.05,def:0.60},
+      {id:'top3',label:'输出 Top-3 概率',type:'select',def:'输出',options:['输出','不输出']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 4.5v9L12 21l-9-4.5v-9Z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>',name:'耕地地块分割模型',crop:['水稻','大豆','玉米'],scenes:['作物与地块识别','补贴核查'],type:'语义分割',owner:'哈工大 · 智慧农业团队',upd:'2026-06-12',calls:121,ver:'v1.7',
+  abbr:'FarmlandPlot-Seg v1.7',author:'哈工大 · 智慧农业团队',
+  abstract:'分割影像中的耕地地块边界，输出耕地 / 非耕地掩膜与地块数量、面积统计，为地块级分析提供底图。',
+  task:'从遥感影像分割耕地地块边界，输出耕地掩膜、地块数量与面积统计，支撑地块级空间分析与底图制作。',
+  ins:['高分辨率遥感影像（无人机正射或亚米级卫星）','县域或农场范围边界'],
+  outs:['耕地 / 非耕地分割掩膜','地块数量与面积统计','耕地地块矢量边界（可导出）'],
+  reqs:['影像分辨率建议 ≤1m，过粗边界精度下降','地块边界模糊或被植被遮挡区需人工复核','分割阈值默认 0.50'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  exec:'async',eta:'约 5–12 分钟',
+  trial:{out:'mask',sample:'样例输入：县域高分影像 QX-2025-0108（预填，可改）',
+    base:{classes:[['耕地',2860.5],['非耕地',1140.2]],unit:'亩'},
+    params:[
+      {id:'thr',label:'分割阈值',type:'range',min:0.30,max:0.80,step:0.05,def:0.50},
+      {id:'area',label:'输出面积统计',type:'select',def:'输出',options:['输出','不输出']},
+      {id:'res',label:'影像分辨率',type:'select',def:'0.5m',options:['0.5m','1m','2m']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V9l5 3V9l5 3V9l5 3V6h3v15Z"/><path d="M3 21h18"/></svg>',name:'育秧棚识别模型',crop:['水稻'],scenes:['作物与地块识别'],type:'目标检测',owner:'业务数据与核查课题组',upd:'2026-05-16',calls:64,ver:'v1.1',
+  abbr:'SeedlingShed-Det v1.1',author:'业务数据与核查课题组',
+  abstract:'目标检测方式定位水稻育秧棚位置，输出育秧棚数量与位置列表，服务于育秧面积统计与设施核查。',
+  task:'在影像中定位水稻育秧棚，输出数量与位置列表，用于育秧面积统计与设施核查。',
+  ins:['无人机正射影像（≥5cm）或亚米级卫星影像','待核查区域范围'],
+  outs:['育秧棚检出框列表（置信度 / 坐标）','检出数量统计','估算占地面积'],
+  reqs:['影像分辨率建议 ≤0.5m，棚体小于 3 像素易漏检','棚膜反光强烈时建议调整阈值','连片棚区重叠时检出数量可能偏低'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'boxes',sample:'样例输入：农场育秧区正射影像 YY-2026-0007（预填，可改）',
+    base:{label:'育秧棚',count:18,area:'36.8 亩'},
+    params:[
+      {id:'thr',label:'置信度阈值',type:'range',min:0.20,max:0.80,step:0.05,def:0.50,hint:'阈值降低 → 检出增多、误检上升'},
+      {id:'nms',label:'NMS IoU',type:'range',min:0.30,max:0.70,step:0.05,def:0.50},
+      {id:'max',label:'最大检出数',type:'select',def:'50',options:['20','50','100']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 6 12h3l-4 6h14l-4-6h3Z"/><path d="M12 18v3"/></svg>',name:'林草湿地变化检测模型',crop:['林草湿地'],scenes:['变化监测'],type:'语义分割',owner:'生态监测课题组',upd:'2026-06-25',calls:92,ver:'v2.4',
+  abbr:'EcoChange-Seg v2.4',author:'生态监测课题组',
+  abstract:'以基准期 / 监测期两期影像做变化检测，分割输出未变化、变为耕地、变为建设用地、植被恢复四类变化图斑，支撑违规占用预警。',
+  task:'对比两期影像检测林草湿地变化，输出变化类型图斑与各类型面积，用于违规占用预警与生态监测。',
+  ins:['基准期影像与监测期影像（两期像素精准匹配、同坐标系）','监测区域边界'],
+  outs:['变化类型分割结果（未变化 / 变为耕地 / 变为建设用地 / 植被恢复）','各变化类型面积（亩）','变化图斑矢量（可导出）'],
+  reqs:['两期影像须像素匹配、时相相近（同季相最佳）','云雪覆盖区需掩膜剔除','变化阈值默认 0.50，细小变化建议下调'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'mask',sample:'样例输入：林草湿地区基准期 2025-08 / 监测期 2026-06 两期影像（预填，可改）',
+    base:{classes:[['未变化',8420.0],['变为耕地',126.4],['变为建设用地',48.7],['植被恢复',73.2]],unit:'亩'},
+    params:[
+      {id:'thr',label:'变化阈值',type:'range',min:0.20,max:0.80,step:0.05,def:0.50},
+      {id:'mask',label:'云雪掩膜剔除',type:'select',def:'启用',options:['启用','不启用']},
+      {id:'area',label:'输出面积统计',type:'select',def:'输出',options:['输出','不输出']}
+    ]}},
+ {ic:'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6.5" cy="17" r="3.5"/><circle cx="18" cy="18" r="2.5"/><path d="M10 17h5V9h-3l-1 4H9M15 9V5h4"/></svg>',name:'无人机巡田作业监测模型',crop:['水稻','大豆','玉米'],scenes:['作物与地块识别'],type:'目标检测',owner:'东北农业大学 · 智慧农场团队',upd:'2026-06-02',calls:76,ver:'v1.3',
+  abbr:'UAVScout-Det v1.3',author:'东北农业大学 · 智慧农场团队',
+  abstract:'识别巡田影像中的作业机具与作业异常（漏作业 / 重作业区），输出异常位置列表，支撑农机作业质量核查。',
+  task:'识别巡田影像中的作业机具位置与作业异常区（漏作业 / 重作业），输出位置列表供作业质量核查。',
+  ins:['巡田无人机影像（含作业前后对比更佳）','田块边界与作业计划范围'],
+  outs:['作业机具检出框（置信度 / 坐标）','作业异常区检出框（漏作业 / 重作业）','异常区面积估算'],
+  reqs:['建议影像与作业时相同步，偏差过大影响判定','影像分辨率建议 ≤5cm','机具被作物遮挡时检出率下降'],
+  use:'平台内在线运行 / 已授权后可 API 调用',
+  trial:{out:'boxes',sample:'样例输入：DK-2026-0451 巡田正射影像 XT-2026-0233（预填，可改）',
+    base:{label:'作业异常区',count:6,area:'9.2 亩'},
+    params:[
+      {id:'thr',label:'置信度阈值',type:'range',min:0.20,max:0.80,step:0.05,def:0.50,hint:'阈值降低 → 检出增多、误检上升'},
+      {id:'nms',label:'NMS IoU',type:'range',min:0.30,max:0.70,step:0.05,def:0.50},
+      {id:'kind',label:'检出目标',type:'select',def:'作业异常区',options:['作业异常区','作业机具','全部']}
+    ]}}
+];
+MD.forEach(function(m){m.author=m.author||m.owner;});
+
+var CUR=MD[0];   /* 由 ?n=<模型名> 决定 */
+
+function hash(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
+
+var VERS={
+ '水稻估产模型（卫星+气象多源）':[
+   {v:'v2.3',d:'2026-06-18',cur:true,n:'融合农田气象观测序列特征，估测精度较 v2.2 提升约 4%（输入输出规格不变）'},
+   {v:'v2.2',d:'2026-04-02',n:'新增 80% 置信区间输出；模型权重由 1.2GB 压缩至 0.8GB'},
+   {v:'v2.1',d:'2025-12-11',n:'区域汇总产量精度优化；修复抽穗期边界样本偏差'}
+ ],
+ '大豆估产与长势联动模型':[
+   {v:'v1.5',d:'2026-05-28',cur:true,n:'长势等级与产量联动解释增强（输入输出规格不变）'},
+   {v:'v1.4',d:'2026-03-19',n:'土壤有效磷特征权重调优'}
+ ],
+ '稻瘟病识别模型':[
+   {v:'v2.0',d:'2026-06-15',cur:true,n:'新增穗颈瘟/节瘟识别；置信度阈值默认值由 0.50 调至 0.60'},
+   {v:'v1.6',d:'2026-02-08',n:'叶部影像预处理改进，过曝样本鲁棒性提升'}
+ ],
+ '耕地地块分割模型':[
+   {v:'v1.7',d:'2026-06-12',cur:true,n:'边界后处理优化，破碎地块面积精度提升（输入输出规格不变）'},
+   {v:'v1.5',d:'2026-01-22',n:'支持 2m 分辨率输入；分割阈值默认值调整'}
+ ]
+};
+function versOf(m){
+  var l=VERS[m.name];
+  if(l&&l.length)return l;
+  return [{v:m.ver,d:m.upd,cur:true,n:'首个上线版本；暂无历史版本'}];
+}
+function curVerOf(m){var l=versOf(m);for(var i=0;i<l.length;i++){if(l[i].cur)return l[i];}return l[0];}
+function selVerOf(m){var l=versOf(m);for(var i=0;i<l.length;i++){if(l[i].v===m._v)return l[i];}return curVerOf(m);}
+function isCurVer(m){return selVerOf(m).cur===true;}
+/* ===================================================================
+   服务与接入信息（SPEC）——⭐0910：这些不是"成果提交人填的说明字段"，而是
+   **服务注册/上架时由平台按推理接口确定**的接入配置（v5 L543 能力共享"服务注册/测试/上架/授权/版本管理"）。
+   详情页的"说明类字段"（名称/摘要/能干什么/输入输出/适用条件）由成果提交方在个人中心填，
+   经后台合规审核后展示；"统计类"（被调用/更新时间）由平台自动生成。
+   ⭐0915（断点 B3「密钥生成节点未定义」）补明密钥与配额的开通节点：
+     触发＝使用申请审批通过；动作＝系统自动签发个人密钥 + 生效该模型默认配额（同步、无人工发放）；
+     变更＝密钥可重置、不可外借；配额用尽返回配额错误，须提交提额申请（走审批中心）。
+   =================================================================== */
+var SPEC_DEF={form:'平台内在线运行 · 已授权可 API 调用',
+  api:'REST /v1/infer（同步返回）· 大批量输入自动转异步任务',
+  auth:'平台统一身份 · 授权令牌；API 调用另需个人密钥（⭐审批通过后由系统自动签发，无需人工发放）',
+  quota:'按该模型的授权配额计（⭐默认配额随授权一并生效，由平台运营在后台「参数与字典」维护）；用量与记录见个人中心「我的调用记录与密钥」',
+  media:'GeoTIFF / JPEG / PNG · 单文件 ≤ 500 MB',
+  crs:'CGCS2000（EPSG:4490）· 单景分辨率 ≤ 2 m'};
+var SPEC={
+ '稻瘟病识别模型':{media:'JPEG / PNG 近景影像 · 建议 ≥1000 万像素 · 单文件 ≤ 20 MB',crs:'无空间参考要求（近景影像）'},
+ '玉米大斑病检测模型':{media:'GeoTIFF / JPEG · 单幅 ≥1000 万像素 · 单文件 ≤ 40 MB',crs:'无空间参考要求（叶片近景）'},
+ '耕地地块分割模型':{media:'GeoTIFF / JPEG2000 · 单文件 ≤ 2 GB',crs:'CGCS2000（EPSG:4490）· 分辨率 ≤ 1 m'},
+ '补贴核查 · 种植面积比对模型':{api:'REST /v1/infer（异步任务 · 生成任务号）',media:'GeoTIFF 多时相影像 + SHP/GeoJSON 地块矢量 · 单文件 ≤ 2 GB',crs:'CGCS2000（EPSG:4490）· 分辨率 ≤ 2 m'},
+ '土壤养分反演模型（五项）':{api:'REST /v1/infer（异步任务 · 生成任务号）',media:'多光谱 GeoTIFF（裸土期）+ CSV 采样真值 · 单文件 ≤ 1 GB'},
+ '育秧棚识别模型':{media:'GeoTIFF / JPEG · 分辨率 ≤ 0.5 m · 单文件 ≤ 1 GB',crs:'CGCS2000（EPSG:4490）· 分辨率 ≤ 0.5 m'}
+};
+function specOf(m){var o=SPEC[m.name]||{};return {form:o.form||SPEC_DEF.form,api:o.api||SPEC_DEF.api,auth:o.auth||SPEC_DEF.auth,quota:o.quota||SPEC_DEF.quota,media:o.media||SPEC_DEF.media,crs:o.crs||SPEC_DEF.crs};}
+function defVals(m){var v={};m.trial.params.forEach(function(p){v[p.id]=(p.type==='range')?Number(p.def):p.def;});return v;}
+var VER_OPEN=false;
+
+/* ===================================================================
+   以下四段（参数取值 / 文件大小 / 结果文件清单 / 运行记录存储 / 参数收集与校验）
+   自 `模型中心-模型详情.html` 原实现复制——该页 v1.5 把试用区整体移出后删掉了这几个函数，
+   故按原实现原样内联到本页，口径与字段完全不变（原型单文件允许重复代码）。
+   =================================================================== */
+function pv(p){var el=document.getElementById('pm_'+p.id);return el?el.value:p.def;}
+function fmtSize(n){
+  if(n>=1073741824)return (n/1073741824).toFixed(2)+' GB';
+  if(n>=1048576)return (n/1048576).toFixed(1)+' MB';
+  if(n>=1024)return (n/1024).toFixed(0)+' KB';
+  return n+' B';
+}
+
+var SEG_COLORS=['#005653','#927021','#3b6d11','#534ab7','#927021','#0f6e56'];
+function bar(label,val,cls){
+  return '<div class="bar-row"><span class="bl">'+label+'</span><span class="bt"><i class="'+(cls||'')+'" style="width:'+Math.max(2,Math.min(100,val))+'%"></i></span><span class="bv">'+val.toFixed(1)+'%</span></div>';
+}
+function renderResult(m,v,h){
+  var t=m.trial,b=t.base,out='';
+  var stageK={'抽穗期':0.88,'灌浆期':1.0,'成熟期':1.04,'开花期':0.90,'结荚期':1.0,'鼓粒期':1.03};
+
+  if(t.out==='value'){
+    var f=1;
+    if(stageK[v.stage]!==undefined)f*=stageK[v.stage];
+    if(v.periods)f*=1+((v.periods-6)*0.004);
+    if(v.wx==='含气象序列')f*=1.02;
+    if(v.link==='启用')f*=1.015;
+    var val=b.v*f,lo=val*0.96,hi=val*1.04;
+    out='<div class="res-hero"><span class="big">'+val.toFixed(1)+'</span><span class="unit">'+b.u+'</span>'+
+        '<span class="lg">'+b.label+'（80% 置信区间 '+lo.toFixed(1)+' ~ '+hi.toFixed(1)+' '+b.u+'）</span>'+
+        '<span class="flag ok">推理完成</span></div>';
+    out+='<div class="sec-title" style="margin-top:0;">特征贡献度</div>';
+    b.feat.forEach(function(x,i){out+=bar(x[0],x[1]*100,i===0?'':'g');});
+    out+='<div class="sec-title">汇总</div><p class="para" style="margin-bottom:0;">'+b.extra+'（示例演示值）</p>';
+    return {html:out,sum:b.label+' '+val.toFixed(1)+' '+b.u+'，区间 '+lo.toFixed(1)+'~'+hi.toFixed(1)};
+  }
+
+  if(t.out==='multi'){
+    var g=1+(v.sample==='含采样点标定'?0.0:-0.06);
+    var rows=b.rows.map(function(r){
+      var n=(typeof r[2]==='number')?r[2]*g:r[2];
+      var val=(typeof n==='number')?n.toFixed(1):n;
+      return '<tr><td>'+r[0]+'</td><td>'+r[2]+'</td><td class="num">'+val+'</td><td>'+r[1]+'</td><td>'+r[3]+'</td></tr>';
+    }).join('');
+    out='<div class="res-hero"><span class="big">5</span><span class="unit">项指标</span>'+
+      '<span class="lg">'+v.season+' · '+(v.sample==='含采样点标定'?'含采样点标定':'未含标定（精度下降约 6%）')+'</span>'+
+      '<span class="flag ok">推理完成</span></div>';
+    out+='<table class="r-tbl"><thead><tr><th>养分指标</th><th>实测参考值</th><th>反演值</th><th>单位</th><th>国家分级</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    out+='<p class="pm-hint" style="margin-top:10px;">分级依据国家耕地土壤养分分级标准；反演值为平台演示数据。</p>';
+    return {html:out,sum:'五项养分反演完成，碱解氮 '+(128.4*g).toFixed(1)+' mg/kg 等'};
+  }
+
+  if(t.out==='series'){
+    var pv2={};
+    pv2['出苗后 60 天']=0.90;pv2['出苗后 90 天']=1.0;pv2['出苗后 120 天']=1.05;
+    var val2=b.v*(pv2[v.point]||1)*(1+((v.len-16)*0.002));
+    out='<div class="res-hero"><span class="big">'+val2.toFixed(1)+'</span><span class="unit">'+b.u+'</span>'+
+      '<span class="lg">'+b.label+'（预测时点：'+v.point+'）</span><span class="flag ok">推理完成</span></div>';
+    if(v.curve==='输出'){
+      var pts=[],real=[];
+      var n=10;
+      for(var i=0;i<n;i++){
+        var x=30+i*(520/(n-1));
+        var y=170-(20+i*13.5)-((h+i*7)%9);
+        pts.push(x.toFixed(1)+','+y.toFixed(1));
+        real.push(x.toFixed(1)+','+(y-4-((h+i*5)%6)).toFixed(1));
+      }
+      out+='<div class="chart-box">'+
+        '<svg viewBox="0 0 580 190" preserveAspectRatio="none">'+
+          '<line x1="30" y1="170" x2="560" y2="170" stroke="#dce5e9"/>'+
+          '<line x1="30" y1="20" x2="30" y2="170" stroke="#dce5e9"/>'+
+          '<polyline points="'+pts.join(' ')+'" fill="none" stroke="#005653" stroke-width="2.4"/>'+
+          '<polyline points="'+real.join(' ')+'" fill="none" stroke="#927021" stroke-width="2" stroke-dasharray="5 4"/>'+
+        '</svg>'+
+        '<div class="chart-lg"><span><i class="sw" style="background:#005653;display:inline-block;"></i>模型预测产量</span>'+
+        '<span><i class="sw" style="background:#927021;display:inline-block;"></i>实测真值（回填）</span>'+
+        '<span style="color:#999;">横轴：生育期推进 · 纵轴：产量形成（累计）</span></div></div>';
+    }else{
+      out+='<p class="para">已按设置不输出产量曲线，仅返回预测值与误差指标。</p>';
+    }
+    out+='<div class="sec-title">误差指标</div><p class="para" style="margin-bottom:0;">'+b.extra+'；序列长度 '+v.len+' 期（示例演示值）。</p>';
+    return {html:out,sum:'预测产量 '+val2.toFixed(1)+' '+b.u+'（'+v.point+'）'};
+  }
+
+  if(t.out==='classify'){
+    var labels=b.labels,thr=Number(v.thr)||0.6;
+    var idx=labels.indexOf(b.main);
+    var conf=Math.max(0.35,Math.min(0.97,b.conf+((h%5)-2)*0.01+(thr-0.6)*0.05));
+    var probs=labels.map(function(l,i){
+      if(i===idx)return conf;
+      var rest=(1-conf)/(labels.length-1);
+      return Math.max(0.01,rest*(1+(((h+i*13)%7)-3)*0.08));
+    });
+    var s=probs.reduce(function(a,c){return a+c;},0);
+    probs=probs.map(function(x){return x/s;});
+    var low=conf<thr;
+    out='<div class="res-hero"><span class="big">'+labels[idx]+'</span>'+
+      '<span class="lg">主类别 · 置信度 '+(conf*100).toFixed(1)+'%</span>'+
+      '<span class="flag '+(low?'warn':'ok')+'">'+(low?'低于阈值 · 建议人工复核':'置信充分 · 推理完成')+'</span></div>';
+    if(v.top3==='输出'||v.top3===undefined){
+      out+='<div class="sec-title" style="margin-top:0;">类别概率分布</div>';
+      labels.forEach(function(l,i){out+=bar(l,probs[i]*100,i===idx?'':'g');});
+    }else{
+      out+='<p class="para">已按设置不输出 Top-3 概率，仅返回主类别与置信度。</p>';
+    }
+    out+='<p class="pm-hint">判定阈值 '+thr.toFixed(2)+'（当前置信度 '+(conf*100).toFixed(1)+'%）'+(low?'——低于阈值，模型不建议直接采用该结果。':'。')+'</p>';
+    return {html:out,sum:'主类别「'+labels[idx]+'」置信度 '+(conf*100).toFixed(1)+'%'+(low?'（低于阈值）':'')};
+  }
+
+  if(t.out==='boxes'){
+    var thr2=Number(v.thr)||0.5;
+    var cnt=Math.max(3,Math.round(b.count*Math.pow(0.5/thr2,0.75)));
+    if(v.max&&cnt>Number(v.max))cnt=Number(v.max);
+    var rows2='';
+    for(var k=0;k<Math.min(5,cnt);k++){
+      var c2=Math.max(0.28,Math.min(0.98,0.92-k*0.07+((h+k*17)%9)*0.004));
+      rows2+='<tr><td>'+b.label+'</td><td class="num">'+c2.toFixed(3)+'</td>'+
+        '<td class="num">'+((10+k*83)%860)/1000+'</td><td class="num">'+((12+k*57)%780)/1000+'</td>'+
+        '<td class="num">'+((8+((k*31)%40)))/100+'</td><td class="num">'+((9+((k*23)%35)))/100+'</td></tr>';
+    }
+    out='<div class="res-hero"><span class="big">'+cnt+'</span><span class="unit">个检出框</span>'+
+      '<span class="lg">均置信度 '+(0.72+((h%9)*0.01)).toFixed(2)+' · 估算占用 '+b.area+'</span>'+
+      '<span class="flag ok">推理完成</span></div>';
+    out+='<div class="det-canvas"><span class="hint">检出框位置示意（演示底图）</span>';
+    for(var q=0;q<Math.min(4,cnt);q++){
+      var L=8+((h+q*97)%62),T=14+((h+q*53)%54),W=14+((q*11)%18),H=12+((q*7)%16);
+      out+='<span class="dbox" style="left:'+L+'%;top:'+T+'%;width:'+W+'%;height:'+H+'%;"><span>'+b.label+' '+(0.9-q*0.07).toFixed(2)+'</span></span>';
+    }
+    out+='</div>';
+    out+='<div class="sec-title" style="margin-top:0;">检出列表（前 '+Math.min(5,cnt)+' 条 / 共 '+cnt+' 条）</div>';
+    out+='<table class="r-tbl"><thead><tr><th>类别</th><th>置信度</th><th>X</th><th>Y</th><th>宽</th><th>高</th></tr></thead><tbody>'+rows2+'</tbody></table>';
+    out+='<p class="pm-hint">坐标已归一化（0~1）；阈值 '+thr2.toFixed(2)+'、NMS IoU '+Number(v.nms||0.5).toFixed(2)+'。阈值降低会显著增加检出与误检。</p>';
+    return {html:out,sum:'检出 '+cnt+' 个「'+b.label+'」，均置信度 '+(0.72+((h%9)*0.01)).toFixed(2)};
+  }
+
+  if(t.out==='mask'){
+    var thr3=Number(v.thr)||0.5;
+    var cls=b.classes.map(function(c,i){return [c[0],c[1],SEG_COLORS[i%SEG_COLORS.length]];});
+    var total=cls.reduce(function(a,c){return a+c[1];},0);
+    var strip=cls.map(function(c){return '<i style="width:'+(c[1]/total*100).toFixed(1)+'%;background:'+c[2]+'"></i>';}).join('');
+    out='<div class="res-hero"><span class="big">'+total.toFixed(1)+'</span><span class="unit">'+b.unit+'</span>'+
+      '<span class="lg">分割覆盖面积合计 · 阈值 '+thr3.toFixed(2)+'</span><span class="flag ok">推理完成</span></div>';
+    out+='<div class="seg-strip">'+strip+'</div>';
+    out+='<div class="seg-legend">'+cls.map(function(c){return '<span><i class="sw" style="background:'+c[2]+'"></i>'+c[0]+'</span>';}).join('')+'</div>';
+    out+='<table class="r-tbl"><thead><tr><th>类别</th><th>面积（'+b.unit+'）</th><th>占比</th></tr></thead><tbody>'+
+      cls.map(function(c){return '<tr><td>'+c[0]+'</td><td class="num">'+c[1].toFixed(1)+'</td><td class="num">'+(c[1]/total*100).toFixed(1)+'%</td></tr>';}).join('')+
+      '</tbody></table>';
+    if(v.area==='不输出')out+='<p class="pm-hint">已按设置不输出面积统计，仅返回分割掩膜。</p>';
+    if(v.res)out+='<p class="pm-hint">影像分辨率 '+v.res+'；分辨率越粗，地块边界精度越低。</p>';
+    if(v.mask)out+='<p class="pm-hint">云雪掩膜剔除：'+(v.mask==='启用'?'已启用（掩膜区不计入变化面积）':'未启用（云雪区可能误判为变化）')+'。</p>';
+    return {html:out,sum:'分割完成，'+cls.map(function(c){return c[0]+' '+c[1].toFixed(1);}).join(' / ')+' '+b.unit};
+  }
+  return {html:'<div class="res-empty">该任务类型暂未提供演示渲染</div>',sum:'—'};
+}
+
+var OUT_NAMES={value:['结果表'],series:['预测值与曲线'],classify:['分类结果'],boxes:['检出框坐标'],mask:['分割掩膜','面积统计'],multi:['养分反演结果']};
+var OUT_EXT={value:'csv',series:'csv',classify:'csv',boxes:'geojson',mask:'tif',multi:'csv'};
+/* 结果文件清单（原型基准时间 2026-07-01；同一份清单同时用于页面展示与运行记录） */
+function resultFilesOf(m){
+  var ds='20260701',abbr=String(m.abbr||'model').replace(/\s*v[\d.]+$/,'').replace(/[^\w.\-]/g,'_');
+  var names=OUT_NAMES[m.trial.out]||['结果'];
+  var arr=names.map(function(n,i){
+    return {name:abbr+'_'+n+'_'+ds+'.'+OUT_EXT[m.trial.out],size:(120+Math.floor(Math.random()*900))+' KB',
+      fmt:String(OUT_EXT[m.trial.out]).toUpperCase(),at:'2026-07-01 10:31:0'+i};
+  });
+  arr.push({name:abbr+'_结果包_'+ds+'.zip',size:(2+Math.floor(Math.random()*6))+'.'+(1+Math.floor(Math.random()*9))+' MB',fmt:'ZIP 打包',at:'2026-07-01 10:31:12',zip:true});
+  return arr;
+}
+/* ---- 运行记录存储：与个人中心「我的运行记录」共用同一个 localStorage 键 ---- */
+function trialKey(){return 'dsh_trial_tasks_v1';}
+function trialStoreLoad(){try{return JSON.parse(localStorage.getItem(trialKey())||'[]');}catch(e){return [];}}
+function fmtOf(n){var e=String(n).split('.').pop().toLowerCase();
+  return {tif:'GeoTIFF',tiff:'GeoTIFF',png:'PNG',jpg:'JPEG',jpeg:'JPEG',shp:'SHP',geojson:'GeoJSON',csv:'CSV',xlsx:'XLSX',zip:'ZIP 打包'}[e]||'文件';}
+/* ---- 参数收集 / 校验 ---- */
+function collect(m){
+  var v={},txt='';
+  m.trial.params.forEach(function(p){
+    v[p.id]=(p.type==='range')?Number(pv(p)):pv(p);
+    txt+=(txt?' · ':'')+p.label+'：'+v[p.id]+(p.unit||'');
+  });
+  if(FILES.length)txt+=' · 数据：'+FILES.length+' 个文件';
+  return {v:v,txt:txt};
+}
+function validate(m,v){
+  var p=m.trial.params.filter(function(x){return x.type==='text';})[0];
+  if(!p)return null;
+  var s=String(v[p.id]||'').trim();
+  if(!s)return '输入格式不符：'+p.label+'不能为空（示例 '+p.def+'）';
+  if(!/^[A-Za-z0-9\-]+$/.test(s))return '输入格式不符：'+p.label+'只允许字母、数字与连字符（当前「'+s+'」含非法字符）';
+  return null;
+}
+
+/* ===================================================================
+   运行记录：读取 / 写入 / 选号（与个人中心「我的运行记录」共用 dsh_trial_tasks_v1）
+   =================================================================== */
+var SEL='';                 /* 当前选中的运行号 */
+var SEED_OFF=false;         /* 演示：清空后本次会话不再自动补示例记录 */
+var ADV_OPEN=true;          /* 输入区「高级参数」默认展开（可折叠） */
+var FILES=[];               /* 待提交文件（演示态只记录文件名与大小） */
+var PVALS={};               /* 参数值缓存：重渲染时保留用户已选值 */
+var TIMERS={};              /* 运行中的模拟推进定时器 */
+var STATUS={queued:{t:'排队中',cls:'t-wait'},running:{t:'处理中',cls:'t-run'},done:{t:'已完成',cls:'t-done'},fail:{t:'失败',cls:'t-fail'},cancel:{t:'已取消',cls:'t-cancel'}};
+var OUT_CN={value:'数值结果',series:'时序与曲线',classify:'分类结果',boxes:'目标检测框',mask:'分割掩码',multi:'多指标表'};
+
+function loadAll(){return trialStoreLoad();}
+function saveAll(a){try{localStorage.setItem(trialKey(),JSON.stringify(a.slice(0,60)));}catch(e){}}
+function myRuns(){
+  var a=loadAll().filter(function(r){return r&&r.model===CUR.name;});
+  a.sort(function(x,y){
+    var sx=String(x.submit||''),sy=String(y.submit||'');
+    if(sx!==sy)return sx<sy?1:-1;
+    return String(x.id)<String(y.id)?1:-1;
+  });
+  return a;
+}
+function upsert(rec){
+  var a=loadAll(),i=-1;
+  for(var k=0;k<a.length;k++){if(a[k]&&a[k].id===rec.id){i=k;break;}}
+  if(i>=0)a[i]=rec;else a.unshift(rec);
+  saveAll(a);
+}
+function nextId(){
+  var a=loadAll(),mx=99;
+  a.forEach(function(r){
+    var m=/^TRY-2026-0701-(\d{4})$/.exec(String((r&&r.id)||''));
+    if(m){var n=Number(m[1]);if(n>=100&&n>mx)mx=n;}
+  });
+  return 'TRY-2026-0701-0'+(mx+1);   /* 新运行用 0100+ 段，避开现有 mock（0024~0069） */
+}
+function selRec(){
+  var l=myRuns();
+  for(var i=0;i<l.length;i++){if(l[i].id===SEL)return l[i];}
+  return null;
+}
+function syncSel(){
+  var l=myRuns();
+  if(!l.length){SEL='';return;}
+  if(!selRec())SEL=l[0].id;
+}
+
+/* ---- 示例记录：某模型下还没有任何记录时补一批（覆盖 已完成 / 排队中或已取消 / 失败） ---- */
+function seedExt(m){
+  var md=specOf(m).media;
+  if(md.indexOf('GeoTIFF')>=0)return 'tif';
+  if(md.indexOf('JPEG')>=0||md.indexOf('PNG')>=0)return 'jpg';
+  if(md.indexOf('CSV')>=0)return 'csv';
+  return 'zip';
+}
+function seedFiles(m){
+  var tag=String(m.abbr||'model').replace(/\s*v[\d.]+$/,'').replace(/[^\w.\-]/g,'_');
+  var e=seedExt(m);
+  return [{name:tag+'_输入影像_01.'+e,size:'38.6 MB',fmt:fmtOf('x.'+e)},
+          {name:tag+'_地块与参数表.csv',size:'12.4 KB',fmt:'CSV'}];
+}
+function bigUnitOf(m){
+  var b=m.trial.base,o=m.trial.out;
+  if(o==='value'||o==='series')return {big:String(b.v),unit:b.u};
+  if(o==='classify')return {big:b.main,unit:'主类别 · '+(b.conf*100).toFixed(1)+'%'};
+  if(o==='boxes')return {big:String(b.count),unit:'个检出框'};
+  if(o==='mask'){var t=0;b.classes.forEach(function(c){t+=c[1];});return {big:t.toFixed(1),unit:b.unit};}
+  if(o==='multi')return {big:'5',unit:'项指标'};
+  return {big:'—',unit:''};
+}
+function ensureSeed(){
+  if(SEED_OFF)return;
+  if(myRuns().length)return;              /* 已有该模型的记录就不再补 */
+  var i=MD.indexOf(CUR);if(i<0)i=0;
+  var base=30+i*4, h=hash(CUR.name);
+  function rid(k){return 'TRY-2026-0701-00'+(base+k);}
+  var files=seedFiles(CUR), vals=defVals(CUR), rf=resultFilesOf(CUR), bu=bigUnitOf(CUR);
+  var res=renderResult(CUR,vals,h);
+  function ps(){return CUR.trial.params.map(function(p){return {k:p.label,v:String(vals[p.id])+(p.unit||''),d:p.hint||('接口默认值 '+p.def+(p.unit||''))};});}
+  function src(){return {kind:'files',files:files,
+    note:'由「模型运行台」提交自有数据后生成；演示态不真实上传，仅记录文件名与大小。'};}
+  function base0(k,status,submit){return {id:rid(k),model:CUR.name,type:CUR.type,trigger:'运行台 · 提交我的数据',
+    ver:curVerOf(CUR).v,status:status,submit:submit,src:src(),params:ps(),vals:vals,eta:CUR.eta||'约 1–3 分钟'};}
+  function doneRec(k,at,fin,dur,extra){
+    var r=base0(k,'done',at);
+    r.finish=fin;r.dur=dur;r.progress=100;r.queueAhead=0;r.progressText='已完成';r.errShort='';
+    r.summary={big:bu.big,unit:bu.unit,label:'本次运行输出摘要',text:'本次运行输出：'+res.sum+'（演示数据）。'+(extra||'')};
+    r.brief=res.sum;r.results=rf;return r;
+  }
+  var out=[];
+  /* ① 处理中（今天）：演示"异步运行/处理中" */
+  var r1=base0(0,'running','2026-07-01 10:30:12');
+  r1.finish='—';r1.dur='已用时 1 分 06 秒';r1.progress=62;r1.queueAhead=0;
+  r1.progressText='处理中 · 已处理 62%';r1.brief='处理中 · 已处理 62%';r1.summary=null;r1.results=[];r1.errShort='';
+  out.push(r1);
+  /* ② 已完成（06-30） */
+  out.push(doneRec(1,'2026-06-30 09:12:40','2026-06-30 09:14:58','2 分 18 秒'));
+  /* ③ 排队中（06-29） */
+  var r3=base0(2,'queued','2026-06-29 16:20:05');
+  r3.finish='—';r3.dur='—';r3.queueAhead=2;r3.progress=0;
+  r3.progressText='排队中 · 前面还有 2 个任务';r3.brief='排队中 · 前面还有 2 个任务';r3.summary=null;r3.results=[];r3.errShort='';
+  out.push(r3);
+  /* ④ 失败·输入格式不符（06-26） */
+  var e4='输入格式不符：第 2 个文件不满足模型输入要求';
+  var r4=base0(3,'fail','2026-06-26 14:05:19');
+  r4.finish='2026-06-26 14:05:41';r4.dur='22 秒（校验失败终止）';r4.progress=0;
+  r4.progressText='运行失败';r4.brief='失败：'+e4;r4.summary=null;r4.results=[];r4.errShort=e4;
+  r4.err=e4+'——该模型对输入介质与规格有明确要求（见「服务与接入信息 · 输入介质」）：'+specOf(CUR).media+'。第 1 个文件已通过校验，运行整体终止，不产生结果文件。';
+  r4.errHint='建议：按模型输入介质与空间参考要求转换文件后重新提交；提交前可对照模型说明的「输入输出规范」核对格式。';
+  out.push(r4);
+  /* ⑤ 已完成（06-20，参数不同的一次） */
+  out.push(doneRec(4,'2026-06-20 11:02:10','2026-06-20 11:04:31','2 分 21 秒','本次参数与上一次不同，可对比两次输出摘要。'));
+  /* ⑥ 已取消（06-11） */
+  var r6=base0(5,'cancel','2026-06-11 15:40:03');
+  r6.finish='2026-06-11 15:40:43';r6.dur='40 秒后取消';r6.progress=0;
+  r6.progressText='已取消';r6.brief='用户取消 · 未占用算力配额';r6.summary=null;r6.results=[];r6.errShort='';
+  r6.cancelText='运行在排队阶段由用户取消，未产生结果文件，也未占用算力配额。取消后可随时重新提交。';
+  out.push(r6);
+  /* ⑦ 失败·参数越界（06-08） */
+  var e7='参数取值越界：影像期数超出模型允许范围';
+  var r7=base0(6,'fail','2026-06-08 09:31:07');
+  r7.finish='2026-06-08 09:31:15';r7.dur='8 秒（参数校验终止）';r7.progress=0;
+  r7.progressText='运行失败';r7.brief='失败：'+e7;r7.summary=null;r7.results=[];r7.errShort=e7;
+  r7.err=e7+'——模型对参数取值范围有约束（见左侧「可调参数」面板的取值说明）。运行在参数校验阶段终止，未进入推理，不产生结果文件。';
+  r7.errHint='建议：按参数说明调整取值后重新提交。';
+  out.push(r7);
+  /* ⑧ 已完成（06-02） */
+  out.push(doneRec(7,'2026-06-02 08:55:20','2026-06-02 08:57:02','1 分 42 秒'));
+  saveAll(loadAll().concat(out));
+}
+
+/* ---- 运行号 / 时间线 ---- */
+function mkTl(status,id,nres){
+  var T='2026-07-01 10:30:', t0=T+'12', t1=T+'12', t2=T+'14', t3=T+'31';
+  if(status==='running')return [
+    {t:'已提交',at:t0,n:'运行台提交自有数据，生成运行号 '+id,st:'pass'},
+    {t:'排队中',at:t1,n:'同步运行：队列瞬时通过（同步只是耗时极短的异步运行）',st:'pass'},
+    {t:'处理中',at:t2,n:'平台内解析输入文件并执行模型推理，结果将展示在右侧',st:'on'},
+    {t:'已完成',at:'—',n:'处理完成后生成结果文件，可下载留存',st:'wait'}];
+  if(status==='queued')return [
+    {t:'已提交',at:t0,n:'运行台提交自有数据，生成运行号 '+id,st:'pass'},
+    {t:'排队中',at:t1,n:'前面还有 2 个任务，等待算力分配',st:'on'},
+    {t:'处理中',at:'—',n:'平台为该任务分配算力后开始推理',st:'wait'},
+    {t:'已完成',at:'—',n:'处理完成后生成结果文件，可下载留存',st:'wait'}];
+  if(status==='fail')return [
+    {t:'已提交',at:t0,n:'运行台提交自有数据，生成运行号 '+id,st:'pass'},
+    {t:'排队中',at:t1,n:'同步运行：队列瞬时通过',st:'pass'},
+    {t:'处理中',at:t2,n:'校验输入文件格式与参数取值',st:'pass'},
+    {t:'失败',at:T+'20',n:'输入校验未通过，运行终止（未产生结果文件）',st:'fail'}];
+  if(status==='cancel')return [
+    {t:'已提交',at:t0,n:'运行台提交自有数据，生成运行号 '+id,st:'pass'},
+    {t:'排队中',at:t1,n:'前面还有 2 个任务，等待算力分配',st:'pass'},
+    {t:'已取消',at:T+'40',n:'用户在排队阶段取消运行，未占用算力配额',st:'cancel'}];
+  return [
+    {t:'已提交',at:t0,n:'运行台提交自有数据，生成运行号 '+id,st:'pass'},
+    {t:'排队中',at:t1,n:'同步运行：队列瞬时通过（同步只是耗时极短的异步运行）',st:'pass'},
+    {t:'处理中',at:t2,n:'平台内解析输入文件并执行模型推理',st:'pass'},
+    {t:'已完成',at:t3,n:'生成 '+(nres||2)+' 个结果文件，可下载留存',st:'on'}];
+}
+function recSummary(r){
+  if(r.status==='done')return r.brief||(r.summary&&r.summary.text)||'已完成，结果文件可下载';
+  if(r.status==='running')return r.progressText||('运行中 · 已处理 '+(r.progress||0)+'%');
+  if(r.status==='queued')return '排队中 · 前面还有 '+(typeof r.queueAhead==='number'?r.queueAhead:2)+' 个任务';
+  if(r.status==='fail')return '失败：'+(r.errShort||'运行失败');
+  return r.cancelText||'用户取消 · 未占用算力配额';
+}
+
+/* ===================================================================
+   左列：运行记录
+   =================================================================== */
+function renderLeft(){
+  document.getElementById('recTitle').textContent=recTitleText();
+  document.getElementById('btnNew').textContent=newRunText();
+  var list=myRuns(),box=document.getElementById('recList');
+  document.getElementById('recCount').textContent=list.length?('共 '+list.length+' 条'):'';
+  if(!list.length){
+    box.innerHTML='<div class="empty sm"><div class="e-ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>'+
+      '<div class="e-t">还没有运行记录</div>'+
+      '<div class="e-s">在下方提交你的数据开始第一次运行</div></div>';
+    return;
+  }
+  box.innerHTML=list.map(function(r){
+    var s=STATUS[r.status]||STATUS.cancel;
+    var prog=(r.status==='running')?('<div class="prog-mini"><i style="width:'+Math.max(4,Math.min(100,r.progress||0))+'%"></i></div>'):'';
+    return '<div class="rec'+(r.id===SEL?' on':'')+'" onclick="pickRun(\''+r.id+'\')">'+
+      '<div class="rec-h"><span class="rec-no" title="'+String(r.id).replace(/"/g,'&quot;')+'">'+r.id+'</span><span class="rec-at" title="'+String(r.submit).replace(/"/g,'&quot;')+'">'+r.submit+'</span></div>'+
+      '<div class="rec-tag"><span class="tchip '+s.cls+'"><i class="tdot"></i>'+s.t+'</span></div>'+
+      '<div class="rec-s'+(r.status==='fail'?' warn':'')+'" title="'+String(recSummary(r)).replace(/"/g,'&quot;')+'">'+recSummary(r)+'</div>'+
+      prog+
+    '</div>';
+  }).join('');
+}
+function pickRun(id){SEL=id;renderRunPanels();}
+function clearModelRuns(){
+  SEED_OFF=true;
+  saveAll(loadAll().filter(function(r){return !(r&&r.model===CUR.name);}));
+  SEL='';renderAll();
+  toast('演示：已清空本模型的运行记录（刷新页面会重新载入示例记录）');
+}
+function newRun(){
+  var el=document.getElementById('inputArea');
+  if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
+  toast('请在下方的输入区选择数据并提交（控件由该模型入参 schema 决定）');
+}
+
+/* ===================================================================
+   右主区：标题行 + 按状态渲染（一套状态机）
+   v1.1 修正③：标题行不再重复左列动作——删除右区标题行的模型说明跳转与新建入口两个按钮
+   （新建入口只保留左列那一处）；模型名改为内联下拉框（MD 14 个模型），
+   切换走同一条深链语义 ?n=<模型名>；版本 chip（只读提示）与状态芯片保留同排。
+   =================================================================== */
+function modelOptionsHtml(){
+  return MD.map(function(m){
+    return '<option value="'+String(m.name).replace(/"/g,'&quot;')+'"'+(m.name===CUR.name?' selected':'')+'>'+m.name+'</option>';
+  }).join('');
+}
+function switchModel(n){
+  if(!n||n===CUR.name)return;
+  location.href='模型中心-模型运行台.html#n='+encodeURIComponent(n);
+}
+function renderMain(){
+  var r=selRec(),sv=selVerOf(CUR);
+  var st=r?(STATUS[r.status]||STATUS.cancel):null;
+  var chip=r?('<span class="tchip lg '+st.cls+'"><i class="tdot"></i>'+st.t+'</span>')
+             :'<span class="tchip lg t-cancel"><i class="tdot"></i>无选中运行</span>';
+  /* v1.2：副信息行固定单行高度（超长截断 + title 兜底），保证右区标题行高度恒定、输出区拿到全部剩余高度 */
+  var bhSub=r
+    ?('运行号 <span class="mono">'+r.id+'</span> · 提交 '+r.submit+' · 触发方式 '+(r.trigger||'运行台 · 提交我的数据')+
+      ' · 运行记录与结果文件按账号隔离保存在本页')
+    :'当前没有选中的运行：在下方输入区提交后会自动选中新生成的那条运行';
+  document.getElementById('bmainHd').innerHTML=
+    '<div class="bh-l">'+
+      '<div class="bh-row1"><span class="bh-ic">'+CUR.ic+'</span>'+
+        '<select onchange="switchModel(this.value)" style="font:inherit;font-size:15px;font-weight:700;color:#333;height:30px;padding:0 6px;max-width:430px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:#fff;vertical-align:middle;">'+modelOptionsHtml()+'</select>'+
+        '<span class="mk ver vsel" onclick="onVerChip()">'+sv.v+(sv.cur?'':' · 历史')+'</span>'+chip+'</div>'+
+      '<div class="bh-sub" title="'+bhSub.replace(/<[^>]+>/g,'').replace(/"/g,'&quot;')+'">'+bhSub+'</div>'+
+    '</div>';
+  document.getElementById('bmainBody').innerHTML=r?bodyOf(r):welcomeHtml();
+}
+function welcomeHtml(){
+  return '<div class="welcome"><div class="w-l">选择左侧运行记录查看结果，或在下方提交一次运行</div></div>';
+}
+function bodyOf(r){
+  if(r.status==='done')return doneHtml(r);
+  if(r.status==='running')return runningHtml(r);
+  if(r.status==='queued')return queuedHtml(r);
+  if(r.status==='fail')return failHtml(r);
+  return cancelHtml(r);
+}
+function echoHtml(r){
+  var s=r.src||{kind:'files',files:[]},h='';
+  if(s.kind==='files'&&s.files&&s.files.length){
+    h+='<div class="sec-title">提交文件清单（'+s.files.length+' 个）</div>'+
+      '<div class="file-list">'+s.files.map(function(f){
+        return '<div class="file-row"><span class="file-ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg></span><span class="file-nm">'+f.name+'</span>'+
+          '<span class="file-tag">'+(f.fmt||fmtOf(f.name))+'</span><span class="file-meta">'+(f.size||'')+'</span></div>';
+      }).join('')+'</div>';
+  }
+  h+='<div class="sec-title" style="margin-top:16px;">参数回显<span style="font-size:11.5px;color:#999;font-weight:400;margin-left:6px;">运行时的参数取值，只读</span></div>';
+  h+='<table class="kv-tbl"><thead><tr><th>参数项</th><th>取值</th><th>说明</th></tr></thead><tbody>'+
+    (r.params||[]).map(function(p){return '<tr><td class="k">'+p.k+'</td><td class="v">'+p.v+'</td><td class="d">'+p.d+'</td></tr>';}).join('')+
+    '</tbody></table>';
+  if(s.note)h+='<div class="para" style="font-size:12.5px;margin-top:10px;">'+s.note+'</div>';
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">输入回显'+
+    '<span class="sub">提交文件清单 + 参数回显</span>'+
+    '<span class="hd-extra">输入来源：用户上传文件（'+((s.files||[]).length)+' 个）</span></div>'+
+    '<div class="panel-bd">'+h+'</div></div></div>';
+}
+function filesHtml(r){
+  var fs=r.results||[];
+  if(!fs.length)return '';
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">结果文件'+
+    '<span class="sub">模型输出，在线查看</span>'+
+    '<span class="hd-extra">共 '+fs.length+' 个</span></div><div class="panel-bd">'+
+    '<div class="file-list">'+fs.map(function(f,i){
+      return '<div class="file-row"><span class="file-ic">'+(f.zip?'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M11 7v2M11 11v2M11 15v2"/></svg>':'<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>')+'</span>'+
+        '<span class="file-nm">'+f.name+'</span>'+
+        '<span class="file-tag'+(f.zip?' zip':'')+'">'+f.fmt+'</span>'+
+        '<span class="file-meta">'+f.size+'</span>'+
+        '<span class="file-meta">生成 '+(f.at||'')+'</span>'+
+        '<button class="btn btn-default btn-sm" onclick="downloadFile('+i+')">查看结果</button></div>';
+    }).join('')+'</div>'+
+    '<div class="para" style="font-size:12.5px;margin-top:9px;">ZIP 为整包下载项，含全部结果文件与结果说明；单个文件也可分别下载。结果文件为模型输出，在线查看。</div>'+
+    '</div></div></div>';
+}
+function doneHtml(r){
+  var vals=r.vals||defVals(CUR);
+  var res=renderResult(CUR,vals,hash(JSON.stringify(vals)+(r.id||'')));
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">运行结果'+
+      '<span class="sub">按该模型输出形态渲染：'+(OUT_CN[CUR.trial.out]||'—')+'</span>'+
+      '<span class="hd-extra">耗时 '+r.dur+' · 完成于 '+r.finish+'</span></div>'+
+      '<div class="panel-bd">'+res.html+'</div></div></div>'+
+    filesHtml(r)+echoHtml(r);
+}
+function runningHtml(r){
+  var p=Math.max(4,Math.min(96,r.progress||0));
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">运行中'+
+      '<span class="sub">同步运行：排队与处理几乎是瞬时跳过，它只是耗时极短的异步运行</span>'+
+      '<span class="hd-extra">提交于 '+(r.submit||'')+'</span></div>'+
+      '<div class="panel-bd">'+
+        '<div class="prog"><i style="width:'+p+'%"></i></div>'+
+        '<div class="bstate run"><span class="dot"></span><span><b>运行中</b> · 已处理 '+p+
+          '%：平台内解析输入文件并执行模型推理，完成后本区直接展示结果与结果文件。</span></div>'+
+        '<div class="para" style="font-size:12.5px;margin-top:10px;">本次运行已写入运行记录（同步运行也落库）：即使中途关闭页面，重新打开本页会继续推进该次运行。</div>'+
+      '</div></div></div>'+echoHtml(r);
+}
+function queuedHtml(r){
+  var q=(typeof r.queueAhead==='number'?r.queueAhead:2), eta=r.eta||CUR.eta||'约 1–3 分钟';
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">排队中'+
+      '<span class="sub">异步任务：提交后生成运行号，可关闭页面</span>'+
+      '<span class="hd-extra">预计耗时 '+eta+'</span></div>'+
+      '<div class="panel-bd">'+
+        '<div class="info-box"><b>前面还有 '+q+' 个任务</b><br>'+
+        '平台算力释放后自动开始处理，无需停留在本页；进度与结果文件在本页左侧记录、个人中心「我的运行记录」均可查看与下载。</div>'+
+        '<div class="prog-static" style="margin-top:14px;"><i style="width:8%"></i></div>'+
+        '<div class="bstate"><span class="dot"></span><span>排队中 · 预计 '+eta+
+        ' 后开始处理（实际完成时间以算力排队为准）；左侧其他运行记录可直接点选查看。</span></div>'+
+        '<div class="act-bar" style="margin-top:14px;"><button class="btn btn-default warn" onclick="cancelRun()">取消任务</button>'+
+        '<span class="ab-note">取消后可随时重新提交，不占用算力配额</span></div>'+
+      '</div></div></div>'+echoHtml(r);
+}
+function failHtml(r){
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">运行失败<span class="sub">错误摘要与建议</span>'+
+      '<span class="hd-extra">'+(r.dur||'')+'</span></div>'+
+      '<div class="panel-bd">'+
+        '<div class="err-box"><b>错误摘要</b><br>'+(r.err||r.errShort||'运行失败')+
+        (r.errHint?'<div class="hint">'+r.errHint+'</div>':'')+'</div>'+
+        '<div class="act-bar" style="margin-top:14px;">'+
+        '<button class="btn btn-primary" onclick="resubmit(\''+r.id+'\')">重新提交</button>'+
+        '<a class="btn btn-default" href="模型中心-模型详情 (调整).html#n='+encodeURIComponent(CUR.name)+'">去模型说明核对输入要求 →</a></div>'+
+      '</div></div></div>'+echoHtml(r);
+}
+function cancelHtml(r){
+  return '<div class="bsec"><div class="panel"><div class="panel-hd">已取消<span class="sub">无结果文件</span>'+
+      '<span class="hd-extra">'+(r.dur||'')+'</span></div>'+
+      '<div class="panel-bd">'+
+        '<div class="info-box"><b>运行已取消</b><br>'+(r.cancelText||'该次运行已取消，未产生结果文件。取消后可随时重新提交。')+'</div>'+
+        '<div class="act-bar" style="margin-top:14px;">'+
+        '<button class="btn btn-primary" onclick="resubmit(\''+r.id+'\')">重新提交</button>'+
+        '<a class="btn btn-default" href="模型中心-模型详情 (调整).html#n='+encodeURIComponent(CUR.name)+'">去模型说明 →</a></div>'+
+      '</div></div></div>'+echoHtml(r);
+}
+function downloadFile(i){var r=selRec();if(!r||!r.results||!r.results[i]){toast('请先选中一条已完成的运行');return;}var f=r.results[i];var result=renderResult(CUR,r.vals||defVals(CUR),hash(JSON.stringify(r.vals||defVals(CUR))+(r.id||'')));portalModal(f.name,'<p class="pcx-note">运行结果预览 · 原型演示数据</p><p>运行编号：'+portalEscape(r.id)+'<br>模型：'+portalEscape(r.model)+'<br>版本：'+portalEscape(r.ver)+'<br>完成时间：'+portalEscape(r.finish)+'</p><p>'+portalEscape(result.sum)+'</p>'+result.html,'<button class="primary" onclick="portalExportReport()">导出结果说明（HTML）</button>');}
+function portalExportReport(){var r=selRec();if(!r)return;var result=renderResult(CUR,r.vals||defVals(CUR),hash(JSON.stringify(r.vals||defVals(CUR))+(r.id||'')));var css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n');var html='<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><title>运行结果说明</title><style>'+css+'body{padding:30px;background:white}</style><body><h1>运行结果说明</h1><p>原型演示数据，不代表真实模型推理结果。</p><p>'+portalEscape(r.model)+' / '+portalEscape(r.ver)+' / '+portalEscape(r.id)+'</p>'+result.html+'<h2>输入与参数</h2><pre>'+portalEscape(JSON.stringify({files:r.src?.files,params:r.params},null,2))+'</pre></body></html>';var url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));var a=document.createElement('a');a.href=url;a.download=r.id+'-结果说明.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function onVerChip(){portalModal('选择模型版本','<p>'+portalEscape(CUR.name)+'</p>'+versOf(CUR).map(v=>'<div class="pcx-record"><strong>'+portalEscape(v.v)+(v.cur?' · 当前版本':' · 历史版本')+'</strong><p>'+portalEscape(v.d)+' · '+portalEscape(v.n)+'</p><button onclick="portalPickVersion(\''+v.v+'\')">'+(v.v===selVerOf(CUR).v?'已选择':'查看此版本')+'</button></div>').join(''));}
+function portalPickVersion(v){CUR._v=v;var q=new URLSearchParams({n:CUR.name,v:v});history.replaceState(null,'','#'+q.toString());portalClose();renderAll();}
+function pickCurVer(){CUR._v=curVerOf(CUR).v;renderAll();toast('已切回当前版本 '+CUR._v);}
+
+/* ===================================================================
+   底部输入区（控件由该模型入参 schema 决定）
+   =================================================================== */
+function runLabel(){return CUR.exec==='async'?'提交并运行':'▶ 运行';}
+function lockBtnText(){
+  if(!isCurVer(CUR))return '历史版本不可运行';
+  if(!LOGGED)return '请先登录后提交';
+  return '授权后可提交';
+}
+function captureParams(){
+  (CUR.trial.params||[]).forEach(function(p){
+    var el=document.getElementById('pm_'+p.id);
+    if(el&&el.value!==undefined&&el.value!=='')PVALS[p.id]=el.value;
+  });
+}
+function paramHtml(p){
+  var cur=(PVALS[p.id]!==undefined?PVALS[p.id]:p.def);
+  var kind=(p.type==='select'?'枚举':(p.type==='range'?'连续区间':'文本'));
+  var h='<div class="pm-row"><label class="pm-lb">'+p.label+'<span class="pm-tag">'+kind+'</span></label>';
+  if(p.type==='select'){
+    h+='<select class="pm-in" id="pm_'+p.id+'">'+p.options.map(function(o){
+      return '<option'+(String(o)===String(cur)?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+  }else if(p.type==='range'){
+    h+='<div class="pm-range"><input type="range" class="pm-rg" id="pm_'+p.id+'" min="'+p.min+'" max="'+p.max+
+       '" step="'+(p.step||1)+'" value="'+cur+'"><span class="pm-rv" id="pmv_'+p.id+'">'+cur+(p.unit||'')+'</span></div>';
+  }else{
+    h+='<input type="text" class="pm-in" id="pm_'+p.id+'" value="'+cur+'" placeholder="'+(p.ph||'')+'">';
+  }
+  if(p.hint)h+='<div class="pm-hint" title="'+String(p.hint).replace(/"/g,'&quot;')+'">'+p.hint+'</div>';
+  return h+'</div>';
+}
+function renderInput(){
+  captureParams();
+  var sp=specOf(CUR), t=CUR.trial, lock=lockReason();
+  document.getElementById('inputArea').innerHTML=
+  '<div class="panel ia-panel">'+
+    /* v1.2：面板标题行 + 权限带合并为一条 18px 状态条（文案一字未改，仅截断长句并补 title） */
+    '<div class="panel-hd"><span class="ia-hd-t">输入区</span>'+
+      '<span class="sub" title="提交你的数据运行模型 · 控件由该模型的入参 schema 决定">提交你的数据运行模型 · 控件由该模型的入参 schema 决定</span>'+
+      '<span class="try-auth" id="authBand"></span>'+
+      '<span class="hd-extra" title="'+(CUR.exec==='async'?'异步任务模型 · 提交后生成运行号，可关闭页面':'同步运行模型 · 排队与处理瞬时通过')+'">'+(CUR.exec==='async'?'异步任务模型 · 提交后生成运行号，可关闭页面':'同步运行模型 · 排队与处理瞬时通过')+'</span></div>'+
+    '<div class="panel-bd">'+
+      '<div class="ia-grid">'+
+        '<div class="ia-col'+(lock?' dis':'')+'" id="colIn">'+
+          '<div class="blk-ttl">① 必填输入数据<span class="req">必填</span><span class="blk-note" title="由该模型输入要求决定">由该模型输入要求决定</span></div>'+
+          '<div class="drop" onclick="pickFiles()"><span class="ic"><svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span><span class="dt">点击选择文件</span>'+
+            '<span class="dh" title="可多选，选择后显示文件名与大小，可逐个移除 允许介质：'+sp.media+'">可多选，选择后显示文件名与大小，可逐个移除<br>允许介质：'+sp.media+'</span></div>'+
+          '<div class="flist" id="fileList"></div>'+
+        '</div>'+
+        '<div class="ia-col'+(lock?' dis':'')+'" id="colParam">'+
+          '<div class="blk-ttl">② 可调参数<span class="opt">可选</span><span class="blk-note" title="由模型推理接口 schema 定义">由模型推理接口 schema 定义</span>'+
+            '<span class="adv" id="advToggle" onclick="toggleAdv()">'+(ADV_OPEN?'高级参数：收起 ▴':'高级参数：展开 ▾')+'</span></div>'+
+          '<div id="paramBody"'+(ADV_OPEN?'':' style="display:none;"')+'>'+t.params.map(paramHtml).join('')+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ia-ft">'+
+        /* v1.2：允许介质提示（原在 #colIn 内）与运行提示同处行 2 左侧，主按钮固定行 2 右侧 */
+        '<div class="ia-tips">'+
+          '<div class="src-hint" title="提交你自己的数据运行（与数据中心的平台数据无关，仅用于本次运行）。允许介质：'+sp.media+'">提交<b>你自己的数据</b>运行（与数据中心的平台数据无关，仅用于本次运行）。允许介质：'+sp.media+'</div>'+
+          '<div class="run-tip" id="runTip"></div>'+
+        '</div>'+
+        '<button class="btn-run" id="btnRun" onclick="submitRun()">'+runLabel()+'</button>'+
+      '</div>'+
+    '</div>'+
+    '<input type="file" id="fileInput" multiple accept=".tif,.tiff,.png,.jpg,.jpeg,.zip,.shp,.geojson,.csv,.xlsx" style="display:none" onchange="onFiles(this)">'+
+  '</div>';
+  t.params.forEach(function(p){
+    if(p.type!=='range')return;
+    var el=document.getElementById('pm_'+p.id),lab=document.getElementById('pmv_'+p.id);
+    if(el&&lab)el.addEventListener('input',function(){lab.textContent=el.value+(p.unit||'');PVALS[p.id]=el.value;});
+  });
+  renderFiles();
+  renderAuth();
+}
+function renderFiles(){
+  var box=document.getElementById('fileList');if(!box)return;
+  if(!FILES.length){
+    box.innerHTML='<div class="pm-hint" style="margin:0;">尚未选择文件：该模型的必填输入数据不可为空</div>';
+    return;
+  }
+  box.innerHTML=FILES.map(function(f,i){
+    return '<div class="fi" title="'+String(f.name).replace(/"/g,'&quot;')+'"><span class="nm">'+f.name+'</span><span class="fsz">'+f.size+'</span>'+
+      '<span class="rm" onclick="rmFile('+i+')">移除</span></div>';
+  }).join('')+'<div class="pm-hint" style="margin:0;" title="已选 '+FILES.length+' 个文件 · 允许介质：'+specOf(CUR).media+'">已选 '+FILES.length+' 个文件 · 允许介质：'+specOf(CUR).media+'</div>';
+}
+function pickFiles(){
+  var lr=lockReason();
+  if(lr){toast(lr);return;}
+  var el=document.getElementById('fileInput');if(el)el.click();
+}
+function onFiles(inp){
+  var arr=Array.prototype.slice.call(inp.files||[]);
+  FILES=FILES.concat(arr.map(function(f){return {name:f.name,size:fmtSize(f.size),type:f.type||'—'};}));
+  inp.value='';renderFiles();
+}
+function rmFile(i){FILES.splice(i,1);renderFiles();}
+function toggleAdv(){
+  ADV_OPEN=!ADV_OPEN;
+  var b=document.getElementById('paramBody'),t=document.getElementById('advToggle');
+  if(b)b.style.display=ADV_OPEN?'':'none';
+  if(t)t.textContent=ADV_OPEN?'高级参数：收起 ▴':'高级参数：展开 ▾';
+}
+function renderAuth(){
+  var box=document.getElementById('authBand');if(!box)return;
+  var h='';
+  var detailHref='模型中心-模型详情 (调整).html#n='+encodeURIComponent(CUR.name);   /* 修正④：纯导航链接，不带 tab 参数 */
+  if(!isCurVer(CUR)){
+    h='<span class="ta-chip no">历史版本 '+selVerOf(CUR).v+' · 只读</span>'+
+      '<span class="ta-note">历史版本<b>仅供复现</b>：可查看输入输出说明与版本说明，<b>不支持运行</b>（避免跑旧版本浪费算力）。</span>'+
+      '<span class="ta-demo" onclick="pickCurVer()">回到当前版本 '+curVerOf(CUR).v+' →</span>';
+  }else if(!LOGGED){
+    /* 修正④：运行台内不造登录/申请控件，只提示登录（页头已有登录入口） */
+    h='<span class="ta-chip no">未登录</span>'+
+      '<span class="ta-note">请先登录/入驻平台（受邀制）；登录后还需获得该模型的使用授权，才能提交运行。</span>';
+  }else if(!DEMO_AUTH){
+    /* 修正④：未授权态只留一句提示文字 + 一个纯导航链接（申请这一动作只在模型详情页发生） */
+    h='<span class="ta-chip no">未授权</span>'+
+      '<span class="ta-note">该模型尚未授权，无法运行。授权由「申请调用」经审批通过后生效，<b>生效时系统自动签发个人密钥并下发该模型默认配额</b>（无需另行申请）。</span>'+
+      '<a href="'+detailHref+'" style="font-size:12px;color:var(--blue);white-space:nowrap;">前往模型详情页 →</a>'+
+      '<span class="ta-demo" onclick="toggleDemoAuth()">演示：模拟授权通过</span>';
+  }else{
+    h='<span class="ta-chip ok">已授权 · 生效中</span>'+
+      '<span class="ta-note">授权生效，可直接提交数据运行；每次运行都会写入运行记录（按账号隔离），结果文件可下载留存。'+
+      '<b>本页运行计入「被调用次数」（热度），不占用 API 配额</b>；每次运行同时写入<b>调用日志表</b>（与 API 调用同表、按来源字段区分，失败调用不计入）。API 调用的密钥与配额用量见个人中心「我的调用记录与密钥」。</span>'+
+      '<span class="ta-demo" onclick="toggleDemoAuth()">演示：回到未授权态</span>';
+  }
+  box.innerHTML=h;
+  syncLock();
+}
+function syncLock(){
+  var lock=lockReason();
+  var btn=document.getElementById('btnRun');
+  if(btn){btn.disabled=!!lock;btn.textContent=lock?lockBtnText():runLabel();}
+  ['colIn','colParam'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.classList.toggle('dis',!!lock);
+  });
+  var ctrls=document.querySelectorAll('#paramBody input,#paramBody select');
+  for(var i=0;i<ctrls.length;i++){ctrls[i].disabled=!!lock;}
+  var fi=document.getElementById('fileInput');if(fi)fi.disabled=!!lock;
+  var tip=document.getElementById('runTip');
+  if(!tip)return;
+  var base='平台内执行 · 你提交的数据仅用于本次运行 · 结果文件可下载留存';
+  if(lock){
+    tip.innerHTML='<b style="color:#b42318;">'+lock+'</b><br>'+base;
+  }else if(CUR.exec==='async'){
+    tip.innerHTML=base+'<br><b>异步任务</b>：提交后生成运行号，可关闭页面；<b>预计耗时 '+(CUR.eta||'约 1–3 分钟')+
+      '</b>，进度与结果在本页与个人中心「我的运行记录」查看。';
+  }else{
+    tip.innerHTML=base+'<br><b>同步运行</b>：提交后先落库再出结果（同步只是耗时极短的异步运行），结果与结果文件同屏展示。';
+  }
+}
+
+/* ===================================================================
+   提交与状态流转（一套状态机）
+   =================================================================== */
+function errHintOf(){
+  return '建议：按模型「输入输出规范」与「服务与接入信息 · 输入介质」核对文件格式、空间参考与参数取值后重新提交；本次失败未产生结果文件，也未占用算力配额。';
+}
+function baseRecord(c){
+  return {
+    id:nextId(), model:CUR.name, type:CUR.type, trigger:'运行台 · 提交我的数据',
+    ver:selVerOf(CUR).v, status:'running',
+    submit:'2026-07-01 10:30:12', finish:'—', dur:'—',
+    src:{kind:'files',
+      files:FILES.map(function(f){return {name:f.name,size:f.size,fmt:fmtOf(f.name)};}),
+      note:'由「模型运行台」提交自有数据后生成；演示态不真实上传，仅记录文件名与大小。'},
+    params:CUR.trial.params.map(function(p){
+      return {k:p.label,v:String(c.v[p.id])+(p.unit||''),d:p.hint||('接口默认值 '+p.def+(p.unit||''))};
+    }),
+    tl:[], summary:null, results:[], progress:0, queueAhead:0, progressText:'', errShort:'',
+    vals:c.v, brief:'', eta:CUR.eta||'约 1–3 分钟'
+  };
+}
+function submitRun(){
+  if(!canRun())return;
+  if(!FILES.length){toast('请先提交运行数据：在「① 必填输入数据」选择文件');return;}
+  var c=collect(CUR), err=validate(CUR,c.v), rec=baseRecord(c);
+  if(err){
+    rec.status='fail';rec.errShort=err;rec.err=err;rec.errHint=errHintOf();
+    rec.finish='2026-07-01 10:30:20';rec.dur='8 秒（校验失败终止）';
+    rec.tl=mkTl('fail',rec.id);rec.brief='失败：'+err;
+    upsert(rec);SEL=rec.id;FILES=[];renderAll();
+    toast('运行失败：'+err);
+    return;
+  }
+  if(CUR.exec==='async'){
+    rec.status='queued';rec.queueAhead=2;rec.progress=0;
+    rec.progressText='排队中 · 前面还有 2 个任务';
+    rec.tl=mkTl('queued',rec.id);rec.brief=rec.progressText;
+    upsert(rec);SEL=rec.id;FILES=[];renderAll();
+    toast('已提交运行 '+rec.id+'（异步任务 · 可关闭页面，进度与结果在本页）');
+    return;
+  }
+  rec.status='running';rec.progress=6;rec.progressText='运行中 · 已处理 6%';
+  rec.tl=mkTl('running',rec.id);rec.brief=rec.progressText;
+  upsert(rec);SEL=rec.id;FILES=[];renderAll();
+  runSync(rec);
+}
+function runSync(rec){
+  if(TIMERS[rec.id])return;
+  TIMERS[rec.id]=setInterval(function(){
+    rec.progress=Math.min(92,(rec.progress||0)+8+Math.round(Math.random()*10));
+    rec.progressText='运行中 · 已处理 '+rec.progress+'%';
+    rec.brief=rec.progressText;
+    upsert(rec);
+    if(SEL===rec.id)renderRunPanels();else renderLeft();
+  },120);
+  setTimeout(function(){
+    clearInterval(TIMERS[rec.id]);delete TIMERS[rec.id];
+    finishRun(rec);
+  },1500);
+}
+function finishRun(rec){
+  var vals=rec.vals||defVals(CUR);
+  var h=hash(JSON.stringify(vals)+(rec.id||''));
+  var ms=(1.2+(h%180)/100);
+  var r=renderResult(CUR,vals,h), bu=bigUnitOf(CUR);
+  rec.status='done';rec.progress=100;rec.progressText='已完成';
+  rec.dur=ms.toFixed(1)+' 秒';rec.finish='2026-07-01 10:31:12';
+  rec.summary={big:bu.big,unit:bu.unit,label:'本次运行输出摘要',
+    text:'本次运行输出：'+r.sum+'（演示数据）。运行记录按账号隔离保存在「模型运行台」，也可在个人中心「我的运行记录」查看与下载。'};
+  rec.brief=r.sum;
+  rec.results=resultFilesOf(CUR);
+  rec.tl=mkTl('done',rec.id,rec.results.length);
+  upsert(rec);
+  if(SEL===rec.id)renderRunPanels();else renderLeft();
+  toast('运行完成 · 耗时 '+ms.toFixed(1)+' 秒 · 生成 '+rec.results.length+' 个结果文件');
+}
+function resumeRuns(){
+  myRuns().forEach(function(r){
+    if(r.status==='running'&&(!r.results||!r.results.length)){
+      r.vals=r.vals||defVals(CUR);
+      r.progress=r.progress||20;
+      r.progressText='运行中 · 已处理 '+r.progress+'%';
+      runSync(r);
+    }
+  });
+}
+function cancelRun(){
+  var r=selRec();
+  if(!r){toast('请先选中一条运行记录');return;}
+  if(r.status!=='queued'&&r.status!=='running'){toast('该次运行已结束，无法取消');return;}
+  if(TIMERS[r.id]){clearInterval(TIMERS[r.id]);delete TIMERS[r.id];}
+  r.status='cancel';r.progress=0;r.progressText='已取消';
+  r.cancelText='用户在排队阶段取消运行，未产生结果文件，也未占用算力配额。取消后可随时重新提交。';
+  r.dur='排队 40 秒后取消';r.finish='2026-07-01 10:30:40';r.brief=r.cancelText;
+  r.tl=[{t:'已提交',at:'2026-07-01 10:30:12',n:'运行台提交自有数据，生成运行号 '+r.id,st:'pass'},
+        {t:'排队中',at:'2026-07-01 10:30:13',n:'平台队列等待算力分配',st:'pass'},
+        {t:'已取消',at:'2026-07-01 10:30:40',n:'用户在排队阶段取消运行，未占用算力配额',st:'cancel'}];
+  upsert(r);renderRunPanels();
+  toast('已取消运行 '+r.id+'（演示：状态机流转为「已取消」）');
+}
+function resubmit(id){
+  var r=null;myRuns().forEach(function(x){if(x.id===id)r=x;});
+  if(!r){toast('未找到该次运行的输入，请重新选择文件后提交');return;}
+  FILES=((r.src&&r.src.files)||[]).map(function(f){return {name:f.name,size:f.size,type:'—'};});
+  if(r.vals)PVALS=r.vals;
+  renderInput();
+  var el=document.getElementById('inputArea');
+  if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'start'});
+  toast('已回填该次运行的输入文件与参数，确认后点击「'+runLabel()+'」重新提交');
+}
+
+/* ===================================================================
+   入口与渲染
+   =================================================================== */
+function renderAll(){syncSel();renderLeft();renderMain();renderInput();}
+function renderRunPanels(){renderLeft();renderMain();}
+function render(){
+  var q=new URLSearchParams(location.search.slice(1)||location.hash.slice(1));
+  var name=q.get('n')||MD[0].name;
+  var rid=q.get('run')||q.get('t')||'';    /* 与详情页/列表页/承接页约定：?n=<模型名>&run=<运行号> */
+  if(!q.get('n')&&rid){                    /* 旧深链只给运行号时，按运行号反查所属模型 */
+    var hit=null;
+    loadAll().forEach(function(r){if(r&&r.id===rid)hit=r;});
+    if(hit)name=hit.model;
+  }
+  CUR=MD.filter(function(x){return x.name===name;})[0]||MD[0];
+  CUR._v=q.get('v')||null;                 /* ?v=v2.2 直达历史版本（只读） */
+  document.title='模型运行台 · '+CUR.name+' — 北大荒智慧农业协同创新平台';
+  document.getElementById('crumbModel').textContent=CUR.name;
+  document.getElementById('crumbModel').href='模型中心-模型详情 (调整).html#n='+encodeURIComponent(CUR.name);
+  ensureSeed();
+  if(rid)SEL=rid;                          /* ?run= 指定运行号：直接选中该条运行 */
+  syncSel();
+  renderAll();
+  resumeRuns();
+}
+render();
+</script>
+<style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body>
+</html>

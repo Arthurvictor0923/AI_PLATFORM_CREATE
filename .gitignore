@@ -47,3 +47,6 @@ underline.png
 
 # === 旧 PNG 轮播图（已替换为 WebP） ===
 assets/carousel/*.png
+
+# === 发布产物暂存目录（GitHub Actions 内组装） ===
+_site/

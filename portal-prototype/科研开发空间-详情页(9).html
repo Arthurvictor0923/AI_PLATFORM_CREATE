@@ -1,0 +1,725 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>科研空间详情 · 北大荒智慧农业协同创新平台</title><style>
+:root{--green:#156044;--dark:#183f34;--line:#dfe6e3;--muted:#78837d;--bg:#f5f7f6}*{box-sizing:border-box}body{margin:0;color:#24342c;background:var(--bg);font:14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:4px;padding:7px 15px;background:white;color:inherit;transition:.15s}button:hover{border-color:var(--green);color:var(--green);background:#f2f8f5}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:2px solid #33a879;outline-offset:3px}.primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover{background:#0c4b32;color:white}.link{background:none;border:0;padding:3px;color:var(--green)}.outline{border-color:#7b9d8c;color:var(--green)}header{height:78px;background:white;border-bottom:1px solid var(--line)}.header-inner{max-width:1344px;margin:auto;height:100%;display:flex;align-items:center;gap:60px;padding:0 24px}.brand{font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px;white-space:nowrap}.leaf{display:inline-block;width:23px;height:29px;background:var(--green);border-radius:23px 0 23px 0;transform:rotate(12deg)}nav{height:100%;display:flex;align-items:stretch;gap:30px;flex:1}nav span{display:flex;align-items:center;white-space:nowrap;color:#727d76}nav .active{color:var(--green);font-weight:700;border-bottom:3px solid var(--green)}.user{display:flex;align-items:center;gap:10px;white-space:nowrap}.avatar{display:grid;place-items:center;width:30px;height:30px;background:#e5ede8;border-radius:50%;color:var(--green)}main{max-width:1344px;margin:auto;padding:30px 24px 48px;min-height:calc(100vh - 298px)}.pending{border:1px solid var(--line);border-radius:5px;background:white;margin-bottom:24px;overflow:hidden}.pending-head{display:flex;width:100%;align-items:center;text-align:left;border:0;border-radius:0;padding:15px 20px;gap:10px;background:#f0f5f2}.pending-head strong{font-size:15px}.count{background:#fff0e5;color:#bc6b2d;border-radius:4px;padding:0 7px;font-weight:700}.summary{color:#728078;margin-left:12px;font-size:13px}.right{margin-left:auto}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px}th,td{text-align:left;padding:12px 20px;border-bottom:1px solid #e9eeeb}th{font-weight:400;color:var(--muted);background:#fbfcfb}td:nth-child(3){max-width:240px;overflow:hidden;text-overflow:ellipsis}.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;color:var(--muted);font-size:12px}.pages{display:flex;align-items:center;gap:14px}.pages button{padding:3px 12px;font-size:12px}.toolbar{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.tabs{display:flex;gap:5px}.tabs button{border:0;background:none;padding:8px 18px}.tabs button.selected{background:var(--green);color:white}.tabs small{margin-left:6px;opacity:.75}.search{margin-left:auto;width:235px;border:1px solid var(--line);border-radius:4px;background:white;padding:8px 12px;outline:none}.search:focus{border-color:var(--green)}.archive{display:flex;gap:6px;align-items:center;color:#657369;font-size:13px;white-space:nowrap}input[type=checkbox]{accent-color:var(--green)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card{background:white;border:1px solid var(--line);border-radius:6px;padding:22px 22px 18px;display:flex;flex-direction:column;min-height:264px;transition:.2s}.card:hover{border-color:#a7c1b3;box-shadow:0 5px 16px #163d2a08}.card-title{display:flex;gap:10px;align-items:flex-start}.card h2{font-size:16px;line-height:1.5;margin:0;font-weight:650;flex:1}.role{font-size:12px;white-space:nowrap;padding:0 7px;border-radius:3px;background:#e7f3ec;color:#276247}.role.member{background:#edf0f2;color:#66737c}.description{font-size:13px;color:#829087;margin:9px 0 20px}.states{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:13px}.label{color:#849087;margin-right:6px}.badge{background:#e9f5ed;color:#28724e;padding:1px 6px;border-radius:3px}.badge.amber{background:#fff1db;color:#ad792c}.badge.gray{background:#eff1f0;color:#7a837e}.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#a4acb1;margin-right:6px}.dot.running{background:#3ba965}.line{font-size:13px;margin-top:10px}.config small{color:#839088;font-size:12px}.progress{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:20px;gap:5px;flex-wrap:wrap}.visit{font-size:12px;color:#8b968f}.actions{display:flex;gap:8px;margin-left:auto}.actions button{font-size:12px;padding:5px 11px}.list-end{text-align:center;color:#96a198;font-size:12px;margin-top:26px}.empty{grid-column:1/-1;background:white;border:1px dashed var(--line);text-align:center;padding:65px;color:#859188}.empty strong{display:block;color:#4b6053;font-size:16px;margin-bottom:5px}footer{background:var(--dark);color:#d6e3da}.footer-inner{max-width:1344px;margin:auto;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;padding:36px 24px 30px;gap:35px}.footer-inner>div+div{border-left:1px solid #ffffff26;padding-left:35px}.footer-brand{color:white;font-size:18px;font-weight:650;display:flex;align-items:center;gap:10px}.footer-brand .leaf{background:white;width:17px;height:23px}footer p{font-size:12px;color:#b5c8bc;margin:9px 0}footer h3{font-size:14px;margin:0 0 12px;color:#f1f6f2}footer .links{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:12px}.slogan{font-family:serif;font-size:23px;letter-spacing:3px;line-height:1.8;padding-top:3px}.copyright{text-align:center;border-top:1px solid #ffffff12;font-size:11px;color:#91a99b;padding:10px 16px}.demo{position:fixed;right:16px;bottom:12px;z-index:10;font-size:12px}.demo summary{list-style:none;cursor:pointer;border-radius:20px;background:white;padding:7px 14px;border:1px solid #cddbd2;box-shadow:0 2px 8px #0001;color:var(--green)}.demo[open]{background:white;border:1px solid var(--line);padding:14px;border-radius:8px;box-shadow:0 5px 30px #0002;width:300px}.demo[open] summary{border:0;box-shadow:none;padding:0;margin-bottom:12px}.demo p{color:var(--muted);font-size:12px}.demo button{margin:3px;padding:5px 9px;font-size:12px}.demo label{display:block;margin:10px 0}.demo select{margin-left:8px}dialog{border:1px solid var(--line);border-radius:8px;width:600px;max-width:calc(100vw - 32px);padding:0;color:#24342c;box-shadow:0 20px 80px #102b2c33}dialog::backdrop{background:#142f2855;backdrop-filter:blur(2px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:none;font-size:22px;padding:0 4px;color:#88938d}.modal-body{padding:24px;max-height:65vh;overflow:auto}.modal-body label{display:block;margin-bottom:18px;color:#526157}.modal-body input:not([type=file]),.modal-body textarea,.modal-body select{display:block;width:100%;margin-top:7px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:white;outline:none}.modal-body input:focus,.modal-body textarea:focus{border-color:var(--green)}.modal-body textarea{min-height:94px;resize:vertical}.modal-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}.feedback{padding:14px 16px;border-left:3px solid #c9984c;background:#fff8ec;color:#846337;margin-bottom:22px;font-size:13px}.hint{font-size:12px;color:var(--muted)}.detail-section{border:1px solid var(--line);padding:18px;margin-bottom:14px;border-radius:5px}.detail-section h3{font-size:15px;margin:0 0 12px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}.detail-section .actions{margin-top:16px}.file{display:flex;justify-content:space-between;padding:9px 0;font-size:13px;border-bottom:1px solid #eef2ef}.toast{position:fixed;left:50%;top:95px;transform:translateX(-50%);background:#163f31;color:white;border-radius:5px;padding:11px 23px;z-index:100;box-shadow:0 6px 25px #0002}.hidden{display:none!important}@media(min-width:1500px){main{padding-top:38px}.card{min-height:280px}}@media(max-width:1100px){.header-inner{gap:25px}nav{gap:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.summary{font-size:12px}.search{width:190px}.slogan{font-size:18px}.card-bottom{gap:10px}}@media(max-width:720px){header{height:auto}.header-inner{padding:15px 18px;flex-wrap:wrap;gap:16px}.brand{font-size:18px}.user{margin-left:auto}nav{order:3;width:100%;overflow:auto;gap:24px;padding-top:7px}nav span{padding-bottom:8px;font-size:13px}main{padding:20px 16px 32px}.grid{grid-template-columns:1fr}.toolbar{gap:10px}.tabs{width:100%}.tabs button{padding:7px 12px}.search{margin-left:0;flex:1;width:130px}.summary{display:none}.pending-head{padding:13px}.footer-inner{grid-template-columns:1fr 1fr;padding:26px 20px;gap:24px}.footer-inner>div+div{border:0;padding-left:0}.slogan{font-size:18px}.card{min-height:250px}.modal-body{padding:18px}.detail-grid{grid-template-columns:1fr}}
+
+/* Match the compact research-space reference, rather than a spacious dashboard. */
+:root{--green:#146044;--dark:#214c3e;--line:#dde5e9;--muted:#697480;--bg:#fff}
+body{background:#fff;color:#27313b;font-size:13px;line-height:1.55}
+header{height:46px;border-bottom:1px solid #e5e9ec}
+.header-inner{max-width:1440px;padding:0 24px;gap:72px}
+.brand{font-size:17px;gap:10px;color:#164b33}.leaf{width:18px;height:25px}
+nav{gap:34px;flex:1}nav span{font-size:12px;color:#606a77}nav .active{border-bottom-width:2px}
+.user{font-size:12px;color:#657080;gap:8px}.avatar{width:24px;height:24px;font-size:12px}
+main{max-width:1440px;padding:10px 14px 8px;min-height:0}
+.pending{border-radius:3px;margin-bottom:10px;border-color:#dce3e9}
+.pending-head{min-height:34px;padding:6px 15px;gap:7px;background:#f4f6f8}
+.pending-head strong{font-size:13px;color:#27323a}.pending-head .right{font-size:12px}
+.count{padding:0 3px;color:#c34135;background:none}.summary{font-size:12px;margin-left:14px;color:#707986}
+table{font-size:12px}th,td{padding:5px 16px;height:28px;border-right:1px solid #e5eaf0;border-bottom:1px solid #e5eaf0}th:last-child,td:last-child{border-right:0}th{color:#66717f;background:#f4f6f8}td{color:#4d5969}.link{padding:0;line-height:1.6;font-size:12px;font-weight:600}.pagination{padding:7px 16px;background:#fcfdfe}.pages{gap:13px}.pages button{padding:2px 12px}
+.toolbar{gap:14px;margin-bottom:10px;min-height:32px}.tabs{gap:4px}.tabs button{padding:5px 18px;font-size:12px;border-radius:3px;min-height:30px}.tabs small{font-size:11px}.search{width:224px;padding:5px 12px;font-size:12px;height:30px;border-radius:3px}.archive{font-size:12px;color:#738090}.archive input{margin:0;width:13px;height:13px}#apply{font-size:12px;padding:5px 14px;border-radius:3px;height:30px}
+.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{min-height:190px;padding:12px 18px 11px;border-radius:4px;border-color:#dce5ec;background:linear-gradient(115deg,#fff 70%,#fafcfd);box-shadow:none}
+.card:hover{box-shadow:none;border-color:#9eb8ab}.card-title{gap:11px;align-items:center}.card h2{font-size:15px;line-height:1.5;font-weight:650;flex:0 1 auto;color:#20292e}.role{font-size:11px;padding:0 8px;line-height:20px;border-radius:3px;background:#d9efe3;color:#265e44}.role.member{background:#e8edf1;color:#50616d}
+.description{font-size:12px;margin:3px 0 8px;color:#6e7987;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.states{justify-content:flex-start;gap:10px;font-size:12px}.states>span{flex:1;white-space:nowrap}.label{color:#74808d;margin-right:7px}.badge{padding:1px 6px;border-radius:3px}.line{font-size:12px;margin-top:3px;line-height:1.6}.config small{font-size:12px;color:#6e7987}.dot{width:7px;height:7px}.dot.running{background:#25a344}
+.card-bottom{position:relative;display:block;padding-top:4px;margin-top:auto;min-height:41px}.visit{display:block;font-size:12px;line-height:17px;color:#657281}.actions{gap:9px}.card-bottom .actions{justify-content:flex-end;margin-top:-2px}.actions button{font-size:12px;padding:3px 13px;line-height:1.5;border-radius:3px;min-height:27px}
+.list-end{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:7px;font-size:11px;color:#89929a;min-height:23px}.list-end button{padding:1px 9px;font-size:11px;min-height:23px}.list-end:empty{display:none}
+footer{background:#214c3e}.footer-inner{max-width:1440px;grid-template-columns:1.16fr 1.12fr 1fr .9fr;padding:17px 36px 16px;gap:30px;align-items:center}.footer-inner>div+div{padding-left:38px;border-left:1px solid #ffffff5c}.footer-brand{font-size:15px;gap:10px;line-height:1.5}.footer-brand .leaf{width:17px;height:23px}footer p{margin:3px 0 0 27px;font-size:11px;color:#c3d2c9}footer h3{font-size:12px;margin:0 0 5px}footer .links{font-size:11px;gap:8px 20px}.slogan{font-family:KaiTi,STKaiti,'Kaiti SC','Microsoft YaHei','PingFang SC',sans-serif;font-size:20px;letter-spacing:3px;line-height:1.25;color:#f1f4ee;font-style:italic;white-space:nowrap}.copyright{display:none}.demo summary{font-size:11px;padding:5px 11px;box-shadow:none}.demo{opacity:.8}.demo:hover,.demo[open]{opacity:1}
+@media(min-width:1500px){main{padding-top:10px}.card{min-height:190px}}
+@media(max-width:1100px) and (min-width:721px){.header-inner{gap:35px}nav{gap:24px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:12px}.card h2{font-size:14px}.card-title{gap:6px;flex-wrap:wrap}.states{gap:4px;flex-wrap:wrap}.config small{display:block}.footer-inner{padding:17px 24px;gap:18px}.footer-inner>div+div{padding-left:20px}.slogan{font-size:17px}.toolbar{gap:10px}.search{width:180px}.tabs button{padding:5px 12px}}
+@media(max-width:720px){header{height:auto}.header-inner{padding:12px 16px;gap:10px}.brand{font-size:17px}nav{height:32px;gap:24px;padding-top:0}nav span{font-size:12px;padding-bottom:6px}main{padding:10px 12px}.grid{grid-template-columns:1fr}.card{min-height:185px;padding:13px 16px}.toolbar{gap:9px}.tabs{width:100%}.search{width:145px;flex:1}.footer-inner{grid-template-columns:1fr 1fr;padding:20px 18px;gap:22px}.footer-inner>div+div{padding-left:0;border:0}.slogan{font-size:17px}.card-bottom .actions{margin-top:2px}.list-end{min-height:30px}}
+
+
+/* Full viewport application shell; content can grow without overlaying the footer. */
+html{min-height:100%}body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+header,footer{flex-shrink:0}.header-inner,.footer-inner{max-width:none;width:100%}
+main{flex:1;display:flex;flex-direction:column;width:100%;max-width:none;margin:0;padding:14px 20px 16px;background:#f7f9f8}
+.pending,.toolbar{flex-shrink:0}.grid{align-content:start;align-items:start}.card{min-height:190px}
+.list-end{margin-top:auto;padding-top:18px;min-height:45px;flex-wrap:wrap;font-size:12px;color:#657281}
+.list-end button{min-height:28px;font-size:12px}.page-size{display:flex;align-items:center;gap:7px;font-size:12px;color:#657281;white-space:nowrap}
+.page-size select{background:white;color:#455765;border:1px solid #dce5e9;border-radius:3px;padding:3px 20px 3px 8px;min-height:28px;cursor:pointer;font:inherit}
+.pagination{justify-content:flex-start;gap:20px}.pagination .pages{margin-left:auto}
+@media(max-width:720px){main{padding:10px 12px 16px}.list-end{gap:8px}.pagination{gap:8px;flex-wrap:wrap}.page-size{gap:4px}}
+
+.header-inner{gap:64px;padding:0 24px}nav{gap:34px}.user{gap:18px}
+.notification-button,.account-button{display:flex;align-items:center;justify-content:center;background:transparent;border:0;padding:0;color:#66717b;min-height:30px}
+.notification-button{width:26px}.notification-button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.account-button{gap:8px;font-size:12px}.account-button .avatar{width:23px;height:23px;background:#e3e7e9;overflow:hidden;color:#929ba2}
+.avatar svg{width:23px;height:23px;fill:currentColor}.chevron{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.account-wrap{position:relative}.account-menu{position:absolute;right:0;top:36px;width:150px;background:white;border:1px solid #dde5e9;border-radius:4px;padding:12px 16px;z-index:20;box-shadow:0 4px 16px #163d2a12}.account-menu strong,.account-menu span{display:block}.account-menu span{color:#87918d;font-size:12px;margin-top:3px}
+@media(max-width:720px){.header-inner{gap:10px;padding:12px 16px}nav{gap:24px}.user{gap:12px}}
+
+/* Canonical seven-item portal navigation from the original prototype. */
+header{height:62px;background:#fff;border-bottom:1px solid #dce6eb}
+.header-inner{display:flex;align-items:center;gap:40px;padding:0 32px}
+.brand{font-size:21px;line-height:1.3;color:#11283d;font-weight:700;gap:12px;flex:none}
+.platform-logo{width:28px;height:36px;flex:none}
+nav{gap:28px;min-width:0;height:100%;flex:1}
+nav span{font-size:14px;color:#627087;flex:none}
+nav .active{color:#005b57;border-bottom:3px solid #005b57;font-weight:700}
+.header-actions{display:flex;align-items:center;gap:12px;margin-left:auto;flex:none}
+.header-actions button{font-size:14px;height:35px;padding:5px 15px;border-radius:4px;white-space:nowrap}
+.login-button{background:#fff;border:1px solid #e0e8ee;color:#21354d}.consult-button{background:#005b57;border:1px solid #005b57;color:white}.consult-button:hover{background:#004b48;color:#fff}
+@media(max-width:1350px) and (min-width:1201px){.header-inner{gap:24px;padding:0 20px}.brand{font-size:18px;gap:9px}.platform-logo{width:23px}nav{gap:18px}nav span{font-size:13px}.header-actions{gap:8px}.header-actions button{padding:5px 11px;font-size:13px}}
+@media(max-width:1200px){header{height:auto}.header-inner{padding:12px 18px 0;gap:12px;flex-wrap:wrap}.brand{font-size:18px}.platform-logo{width:23px;height:30px}.header-actions{margin-left:auto}nav{order:3;flex:0 0 100%;width:100%;height:40px;gap:26px;overflow-x:auto;padding-top:0}nav span{font-size:13px;padding-bottom:7px}}
+@media(max-width:560px){.header-inner{padding:10px 12px 0}.brand{font-size:16px;gap:6px}.header-actions{margin-left:auto;gap:8px}.header-actions button{font-size:12px;height:29px;padding:3px 10px}.footer-brand{font-size:13px;align-items:flex-start}}
+
+main.detail-main{padding:18px 28px 28px;gap:16px;background:#f5f8f7;display:block}.breadcrumb{display:flex;align-items:center;gap:9px;color:#89949e;font-size:12px;margin-bottom:14px}.breadcrumb a{color:#526a62;text-decoration:none}.space-heading{background:#fff;border:1px solid #dfe7eb;border-radius:5px;padding:20px 23px;margin-bottom:18px;display:flex;align-items:center;gap:24px}.space-heading h1{font-size:23px;line-height:1.5;margin:0 0 8px;color:#192f3c}.heading-tags{display:flex;gap:8px;align-items:center}.heading-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:#70808b}.heading-meta b{font-weight:400;color:#384f5a}.heading-text{flex:1}.heading-actions{display:flex;gap:10px;flex:none}.detail-main button{font-size:12px}.detail-columns{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;align-items:start}.main-column,.side-column{display:flex;flex-direction:column;gap:18px;min-width:0}.panel{background:#fff;border:1px solid #dfe7eb;border-radius:5px;overflow:hidden}.panel-head{min-height:52px;padding:14px 20px;border-bottom:1px solid #e8edef;display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h2{margin:0;color:#203941;font-size:15px;display:flex;align-items:center;gap:9px}.panel-body{padding:18px 20px}.muted{color:#7c8992;font-size:12px}.small-pill{font-size:11px;color:#47705e;background:#edf5f0;border:1px solid #deebe3;border-radius:3px;padding:1px 6px;font-weight:400}.resource-tabs{display:flex;gap:26px;border-bottom:1px solid #e7eeea;padding:0 20px}.resource-tabs button{border:0;border-radius:0;background:none;padding:11px 0;color:#71808b}.resource-tabs button.active{border-bottom:2px solid #005b57;color:#005b57;font-weight:700}.resource-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.resource-card{border:1px solid #e2e9ec;border-radius:4px;padding:15px}.resource-name{display:flex;align-items:center;gap:9px;color:#264a4c;font-weight:600;font-size:13px}.resource-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:4px;background:#f0f6f3;color:#00615b;font-size:17px}.resource-card p{font-size:12px;color:#7b8992;margin:10px 0}.resource-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#87949e}.resource-foot button{padding:0;border:0;color:#00615b}.resource-note{font-size:12px;color:#849099;padding:0 20px 16px}.path-bar{display:flex;align-items:center;gap:8px;padding:12px 20px;background:#fafcfb;border-bottom:1px solid #e6edef;flex-wrap:wrap}.path-bar button{border:0;background:none;padding:0;color:#22654b}.file-table{white-space:normal;table-layout:fixed}.file-table th,.file-table td{padding:12px 20px;border-right:0;height:44px;font-size:12px}.file-table th:first-child{width:46%}.file-table th:nth-child(2){width:16%}.file-table th:nth-child(3){width:23%}.file-table td{overflow:hidden;text-overflow:ellipsis}.file-table .filename{border:0;background:none;padding:0;text-align:left;display:flex;gap:9px;align-items:center;color:#334d59;max-width:100%;word-break:break-all}.folder-icon{color:#bf9854}.doc-icon{color:#438589}.file-caption{padding:12px 20px;color:#89959b;font-size:12px}.storage{font-size:12px;color:#73838a;display:flex;gap:12px;align-items:center}.storage-track{width:90px;height:4px;background:#edf1ee;border-radius:4px;overflow:hidden}.storage-track i{display:block;width:18%;height:100%;background:#498c73}.instance-state{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.instance-state strong{font-size:14px}.specs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 16px}.specs dt{font-size:12px;color:#829098}.specs dd{font-size:18px;color:#203d46;margin:4px 0 0;font-weight:600}.specs dd small{font-size:12px;font-weight:400;margin-left:4px;color:#6e8189}.instance-note{font-size:12px;line-height:1.8;color:#7c8a90;border-top:1px solid #ecf0ee;padding-top:12px;margin:0 0 14px}.instance-actions{display:flex;gap:9px}.instance-actions .primary{flex:1}.instance-actions button{min-height:33px}.member-row{display:flex;align-items:center;gap:10px;padding:9px 0}.member-row+.member-row{border-top:1px solid #f0f3f1}.member-avatar{width:30px;height:30px;display:grid;place-items:center;background:#e9f1ed;color:#537869;border-radius:50%;font-size:12px}.member-name{flex:1;font-size:13px}.member-name small{display:block;color:#8a989d;font-size:11px}.record{padding:15px 20px;border-bottom:1px solid #ecf0f1}.record:last-child{border-bottom:0}.record-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.record-title strong{font-size:13px;color:#304853}.record-meta{font-size:11px;color:#8a979d;margin:7px 0}.record button{padding:0;border:0;background:none;color:#076452}.no-data{padding:30px;text-align:center;color:#82918c;font-size:12px}.request-note{margin-top:12px;font-size:12px;color:#697f74}.file-choice{display:flex!important;align-items:center;gap:8px;margin:8px 0!important}.file-choice input{width:auto!important;margin:0!important}.danger{color:#a15042;border-color:#d8bcb5}.danger:hover{color:#8f392c;background:#fff7f5;border-color:#b07769}.archive-notice{background:#edf2ef;padding:10px 15px;color:#687a70;font-size:12px;margin-bottom:16px;border-radius:4px}#upload-input{display:none}.submit-record-body{line-height:1.8}.submit-record-body ul{padding-left:20px}.primary{background:#005b57;border-color:#005b57}.primary:hover{background:#004945}.panel-head .link{color:#005b57}
+@media(min-width:1700px){.detail-columns{grid-template-columns:minmax(0,1fr) 400px}.detail-main{padding-left:40px!important;padding-right:40px!important}}
+@media(max-width:1000px){.detail-columns{grid-template-columns:minmax(0,1fr) 310px}.space-heading{align-items:flex-start}.heading-actions{flex-direction:column}.resource-grid{grid-template-columns:1fr}.file-table th,.file-table td{padding:10px}.panel-head{padding:12px 15px}.storage-track{display:none}.heading-meta{gap:8px 18px}}
+@media(max-width:760px){main.detail-main{padding:14px 12px}.detail-columns{grid-template-columns:1fr}.space-heading{display:block;padding:16px}.heading-actions{margin-top:16px;flex-direction:row}.space-heading h1{font-size:19px}.side-column{display:grid;grid-template-columns:1fr}.storage{font-size:11px}.panel-head{flex-wrap:wrap}.file-table th:first-child{width:42%}.file-table th:nth-child(2){width:16%}.file-table th:nth-child(3){width:25%}.file-table td,.file-table th{font-size:11px}.footer-brand{font-size:13px}}
+/* Detail layout aligned to the supplied high-fidelity reference. */
+main.detail-main{padding:20px 40px 30px;background:#f6f8fa}.breadcrumb{font-size:12px;margin-bottom:12px}.space-heading{background:transparent;border:0;border-radius:0;padding:0 0 5px;margin-bottom:18px;min-height:74px}.space-heading h1{font-size:27px;color:#132135;line-height:1.4;margin-bottom:8px}.heading-tags{gap:16px}.heading-tags>.badge,.my-role{border-radius:18px;background:#e4f5e8;color:#18743a;padding:3px 14px;font-size:14px;white-space:nowrap}.heading-meta{font-size:14px;gap:22px;color:#5e6d84}.heading-meta b{color:#4c5e78}.heading-actions{align-items:center;gap:20px}.heading-actions button{min-width:104px;height:36px;border-color:#257b47;color:#206f3b;font-size:14px;background:#fff}.more-wrap{position:relative}#more-menu{position:absolute;right:0;top:42px;background:white;border:1px solid #e0e6ed;border-radius:5px;box-shadow:0 5px 16px #1e314a20;z-index:15;padding:7px;min-width:140px}#more-menu button{border:0;color:#27384d;min-width:126px;text-align:left;white-space:nowrap}.detail-columns{grid-template-columns:minmax(0,1.92fr) minmax(340px,1fr);gap:18px}.main-column,.side-column{gap:16px}.panel{border-color:#e1e7ee;border-radius:6px}.panel-head{padding:17px 20px 12px;min-height:56px;border-bottom:0}.panel-head h2{font-size:20px;color:#142033;line-height:1.5}.detail-main button{font-size:14px}.detail-main .primary,.modal-footer .primary{background:#1e7d3e;border-color:#1e7d3e;color:#fff}.detail-main .primary:hover{background:#176b32}.panel-head .primary{padding:7px 18px}.resource-tabs{gap:25px;padding:0 20px}.resource-tabs button{font-size:14px;padding:12px 6px}.resource-tabs button.active{border-color:#1d7c3d;color:#1b7037}.resource-tabs span{font-size:13px}#resources{padding:12px 20px 4px}.resource-table{white-space:normal;table-layout:fixed;width:100%}.resource-table th,.resource-table td{border-right:0;padding:13px 12px;font-size:13px;line-height:1.7;border-bottom:1px solid #e8edf2;vertical-align:middle}.resource-table th{background:#f3f5f8;font-weight:500;color:#5f6e84}.resource-table th:nth-child(1){width:25%}.resource-table th:nth-child(2){width:28%}.resource-table th:nth-child(3){width:13%}.resource-table th:nth-child(4){width:22%}.resource-table th:nth-child(5){width:12%}.resource-table td:first-child{font-weight:500;color:#243144}.resource-table td{color:#53647f}.resource-table td:nth-child(3){overflow:visible}.resource-table .badge{font-size:12px;white-space:nowrap;background:#e3f5e7;color:#24753b}.resource-table .link{font-size:13px;white-space:nowrap;color:#257443}.resource-note{font-size:12px;padding:9px 20px 15px;color:#8390a3}.file-table th,.file-table td{font-size:14px;padding:10px 15px;height:44px}.file-table th{background:#f3f5f8;color:#5e6d84}.file-table th:nth-child(1){width:40%}.file-table th:nth-child(2){width:17%}.file-table th:nth-child(3){width:20%}.file-table th:nth-child(4){width:23%}.file-table .filename{font-size:14px;color:#27344a}.file-table td{color:#576881}.file-table{width:calc(100% - 40px);margin:0 20px}.file-caption{background:#f3f6f9;border-radius:4px;margin:14px 20px;padding:9px 12px;font-size:12px;color:#697992}.file-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:19px;height:22px;border-radius:3px;color:white;font-size:9px;font-weight:700}.file-icon.folder{background:#ffb522;border:1px solid #eba512;height:16px;position:relative;margin-top:4px}.file-icon.folder:before{content:'';position:absolute;width:8px;height:4px;border-radius:2px 2px 0 0;left:-1px;top:-4px;background:#ffb522}.file-icon.pdf{background:#ef4b43}.file-icon.notebook{background:#66acdd;font-size:16px}.small-pill{border:0;border-radius:16px;background:#e4efff;color:#3475b8;padding:3px 12px;font-size:13px}.storage{gap:20px;font-size:13px}.storage-meter{display:flex;flex-direction:column;gap:7px;min-width:185px}.storage-track{display:block;width:100%;height:7px;background:#e9edf1}.storage-track i{background:#247b43;border-radius:6px}.storage strong{color:#203146}.upload-note{text-align:right;font-size:12px;color:#8895a7;padding:0 20px;margin:0 0 12px}.side-column .panel-head{padding-bottom:6px}.side-column .panel-body{padding:8px 20px 14px}#instance{position:relative}.instance-state{position:absolute;right:20px;top:-38px;margin:0}.instance-state>.muted{display:none}.instance-state .badge{border-radius:18px;padding:3px 12px;font-size:13px}.instance-config-label{font-size:13px;color:#69788c;margin:1px 0 5px}.instance-config{font-size:14px;color:#25374e;margin:0 0 10px;line-height:1.8;white-space:normal}.instance-config span{color:#9aa5b3;padding:0 6px}.environment-label{font-size:14px;color:#34485d;margin:0 0 6px}.instance-note{border:0;padding:0;margin:0 0 10px;color:#8290a3;font-size:12px}.instance-actions{flex-direction:column;gap:10px}.instance-actions button{width:100%;min-height:36px;font-size:14px}.instance-warning{font-size:12px;color:#8290a3;margin:7px 0 0}#members{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:14px 16px 17px}.member-row{border:0!important}.side-column .member-row{flex-direction:column;gap:5px;text-align:center;padding:0;min-width:0}.member-avatar{width:40px;height:40px;font-size:19px;background:#e3f4e7;color:#22793e}.member-row:nth-child(2) .member-avatar{background:#e1edff;color:#3973b8}.member-row:nth-child(3) .member-avatar{background:#fff0d6;color:#8e7747}.member-row:nth-child(4) .member-avatar{background:#eee5ff;color:#7854b0}.member-name{font-size:13px}.side-column .member-name small{display:none}.side-column .role{background:none;padding:0;font-size:12px;line-height:1.1}.side-column .role.member{color:#7b8a9e}.panel-head .muted{font-size:13px;font-weight:400;color:#7d8b9e}.panel-head .link{color:#277648;font-size:13px}.record{margin:7px 18px 12px;padding:0;border:1px solid #e5eaf0!important;border-radius:4px;overflow:hidden}.record-title{padding:8px 12px;background:#f3f5f8;font-size:12px}.record-title strong{font-size:13px}.record-date{font-size:11px;color:#7b879c;white-space:nowrap}.record-content{display:flex;align-items:center;gap:10px;padding:12px}.result-icon{font-size:23px;color:#526983}.record-content>div{flex:1}.record-content strong{font-size:13px;color:#2e4058;font-weight:500}.record-content p{font-size:12px;color:#8b96a6;margin:3px 0 0}.record-content .badge{font-size:12px;white-space:nowrap}.record-detail{font-size:12px!important;margin:0 12px 10px}.all-records{margin:0 18px 16px;width:calc(100% - 36px);padding:6px 10px;border-color:#b9c6d5;color:#52637a;background:white;font-size:13px!important}.record-list-item{display:flex;gap:18px;align-items:center;justify-content:space-between;border-bottom:1px solid #e3e9ed;padding:14px 0}.mount-intro{color:#526579;font-size:14px;margin:0 0 18px}.mount-option{display:flex!important;align-items:center;gap:12px;padding:13px 10px;border:1px solid #e0e8e4;border-radius:4px;margin-bottom:10px!important}.mount-option input{width:auto!important;margin:0!important;accent-color:#257c42}.mount-option>span:first-of-type{flex:1}.mount-option strong{display:block;font-size:14px}.mount-option small{display:block;font-size:12px;color:#87928d;margin-top:5px}.mount-option .badge{font-size:12px;white-space:nowrap}.my-role{font-weight:600}
+@media(min-width:1700px){.detail-columns{grid-template-columns:minmax(0,1.92fr) minmax(400px,1fr)}}
+@media(max-width:1200px){main.detail-main{padding:18px 24px}.detail-columns{grid-template-columns:minmax(0,1.75fr) minmax(320px,1fr)}.space-heading h1{font-size:23px}.heading-actions{gap:10px}.heading-actions button{min-width:85px}.my-role{font-size:12px;padding:4px 9px}.resource-table th,.resource-table td{font-size:12px;padding:10px 7px}.resource-table .link{font-size:12px}.resource-table th:nth-child(1){width:25%}.resource-table th:nth-child(2){width:23%}.resource-table th:nth-child(3){width:14%}.resource-table th:nth-child(4){width:23%}.resource-table th:nth-child(5){width:15%}.panel-head h2{font-size:18px}.storage-meter{min-width:145px}.storage{gap:10px}.file-table th,.file-table td{font-size:12px;padding:10px}.file-table .filename{font-size:12px}.record-content{gap:7px;padding:10px}.record-date{display:none}}
+@media(max-width:950px){.detail-columns{grid-template-columns:1fr}.heading-actions{flex-direction:row;flex-wrap:wrap}.side-column{display:grid;grid-template-columns:1fr 1fr;gap:16px}.side-column>section:first-child{grid-row:span 2}.space-heading{align-items:flex-start}.my-role{width:100%;text-align:center}.resource-table th,.resource-table td{font-size:13px}.record-date{display:block}}
+@media(max-width:650px){main.detail-main{padding:14px 12px}.space-heading{display:block}.space-heading h1{font-size:21px}.heading-meta{font-size:12px;gap:8px 15px}.heading-actions{margin-top:12px;justify-content:flex-end}.my-role{width:auto;margin-right:auto}.heading-actions button{min-width:74px;height:32px;font-size:12px}.side-column{grid-template-columns:1fr}.panel-head{padding:14px 14px 9px}.panel-head h2{font-size:17px}.resource-tabs{padding:0 14px}#resources{padding:10px 12px 0}.resource-table{min-width:600px}.file-table{margin:0 12px;width:calc(100% - 24px);min-width:480px}.file-caption{margin:10px 12px}.storage{margin-left:auto}.storage-meter{min-width:130px}.panel-head .primary{padding:5px 10px;font-size:12px}.upload-note{padding:0 14px;font-size:11px}.storage-track{height:5px}.panel-head:has(.storage){align-items:center;gap:12px}.record-date{display:block}.instance-config{font-size:14px}}
+</style>
+<!-- ============================================================
+     统一一级导航 · 口径＝门户页 `.site-header` / `.main-nav`（0924，用户指令）
+     由 _tools_原型对齐/patch_portal_nav_unify_0924.py 注入；
+     追加于本页原有 <style> 之后，用于覆盖页面自有的页头规则。
+     · 七项＝首页｜数据中心｜模型中心｜科研开发空间｜课题中心｜需求中心｜关于平台
+     · 页头 80px（≤1279 收敛 64，与门户页断点一致）；项间距 20px、内边距 0 2px；激活＝整项宽 2px 实心下划线
+     · 品牌 22px/600 + 30×30；动作区「登录」文字按钮 + 「合作咨询」主按钮
+     · ≤1099px 收起为移动端菜单（同门户页）
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+<style id="bdh-about-foot">/* 0924：科研开发空间页脚「关于平台/平台资源」由 span 改为真链接 */
+footer .links a{color:inherit;text-decoration:none}
+footer .links a:hover{color:#fff;text-decoration:underline}
+</style>
+</head><body><header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg class="platform-logo" viewBox="0 0 30 36" aria-hidden="true"><path d="M15 34V15" fill="none" stroke="#4e963e" stroke-width="2"/><path d="M14 20C5 19 2 12 3 4c8 0 13 7 11 16" fill="#197951"/><path d="M16 24c0-9 4-14 12-15 1 8-4 15-12 15" fill="#58a753"/></svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="数据中心-数据集列表页.html">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a class="active" href="科研开发空间-交互原型(10).html" aria-current="page">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="autharea">
+        <a class="signed-user" data-bdh-me href="个人中心-高保真原型.html">张三 · 科研工作台</a>
+        <button type="button" class="button button-primary" onclick="showConsultEntry()">合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a href="数据中心-数据集列表页.html">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a class="active" href="科研开发空间-交互原型(10).html" aria-current="page">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header><main class="detail-main"><div id="heading"></div><div id="archive-note"></div><div class="detail-columns"><div class="main-column"><section class="panel"><div class="panel-head"><h2>已挂载资源</h2><button class="primary" id="resource-mount" onclick="mountResources()">挂载数据</button></div><div class="resource-tabs"><button id="data-tab" onclick="setResourceTab('data')">数据 <span id="data-count"></span></button><button id="model-tab" onclick="setResourceTab('model')">模型 <span id="model-count"></span></button></div><div class="panel-body" id="resources"></div><div class="resource-note">仅展示已获授权并挂载到本空间的资源。</div></section><section class="panel"><div class="panel-head"><h2>研究文件 <span class="small-pill">团队共享</span></h2><div class="storage"><div class="storage-meter"><span id="storage-label">已使用 36 GB / 200 GB</span><span class="storage-track"><i></i></span></div><button id="upload-button" class="primary" onclick="document.querySelector('#upload-input').click()">↥ 上传文件</button></div></div><p class="upload-note">上传文件仅供本空间研究使用，不会自动发布到资源中心。</p><div class="path-bar" id="file-path"></div><div class="table-wrap"><table class="file-table"><thead><tr><th>文件名称</th><th>类型</th><th>更新人</th><th>更新时间</th></tr></thead><tbody id="files"></tbody></table></div><div class="file-caption">ⓘ　编辑代码与运行实验请进入开发环境。</div><input id="upload-input" type="file" multiple></section></div><aside class="side-column"><section class="panel"><div class="panel-head"><h2>开发实例</h2></div><div class="panel-body" id="instance"></div></section><section class="panel"><div class="panel-head"><h2>协作成员 <span class="muted" id="member-count"></span></h2><button class="link" id="manage-members" onclick="manageMembers()">管理成员</button></div><div class="panel-body" id="members"></div></section><section class="panel"><div class="panel-head"><h2>成果上传记录</h2><span class="muted" id="record-count"></span></div><div id="records"></div></section></aside></div></main><footer><div class="footer-inner"><div><div class="footer-brand"><i class="leaf"></i>北大荒智慧农业协同创新平台</div><p>汇聚农业数据，支撑科研创新</p></div><div><h3>平台资源</h3><div class="links"><a href="数据中心-数据集列表页.html">数据中心</a><a href="模型中心-模型列表页（调整）.html">模型中心</a><a href="科研开发空间-交互原型(10).html">科研开发空间</a></div></div><div><h3>关于平台</h3><div class="links"><a href="关于平台-平台介绍.html">平台介绍</a><a href="关于平台-开发者接入.html">开发者区</a><a href="关于平台-使用帮助.html">使用帮助</a><a href="关于平台-联系支持.html">联系我们</a></div></div><div class="slogan">耕耘数据沃土<br>共建智慧农业</div></div><div class="copyright">智慧农业平台 · 科研开发空间</div></footer><dialog id="modal"><div class="modal-head"><h2 id="modal-title"></h2><button class="close" aria-label="关闭" onclick="closeModal()">×</button></div><div id="modal-content"></div></dialog><div id="toast" class="toast hidden" role="status"></div><script>const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const q=new URLSearchParams(location.search.slice(1)||location.hash.slice(1));const space={name:q.get('name')||'寒地水稻倒伏识别研究',role:q.get('role')==='成员'?'成员':'负责人',state:q.get('state')==='已归档'?'已归档':'可用',instance:['运行中','已停止','异常'].includes(q.get('instance'))?q.get('instance'):'运行中',cpu:Math.max(1,Number(q.get('cpu'))||8),team:q.get('team')||'作物遥感研究团队'};space.ram=Math.max(1,Number(q.get('ram'))||space.cpu*4);space.storage=Math.max(1,Number(q.get('storage'))||200);
+const owner=()=>space.role==='负责人',editable=()=>!['已归档','待验收'].includes(space.state),canManage=()=>owner()&&editable();let currentPath='',resourceTab='data',busy=false,uploadedBytes=0;
+let members=[{name:'张三',role:'负责人',note:'空间负责人'},{name:'李四',role:'成员',note:'模型研究'},{name:'王五',role:'成员',note:'数据分析'},{name:'陈颖',role:'成员',note:'研究协作'}];
+const directories={'':[{name:'research',folder:true,size:'—',time:'09-18 09:15'},{name:'results',folder:true,size:'—',time:'09-17 16:30'},{name:'uploads',folder:true,size:'—',time:'09-17 16:20'},{name:'倒伏识别实验.ipynb',size:'128 KB',time:'09-18 09:25',note:'水稻倒伏识别实验 Notebook'},{name:'精度评估报告.pdf',size:'3.2 MB',time:'09-17 17:00',author:'李四',note:'模型精度评估报告'}],uploads:[],research:[{name:'zhangsan',folder:true,size:'—',time:'09-18 09:15'},{name:'lisi',folder:true,size:'—',time:'09-17 16:20'},{name:'wangwu',folder:true,size:'—',time:'09-17 10:40'}],'research/zhangsan':[{name:'lodging_detection.ipynb',size:'128 KB',time:'09-18 09:15',note:'水稻倒伏识别实验 Notebook'}],'research/lisi':[{name:'model_validation.ipynb',size:'96 KB',time:'09-17 16:20',note:'模型精度验证 Notebook'}],'research/wangwu':[{name:'sample_analysis.ipynb',size:'84 KB',time:'09-17 10:40',note:'样本统计分析 Notebook'}],results:[{name:'model_v1.zip',size:'86.4 MB',time:'09-17 16:30',note:'阶段研究模型文件'},{name:'validation_report.pdf',size:'3.2 MB',time:'09-17 16:20',note:'模型精度验证报告'},{name:'README_results.md',size:'5.6 KB',time:'09-17 16:10',note:'成果运行与使用说明'}]};
+const resources={data:[{name:'寒地水稻遥感样本数据集',meta:'2026 年 · 12,840 条样本',type:'挂载目录',path:'/data/rice_samples',symbol:'▤'},{name:'黑龙江省农田遥感影像',meta:'2026 年 · 10 m 分辨率',type:'挂载目录',path:'/data/remote_sensing',symbol:'▧'}],model:[{name:'水稻倒伏识别模型',meta:'V1.2 · 初始绑定模型',type:'模型目录',path:'/models/rice_lodging',symbol:'◇'}]};const authorizedCatalog={data:[...resources.data,{name:'农田气象观测数据集',meta:'2026 年 · 逐日观测',type:'挂载目录',path:'/data/weather'},{name:'水稻地面调查样本集',meta:'2026 年 · 地面调查',type:'挂载目录',path:'/data/field_samples'}],model:[...resources.model,{name:'作物长势监测模型',meta:'V2.0 · 长势监测',type:'模型目录',path:'/models/crop_growth'},{name:'水稻物候识别模型',meta:'V1.1 · 物候识别',type:'模型目录',path:'/models/rice_phenology'}]};
+let records=[{name:'水稻倒伏识别阶段成果',version:'V1.0',time:'2026-09-17 16:35',author:'张三',description:'完成样本整理及模型验证，保留模型文件、精度报告和使用说明。',files:['model_v1.zip','validation_report.pdf','README_results.md']}];
+const modal=$('#modal');function openDialog(title,content){$('#modal-title').textContent=title;$('#modal-content').innerHTML=content;if(!modal.open)modal.showModal()}function closeModal(){modal.close()}modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});let toastTimer;function toast(t){$('#toast').textContent=t;$('#toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.add('hidden'),3200)}function formFooter(label){return `<div class="modal-footer"><button type="button" onclick="closeModal()">取消</button><button type="submit" class="primary">${label}</button></div>`}
+function renderHeading(){$('#heading').innerHTML=`<section class="space-heading"><div class="heading-text"><div class="heading-tags"><h1>${esc(space.name)}</h1><span class="badge ${editable()?'':'gray'}">${space.state}</span></div><div class="heading-meta"><span>所属团队：<b>${esc(space.team)}</b></span><span>负责人：<b>张三</b></span></div></div><div class="heading-actions"><span class="my-role">我的角色：${space.role}</span>${canManage()?'<button class="outline" onclick="submitResult()">提交成果</button><div class="more-wrap"><button class="outline" id="more-button" aria-expanded="false" onclick="toggleMore()">更多⌄</button><div id="more-menu" class="hidden"><button onclick="archiveSpace()">⏻　结束研究</button></div></div>':''}</div></section>`;$('#archive-note').innerHTML=editable()?'':'<div class="archive-notice">研究已结束，空间已归档。共享文件、已挂载资源与成果记录保留为只读，实例不可启动。</div>';$('#upload-button').hidden=!editable();$('#resource-mount').hidden=!canManage();$('#manage-members').hidden=!canManage()}
+function toggleMore(){const b=$('#more-button'),on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',String(on));$('#more-menu').classList.toggle('hidden',!on)}
+document.addEventListener('click',e=>{if(!e.target.closest('.more-wrap')&&$('#more-menu')){$('#more-menu').classList.add('hidden');$('#more-button').setAttribute('aria-expanded','false')}});
+function setResourceTab(t){resourceTab=t;renderResources()}
+function renderResources(){$('#data-tab').classList.toggle('active',resourceTab==='data');$('#model-tab').classList.toggle('active',resourceTab==='model');$('#data-tab').setAttribute('aria-pressed',resourceTab==='data');$('#model-tab').setAttribute('aria-pressed',resourceTab==='model');$('#data-count').textContent='（'+resources.data.length+'）';$('#model-count').textContent='（'+resources.model.length+'）';$('#resource-mount').textContent=resourceTab==='model'?'挂载模型':'挂载数据';$('#resources').innerHTML=`<div class="table-wrap"><table class="resource-table"><thead><tr><th>资源名称</th><th>描述</th><th>挂载状态</th><th>访问说明</th><th>操作</th></tr></thead><tbody>${resources[resourceTab].map((r,i)=>`<tr><td>${esc(r.name)}</td><td>${esc(r.meta)}</td><td><span class="badge">已挂载</span></td><td>${!editable()?'已归档，仅查看':space.instance==='运行中'?'开发环境内可访问':'实例启动后可访问'}</td><td><button class="link" onclick="resourceInfo(${i})">查看详情</button></td></tr>`).join('')}</tbody></table></div>`}
+function resourceInfo(i){const r=resources[resourceTab][i];openDialog('资源访问方式',`<div class="modal-body"><h3>${esc(r.name)}</h3><p class="hint">在开发环境中，通过以下目录访问已授权资源。</p><label>${r.type}<input readonly value="${esc(r.path)}" onclick="this.select()"></label><p class="hint">此处为原型路径示例，正式环境使用后台返回的实际地址。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>`)}
+function mountResources(){if(!canManage())return;const type=resourceTab,candidates=authorizedCatalog[type];openDialog(type==='model'?'挂载已授权模型':'挂载已授权数据',`<form id="mount-form"><div class="modal-body"><p class="mount-intro">选择已获授权的${type==='model'?'模型':'数据'}，挂载到当前科研空间供成员共享使用。</p><div class="mount-options">${candidates.map((r,i)=>{const exists=resources[type].some(x=>x.path===r.path);return `<label class="mount-option"><input type="checkbox" name="mount-items" value="${i}" ${exists?'checked disabled':''}><span><strong>${esc(r.name)}</strong><small>${esc(r.meta)}</small></span><span class="badge ${exists?'gray':''}">${exists?'已挂载':'已授权'}</span></label>`}).join('')}</div><p class="hint">未获授权的资源不在此列表展示。${type==='model'?'挂载模型不会切换或重建实例运行环境。':''}</p><p id="mount-error" class="hidden" style="color:#aa473a">请选择至少一项尚未挂载的资源。</p></div>${formFooter('确认挂载')}</form>`);$('#mount-form').onsubmit=e=>{e.preventDefault();if(!canManage())return;const selected=new FormData(e.target).getAll('mount-items');if(!selected.length){$('#mount-error').classList.remove('hidden');return}for(const i of selected){const r=candidates[+i];if(!resources[type].some(x=>x.path===r.path))resources[type].push({...r})}closeModal();renderResources();toast(`已挂载 ${selected.length} 项资源（原型示例）`)}}
+const folderLabels={research:'个人工作目录',results:'团队成果',uploads:'团队上传'};
+function renderFiles(){const segments=currentPath.split('/').filter(Boolean);$('#file-path').innerHTML=`<button onclick="navigateFolder('')">共享文件</button>${segments.map((part,i)=>`<span>/</span><button onclick="navigateFolder('${segments.slice(0,i+1).join('/')}')">${esc(folderLabels[part]||part)}</button>`).join('')}`;$('#file-path').classList.toggle('hidden',!currentPath);const fs=directories[currentPath]||[];$('#files').innerHTML=fs.map((f,i)=>`<tr><td><button class="filename" onclick="openFile(${i})"><span class="file-icon ${f.folder?'folder':f.name.endsWith('.pdf')?'pdf':'notebook'}">${f.folder?'':f.name.endsWith('.pdf')?'PDF':'▤'}</span>${esc(folderLabels[f.name]||f.name)}</button></td><td>${f.folder?'文件夹':f.name.endsWith('.ipynb')?'Notebook':f.name.endsWith('.pdf')?'PDF':'文件'}</td><td>${f.author||'张三'}</td><td>${f.time}</td></tr>`).join('')||'<tr><td colspan="4" class="no-data">此目录暂无文件</td></tr>';$('#storage-label').innerHTML=`已使用 <strong>${(36+uploadedBytes/1073741824).toFixed(uploadedBytes?2:0)} GB</strong> / ${space.storage} GB`}
+function navigateFolder(path){currentPath=path;renderFiles()}function openFile(i){const f=directories[currentPath][i];if(f.folder){navigateFolder([currentPath,f.name].filter(Boolean).join('/'));return}openDialog(f.name,`<div class="modal-body"><div class="detail-grid"><span>文件大小：${f.size}</span><span>更新时间：${f.time}</span></div><p>${esc(f.note||'团队上传的研究文件')}</p><p class="hint">文件路径：/${esc([currentPath,f.name].filter(Boolean).join('/'))}</p><p class="hint">文件编辑与 Notebook 运行在开发环境内完成。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button>${editable()&&space.instance==='运行中'?'<button class="primary" onclick="enterEnvironment()">进入开发环境</button>':''}</div>`)}
+$('#upload-input').onchange=e=>{if(!editable())return;const files=[...e.target.files];for(const file of files){let name=file.name,base=name,n=1;while(directories[currentPath].some(f=>f.name===name))name=`${n++}_${base}`;directories[currentPath].push({name,author:owner()?'张三':'李四',size:file.size>1048576?(file.size/1048576).toFixed(1)+' MB':Math.max(1,Math.ceil(file.size/1024))+' KB',time:'刚刚',note:'本次上传的研究文件'});uploadedBytes+=file.size}e.target.value='';renderFiles();if(files.length)toast(`已添加 ${files.length} 个文件到当前目录（仅本次原型会话）`)};
+function renderInstance(){$('#instance').innerHTML=`<div class="instance-state"><span class="muted">实例状态</span><span class="badge ${space.instance==='运行中'?'':'gray'}"><i class="dot ${space.instance==='运行中'?'running':''}"></i>${space.instance}</span></div><p class="instance-config-label">实例配置（成员共享）</p><p class="instance-config">${space.cpu} 核 CPU <span>/</span> ${space.ram} GB 内存 <span>/</span> GPU 未配置</p><p class="environment-label">运行环境：水稻倒伏识别模型 V1.2</p><p class="instance-note">成员共享算力，分别开展研究。</p><div class="instance-actions">${!editable()?'<span class="muted">已归档，实例不可启动</span>':busy?'<button disabled>正在启动…</button>':space.instance==='运行中'?`<button class="primary" onclick="enterEnvironment()">进入开发环境</button>${owner()?'<button onclick="stopInstance()">停止实例</button>':''}`:owner()?`<button class="primary" onclick="startInstance()">${space.instance==='异常'?'重试启动':'启动实例'}</button>`:`<span class="muted">${space.instance==='异常'?'实例异常':'实例未启动'}，请联系负责人张三。</span>`}</div><p class="instance-warning">${!editable()?'共享文件与成果记录继续保留。':owner()?'停止将中断团队运行任务，文件仍保留。':'关闭浏览器不会停止实例。'}</p>`;renderResources()}
+function enterEnvironment(){if(!editable()||space.instance!=='运行中')return;openDialog('进入开发环境',`<div class="modal-body"><h3>${esc(space.name)}</h3><p>实例运行中 · ${space.cpu} 核 CPU / ${space.ram} GB 内存</p><p class="hint">正式系统将使用当前用户身份打开授权的 Notebook 工作界面。此原型未连接真实算力。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>`)}
+function startInstance(){if(!canManage()||busy)return;busy=true;space.instance='启动中';renderInstance();setTimeout(()=>{busy=false;space.instance='运行中';renderInstance();toast('实例已启动（原型示例）')},700)}
+function stopInstance(){if(!canManage())return;openDialog('停止实例',`<div class="modal-body"><div class="feedback">停止后将中断团队正在运行的任务，请确认成员已保存工作。</div><p>共享文件和成果提交记录继续保留。</p></div><div class="modal-footer"><button onclick="closeModal()">取消</button><button class="primary" id="confirm-stop">确认停止</button></div>`);$('#confirm-stop').onclick=()=>{space.instance='已停止';closeModal();renderInstance();toast('实例已停止（原型示例）')}}
+function renderMembers(){$('#member-count').textContent=`${members.length} 人`;$('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${m.name[0]}</span><span class="member-name">${m.name}${m.name===(owner()?'张三':'李四')?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('')}
+function manageMembers(){if(!canManage())return;openDialog('管理协作成员',`<div class="modal-body"><p class="hint">从所属团队选择成员加入科研空间。负责人负责实例启停、资源挂载与成果提交。</p>${members.map((m,i)=>`<div class="member-row"><span class="member-name">${m.name}</span><span class="muted">${m.role}</span>${m.role==='成员'?`<button class="link danger" onclick="removeMember(${i})">移除</button>`:''}</div>`).join('')}<form id="member-form"><label style="margin-top:18px">添加团队成员<select name="member">${['赵六','陈七','李四','王五'].filter(n=>!members.some(m=>m.name===n)).map(n=>`<option>${n}</option>`).join('')}</select></label><button class="primary" type="submit">添加成员</button></form></div><div class="modal-footer"><button onclick="closeModal()">完成</button></div>`);$('#member-form').onsubmit=e=>{e.preventDefault();const name=new FormData(e.target).get('member');if(!name)return;members.push({name,role:'成员',note:'团队协作'});renderMembers();manageMembers()}}
+function removeMember(i){if(!canManage()||members[i].role==='负责人')return;const name=members[i].name;openDialog('移除成员',`<div class="modal-body"><p>确认将 ${esc(name)} 移出本科研空间？</p><p class="hint">成员的研究文件保留；该成员将失去空间访问权限。</p></div><div class="modal-footer"><button onclick="manageMembers()">取消</button><button class="danger" id="remove-confirm">确认移除</button></div>`);$('#remove-confirm').onclick=()=>{members.splice(i,1);renderMembers();manageMembers()}}
+function renderRecords(){$('#record-count').textContent=`${records.length} 条`;$('#records').innerHTML=records.slice(0,2).map((r,i)=>`<div class="record"><div class="record-title"><strong>${esc(r.name)}</strong><span class="record-date">${r.time.split(' ')[0]}</span></div><div class="record-content"><span class="result-icon">▣</span><div><strong>${esc(r.name)} ${r.version}</strong><p>${r.files.length} 个文件 · ${r.author} 提交</p></div><span class="badge">已提交</span></div><button class="record-detail" onclick="showRecord(${i})">查看提交记录</button></div>`).join('')+'<button class="all-records" onclick="showAllRecords()">查看全部记录</button>'}
+function showAllRecords(){openDialog('全部成果提交记录',`<div class="modal-body">${records.map((r,i)=>`<div class="record-list-item"><div><strong>${esc(r.name)} ${r.version}</strong><p class="hint">${r.time} · ${r.author} · 已提交</p></div><button class="link" onclick="showRecord(${i})">查看详情</button></div>`).join('')}</div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>`)}
+function showRecord(i){const r=records[i];openDialog('成果提交记录',`<div class="modal-body submit-record-body"><h3>${esc(r.name)} <span class="badge">已提交</span></h3><p class="hint">${r.version} · 提交人：${r.author} · ${r.time}</p><p>${esc(r.description)}</p><strong>提交文件</strong><ul>${r.files.map(f=>`<li>${esc(f)}</li>`).join('')}</ul><p class="hint">本次提交保留独立版本，后续研究文件的修改不覆盖此记录。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>`)}
+function submitResult(){if(!canManage())return;const fs=directories.results.filter(f=>!f.folder);openDialog('提交研究成果',`<form id="result-form"><div class="modal-body"><label>成果名称<input name="name" required maxlength="60" placeholder="请输入成果名称"></label><label>成果说明<textarea name="description" required placeholder="说明研究内容、结果及使用方式"></textarea></label><label>版本<input readonly value="V1.${records.length}"></label><strong style="font-size:13px">选择团队成果目录中的文件</strong>${fs.map((f,i)=>`<label class="file-choice"><input type="checkbox" name="files" value="${i}">${esc(f.name)}</label>`).join('')||'<p class="hint">暂无文件，请先上传文件到团队成果目录。</p>'}<p id="result-error" class="hidden" style="color:#aa473a;font-size:12px">请至少选择一个成果文件。</p><p class="hint">提交后立即生成“已提交”记录并保留当前版本。</p></div>${formFooter('提交成果')}</form>`);$('#result-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),selected=f.getAll('files');if(!selected.length){$('#result-error').classList.remove('hidden');return}records.unshift({name:f.get('name'),description:f.get('description'),version:`V1.${records.length}`,author:'张三',time:new Date().toLocaleString('zh-CN',{hour12:false}),files:selected.map(i=>fs[+i].name)});closeModal();renderRecords();toast('成果已提交，记录已保存（仅本次原型会话）')}}
+function archiveSpace(){if(!canManage()||busy)return;openDialog('结束研究',`<div class="modal-body"><div class="feedback">结束后空间将归档，实例停止，成员不可继续上传或运行研究任务。</div><p>共享文件与成果记录保留为只读。请确认团队已保存工作。</p><label class="file-choice"><input type="checkbox" id="archive-confirm">我已确认团队工作已保存</label></div><div class="modal-footer"><button onclick="closeModal()">取消</button><button class="danger" id="archive-submit" disabled>结束并归档</button></div>`);$('#archive-confirm').onchange=e=>$('#archive-submit').disabled=!e.target.checked;$('#archive-submit').onclick=()=>{space.state='已归档';space.instance='已停止';closeModal();renderAll();toast('空间已归档（原型示例）')}}
+function showLoginEntry(){openDialog('登录','<div class="modal-body"><p class="hint">当前页面使用示例账号展示科研空间，未接入真实账号认证。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>')}function showConsultEntry(){openDialog('合作咨询','<div class="modal-body"><p>北大荒智慧农业协同创新平台</p><p class="hint">合作咨询内容与联系方式待接入。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>')}
+function renderAll(){renderHeading();renderResources();renderFiles();renderInstance();renderMembers();renderRecords()}renderAll();
+</script><style>
+:root{--green:#176b48;--ink:#23364a;--muted:#7c8997;--line:#e3e9ed}body{color:var(--ink)}.signed-user{font-size:13px;color:#607083}.detail-main .primary,.modal-footer .primary{background:var(--green);border-color:var(--green)}main.detail-main{padding:26px 36px 32px}.space-heading h1{font-size:25px}.heading-actions{gap:10px}.heading-actions .primary{color:white}.heading-actions button{border-color:#b6cec2}.panel-head h2{font-size:17px}.resource-table th,.resource-table td{padding:10px 12px}.file-table th,.file-table td{font-size:13px;height:39px}.file-table .filename{font-size:13px}.detail-columns{grid-template-columns:minmax(0,1fr) 336px}.my-role{font-size:12px;background:#eaf2ed}.heading-meta{font-size:13px}.badge.status-pass{background:#e9f5ed;color:#237145}.badge.status-wait{background:#fff4df;color:#a47117}.badge.status-back{background:#fceceb;color:#ba514c}.badge.status-archive{background:#eef1f5;color:#67758a}.badge{display:inline-flex;font-size:11px;line-height:1.5;border-radius:4px;padding:3px 7px}.notice-strip{padding:14px 18px;background:#fff9ec;border:1px solid #f0dfb8;border-radius:6px;margin-bottom:18px;display:flex;align-items:center;gap:14px;font-size:13px}.notice-strip>div{flex:1}.notice-strip strong{display:block;margin-bottom:5px}.notice-strip p{margin:0;color:#8a7753;line-height:1.7}.outcome-summary{display:flex;gap:25px;padding:0 20px 15px;color:#718092;font-size:12px}.outcome-summary b{color:#243c50;font-size:19px;margin-right:5px;font-weight:600}.result-table{width:100%;white-space:normal}.result-table th{background:#f5f7fa;color:#728093;font-weight:400;font-size:12px}.result-table td,.result-table th{padding:13px 15px;border-right:0;text-align:left}.result-table td{font-size:12px}.result-table td strong{display:block;font-size:13px;font-weight:600;margin-bottom:4px}.result-table small{color:#82909f;display:block;line-height:1.6}.text-btn{border:0;background:none;color:var(--green);padding:3px 0;min-height:24px;font-size:12px!important}.text-btn+.text-btn{margin-left:12px}.type-square{width:32px;height:34px;display:grid;place-items:center;border-radius:6px;background:#edf3fc;color:#4e79ac;font-weight:600}.type-square.data{background:#eaf4ee;color:#368161}.type-square.archive{background:#f3f0fa;color:#8c75a6}.result-title{display:flex;align-items:center;gap:10px}.result-bottom{padding:11px 20px;color:#8591a0;font-size:12px;display:flex;justify-content:space-between}.result-bottom span{line-height:1.7}.section-note{font-size:12px;color:#7a8999;padding:0 20px 12px;margin:0}.side-tip{padding:16px 19px;background:#f0f5f2;border:1px solid #e0eae4;border-radius:6px}.side-tip strong{font-size:13px;color:#36634d}.side-tip p{font-size:12px;line-height:1.9;color:#718578;margin:8px 0 0}.tiny-timeline{display:flex;flex-direction:column;gap:12px;padding:2px 20px 18px;font-size:12px;color:#6e7f90}.tiny-timeline b{color:#3e5368;font-weight:500}.tiny-timeline span{display:block;margin-left:15px;margin-top:4px;color:#98a1ad;font-size:11px}dialog.wide{width:min(1120px,94vw);max-width:1120px;max-height:92vh;padding:0;border:0;border-radius:9px;box-shadow:0 24px 100px #142c3c30}dialog::backdrop{background:#14253666;backdrop-filter:blur(2px)}dialog.wide .modal-head{padding:21px 26px;border-bottom:1px solid var(--line)}dialog.wide .modal-head h2{font-size:19px}.wizard-top{padding:18px 26px 16px;border-bottom:1px solid var(--line);background:#fbfcfd}.steps{display:flex;justify-content:center;gap:35px}.step{display:flex;gap:8px;align-items:center;color:#98a1ac;font-size:13px}.step i{font-style:normal;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#edf0f3;font-size:12px}.step.on{color:var(--green);font-weight:600}.step.on i{background:var(--green);color:white}.wizard-content{height:min(590px,62vh);overflow:auto;background:#fff}.composer{display:grid;grid-template-columns:215px minmax(0,1fr);min-height:100%}.item-rail{padding:18px 13px;background:#f7f9fa;border-right:1px solid var(--line)}.rail-label{font-size:11px;letter-spacing:1px;color:#8a97a4;margin:0 8px 12px}.item-button{width:100%;text-align:left;background:transparent;border:1px solid transparent;padding:12px;border-radius:5px;margin-bottom:7px}.item-button.active{background:#fff;border-color:#a9c9b7;box-shadow:0 2px 6px #23573906}.item-button b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item-button small{display:block;color:#8b98a4;font-size:11px;margin-top:6px}.item-add{width:100%;border:1px dashed #b8c9c0;color:#377556;background:#fff;margin-top:8px;font-size:12px;padding:9px}.editor{padding:23px 27px}.editor h3,.review-body h3{font-size:15px;margin:0 0 15px}.editor-top{display:flex;align-items:center;justify-content:space-between}.required{color:#c35b51;margin-left:3px}.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 20px}.type-card{padding:12px 14px;border:1px solid #dce3e8;border-radius:5px;text-align:left;color:#53657a;background:white}.type-card.active{border-color:#418363;background:#f0f7f3;box-shadow:inset 0 0 0 1px #418363}.type-card strong{font-size:13px;display:block}.type-card small{font-size:11px;color:#8996a0;display:block;margin-top:6px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.field{display:block;font-size:12px;color:#5e7081;margin:0!important}.field.full{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;display:block;border:1px solid #dce3e8;border-radius:4px;padding:9px 11px;margin:7px 0 0!important;font:inherit;color:#31485a;background:white;box-sizing:border-box}.field textarea{resize:vertical;min-height:67px;line-height:1.7}.field input:focus,.field textarea:focus,.field select:focus{outline:2px solid #dbece1;border-color:#66997c}.field input[readonly]{background:#f5f7f9;color:#81909e}.field-help{color:#91a0ac;font-size:11px;margin-top:6px;line-height:1.6}.materials-heading{display:flex;align-items:center;justify-content:space-between;margin-top:25px;margin-bottom:12px}.materials-heading h3{margin:0}.materials-heading span{font-size:12px;color:#7c8d99}.material-row{border:1px solid #e3e9ed;border-bottom:0;display:grid;grid-template-columns:170px minmax(0,1fr) 104px;gap:12px;padding:12px;align-items:center}.material-row:first-child{border-radius:5px 5px 0 0}.material-row:last-child{border-bottom:1px solid #e3e9ed;border-radius:0 0 5px 5px}.material-name{font-size:12px;font-weight:500}.material-name small{font-size:10px;color:#91a0ac;display:block;line-height:1.5;margin-top:4px;font-weight:400}.material-selected{font-size:11px;line-height:1.6;overflow-wrap:anywhere;color:#377458}.material-selected.empty{color:#a3aeb7}.material-row button{font-size:11px;border-color:#cad8d0;color:#367151;background:white;padding:7px;white-space:nowrap}.inline-info{padding:10px 12px;background:#f4f7fa;color:#758599;font-size:11px;line-height:1.8;margin:15px 0 0;border-radius:4px}.wizard-footer{padding:15px 26px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;background:#fff}.wizard-footer .foot-left{flex:1;color:#8c98a6;font-size:12px}.wizard-footer button{font-size:13px;padding:9px 19px}.wizard-footer .primary{background:var(--green);border-color:var(--green);color:white}.error-box{background:#fff3f1;border:1px solid #efd6d0;color:#b45346;padding:12px 15px;border-radius:5px;font-size:12px;line-height:1.8;margin-bottom:16px}.ok-box{background:#eff7f1;border:1px solid #d5e8d9;color:#40734e;padding:13px 16px;border-radius:5px;font-size:12px;line-height:1.8;margin-bottom:18px}.review-body{padding:22px 28px}.check-card{border:1px solid var(--line);border-radius:6px;margin-bottom:14px;overflow:hidden}.check-card-head{padding:13px 16px;background:#f7f9fa;display:flex;justify-content:space-between;align-items:center;font-size:13px}.check-list{padding:12px 17px;display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:12px}.check-good{color:#47805d}.check-bad{color:#b45c4f}.picker-path{font-size:12px;color:#667c6d;background:#f1f6f3;border:1px solid #e0eae4;border-radius:4px;padding:10px 13px;margin-bottom:14px}.picker-list{display:flex;flex-direction:column;gap:8px}.picker-file{display:flex!important;align-items:center;gap:12px;border:1px solid var(--line);padding:12px 14px;border-radius:5px;margin:0!important;cursor:pointer}.picker-file input{width:16px!important;margin:0!important;accent-color:var(--green)}.picker-file>span{flex:1;font-size:12px}.picker-file small{display:block;color:#94a0ae;margin-top:4px;font-size:11px}.picker-file em{font-size:11px;font-style:normal;color:#9aa5af}.picker-file.disabled{background:#f7f8fa;cursor:not-allowed;opacity:.7}.upload-local{display:inline-flex;align-items:center;gap:8px;color:var(--green);border:1px solid #c2d6c8;border-radius:4px;padding:8px 12px;cursor:pointer;font-size:12px;margin:0!important}.upload-local input{display:none}.empty-state{text-align:center;padding:35px;color:#8995a4;font-size:13px}.final-row{border:1px solid var(--line);border-radius:5px;margin:12px 0;padding:15px 17px;display:grid;grid-template-columns:24px 1fr 140px;gap:12px;align-items:start}.final-row input[type=checkbox]{width:16px;accent-color:var(--green);margin-top:4px}.final-row strong{font-size:13px}.final-row p{color:#8a97a4;font-size:12px;line-height:1.7;margin:7px 0}.final-row select,.final-row input[type=text]{padding:7px 9px;border:1px solid #dfe6eb;border-radius:4px;font-size:12px;color:#607388;background:white}.final-row select{width:100%}.final-row input[type=text]{display:block;width:100%;box-sizing:border-box}.final-actions{text-align:right}.final-note{padding:14px 16px;background:#f6f8fa;border-radius:5px;font-size:12px;color:#748598;line-height:1.8}.check-label{display:flex!important;align-items:flex-start;gap:9px;font-size:12px!important;color:#657589;margin:13px 0!important;line-height:1.7}.check-label input{width:15px!important;margin:3px 0 0!important;accent-color:var(--green)}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat-box{border:1px solid var(--line);border-radius:5px;padding:16px 18px;font-size:12px;color:#7b8d9e}.stat-box b{font-size:25px;display:block;color:#2d4b3c;margin-bottom:5px}.detail-kv{display:grid;grid-template-columns:1fr 1fr;gap:15px;font-size:12px;margin-bottom:18px}.detail-kv span{color:#8c9ba7;display:block;margin-bottom:5px}.audit-note{border-left:3px solid #72a285;background:#f4f8f5;padding:12px 15px;font-size:12px;line-height:1.8;color:#5c7866}.audit-note.back{border-color:#d59a73;background:#fff8f1;color:#996b47}.version-line{font-size:12px;display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.version-line .badge{margin-left:auto}.modal-head .close{border:0;background:transparent;font-size:24px;color:#8c99a5}.divider-title{margin-top:23px!important}.cancel-link{color:#9d6b5e!important}.history-actions{display:flex;gap:12px;align-items:center}.frozen-list{margin:12px 0;padding:0;list-style:none}.frozen-list li{padding:11px 0;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between}.subtitle-sm{color:#8997a5;font-size:12px;line-height:1.8;margin:0 0 16px}.modal-footer{background:white}button:disabled{opacity:.45;cursor:not-allowed}footer{margin-top:0}.feedback{line-height:1.8}@media(max-width:1000px){.detail-columns{grid-template-columns:1fr}.side-column{display:grid;grid-template-columns:1fr 1fr}.side-column>section:first-child{grid-row:auto}.composer{grid-template-columns:170px 1fr}.editor{padding:18px}.material-row{grid-template-columns:130px 1fr 90px}.steps{gap:15px}}@media(max-width:680px){main.detail-main{padding:18px 12px}.side-column{display:flex}.composer{display:block}.item-rail{border-right:0;display:flex;gap:5px;overflow:auto;padding:10px}.item-button{min-width:130px;margin:0}.item-add{min-width:100px;margin:0}.rail-label{display:none}.form-grid{grid-template-columns:1fr}.type-grid{gap:5px}.type-card{padding:9px}.steps{gap:8px}.step{font-size:11px}.check-list{grid-template-columns:1fr}.material-row{grid-template-columns:115px 1fr}.material-row button{grid-column:2}.final-row{grid-template-columns:22px 1fr}.final-actions{grid-column:2}.review-body{padding:17px}.wizard-footer{padding:12px}.wizard-footer button{padding:8px 10px}.wizard-footer .foot-left{font-size:10px}.stats-grid{gap:6px}.result-table{min-width:650px}.signed-user{display:none}}
+</style>
+<style>
+dialog.light{width:min(700px,94vw);max-width:700px;border:0;border-radius:8px;padding:0;max-height:92vh;box-shadow:0 22px 80px #1834272b}dialog.light .modal-head{padding:20px 24px;border-bottom:1px solid #e5eaee}dialog.light .modal-head h2{font-size:18px}.light-body{padding:22px 25px;overflow:auto;max-height:calc(90vh - 156px)}.light-body .field{margin-bottom:18px!important}.light-body .field textarea{min-height:88px}.light-footer{padding:15px 24px;border-top:1px solid #e5eaee;display:flex;gap:10px;align-items:center}.light-footer>span{flex:1;color:#86939d;font-size:11px}.light-footer button{padding:9px 21px;font-size:13px}.light-footer .primary{background:#176b48;color:#fff;border-color:#176b48}.simple-types{display:flex;gap:10px;margin-top:9px}.simple-types button{padding:10px 30px;background:#fff;border:1px solid #d8e2dc;color:#637486;border-radius:4px;font-size:13px}.simple-types button.selected{border-color:#2d805b;color:#176b48;background:#eff7f2;box-shadow:inset 0 0 0 1px #2d805b}.simple-types button:disabled{opacity:1}.file-selection{margin-top:8px;padding:14px;border:1px solid #dce5e0;border-radius:5px;background:#fafcfb}.file-selection-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px}.file-selection-top b{color:#405e4f;font-weight:500}.file-selection-top button{font-size:12px;color:#176b48;border:1px solid #bad0c2;padding:6px 11px;background:white}.file-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.file-tag{background:#edf3ef;border-radius:3px;font-size:11px;color:#5c7967;padding:4px 7px}.selection-empty{color:#95a19b;font-size:12px;margin:12px 0 2px}.inline-files{margin-top:12px;border-top:1px solid #e2e8e4;padding-top:10px;max-height:260px;overflow:auto}.folder-head{display:flex;align-items:center;gap:9px;font-size:12px;padding:9px 5px;font-weight:600;color:#496553;background:#f0f5f2}.folder-head input,.simple-file input{width:15px!important;margin:0!important;accent-color:#176b48}.simple-file{display:flex!important;align-items:center;gap:9px;font-size:12px;margin:0!important;padding:8px 8px 8px 25px;border-bottom:1px solid #edf1ee}.simple-file span{flex:1;word-break:break-all}.simple-file small{font-size:10px;color:#97a39d}.material-hint{margin:10px 0 0;color:#7c8d82;font-size:11px;line-height:1.8}.material-hint summary{cursor:pointer;color:#53745f}.material-hint p{margin:5px 0}.light-error{font-size:12px;line-height:1.9;color:#b35f48;border-radius:4px;background:#fff3ee;padding:10px 13px;margin-bottom:16px}.light-error:empty{display:none}.simple-end-choice{border:1px solid #dce5e0;border-radius:5px;padding:14px 15px;margin-bottom:12px}.simple-end-choice.active{border-color:#82ad93;background:#f7fbf8}.simple-end-choice>label{display:flex;align-items:center;gap:10px;margin:0!important;font-size:13px;color:#3c5245;cursor:pointer}.simple-end-choice input[type=radio]{width:15px!important;margin:0!important;accent-color:#176b48}.end-content{padding:12px 0 0 25px}.end-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #e7eee9;font-size:12px}.end-item:last-child{border-bottom:0}.end-item>span:first-child{flex:1}.end-item .text-btn{white-space:nowrap}.end-help{font-size:12px;color:#88968d;line-height:1.8;margin:6px 0}.simple-hint{font-size:12px;line-height:1.8;color:#7b8d81;margin:0 0 17px}.result-table td,.result-table th{padding:15px 20px}.result-table th:first-child{width:48%}.result-table{min-width:0}.side-column{align-self:start}.detail-columns{grid-template-columns:minmax(0,1fr) 336px}.result-table small{display:none}.compact-summary{font-size:13px;line-height:1.9;color:#64796d;margin-bottom:18px}.simple-history{font-size:12px;color:#7b8c81;margin-top:18px}.simple-history summary{cursor:pointer}.lite-empty{font-size:12px;line-height:1.8;color:#8a988e;padding:8px 0}.end-absence textarea{width:100%;box-sizing:border-box;border:1px solid #d8e2dc;border-radius:4px;min-height:74px;padding:9px;margin-top:10px;font:inherit;font-size:12px;resize:vertical}.no-hscroll{overflow-x:auto}@media(max-width:1000px){.detail-columns{grid-template-columns:1fr}.side-column{display:grid;grid-template-columns:1fr 1fr}}@media(max-width:680px){.side-column{display:flex}.light-body{padding:18px}.light-footer{padding:13px 18px}.light-footer>span{font-size:10px}.simple-types button{flex:1;padding:9px}.result-table{min-width:520px}.file-selection-top{flex-wrap:wrap}}
+</style>
+<script>
+// Upload history: each successful upload produces one immutable record.
+let outcomes=[
+{id:'upload-sample-files',name:'水稻倒伏识别实验结果',method:'files',contentType:'model',time:'2026-09-20 10:30:00',author:'张三',description:'本次实验的模型文件与验证报告。',files:[{name:'model_v1.pt',path:'/results/model_v1.pt',size:'86.4 MB',source:'space'},{name:'validation_report.pdf',path:'/results/validation_report.pdf',size:'3.2 MB',source:'space'},{name:'模型使用说明.md',path:'/results/模型使用说明.md',size:'8 KB',source:'space'}]},
+{id:'upload-sample-image',name:'倒伏识别开发环境',method:'image',contentType:'image',time:'2026-09-19 15:20:00',author:'张三',description:'保存本阶段的开发环境与研究文件。',files:[{name:'rice-research-env-20260919.tar',size:'—',source:'image'}],image:{name:'rice-lodging-dev:1.2',runtime:'Python 3.10 · PyTorch 2.2',includeResearch:true}},
+{id:'upload-sample-dataset',name:'倒伏标注样本集',method:'files',contentType:'dataset',time:'2026-09-18 16:40:00',author:'张三',description:'本阶段整理并标注的倒伏样本数据，含字段说明与数据质量报告。',files:[{name:'倒伏样本.csv',path:'/results/倒伏样本.csv',size:'28.6 MB',source:'space'},{name:'标注样本.zip',path:'/results/标注样本.zip',size:'156 MB',source:'space'},{name:'数据使用说明.md',path:'/results/数据使用说明.md',size:'8 KB',source:'space'}]},
+{id:'upload-sample-image-2',name:'训练环境镜像快照',method:'image',contentType:'image',time:'2026-09-17 11:05:00',author:'张三',description:'记录训练阶段的镜像与环境配置，便于复现实验。',files:[{name:'rice-lodging-train-20260917.tar',size:'—',source:'image'}],image:{name:'rice-lodging-train:1.0',runtime:'Python 3.10 · PyTorch 2.1',includeResearch:false}}
+];
+const UPLOAD_SCHEMA=3;
+let closure=null;
+function normalizeUploadHistory(items){
+ if(!Array.isArray(items))return [];
+ return items.flatMap((o,i)=>{
+  if(Array.isArray(o.versions))return o.versions.map((v,j)=>({id:String(o.id)+'-upload-'+j,name:o.name||'成果文件',method:'files',contentType:o.type==='model'?'model':o.type==='data'?'dataset':'unspecified',time:v.time||'',author:v.author||o.author||'',description:v.description||'',files:(v.files||[]).map(f=>typeof f==='string'?{name:f,size:'—',source:'space'}:{name:f.name,path:f.path||'',size:f.size||'—',source:f.source||'space'})}));
+  return [{id:o.id||'upload-'+i,name:o.name||'成果文件',method:o.method==='image'?'image':'files',contentType:o.method==='image'?'image':['model','dataset'].includes(o.contentType)?o.contentType:'unspecified',time:o.time||'',author:o.author||'',description:o.description||'',files:(o.files||[]).map(f=>typeof f==='string'?{name:f,size:'—',source:'space'}:{name:f.name,path:f.path||'',size:f.size||'—',source:f.source||'space'}),...(o.image?{image:{name:o.image.name||'',runtime:o.image.runtime||'',includeResearch:o.image.includeResearch===true}}:{})}];
+ }).sort((a,b)=>(Date.parse(b.time)||0)-(Date.parse(a.time)||0));
+}
+const catalog=[
+['model_v1.pt','86.4 MB'],['model_v1_1.pt','88.1 MB'],['model.onnx','82.3 MB'],['algorithm.py','26 KB'],['inference.py','12 KB'],['requirements.txt','2 KB'],['模型使用说明.md','8 KB'],['测试输入.json','16 KB'],['预期输出.json','4 KB'],['validation_report.pdf','3.2 MB'],['倒伏样本.csv','28.6 MB'],['田块边界.geojson','12.8 MB'],['长势影像.tif','120 MB'],['标注样本.zip','156 MB'],['字段说明.md','6 KB'],['数据使用说明.md','8 KB'],['数据质量报告.pdf','1.8 MB'],['研究总结.pdf','2.3 MB']
+].map((x,i)=>({id:'file'+i,name:x[0],size:x[1],bytes:1000+i,path:'/results/'+x[0],source:'space'}));
+for(const f of catalog)if(!directories.results.some(x=>x.name===f.name))directories.results.push({name:f.name,size:f.size,time:'09-21 09:15',author:'张三',note:'团队成果材料'});
+const resultPanel=$('#records').closest('section');$('.main-column').appendChild(resultPanel);resultPanel.id='outcome-panel';resultPanel.querySelector('h2').textContent='成果上传记录';
+let simpleDraft=null,returnToEnd=false,endMode='existing',endReason='',endSaved=false;
+const groups=[{label:'倒伏识别模型',ids:['file1','file4','file5','file6','file7','file8','file9']},{label:'倒伏标注样本集',ids:['file10','file14','file15','file16']},{label:'其他研究文件',ids:['file0','file2','file3','file11','file12','file13','file17']}];
+const baseDialog=openDialog;openDialog=function(title,html){modal.classList.remove('wide','light');baseDialog(title,html)};
+function lightDialog(title,html,buttons,hint=''){openDialog(title,`<div class="light-body">${html}</div><div class="light-footer"><span>${hint}</span>${buttons}</div>`);modal.classList.add('light')}
+function simpleFieldError(messages){$('#simple-errors').innerHTML=messages.map(esc).join('<br>');if(messages.length)$('#simple-errors').scrollIntoView({block:'nearest',behavior:'smooth'})}
+
+let uploadPage=1,uploadPageSize=5,uploadJob=null,uploadSequence=0;
+function renderHeading(){const arch=space.state==='已归档';$('#heading').innerHTML=`<section class="space-heading"><div class="heading-text"><div class="heading-tags"><h1>${esc(space.name)}</h1><span class="badge ${arch?'status-archive':'status-pass'}">${arch?'已结束':'研究中'}</span></div><div class="heading-meta"><span>所属团队：<b>${esc(space.team)}</b></span><span>负责人：<b>张三</b></span></div></div><div class="heading-actions"><span class="my-role">${space.role}</span>${owner()?arch?'<button onclick="showClosure()">查看结束记录</button><button class="primary" onclick="resumeResearch()">继续研究</button>':'<button class="primary" onclick="submitResult()">上传成果</button><button onclick="archiveSpace()">结束研究</button>':''}</div></section>`;$('#archive-note').innerHTML=arch?'<div class="notice-strip"><div><strong>研究已结束</strong><p>研究文件与成果上传记录继续保留，可随时查看。</p></div></div>':'';$('#upload-button').hidden=!editable();$('#resource-mount').hidden=!canManage();$('#manage-members').hidden=!canManage()}
+function uploadMethod(r){return r.method==='image'?'镜像打包上传':'选择文件上传'}
+function uploadContentType(r){return ({image:'开发镜像',model:'模型文件',dataset:'数据合集',unspecified:'未标注'})[r.contentType]||'未标注'}
+function uploadAuthor(r){return r.author||(owner()?'张三':'李四')}
+function uploadTime(){const d=new Date(),pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
+function renderRecords(){
+ $('#record-count').textContent=outcomes.length+' 条';const totalPages=Math.max(1,Math.ceil(outcomes.length/uploadPageSize));uploadPage=Math.min(uploadPage,totalPages);
+ $('#records').innerHTML=outcomes.length?`<div class="no-hscroll"><table class="result-table upload-record-table"><thead><tr><th>上传时间</th><th>上传内容</th><th>文件类型</th><th>上传方式</th><th>上传人</th><th>操作</th></tr></thead><tbody>${outcomes.slice((uploadPage-1)*uploadPageSize,uploadPage*uploadPageSize).map((r,i)=>`<tr><td class="upload-time">${esc(r.time)}</td><td><strong>${esc(r.name)}</strong><small>${esc(r.files.slice(0,2).map(f=>f.name).join('、'))}${r.files.length>2?' 等 '+r.files.length+' 个文件':''}</small></td><td><span class="upload-content-tag">${uploadContentType(r)}</span></td><td>${uploadMethod(r)}</td><td>${esc(uploadAuthor(r))}</td><td><button class="text-btn" onclick="showOutcome(${(uploadPage-1)*uploadPageSize+i})">查看</button></td></tr>`).join('')}</tbody></table></div><div class="upload-pagination"><span>共 ${outcomes.length} 条记录</span><label>每页 <select aria-label="上传记录每页条数" onchange="uploadPageSize=Number(this.value);uploadPage=1;renderRecords()">${[5,10,20].map(n=>`<option ${n===uploadPageSize?'selected':''}>${n}</option>`).join('')}</select> 条</label><button ${uploadPage===1?'disabled':''} onclick="uploadPage--;renderRecords()">上一页</button><span>${uploadPage} / ${totalPages}</span><button ${uploadPage===totalPages?'disabled':''} onclick="uploadPage++;renderRecords()">下一页</button></div>`:'<div class="empty-state">暂无成果上传记录</div>';
+}
+function syncResearchFiles(){for(const [dir,items]of Object.entries(directories)){for(const f of items){if(f.folder)continue;const path='/'+[dir,f.name].filter(Boolean).join('/');if(catalog.some(x=>x.path===path))continue;const id='workspace'+catalog.length;catalog.push({id,name:f.name,size:f.size||'—',bytes:1,path,source:'space'});groups[2].ids.push(id)}}}
+function submitResult(){if(!canManage()||uploadJob)return;syncResearchFiles();returnToEnd=modal.open&&!!$('#simple-end');simpleDraft={method:'image',contentType:'',name:space.name+'成果',description:'',ids:[],localFiles:[],picker:true,filter:'',includeResearch:true};renderSimpleSubmit()}
+function setUploadMethod(method){simpleDraft.method=method;renderSimpleSubmit()}
+function canPackageImage(){return space.instance==='运行中'&&compute.ready&&compute.allocation!=='released'}
+function renderSimpleSubmit(){const d=simpleDraft,selected=catalog.filter(f=>d.ids.includes(f.id));
+ lightDialog('上传成果',`<div id="simple-errors" class="light-error" role="alert"></div><div class="upload-methods"><button type="button" class="${d.method==='image'?'selected':''}" onclick="setUploadMethod('image')" aria-pressed="${d.method==='image'}"><span class="method-symbol">▣</span><span><strong>整个镜像打包上传</strong><small>打包当前开发环境</small></span><i>${d.method==='image'?'●':'○'}</i></button><button type="button" class="${d.method==='files'?'selected':''}" onclick="setUploadMethod('files')" aria-pressed="${d.method==='files'}"><span class="method-symbol">▤</span><span><strong>选择文件上传</strong><small>选择空间文件或本地文件</small></span><i>${d.method==='files'?'●':'○'}</i></button></div><label class="field">成果名称<span class="required">*</span><input id="outcome-name" maxlength="80" value="${esc(d.name)}" placeholder="请输入本次上传的成果名称" oninput="simpleDraft.name=this.value"></label>${d.method==='image'?`<div class="upload-image-info"><div><span>来源空间</span><strong>${esc(space.name)}</strong></div><div><span>开发镜像</span><strong>${esc(compute.image||'当前实例镜像')}</strong></div><div><span>运行环境</span><strong>${esc(compute.runtime)}</strong></div><div><span>开发工具</span><strong>${esc(space.ide||'JupyterLab 4')}</strong></div></div><label class="upload-research-check"><input type="checkbox" ${d.includeResearch?'checked':''} onchange="simpleDraft.includeResearch=this.checked"><span>随包包含研究文件</span></label><p class="upload-help">包含当前镜像及环境变更，可随包包含研究文件。挂载的授权模型和数据不重复打包。</p><p class="upload-help">打包前请保存代码与文件，未保存内容及内存中的运行进度不包含在内。</p>${!canPackageImage()?'<div class="light-error">请先启动开发实例，再进行镜像打包上传。</div>':''}`:`<fieldset class="upload-content-types"><legend>内容类型<span class="required">*</span></legend><div><label><input type="radio" name="upload-content-type" value="dataset" ${d.contentType==='dataset'?'checked':''} onchange="simpleDraft.contentType=this.value"><span>数据合集</span></label><label><input type="radio" name="upload-content-type" value="model" ${d.contentType==='model'?'checked':''} onchange="simpleDraft.contentType=this.value"><span>模型文件</span></label></div><p>数据合集可包含数据、标注和字段说明；模型文件可包含权重、运行代码和使用说明。</p></fieldset><div class="upload-files-head"><strong>成果文件 <span class="required">*</span></strong><label class="upload-local">＋ 添加本地文件<input type="file" multiple onchange="addResultFiles(this.files)"></label></div><div class="upload-file-picker"><div class="upload-file-filter"><input id="outcome-file-filter" value="${esc(d.filter)}" placeholder="搜索空间内的文件名称或路径" oninput="simpleDraft.filter=this.value;renderUploadFiles()"></div><div id="outcome-file-options" class="upload-file-options"></div></div><div id="upload-selected-list"></div>`}<label class="field" style="margin-top:19px!important">备注 <span class="muted">（选填）</span><textarea maxlength="500" placeholder="说明本次上传的内容" oninput="simpleDraft.description=this.value">${esc(d.description)}</textarea></label>`,`<button onclick="cancelSimpleSubmit()">取消</button><button class="primary" id="confirm-outcome-upload" onclick="commitSimpleResult()" ${d.method==='image'&&!canPackageImage()?'disabled':''}>${d.method==='image'?'打包并上传':'确认上传'}</button>`,returnToEnd?'上传后返回结束研究':'每次上传单独保留一条记录');
+ if(d.method==='files'){renderUploadFiles();renderSelectedUploads()}
+}
+function renderUploadFiles(){const d=simpleDraft,q=d.filter.toLowerCase(),items=catalog.filter(f=>f.source!=='local'&&(!q||(f.name+' '+f.path).toLowerCase().includes(q)));
+ $('#outcome-file-options').innerHTML=items.length?items.map(f=>`<label class="upload-file-option"><input type="checkbox" ${d.ids.includes(f.id)?'checked':''} data-upload-file="${esc(f.id)}"><span><strong>${esc(f.name)}</strong><small>${esc(f.path)}</small></span><em>${esc(f.size)}</em></label>`).join(''):'<p class="lite-empty">未找到匹配文件</p>';
+ $('#outcome-file-options').querySelectorAll('[data-upload-file]').forEach(el=>el.onchange=()=>{const id=el.dataset.uploadFile;d.ids=el.checked?[...new Set([...d.ids,id])]:d.ids.filter(x=>x!==id);renderSelectedUploads()})
+}
+function selectedUploadFiles(){return [...catalog.filter(f=>simpleDraft.ids.includes(f.id)).map(f=>({...f,source:'space'})),...simpleDraft.localFiles]}
+function renderSelectedUploads(){const selected=selectedUploadFiles();$('#upload-selected-list').innerHTML=`<div class="selected-upload-heading">已选择 ${selected.length} 个文件</div>${selected.length?`<div class="selected-upload-items">${selected.map(f=>`<div><span>${esc(f.name)}<small>${f.source==='local'?'本地文件':esc(f.path)}</small></span><button class="text-btn" data-remove-upload="${esc(f.id)}" aria-label="移除${esc(f.name)}">移除</button></div>`).join('')}</div>`:'<p class="upload-help">勾选上方空间文件，或添加本地文件。</p>'}`;$('#upload-selected-list').querySelectorAll('[data-remove-upload]').forEach(b=>b.onclick=()=>{simpleDraft.ids=simpleDraft.ids.filter(id=>id!==b.dataset.removeUpload);simpleDraft.localFiles=simpleDraft.localFiles.filter(f=>f.id!==b.dataset.removeUpload);renderSelectedUploads();renderUploadFiles()})}
+function addResultFiles(fileList){const bad=[];for(const f of fileList){if(f.size===0){bad.push(f.name);continue}if(simpleDraft.localFiles.some(x=>x.name===f.name&&x.bytes===f.size&&x.lastModified===f.lastModified))continue;simpleDraft.localFiles.push({id:'local-'+Date.now()+'-'+Math.random().toString(36).slice(2),name:f.name,path:'',size:f.size>=1048576?(f.size/1048576).toFixed(1)+' MB':Math.max(1,Math.ceil(f.size/1024))+' KB',bytes:f.size,source:'local',lastModified:f.lastModified})}renderSelectedUploads();if(bad.length)simpleFieldError(['空文件未添加：'+bad.join('、')]);else simpleFieldError([])}
+function cancelSimpleSubmit(){if(uploadJob)cancelOutcomeUpload();else if(returnToEnd)renderSimpleEnd();else closeModal()}
+function cancelOutcomeUpload(){uploadSequence++;uploadJob=null;if(returnToEnd)renderSimpleEnd();else closeModal();toast('已取消本次上传')}
+function renderUploadProgress(stage,total){const image=uploadJob.draft.method==='image',steps=image?['打包开发镜像',...(uploadJob.draft.includeResearch?['整理研究文件']:[]),'上传镜像包']:['整理所选文件','上传成果文件'];lightDialog(image?'镜像打包上传':'上传成果',`<div class="upload-progress"><strong>${esc(uploadJob.draft.name)}</strong><p>${esc(steps[stage])}…</p><div class="upload-progress-track"><i style="width:${Math.round((stage+1)/(total+1)*100)}%"></i></div><div class="upload-progress-steps">${steps.map((s,i)=>`<span class="${i<=stage?'on':''}">${i<stage?'✓':i+1} ${s}</span>`).join('')}</div></div>`,`<button onclick="cancelOutcomeUpload()">取消上传</button>`,'原型上传预览')}
+async function commitSimpleResult(){
+ if(!canManage()||uploadJob)return;const d=structuredClone(simpleDraft),fs=selectedUploadFiles(),errors=[];
+ if(!d.name.trim())errors.push('请填写成果名称。');if(d.method==='files'&&!['model','dataset'].includes(d.contentType))errors.push('请选择内容类型：数据合集或模型文件。');if(d.method==='files'&&!fs.length)errors.push('请选择至少一个成果文件。');if(d.method==='image'&&!canPackageImage())errors.push('请先启动开发实例。');if(errors.length){simpleFieldError(errors);return}
+ const token=++uploadSequence;uploadJob={token,draft:d};const steps=d.method==='image'?(d.includeResearch?3:2):2;
+ for(let i=0;i<steps;i++){if(token!==uploadSequence)return;renderUploadProgress(i,steps);await new Promise(r=>setTimeout(r,500));}
+ if(token!==uploadSequence||!canManage()){uploadJob=null;return}
+ const time=uploadTime(),imageName='research-env-'+time.replace(/[-: ]/g,'')+'.tar';
+ const record={id:'upload-'+Date.now()+'-'+Math.random().toString(36).slice(2),name:d.name.trim(),method:d.method,contentType:d.method==='image'?'image':d.contentType,time,author:owner()?'张三':'李四',description:d.description.trim(),files:d.method==='image'?[{name:imageName,size:'—',source:'image'}]:fs.map(f=>({name:f.name,path:f.path||'',size:f.size,source:f.source})),...(d.method==='image'?{image:{name:compute.image||'当前实例镜像',runtime:compute.runtime,includeResearch:d.includeResearch}}:{})};
+ const next=[record,...outcomes];try{const all=readInstances();all[spaceId]={state:space.state,instance:space.instance,ide:space.ide,compute:{...compute},outcomes:next,closure,closureHistory,uploadRecordSchema:UPLOAD_SCHEMA,updated:Date.now()};localStorage.setItem(instanceKey,JSON.stringify(all));}catch{uploadJob=null;renderSimpleSubmit();simpleFieldError(['本地记录保存失败，请检查浏览器存储后重试。']);return}
+ outcomes=next;uploadJob=null;uploadPage=1;renderAll();if(returnToEnd){endMode='existing';renderSimpleEnd()}else closeModal();toast('已生成本次成果上传记录');
+}
+modal.addEventListener('close',()=>{if(uploadJob){uploadSequence++;uploadJob=null}});
+function showOutcome(i){const r=outcomes[i];if(!r)return;lightDialog('成果上传记录',`<h3 class="upload-detail-title">${esc(r.name)}</h3><div class="upload-record-meta"><div><span>上传时间</span><strong>${esc(r.time)}</strong></div><div><span>上传人</span><strong>${esc(uploadAuthor(r))}</strong></div><div><span>上传方式</span><strong>${uploadMethod(r)}</strong></div><div><span>内容类型</span><strong>${uploadContentType(r)}</strong></div><div><span>来源空间</span><strong>${esc(space.name)}</strong></div></div>${r.image?`<div class="upload-image-info"><div><span>开发镜像</span><strong>${esc(r.image.name)}</strong></div><div><span>运行环境</span><strong>${esc(r.image.runtime)}</strong></div><div><span>研究文件</span><strong>${r.image.includeResearch?'随包包含':'未包含'}</strong></div></div>`:''}<h4 class="upload-detail-subtitle">上传内容（${r.files.length}）</h4><div class="upload-detail-files">${r.files.map(f=>`<div><span><strong>${esc(f.name)}</strong><small>${f.source==='image'?'镜像归档包':f.source==='local'?'本地文件':esc(f.path||'空间文件')}</small></span><em>${esc(f.size||'—')}</em></div>`).join('')}</div>${r.description?`<h4 class="upload-detail-subtitle">备注</h4><p class="compact-summary">${esc(r.description)}</p>`:''}`,'<button onclick="closeModal()">关闭</button>')}
+function archiveSpace(){if(!canManage()||busy||uploadJob)return;endMode='existing';endReason='';renderSimpleEnd()}
+function renderSimpleEnd(){const has=outcomes.length>0;lightDialog('结束研究',`<div id="simple-end"><p class="simple-hint">${has?'当前已有 '+outcomes.length+' 条成果上传记录，结束研究后继续保留。':'当前暂无成果上传记录，也可以直接结束研究。'}</p>${has?`<div class="end-results">${outcomes.slice(0,3).map(r=>`<div class="end-item"><span>${esc(r.name)}<small class="end-upload-time">${esc(r.time)} · ${uploadMethod(r)}</small></span></div>`).join('')}</div>`:''}<div class="end-tools"><button class="text-btn" onclick="submitResult()">＋ 上传成果</button></div><label class="field" style="margin-top:16px!important">结束备注 <span class="muted">（选填）</span><textarea aria-label="结束备注" placeholder="有需要说明的情况，可在这里填写" oninput="endReason=this.value">${esc(endReason)}</textarea></label>${runningTasks.length?`<div class="task-warning"><strong>以下任务仍在运行，结束研究会中断任务：</strong><ul>${runningTasks.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:''}<div class="end-effect">结束后停止实例，研究文件与成果上传记录继续保留。</div></div>`,`<button onclick="closeModal()">暂不结束</button><button class="primary" onclick="commitSimpleEnd()">${runningTasks.length?'停止任务并结束研究':'结束研究'}</button>`)}
+function commitSimpleEnd(){if(!canManage()||uploadJob)return;closure={time:uploadTime(),items:outcomes.map(r=>({id:r.id,name:r.name,time:r.time,method:r.method,contentType:r.contentType})),reason:endReason.trim(),archiveOnly:!outcomes.length};closureHistory.push(structuredClone(closure));space.state='已归档';space.instance='已停止';runningTasks=[];closeModal();renderAll();toast('研究已结束，上传记录已保留')}
+function showClosure(){lightDialog('结束记录',closure?`<p class="compact-summary">结束时间：${esc(closure.time)}</p>${closure.items?.length?`<p class="simple-hint">结束时已保留 ${closure.items.length} 条成果上传记录。</p>`:'<div class="final-note">本次研究直接归档，研究文件继续保留。</div>'}${closure.reason?`<p class="compact-summary">备注：${esc(closure.reason)}</p>`:''}<p class="simple-hint">上传内容可在空间的成果上传记录中查看。</p>`:'<p class="simple-hint">研究文件与成果上传记录已保留。</p>','<button onclick="closeModal()">关闭</button>')}
+function resumeResearch(){if(!owner()||space.state!=='已归档')return;space.state='可用';space.instance='已停止';closeModal();renderAll();toast('已恢复研究，可按需启动实例')}
+const originalInstance=renderInstance;renderInstance=function(){originalInstance();if(space.state==='已归档'){$('#instance .instance-actions').innerHTML='<span class="muted">研究已结束，实例已停止</span>';$('#instance .instance-warning').textContent='继续研究后，可按需启动实例。'}};
+let runningTasks=[],closureHistory=[];
+
+renderAll();
+</script><style>.end-results{border:1px solid #e2e9e5;border-radius:5px;padding:0 15px}.end-tools{display:flex;justify-content:space-between;align-items:center;margin-top:12px}.end-tools .subtle{color:#8b9890;font-size:11px!important}.end-empty{border:1px dashed #cfdbd3;background:#f8fbf9;border-radius:6px;padding:24px;text-align:center}.end-empty strong{font-size:14px;font-weight:500;color:#496452}.end-empty p{font-size:12px;color:#8b988f;line-height:1.8}.end-effect{border-radius:4px;background:#f4f7f5;color:#6e8577;font-size:12px;padding:12px 14px;line-height:1.8;margin-top:20px}.task-warning{margin-top:18px;padding:12px 15px;font-size:12px;background:#fff6e7;color:#947341;border-radius:5px;line-height:1.8}.task-warning ul{margin:5px 0;padding-left:20px}.notice-strip{background:#f0f6f2;border-color:#dce8e0}.notice-strip p{color:#758b7c}</style><style>.instance-meta{font-size:12px;color:#718396;line-height:1.9}.instance-meta b{font-weight:500;color:#354f63}.instance-message{font-size:12px;line-height:1.8;padding:10px 12px;background:#f2f6f4;color:#547764;border-radius:4px;margin:12px 0}.instance-message.warn{background:#fff5e7;color:#9b753e}.instance-message.error{background:#fff1ed;color:#ac6250}.instance-actions .inline-link{border:0;background:none;padding:0;color:#347458;min-height:24px;font-size:12px}.instance-detail{font-size:11px;color:#81928a;margin:10px 0}.instance-detail summary{cursor:pointer}.space-return{display:inline-block;text-decoration:none;color:#648171;font-size:12px;margin-bottom:15px}.service-dot{width:6px;height:6px;background:#2d9461;border-radius:50%;display:inline-block;margin-right:5px}.instance-note{line-height:1.8}.instance-state{max-width:145px}.instance-state .badge{font-size:12px}.instance-warning{line-height:1.7}</style>
+<script>
+// All infrastructure responses below are local prototype fixtures, not a cloud connection.
+const instanceKey='agri-research-instance-v7',spaceId=q.get('id')||'1';
+function readInstances(){try{return JSON.parse(localStorage.getItem(instanceKey)||'{}')}catch{return {}}}
+const snapshot=readInstances()[spaceId];
+let compute={image:q.get('image')||'',systemDisk:Number(q.get('systemDisk'))||0,allocation:q.get('allocation')||'retained',ready:q.get('ready')!=='false',gpu:q.get('gpu')||'未配置 GPU',runtime:q.get('runtime')||'Python 3.10 · PyTorch 2.2',detail:q.get('environment')||'Ubuntu 22.04 · JupyterLab 4',error:q.get('error')||'开发环境启动失败，请重试；如仍失败可联系管理员。'};
+if(snapshot){space.state=snapshot.state||space.state;space.instance=snapshot.instance||space.instance;compute={...compute,...snapshot.compute};if(snapshot.outcomes&&(snapshot.uploadRecordSchema||0)>=UPLOAD_SCHEMA)outcomes=normalizeUploadHistory(snapshot.outcomes);if(snapshot.closure)closure=snapshot.closure;if(snapshot.closureHistory)closureHistory=snapshot.closureHistory;}
+else{if(['准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(q.get('instance')))space.instance=q.get('instance');}
+if(!['准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(space.instance))space.instance='已停止';
+if(space.state==='已归档'&&['运行中','启动中','准备中'].includes(space.instance))space.instance='已停止';
+let instanceOp=0,autoEnter=false;
+function saveInstance(){const all=readInstances();all[spaceId]={state:space.state,instance:space.instance,ide:space.ide,compute:{...compute},outcomes,closure,closureHistory,uploadRecordSchema:UPLOAD_SCHEMA,updated:Date.now()};try{localStorage.setItem(instanceKey,JSON.stringify(all))}catch{}}
+function refreshInstance(){busy=['准备中','启动中','停止中'].includes(space.instance);renderInstance();saveInstance()}
+function renderInstance(){const st=space.instance,arch=space.state==='已归档',active=st==='运行中'&&compute.ready,own=owner();let message='',tone='',action='';
+if(arch){message=compute.allocation==='released'?'研究已结束，计算资源已回收。继续研究时自动准备环境。':'研究已结束，实例已停止。继续研究后可按需启动。';action='<button disabled>研究已结束</button>';}
+else if(st==='准备中'||st==='启动中'){message=st==='准备中'?'正在准备运行环境并连接研究目录。':'正在启动开发服务，准备完成后自动进入。';action='<button disabled>正在准备，请稍候…</button>';}
+else if(st==='等待算力'){message='当前算力繁忙，正在等待可用资源；研究文件仍可查看。';tone='warn';action='<button disabled>等待算力</button>'+(own?'<button class="inline-link" onclick="cancelWaiting()">取消等待</button>':'');}
+else if(st==='停止中'){message='正在停止实例，请稍候。';action='<button disabled>正在停止…</button>';}
+else if(st==='异常'){message=compute.error;tone='error';action=own?'<button class="primary" onclick="startInstance()">重试并进入</button><button class="inline-link" onclick="contactAdmin()">联系管理员</button>':'<span class="muted">请联系空间负责人处理。</span>';}
+else if(st==='运行中'&&!compute.ready){message='实例已启动，开发服务尚未就绪。';action='<button disabled>开发环境准备中…</button>'+(own?'<button class="inline-link" onclick="contactAdmin()">联系管理员</button>':'');}
+else if(active){action='<button class="primary" onclick="enterEnvironment()">进入开发环境</button>'+(own?'<button onclick="stopInstance()">停止实例</button>':'');}
+else{message=compute.allocation==='released'?'计算资源已回收，启动时将自动重新准备，研究文件保留。':'实例已停止，研究文件和成果保留。';action=own?'<button class="primary" onclick="startInstance()">启动并进入</button>':'<span class="muted">请联系空间负责人启动实例。</span>';}
+const label=st==='运行中'&&!compute.ready?'环境准备中':st;$('#instance').innerHTML=`<div class="instance-state"><span class="badge ${active?'status-pass':['异常'].includes(st)?'status-back':['启动中','准备中','停止中','等待算力'].includes(st)?'status-wait':'status-archive'}">${active?'<i class="service-dot"></i>':''}${esc(label)}</span></div><p class="instance-config-label">实例配置（成员共享）</p><p class="instance-config">${space.cpu} 核 CPU <span>/</span> ${space.ram} GB 内存</p><div class="instance-meta"><div>GPU：<b>${esc(compute.gpu)}</b></div><div>研究存储：<b>${space.storage} GB</b></div><div>开发工具：<b>${esc(space.ide||'JupyterLab 4')}</b></div><div>运行环境：<b>${esc(compute.runtime)}</b></div></div><details class="instance-detail"><summary>环境详情</summary><p>${esc(compute.detail)}${compute.image?'<br>镜像：'+esc(compute.image):''}${compute.systemDisk?'<br>平台预留环境空间：'+compute.systemDisk+' GB':''}</p><p>研究目录：/research　·　成果目录：/results<br>挂载目录持久保留，临时文件与内存计算进度不属于保存内容。</p></details>${message?`<div class="instance-message ${tone}">${esc(message)}</div>`:''}<div class="instance-actions">${action}</div><p class="instance-warning">${active?'关闭浏览器不会停止实例。':'研究文件与成果上传记录继续保留。'}</p>`;renderResources();}
+function startInstance(){if(!canManage()||busy||space.instance==='等待算力')return;const op=++instanceOp;autoEnter=true;compute.ready=false;space.instance=compute.allocation==='released'?'准备中':'启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp)return;space.instance='启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp||!editable())return;compute.allocation='retained';compute.ready=true;space.instance='运行中';refreshInstance();if(autoEnter)enterEnvironment();},1000)},900)}
+function cancelWaiting(){if(!owner())return;instanceOp++;autoEnter=false;space.instance='已停止';compute.ready=false;refreshInstance();toast('已取消等待，研究文件保留')}
+function stopInstance(){if(!canManage()||space.instance!=='运行中')return;lightDialog('停止实例',`<p class="simple-hint">停止将中断团队在此实例中的运行任务，已保存的研究文件和成果继续保留。</p>${runningTasks.length?'<div class="task-warning">'+runningTasks.map(esc).join('<br>')+'</div>':''}`,'<button onclick="closeModal()">取消</button><button class="primary" onclick="confirmInstanceStop()">停止实例</button>')}
+function confirmInstanceStop(){if(!canManage()||space.instance!=='运行中')return;const op=++instanceOp;closeModal();space.instance='停止中';compute.ready=false;refreshInstance();setTimeout(()=>{if(op!==instanceOp)return;space.instance='已停止';runningTasks=[];refreshInstance();toast('实例已停止')},1300)}
+function enterEnvironment(file=''){
+ if(!editable()||space.instance!=='运行中'||!compute.ready)return;
+ saveInstance();
+ const returnParams=new URLSearchParams(q);returnParams.delete('action');returnParams.set('ide',space.ide);
+ const payload={id:spaceId,...space,ide:space.ide,compute:{...compute},resources,members,returnHash:returnParams.toString(),file:typeof file==='string'&&file?file:pendingIdeFile||''};
+ try{localStorage.setItem('agri-ide-handoff-'+spaceId,JSON.stringify(payload))}catch{}
+ const target=new URLSearchParams({id:spaceId,name:space.name,role:space.role,ide:space.ide,cpu:String(space.cpu),ram:String(space.ram),storage:String(space.storage)});
+ target.set('context',JSON.stringify(payload));
+ if(payload.file)target.set('file',payload.file);
+ location.href='科研开发空间-IDE编辑页.html#'+target.toString();
+}
+function contactAdmin(){lightDialog('联系管理员',`<p class="simple-hint">请通过平台现有联系渠道向管理员提供以下信息：</p><div class="final-note">空间：${esc(space.name)}<br>实例状态：${esc(space.instance)}<br>情况：${esc(compute.error)}</div>`,'<button onclick="closeModal()">关闭</button>')}
+function resumeResearch(){if(!owner()||space.state!=='已归档')return;space.state='可用';space.instance='已停止';renderAll();saveInstance();if(compute.allocation==='released')startInstance();else toast('已恢复研究，可启动并进入')}
+const endResearchBase=commitSimpleEnd;commitSimpleEnd=function(){instanceOp++;autoEnter=false;endResearchBase();compute.ready=false;saveInstance();renderInstance()};
+const oldResources=renderResources;renderResources=function(){oldResources();if(space.instance==='运行中'&&!compute.ready)$('#resources').querySelectorAll('td:nth-child(4)').forEach(e=>e.textContent='环境就绪后可访问')};
+$('.detail-main').insertAdjacentHTML('afterbegin','<a class="space-return" href="科研开发空间-交互原型(10).html">← 科研开发空间</a>');
+
+if(snapshot&&['启动中','准备中','停止中'].includes(space.instance)){space.instance='已停止';compute.ready=false;}
+let pendingIdeFile='';
+const sourceFileOpen=openFile;openFile=function(i){const f=directories[currentPath]?.[i];pendingIdeFile=f&&!f.folder?'/'+[currentPath,f.name].filter(Boolean).join('/'):'';sourceFileOpen(i)};
+let linkedApplication=null;try{linkedApplication=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]').find(a=>String(a.id)===String(spaceId))}catch{}
+space.ide=q.get('ide')||snapshot?.ide||linkedApplication?.ide||'JupyterLab 4';
+compute.detail=(compute.detail||'Ubuntu 22.04').replace(/ · (JupyterLab(?: 4)?|VSCode)/g,'')+' · '+space.ide;
+if(linkedApplication){
+ if(Array.isArray(linkedApplication.datasets)){resources.data.splice(0,resources.data.length,...linkedApplication.datasets.map(d=>({name:d.name,meta:d.version+' · 已授权',type:'挂载目录',path:d.path,symbol:'▤'})));}
+ if(linkedApplication.model){resources.model.splice(0,resources.model.length,{name:linkedApplication.model,meta:(linkedApplication.modelVersion||'')+' · 初始绑定模型',type:'模型目录',path:'/models/'+(linkedApplication.modelId||'initial_model'),symbol:'◇'});}
+ for(const type of ['data','model'])for(const r of resources[type])if(!authorizedCatalog[type].some(a=>a.path===r.path))authorizedCatalog[type].push({...r});
+}
+// Reflect locally saved IDE files in the space file list and result picker.
+try{
+ const ideWorkspace=JSON.parse(localStorage.getItem('agri-ide-workspace-v1-'+spaceId)||'null');
+ if(ideWorkspace?.files){for(const [path,f]of Object.entries(ideWorkspace.files)){
+  if(!/^\/(research|results)\//.test(path)||f.readonly)continue;
+  const parts=path.slice(1).split('/'),name=parts.pop();let current='';
+  for(const part of parts){const next=[current,part].filter(Boolean).join('/');if(!directories[current])directories[current]=[];if(!directories[current].some(d=>d.folder&&d.name===part))directories[current].push({name:part,folder:true,size:'—',time:'刚刚'});if(!directories[next])directories[next]=[];current=next;}
+  const bytes=new TextEncoder().encode(f.type==='notebook'?JSON.stringify(f.cells):f.content||'').length;
+  const row={name,size:Math.max(1,Math.ceil(bytes/1024))+' KB',time:'刚刚',author:owner()?'张三':'李四',note:'开发环境中保存的研究文件'};
+  const index=directories[current].findIndex(d=>d.name===name);if(index>=0)directories[current][index]={...directories[current][index],...row};else directories[current].push(row);
+  if(path.startsWith('/results/')&&!catalog.some(x=>x.path===path)){const id='ide-'+path;catalog.push({id,name,size:row.size,bytes,path,source:'space'});groups[2].ids.push(id);}
+ }}
+}catch{}
+renderAll();saveInstance();
+if(q.get('action')==='enter'){if(space.instance==='运行中'&&compute.ready)enterEnvironment();else if(owner()&&['已停止','异常'].includes(space.instance)&&editable())startInstance();}
+</script>
+
+<style>
+.upload-content-tag{display:inline-block;font-size:10px;font-weight:400;color:#61836d;background:#f0f5f1;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;white-space:nowrap}.upload-content-types{border:0;padding:0;margin:2px 0 20px}.upload-content-types legend{font-size:12px;color:#5b7362;margin-bottom:10px}.upload-content-types>div{display:flex;gap:13px}.upload-content-types label{display:flex!important;align-items:center;gap:8px;border:1px solid #dce6de;border-radius:4px;padding:9px 22px;margin:0!important;cursor:pointer;font-size:12px;color:#5e7768;flex:1}.upload-content-types label:has(input:checked){background:#f1f8f3;border-color:#478c64;color:#276646}.upload-content-types input{width:15px!important;height:15px;margin:0!important;accent-color:#176b48}.upload-content-types p{font-size:10px;line-height:1.8;color:#90a095;margin:9px 0 0}
+.upload-record-table{table-layout:fixed;min-width:836px}.upload-record-table th:first-child{width:162px}.upload-record-table th:nth-child(2){width:auto}.upload-record-table th:nth-child(3){width:92px}.upload-record-table th:nth-child(4){width:112px}.upload-record-table th:nth-child(5){width:78px}.upload-record-table th:nth-child(6){width:62px}.upload-record-table .upload-content-tag{margin-left:0}.upload-record-table th,.upload-record-table td{padding:13px 15px;font-size:12px}.upload-record-table td small{display:block;color:#91a095;font-size:11px;line-height:1.7;overflow-wrap:anywhere}.upload-record-table td strong{font-size:13px;font-weight:500}.upload-time{font-size:11px!important;white-space:nowrap;color:#748579}.upload-pagination{display:flex;align-items:center;gap:12px;padding:13px 16px;font-size:11px;color:#87948c}.upload-pagination label{margin-left:auto}.upload-pagination select{border:1px solid #dce5de;border-radius:3px;color:#567060;padding:2px 5px;background:white}.upload-pagination button{font-size:11px;padding:4px 9px}.upload-methods{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:23px}.upload-methods button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #dce5df;background:white;padding:14px;border-radius:5px;color:#65776b}.upload-methods button.selected{border-color:#39855e;background:#f2f8f4;box-shadow:inset 0 0 0 1px #39855e}.upload-methods strong{display:block;font-size:13px;font-weight:500;color:#385744}.upload-methods small{display:block;font-size:10px;color:#8b9c90;margin-top:4px}.upload-methods i{margin-left:auto;font-style:normal;font-size:14px;color:#529171}.method-symbol{font-size:23px;color:#629579}.upload-image-info{background:#f6f9f7;border:1px solid #e1e9e3;border-radius:5px;padding:13px 16px;font-size:12px;margin-bottom:12px}.upload-image-info>div{display:flex;gap:20px;line-height:2.1}.upload-image-info span{color:#8a9b8f;flex:0 0 62px}.upload-image-info strong{font-weight:400;color:#4d6957;overflow-wrap:anywhere}.upload-research-check{display:flex!important;align-items:center;gap:8px;font-size:12px;color:#516d5b;margin:14px 0 6px!important}.upload-research-check input{width:15px!important;height:15px;margin:0!important;accent-color:#176b48}.upload-help{font-size:11px;line-height:1.8;color:#92a096;margin:6px 0}.upload-files-head{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px}.upload-files-head strong{font-size:12px;font-weight:500;color:#537060}.upload-files-head .upload-local{font-size:11px;padding:5px 8px}.upload-file-picker{border:1px solid #dfe7e1;border-radius:5px;overflow:hidden}.upload-file-filter{padding:9px 10px;background:#f8faf8;border-bottom:1px solid #e6ece8}.upload-file-filter input{border:1px solid #dfe7e1;width:100%;border-radius:3px;padding:7px 9px;font-size:11px;outline:none}.upload-file-options{max-height:200px;overflow:auto;padding:0 10px}.upload-file-option{display:flex!important;gap:9px;align-items:center;padding:9px 3px;margin:0!important;border-bottom:1px solid #edf1ee;cursor:pointer}.upload-file-option input{width:14px!important;height:14px;accent-color:#176b48;margin:0!important;flex:none}.upload-file-option>span{flex:1;min-width:0}.upload-file-option strong{font-size:12px;font-weight:400;color:#4f6657;display:block}.upload-file-option small{display:block;color:#95a398;font-size:10px;overflow-wrap:anywhere}.upload-file-option em{font-size:10px;font-style:normal;color:#96a599}.selected-upload-heading{font-size:11px;color:#6f8778;margin-top:13px}.selected-upload-items{max-height:125px;overflow:auto;border:1px solid #e6ece8;border-radius:4px;margin-top:7px}.selected-upload-items>div{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #edf1ee;font-size:11px;color:#5d7867}.selected-upload-items>div>span{flex:1;overflow-wrap:anywhere}.selected-upload-items small{display:block;font-size:10px;color:#97a399}.selected-upload-items button{font-size:11px!important}.upload-detail-title{font-size:17px;font-weight:500;color:#34533f;margin:0 0 20px}.upload-record-meta{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-bottom:20px;font-size:12px}.upload-record-meta span{display:block;color:#8e9d93;font-size:11px;margin-bottom:4px}.upload-record-meta strong{font-weight:400;color:#526c5b}.upload-detail-subtitle{font-size:12px;margin:19px 0 10px;font-weight:500;color:#5c7966}.upload-detail-files{border:1px solid #e2e9e4;border-radius:4px}.upload-detail-files>div{display:flex;align-items:center;gap:12px;padding:11px 13px;border-bottom:1px solid #edf1ee}.upload-detail-files span{flex:1}.upload-detail-files strong{display:block;font-size:12px;font-weight:400;color:#4e6958}.upload-detail-files small{display:block;font-size:10px;color:#95a297;margin-top:4px;overflow-wrap:anywhere}.upload-detail-files em{font-style:normal;font-size:11px;color:#93a098}.upload-progress{padding:20px 0 26px}.upload-progress>strong{font-size:15px;color:#46654f;font-weight:500}.upload-progress p{font-size:12px;color:#839889;margin:13px 0 20px}.upload-progress-track{background:#edf2ee;height:6px;border-radius:4px;overflow:hidden}.upload-progress-track i{display:block;height:100%;background:#3d8961;border-radius:4px;transition:width .2s}.upload-progress-steps{display:flex;gap:25px;color:#a0aaa3;font-size:11px;margin-top:14px}.upload-progress-steps .on{color:#5a8d6b}.end-upload-time{display:block;font-size:10px;color:#9aa59d;margin-top:4px}.end-item>span:first-child{font-size:12px;color:#5b7362}@media(max-width:650px){.upload-methods{grid-template-columns:1fr}.upload-pagination{flex-wrap:wrap}.upload-record-meta{grid-template-columns:1fr}.upload-image-info>div{gap:10px}.upload-progress-steps{gap:10px}}
+</style>
+<style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body></html>

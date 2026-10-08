@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>平台介绍 · 关于平台 · 北大荒智慧农业协同创新平台</title>
+<!-- ============================================================
+     「关于平台」平台介绍（0924 新做）
+     图源＝平台调整后原型/关于平台-完整示意图与原型说明-6张/  ←  同名 PNG
+     口径＝原型制作说明.md（搜索范围仅本帮助模块；原型默认折叠；不新建重复申请流程）
+     页头＝0924 门户端统一导航（与其余 12 页同源）；页脚＝门户页同款深绿页脚
+     ============================================================ -->
+<style id="bdh-portal-nav">
+:root{ --header-height:80px; --bdh-brand:#064c43; --bdh-brand-hover:#043d36; --bdh-brand-active:#03332d;
+       --bdh-ink:#263b38; --bdh-heading:#123b35; --bdh-line:#dfe7e1; --bdh-focus:#8a9f98; --bdh-soft:#edf6f2; }
+header.site-header{ position:sticky; top:0; z-index:100; height:auto; background:#fff; border-bottom:1px solid var(--bdh-line); }
+header.site-header .header-inner{ height:var(--header-height); gap:32px; flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+header.site-header .brand{ display:flex; align-items:center; gap:10px; flex:none; margin:0; color:var(--bdh-heading);
+  font-family:inherit; font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; white-space:nowrap; text-decoration:none; }
+header.site-header .brand span{ color:var(--bdh-heading); font-size:22px; line-height:30px; font-weight:600; letter-spacing:normal; }
+header.site-header .brand svg{ flex:none; width:30px; height:30px; }
+header.site-header .main-nav{ display:flex; align-items:center; gap:20px; height:var(--header-height); margin:0 auto;
+  flex:0 1 auto; width:auto; order:0; min-width:0; overflow:visible; }
+header.site-header .main-nav a,
+header.site-header .main-nav button{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--header-height); padding:0 2px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink);
+  font-family:inherit; font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; text-decoration:none; cursor:pointer;
+  transition:color .16s ease; }
+header.site-header .main-nav a:hover,
+header.site-header .main-nav button:hover{ color:var(--bdh-brand); background:none; text-decoration:none; }
+header.site-header .main-nav a.active,
+header.site-header .main-nav button.active{ color:var(--bdh-brand); font-weight:600; border-bottom:0; }
+header.site-header .main-nav a.active::after,
+header.site-header .main-nav button.active::after{ content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; border-radius:0; background:var(--bdh-brand); }
+header.site-header .header-actions{ display:flex; align-items:center; gap:16px; margin-left:0; flex:none; }
+header.site-header .header-actions .autharea{ display:flex; align-items:center; gap:16px; }
+header.site-header .header-actions .login-link{ display:inline-flex; align-items:center; justify-content:center; height:44px;
+  padding:0 12px; margin:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); font-family:inherit;
+  font-size:14px; font-weight:500; line-height:22px; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+header.site-header .header-actions .login-link:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .button.button-primary{ display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 20px; margin:0; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; line-height:22px; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease, border-color .16s ease; }
+header.site-header .header-actions .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .button.button-primary:active{ background:var(--bdh-brand-active); border-color:var(--bdh-brand-active); }
+/* —— 兼容各页自渲染的登录态节点（doLogin/doLogout/renderAuthArea 会重写 #authArea）—— */
+header.site-header .header-actions .btn-login,
+header.site-header .header-actions .header-btn-login{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; text-decoration:none; }
+header.site-header .header-actions .btn-login:hover,
+header.site-header .header-actions .header-btn-login:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .btn-brand,
+header.site-header .header-actions .header-btn-register{ display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 20px; background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff;
+  font-size:14px; font-weight:600; text-decoration:none; }
+header.site-header .header-actions .btn-brand:hover,
+header.site-header .header-actions .header-btn-register:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+header.site-header .header-actions .u-box{ display:flex; align-items:center; gap:8px; position:relative; }
+header.site-header .header-actions .u-avatar{ width:30px; height:30px; border-radius:50%; background:var(--bdh-brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex:none; }
+header.site-header .header-actions .u-name{ display:inline-flex; align-items:center; gap:4px; color:var(--bdh-ink);
+  font-size:14px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-name:hover{ color:var(--bdh-brand); }
+header.site-header .header-actions .u-menu{ position:absolute; top:calc(100% + 8px); right:0; min-width:176px; background:#fff;
+  border:1px solid var(--bdh-line); border-radius:8px; box-shadow:0 4px 16px rgba(6,76,67,.08); padding:4px; z-index:200; }
+header.site-header .header-actions .u-mi{ display:block; padding:8px 12px; font-size:14px; color:var(--bdh-ink);
+  border-radius:4px; white-space:nowrap; cursor:pointer; }
+header.site-header .header-actions .u-mi:hover{ background:var(--bdh-soft); color:var(--bdh-brand); }
+header.site-header .header-actions .u-mi.out{ color:#b42318; }
+header.site-header .header-actions .pc-bell{ position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; padding:0; background:none; border:0; border-radius:0; color:var(--bdh-ink); cursor:pointer; }
+header.site-header .header-actions .pc-bell:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .pc-user{ display:inline-flex; align-items:center; height:44px; padding:0 12px;
+  background:none; border:0; border-radius:0; color:var(--bdh-ink); font-size:14px; font-weight:500; cursor:pointer; }
+header.site-header .header-actions .pc-user:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .header-actions .signed-user{ display:inline-flex; align-items:center; color:var(--bdh-ink);
+  font-size:14px; font-weight:500; white-space:nowrap; }
+header.site-header .menu-toggle{ display:none; width:44px; height:44px; padding:0; margin:0; align-items:center;
+  justify-content:center; background:#fff; border:1px solid var(--bdh-focus); border-radius:6px; cursor:pointer; }
+header.site-header .menu-toggle:hover{ background:#fff; border-color:var(--bdh-brand); color:var(--bdh-brand); }
+header.site-header .mobile-menu{ display:none; border-top:1px solid var(--bdh-line); background:#fff; padding:16px 24px 24px; }
+header.site-header .mobile-menu.open{ display:block; }
+header.site-header .mobile-menu a,
+header.site-header .mobile-menu button{ display:block; width:100%; padding:12px 0; margin:0; background:none; border:0;
+  border-bottom:1px solid var(--bdh-line); border-radius:0; color:var(--bdh-ink); font-family:inherit; font-size:15px;
+  font-weight:400; line-height:24px; text-align:left; text-decoration:none; cursor:pointer; }
+header.site-header .mobile-menu a:hover,
+header.site-header .mobile-menu button:hover{ color:var(--bdh-brand); background:none; }
+header.site-header .mobile-menu a.active{ color:var(--bdh-brand); font-weight:600; }
+header.site-header .mobile-menu .button.button-primary{ display:inline-flex; width:100%; margin-top:16px; justify-content:center;
+  background:var(--bdh-brand); border:1px solid var(--bdh-brand); border-radius:6px; color:#fff; font-size:15px; font-weight:600;
+  padding:11px 0; text-align:center; }
+header.site-header .mobile-menu .button.button-primary:hover{ background:var(--bdh-brand-hover); border-color:var(--bdh-brand-hover); color:#fff; }
+@media (max-width:1279px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ gap:20px; }
+  header.site-header .main-nav{ gap:14px; }
+  header.site-header .main-nav a, header.site-header .main-nav button{ font-size:13px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:1099px){
+  :root{ --header-height:64px; }
+  header.site-header .header-inner{ flex-wrap:nowrap; padding-top:0; padding-bottom:0; }
+  header.site-header .main-nav{ display:none; }
+  header.site-header .header-actions .login-link,
+  header.site-header .header-actions .pc-user,
+  header.site-header .header-actions .signed-user{ display:none; }
+  header.site-header .menu-toggle{ display:inline-flex; }
+  header.site-header .brand, header.site-header .brand span{ font-size:18px; line-height:26px; }
+}
+@media (max-width:767px){
+  header.site-header .header-inner{ gap:12px; }
+  header.site-header .brand{ gap:8px; }
+  header.site-header .brand svg{ width:24px; height:24px; }
+  header.site-header .brand, header.site-header .brand span{ font-size:16px; line-height:24px; }
+  header.site-header .header-actions .button.button-primary{ display:none; }
+  header.site-header .mobile-menu{ padding:12px 16px 20px; }
+}
+
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 0929：旧 1365 档已由本文件末尾的无条件规则取代 */
+/* 0929：旧 1365 档已由本文件末尾的无条件规则取代 */
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+<style id="bdh-about">
+/* ============================================================
+   「关于平台」模块 · 版式令牌＝门户页 v9 深绿
+   brand #064c43 / 页面 #f4f8f5 / soft #edf6f2 / 线 #dfe7e1 / 标题 #123b35
+   栅格＝左栏 256 + 16 间隙 + 内容，总宽 1280（与页头同宽，视觉左右对齐）
+   ============================================================ */
+:root{ --ab-brand:#064c43; --ab-brand-h:#043d36; --ab-soft:#edf6f2; --ab-soft2:#f4faf7;
+       --ab-page:#f4f8f5; --ab-line:#dfe7e1; --ab-ink:#263b38; --ab-head:#123b35;
+       --ab-sec:#5f6f6b; --ab-mut:#74807c; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--ab-page);
+  color:var(--ab-ink);font:14px/1.7 "Noto Sans SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+h1,h2,h3,h4,p{margin:0}
+ol,ul{margin:0;padding:0;list-style:none}
+a{color:var(--ab-brand);text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit;color:inherit}
+[id]{scroll-margin-top:calc(var(--header-height,80px) + 16px)}
+.about-inner{width:100%;max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* —— 页头容器：与内容区同宽（门户页页头=1360，本模块取 1280 以对齐栅格）——
+   注意：统一导航样式只给了 height/gap/flex-wrap，`display:flex` 由各页自有 CSS 提供，
+   本模块必须自带，否则 brand / nav / actions 会各占一行。 */
+header.site-header .header-inner{display:flex;align-items:center;max-width:1280px;margin:0 auto;
+  padding:0 24px;height:var(--header-height,80px)}
+
+/* ================= 主栅格 ================= */
+.about-main{flex:1;padding:28px 0 56px}
+.about-grid{display:grid;grid-template-columns:256px minmax(0,1fr);gap:16px;align-items:start}
+
+/* ================= 左侧栏目（5 项）================= */
+.side{background:#fff;border:1px solid var(--ab-line);border-radius:8px;padding:20px 14px 16px;
+  position:sticky;top:calc(var(--header-height,80px) + 20px)}
+.side h2{font-size:19px;line-height:1.4;font-weight:700;color:var(--ab-head);padding:0 10px 14px}
+.side-list{display:flex;flex-direction:column;gap:2px}
+.side-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border:0;background:none;
+  border-radius:6px;font-size:14px;line-height:1.5;color:var(--ab-ink);text-align:left;
+  transition:background .15s ease,color .15s ease}
+.side-item:hover{background:var(--ab-soft)}
+.side-item.active{background:var(--ab-soft);color:var(--ab-brand);font-weight:600}
+.side-item .ico{flex:none;width:18px;height:18px;color:var(--ab-brand)}
+.side-item .ico svg{display:block;width:18px;height:18px}
+.side-item .chev{margin-left:auto;flex:none;width:15px;height:15px;color:#a9b5b0}
+.side-sub{display:flex;flex-direction:column;gap:2px;padding:2px 0 4px 14px;
+  border-left:2px solid #e6eeea;margin:0 0 2px 27px}
+.side-sub a{display:block;padding:8px 10px;border-left:2px solid transparent;margin-left:-2px;
+  border-radius:0 6px 6px 0;font-size:13px;color:var(--ab-sec)}
+.side-sub a:hover{background:var(--ab-soft);color:var(--ab-brand)}
+.side-sub a.active{background:var(--ab-soft);color:var(--ab-brand);font-weight:600;border-left-color:var(--ab-brand)}
+
+/* ================= 右内容 ================= */
+.about-col{min-width:0;display:flex;flex-direction:column;gap:16px}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:2px 0 0}
+.page-head h1{font-size:28px;line-height:1.35;font-weight:700;color:var(--ab-head);letter-spacing:.2px}
+.eyebrow{font-size:13px;color:var(--ab-mut);margin-bottom:8px}
+.lead{margin-top:10px;max-width:820px;font-size:14px;color:var(--ab-sec)}
+.units{margin-top:14px;font-size:13px;color:var(--ab-mut)}
+.units b{color:var(--ab-sec);font-weight:400}
+.units span{display:inline-block;margin-left:22px;color:var(--ab-head);font-weight:500}
+.crumb{margin-top:10px;font-size:13px;color:var(--ab-mut)}
+.crumb a{color:var(--ab-mut)}
+.crumb a:hover{color:var(--ab-brand)}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ab-sec)}
+.back:hover{color:var(--ab-brand)}
+.back svg{width:15px;height:15px}
+
+/* 搜索 */
+.search{display:flex;gap:8px;flex:none;width:330px}
+.search input{flex:1;min-width:0;height:36px;padding:0 12px;background:#fff;
+  border:1px solid var(--ab-line);border-radius:4px}
+.search input::placeholder{color:#96a4a0}
+.search input:focus{outline:none;border-color:var(--ab-brand);box-shadow:0 0 0 2px rgba(6,76,67,.12)}
+.search button{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 18px;
+  background:var(--ab-brand);border:1px solid var(--ab-brand);border-radius:4px;color:#fff;font-weight:600;font-size:14px}
+.search button:hover{background:var(--ab-brand-h);border-color:var(--ab-brand-h)}
+.search.icon-only{width:290px}
+.search.icon-only button{padding:0 12px;background:#fff;border-color:var(--ab-line);color:var(--ab-brand)}
+.search.icon-only button:hover{background:var(--ab-soft);border-color:var(--ab-brand)}
+.search.icon-only button svg{width:18px;height:18px}
+
+/* 搜索结果面板 */
+.search-panel{display:none;background:#fff;border:1px solid var(--ab-line);border-radius:8px;
+  padding:18px 20px 16px;margin-bottom:16px}
+.about-grid.is-searching .search-panel{display:block}
+.about-grid.is-searching .page-body{display:none}
+.sp-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;
+  border-bottom:1px solid #eef3f0;margin-bottom:8px}
+.sp-head strong{font-size:15px;color:var(--ab-head)}
+.sp-head em{font-style:normal;color:var(--ab-brand);font-weight:700}
+.sp-list{display:flex;flex-direction:column;gap:2px}
+.sp-item{display:block;padding:11px 12px;border-radius:6px}
+.sp-item:hover{background:var(--ab-soft)}
+.sp-item b{display:block;font-size:14px;font-weight:600;color:var(--ab-head)}
+.sp-item small{display:block;margin:2px 0 4px;font-size:12px;color:var(--ab-mut)}
+.sp-item p{font-size:13px;color:var(--ab-sec)}
+.sp-empty{padding:10px 2px 4px;font-size:14px;color:var(--ab-sec)}
+.sp-empty strong{color:var(--ab-head)}
+.sp-empty .sp-acts{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* 卡片 */
+.page-body{display:flex;flex-direction:column;gap:16px}
+.card{background:#fff;border:1px solid var(--ab-line);border-radius:8px;padding:22px 24px}
+.card>h2{font-size:18px;font-weight:700;color:var(--ab-head);margin-bottom:14px}
+.card>h2+.sub{margin:-8px 0 14px;font-size:13px;color:var(--ab-sec)}
+
+/* 按钮 */
+.arw{width:15px;height:15px;flex:none;display:inline-block;vertical-align:-2px;transition:transform .15s ease}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 18px;
+  border:1px solid var(--ab-brand);border-radius:4px;font-size:14px;font-weight:600;white-space:nowrap;
+  transition:background .15s ease,color .15s ease,border-color .15s ease}
+.btn:hover .arw,.link-more:hover .arw,.help-foot:hover .arw{transform:translateX(3px)}
+.btn-ghost{background:#fff;color:var(--ab-brand)}
+.btn-ghost:hover{background:var(--ab-soft)}
+.btn-primary{background:var(--ab-brand);color:#fff}
+.btn-primary:hover{background:var(--ab-brand-h);border-color:var(--ab-brand-h);color:#fff}
+.btn-line{background:#fff;color:var(--ab-sec);border-color:var(--ab-line)}
+.btn-line:hover{border-color:var(--ab-brand);color:var(--ab-brand);background:#fff}
+.link-more{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ab-brand)}
+.link-more:hover{color:var(--ab-brand-h)}
+.link-more.sm{font-size:13px}
+
+/* ================= 01 平台介绍 ================= */
+.svc-list{display:flex;flex-direction:column}
+.svc{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #eef3f0}
+.svc:first-child{padding-top:2px}
+.svc:last-child{border-bottom:0;padding-bottom:2px}
+.ico-box{flex:none;width:40px;height:40px;border-radius:8px;background:var(--ab-soft);
+  display:flex;align-items:center;justify-content:center;color:var(--ab-brand)}
+.ico-box svg{width:21px;height:21px}
+.ico-box.sm{width:34px;height:34px;border-radius:7px}
+.ico-box.sm svg{width:18px;height:18px}
+.svc-name{flex:none;width:110px;font-size:15px;font-weight:600;color:var(--ab-head)}
+.svc-desc{flex:1;min-width:0;font-size:13.5px;color:var(--ab-sec)}
+.svc .link-more{flex:none}
+.participate{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pcard{border:1px solid var(--ab-line);border-radius:8px;padding:18px;display:flex;flex-direction:column}
+.pcard-head{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.pcard h3{font-size:15.5px;font-weight:700;color:var(--ab-head)}
+.pcard p{flex:1;font-size:13.5px;color:var(--ab-sec)}
+.pcard .btn{margin-top:14px;align-self:flex-end}
+.notes{background:var(--ab-soft2);border:1px solid #e3efe8;border-radius:8px;padding:18px 20px;
+  display:flex;align-items:center;gap:28px}
+.notes-list{counter-reset:n;flex:1;min-width:0;display:flex;flex-direction:column;gap:11px}
+.notes-list li{counter-increment:n;display:flex;gap:10px;font-size:13.5px;line-height:1.6}
+.notes-list li::before{content:counter(n);flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;
+  background:var(--ab-brand);color:#fff;font-size:11px;font-weight:700;display:flex;
+  align-items:center;justify-content:center}
+.notes-acts{flex:none;display:flex;gap:10px}
+
+/* ================= 02 使用帮助 ================= */
+.help-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.help-card{background:#fff;border:1px solid var(--ab-line);border-radius:8px;padding:20px 22px}
+.help-head{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+.help-head .ico-box{width:38px;height:38px}
+.help-head h3{font-size:16px;font-weight:700;color:var(--ab-head)}
+.help-head h3 i{font-style:normal;color:var(--ab-brand);font-weight:600}
+.help-head p{margin-top:4px;font-size:13px;color:var(--ab-sec)}
+.qa-wrap{border:1px solid #eaf1ed;border-radius:6px;padding:0 12px}
+.qa{border-top:1px solid #eef3f0}
+.qa:first-child{border-top:0}
+.qa:last-of-type{border-bottom:0}
+.qa-wrap .qa:last-of-type{border-bottom:0}
+.qa-q{display:flex;align-items:center;gap:10px;width:100%;padding:11px 2px;border:0;background:none;
+  text-align:left;font-size:13.5px;color:var(--ab-ink)}
+.qa-q:hover{color:var(--ab-brand)}
+.qa-q .chev{flex:none;width:15px;height:15px;margin-left:auto;color:#a9b5b0;transition:transform .18s ease}
+.qa.open .qa-q{color:var(--ab-brand);font-weight:600}
+.qa.open .qa-q .chev{transform:rotate(180deg)}
+.qa-a{display:none;padding:0 26px 13px 2px;font-size:13px;color:var(--ab-sec)}
+.qa.open .qa-a{display:block}
+.help-foot{margin-top:14px;padding-top:13px;border-top:1px solid #eef3f0}
+
+/* ================= 03 数据使用指南 ================= */
+.art-grid{display:grid;grid-template-columns:minmax(0,1fr) 208px;gap:24px;align-items:start}
+.article{background:#fff;border:1px solid var(--ab-line);border-radius:8px;padding:24px 26px 26px}
+.article h1{font-size:26px;line-height:1.35;font-weight:700;color:var(--ab-head);margin-top:16px}
+.article .lead{margin-top:10px}
+.sec{margin-top:24px;border-bottom:1px solid #eef3f0;padding-bottom:2px}
+.sec#sec4{border-bottom:0}
+.sec#sec1{margin-top:20px}
+.step{display:flex;gap:15px;padding:16px 0}
+.step-no{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ab-soft);color:var(--ab-brand);
+  border:1px solid #cfe4da;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.step-body{flex:1;min-width:0}
+.step-body h3{font-size:16px;font-weight:700;color:var(--ab-head);margin-bottom:8px}
+.step-body p{font-size:13.5px;color:var(--ab-sec)}
+.step-body .link-more{margin-top:10px}
+.callout{display:flex;gap:10px;align-items:flex-start;background:var(--ab-soft2);
+  border:1px solid #d9ece3;border-radius:8px;padding:13px 16px;font-size:13.5px;color:var(--ab-brand)}
+.callout svg{flex:none;width:18px;height:18px;margin-top:2px}
+.callout b{font-weight:600}
+.callout.plain{margin-top:14px}
+.toc{position:sticky;top:calc(var(--header-height,80px) + 20px);background:var(--ab-soft2);
+  border:1px solid #e3efe8;border-left:3px solid var(--ab-brand);border-radius:8px;padding:16px 14px}
+.toc h4{font-size:14px;font-weight:700;color:var(--ab-head);margin-bottom:8px;padding-left:4px}
+.toc a{display:block;padding:6px 4px;font-size:13px;color:var(--ab-sec);border-radius:4px}
+.toc a:hover{background:#fff;color:var(--ab-brand)}
+.faq-list{margin-top:6px}
+.faq{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid #eef3f0}
+.faq:last-child{border-bottom:0}
+.faq .q{flex:none;width:20px;height:20px;margin-top:2px;border-radius:50%;background:var(--ab-soft);
+  color:var(--ab-brand);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.faq b{display:block;font-size:13.5px;font-weight:600;color:var(--ab-head);margin-bottom:3px}
+.faq p{font-size:13px;color:var(--ab-sec)}
+.art-foot{margin-top:26px;padding-top:16px;border-top:1px solid #eef3f0;display:flex;
+  align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--ab-mut)}
+.art-foot .rel a{color:var(--ab-brand);border-bottom:1px solid #bcd6cd}
+.art-foot .rel a:hover{border-bottom-color:var(--ab-brand)}
+.art-foot .rel span{margin:0 10px;color:#cfd9d5}
+
+/* ================= 04 开发者接入 ================= */
+.flow{display:flex;align-items:stretch;gap:4px}
+.flow-step{flex:1;min-width:0;padding:0 6px}
+.flow-arrow{flex:none;width:22px;display:flex;align-items:center;justify-content:center;
+  color:#c3cfca;font-size:16px}
+.flow-ico{position:relative;width:44px;height:44px;border-radius:9px;background:var(--ab-soft);
+  display:flex;align-items:center;justify-content:center;color:var(--ab-brand);margin-bottom:12px}
+.flow-ico svg{width:22px;height:22px}
+.flow-no{position:absolute;top:-6px;left:-6px;width:19px;height:19px;border-radius:50%;background:var(--ab-brand);
+  color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff}
+.flow-step h3{font-size:14.5px;font-weight:700;color:var(--ab-head);margin-bottom:6px}
+.flow-step p{font-size:13px;color:var(--ab-sec)}
+.spec{width:100%;border-collapse:collapse;font-size:13.5px}
+.spec th{background:var(--ab-soft);color:var(--ab-head);font-weight:600;text-align:left;
+  padding:10px 14px;border:1px solid var(--ab-line)}
+.spec td{padding:10px 14px;border:1px solid var(--ab-line);color:var(--ab-sec)}
+.spec td:first-child{width:150px;font-weight:600;color:var(--ab-ink);background:#fcfdfc}
+.card-foot{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.card-foot.center{justify-content:center;margin-top:4px}
+
+/* ================= 05 部署说明 ================= */
+.inside{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.icard{border:1px solid var(--ab-line);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column}
+.icard-head{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.icard h3{font-size:15.5px;font-weight:700;color:var(--ab-head)}
+.icard p{flex:1;font-size:13.5px;color:var(--ab-sec)}
+.icard .btn{margin-top:16px;align-self:flex-start}
+.prep{background:var(--ab-soft2);border:1px solid #e3efe8;border-radius:8px;padding:18px 20px}
+.prep h4{font-size:14px;font-weight:700;color:var(--ab-head);margin-bottom:14px}
+.prep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px}
+.prep-item{display:flex;gap:10px;align-items:flex-start}
+.prep-item .ico{flex:none;width:18px;height:18px;margin-top:3px;color:var(--ab-brand)}
+.prep-item .ico svg{display:block;width:18px;height:18px}
+.prep-item b{flex:none;width:70px;font-size:13.5px;font-weight:600;color:var(--ab-head)}
+.prep-item span{flex:1;min-width:0;font-size:13.5px;color:var(--ab-sec)}
+.nlist{display:flex;flex-direction:column}
+.nrow{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid #eef3f0;
+  font-size:13.5px;color:var(--ab-sec)}
+.nrow:last-child{border-bottom:0;padding-bottom:0}
+.nrow .ico{flex:none;width:18px;height:18px;margin-top:3px;color:var(--ab-brand)}
+.nrow .ico svg{display:block;width:18px;height:18px}
+
+/* ================= 06 联系支持 ================= */
+.entries{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.entry{border:1px solid var(--ab-line);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column}
+.entry h3{font-size:15.5px;font-weight:700;color:var(--ab-head);margin:12px 0 8px}
+.entry p{flex:1;min-width:0;font-size:13.5px;color:var(--ab-sec);margin-bottom:16px}
+.entry .btn{align-self:flex-start}
+.contact{background:var(--ab-soft2);border:1px solid #e3efe8;border-radius:8px;padding:18px 20px}
+.contact-row{display:flex;align-items:center;gap:12px;padding:8px 0;flex-wrap:wrap}
+.contact-row+.contact-row{border-top:1px solid #e6f1eb}
+.contact-row .ico{flex:none;width:20px;height:20px;color:var(--ab-brand)}
+.contact-row .ico svg{display:block;width:20px;height:20px}
+.contact-row b{flex:none;width:86px;font-size:13.5px;font-weight:600;color:var(--ab-head)}
+.contact-row span{font-size:13.5px;color:var(--ab-mut)}
+.contact-note{margin-top:10px;font-size:12.5px;color:var(--ab-mut)}
+.numlist{counter-reset:n;display:flex;flex-direction:column;gap:10px}
+.numlist li{counter-increment:n;display:flex;gap:10px;font-size:13.5px;color:var(--ab-sec)}
+.numlist li::before{content:counter(n);flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;
+  background:var(--ab-soft);color:var(--ab-brand);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+
+/* ================= 页脚（门户页同款深绿）================= */
+.site-footer{position:relative;background:#063e36;color:#e4eee8;overflow:hidden;margin-top:auto}
+.footer-inner{position:relative;z-index:1;display:flex;justify-content:space-between;gap:40px;
+  padding-top:34px;padding-bottom:34px}
+.footer-brand .f-name{display:flex;align-items:center;gap:10px;font-size:20px;line-height:30px;
+  font-weight:600;color:#fff}
+.footer-brand .f-slogan{margin-top:12px;font-size:14px;color:#e4eee8}
+.footer-links{display:flex;gap:0}
+.footer-links>div{padding:0 36px;border-left:1px solid rgba(255,255,255,.16)}
+.footer-links>div:first-child{border-left:0;padding-left:0}
+.footer-links h4{margin:0 0 12px;font-size:14px;font-weight:600;color:#fff}
+.footer-links ul{display:flex;flex-direction:column;gap:8px}
+.footer-links a{font-size:14px;color:#e4eee8;opacity:.85}
+.footer-links a:hover{opacity:1;text-decoration:underline}
+.footer-wheat{position:absolute;right:-12px;bottom:-16px;opacity:.16;pointer-events:none}
+
+/* ================= toast ================= */
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(8px);z-index:200;
+  max-width:min(560px,calc(100% - 32px));padding:10px 20px;border-radius:6px;background:var(--ab-brand);
+  color:#fff;font-size:14px;box-shadow:0 12px 32px rgba(6,62,54,.28);opacity:0;pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ================= 响应式 ================= */
+@media(max-width:1279px){
+  header.site-header .header-inner{max-width:1100px}
+  .about-inner{max-width:1100px}
+}
+@media(max-width:1099px){
+  .about-grid{grid-template-columns:224px minmax(0,1fr)}
+  .help-grid{grid-template-columns:1fr}
+  .art-grid{grid-template-columns:minmax(0,1fr)}
+  .toc{position:static;order:-1}
+  .flow{flex-wrap:wrap;gap:14px}
+  .flow-step{flex:1 1 44%}
+  .flow-arrow{display:none}
+  .entries{grid-template-columns:1fr}
+}
+@media(max-width:820px){
+  .about-main{padding:20px 0 40px}
+  .about-grid{grid-template-columns:1fr}
+  .side{position:static;padding:16px 12px}
+  .page-head{flex-direction:column;gap:16px}
+  .search{width:100%}
+  .page-head h1{font-size:23px}
+  .article{padding:20px 18px}
+  .article h1{font-size:21px}
+  .participate,.inside,.prep-grid{grid-template-columns:1fr}
+  .svc{flex-wrap:wrap;gap:8px 12px}
+  .svc-name{width:auto}
+  .svc-desc{flex-basis:100%;order:3}
+  .notes{flex-direction:column;align-items:flex-start;gap:16px}
+  .flow-step{flex:1 1 100%}
+  .footer-inner{flex-direction:column;gap:24px;padding-top:26px;padding-bottom:26px}
+  .footer-links{flex-wrap:wrap;gap:20px}
+  .footer-links>div{padding:0 20px}
+  .footer-links>div:first-child{padding-left:0}
+  .spec th,.spec td{padding:8px 10px;font-size:12.5px}
+  .spec td:first-child{width:104px}
+}
+</style>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-nav-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg class="logo" viewBox="0 0 44 50" fill="none" aria-hidden="true"><path d="M12 46C23 36 23 20 35 5" stroke="#00635a" stroke-width="2.5"/><path d="M23 23C23 8 32 3 43 3C39 14 34 21 23 23" fill="#69a821"/><path d="M20 33C8 32 4 23 5 16C16 17 21 23 20 33" fill="#005653"/><path d="M21 35C26 26 33 24 41 25C35 35 29 38 21 35" fill="#08746d"/><path d="M16 39C7 36 4 40 3 47C11 47 16 45 16 39" fill="#63942d"/></svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="数据中心-数据集列表页.html">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <div class="account autharea" id="authArea">
+        <button type="button" class="login-link" data-bdh-login>登录</button>
+        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+      </div>
+      <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="bdhMobileMenu">
+    <a href="index.html">首页</a>
+    <a href="数据中心-数据集列表页.html">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
+    <a href="javascript:void(0)" data-bdh-login>登录</a>
+    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+  </div>
+</header>
+<main class="about-main">
+  <div class="about-inner about-grid" id="aboutGrid">
+    <aside class="side">
+    <h2>关于平台</h2>
+    <nav class="side-list" aria-label="关于平台栏目">
+      <button type="button" class="side-item active" data-goto="关于平台-平台介绍.html"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.6H7a2 2 0 0 0-2 2v14.8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.6Z"/><path d="M14 2.6v5h5"/></svg></span>平台介绍<span class="chev"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span></button>
+      <button type="button" class="side-item" data-goto="关于平台-使用帮助.html"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.8"/><path d="M9.7 9.3a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1.1.7-1.1 1.4v.7"/><path d="M12 17h.01"/></svg></span>使用帮助<span class="chev"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span></button>
+      <button type="button" class="side-item" data-goto="关于平台-开发者接入.html"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8.6 8.2-4.4 3.8 4.4 3.8M15.4 8.2l4.4 3.8-4.4 3.8M13.4 5.2l-2.8 13.6"/></svg></span>开发者接入<span class="chev"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span></button>
+      <button type="button" class="side-item" data-goto="关于平台-部署说明.html"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.8" width="18" height="6.2" rx="1.6"/><rect x="3" y="14" width="18" height="6.2" rx="1.6"/><path d="M7 6.9h.01M7 17.1h.01"/></svg></span>部署说明<span class="chev"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span></button>
+      <button type="button" class="side-item" data-goto="关于平台-联系支持.html"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 15.2v-3.1a7.8 7.8 0 0 1 15.6 0v3.1"/><path d="M4.2 14.2h2.3a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5.7a1.5 1.5 0 0 1-1.5-1.5Z"/><path d="M19.8 14.2h-2.3a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h.8a1.5 1.5 0 0 0 1.5-1.5Z"/></svg></span>联系支持<span class="chev"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></span></button>
+    </nav>
+  </aside>
+    <div class="about-col">
+      <section class="search-panel" id="searchPanel" aria-live="polite">
+        <div class="sp-head">
+          <strong id="spTitle">搜索结果</strong>
+          <button type="button" class="btn btn-line" id="spClear">清空搜索</button>
+        </div>
+        <div class="sp-list" id="spList"></div>
+      </section>
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">关于平台</p>
+          <h1>平台介绍</h1>
+          <p class="lead">北大荒智慧农业协同创新平台汇聚农业数据、模型与科研资源，支持科研协作与技术应用。</p>
+          <p class="units"><b>共建单位：</b><span>智慧农场技术与系统全国重点实验室</span><span>北大荒农垦集团</span></p>
+        </div>
+
+      </div>
+
+      <div class="page-body">
+        <section class="card">
+          <h2>平台提供什么</h2>
+          <div class="svc-list">
+      <article class="svc">
+        <span class="ico-box sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="3"/><path d="M5 5.5v13c0 1.66 3.13 3 7 3s7-1.34 7-3v-13"/><path d="M5 12c0 1.66 3.13 3 7 3s7-1.34 7-3"/></svg></span>
+        <h3 class="svc-name">数据中心</h3>
+        <p class="svc-desc">检索数据、查看元数据与样例。申请授权后在科研开发空间使用。</p>
+        <a class="link-more" href="数据中心-数据集列表页.html">进入数据中心 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+      </article>
+      <article class="svc">
+        <span class="ico-box sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.6 8.4 4.7v9.4L12 21.4 3.6 16.7V7.3Z"/><path d="m3.6 7.3 8.4 4.7 8.4-4.7M12 12v9.4"/></svg></span>
+        <h3 class="svc-name">模型中心</h3>
+        <p class="svc-desc">了解模型能力与输入输出要求，在线运行或申请调用。</p>
+        <a class="link-more" href="模型中心-模型列表页（调整）.html">进入模型中心 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+      </article>
+      <article class="svc">
+        <span class="ico-box sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="4" width="18.8" height="12.6" rx="1.8"/><path d="M9 20.6h6M12 16.6v4"/><path d="m9.6 8.3-1.9 2.4 1.9 2.4M14.4 8.3l1.9 2.4-1.9 2.4"/></svg></span>
+        <h3 class="svc-name">科研开发空间</h3>
+        <p class="svc-desc">在线开发、挂载资源、团队协作与成果提交。</p>
+        <a class="link-more" href="科研开发空间-交互原型(10).html">进入科研开发空间 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+      </article>
+      <article class="svc">
+        <span class="ico-box sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.6H7a2 2 0 0 0-2 2v14.8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.6Z"/><path d="M14 2.6v5h5M8.8 13h6.4M8.8 16.6h4"/></svg></span>
+        <h3 class="svc-name">课题中心</h3>
+        <p class="svc-desc">查看课题指南、公示与历年档案，按指南要求线下申报。</p>
+        <a class="link-more" href="课题中心-高保真原型.html">进入课题中心 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+      </article>
+      <article class="svc">
+        <span class="ico-box sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 15.2a1.8 1.8 0 0 1-1.8 1.8H8.4L3.4 21V5.2a1.8 1.8 0 0 1 1.8-1.8h13.6a1.8 1.8 0 0 1 1.8 1.8Z"/><path d="M8.6 9h6.8M8.6 12.4h4"/></svg></span>
+        <h3 class="svc-name">需求中心</h3>
+        <p class="svc-desc">查看业务需求，登录获取发布方联系方式，线下沟通。</p>
+        <a class="link-more" href="需求中心-高保真原型%20(1).html">进入需求中心 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+      </article>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>如何参与</h2>
+          <div class="participate">
+            <article class="pcard">
+              <div class="pcard-head"><span class="ico-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7.6" r="3.2"/><path d="M2.7 20.4v-1.8a6.3 6.3 0 0 1 12.6 0v1.8"/><path d="M17.4 5.3a3.2 3.2 0 0 1 0 6M18.4 14.2a5.6 5.6 0 0 1 3 5v1.2"/></svg></span><h3>科研老师与团队</h3></div>
+              <p>准备机构信息、研究方向及成果材料，通过合作咨询了解加入方式。</p>
+              <button type="button" class="btn btn-primary" data-consult>合作咨询 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></button>
+            </article>
+            <article class="pcard">
+              <div class="pcard-head"><span class="ico-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20.8V4.2A1.6 1.6 0 0 1 5.6 2.6h8.8A1.6 1.6 0 0 1 16 4.2v16.6"/><path d="M16 9.6h2.4A1.6 1.6 0 0 1 20 11.2v9.6M2.6 20.8h18.8"/><path d="M7.4 6.6h5M7.4 10.4h5M7.4 14.2h5"/></svg></span><h3>企业用户</h3></div>
+              <p>查看模型与需求，按资源详情申请使用，通过合作咨询沟通接入需求。</p>
+              <button type="button" class="btn btn-primary" data-consult>合作咨询 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></button>
+            </article>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>使用须知</h2>
+          <div class="notes">
+            <ol class="notes-list">
+              <li>公开内容可直接浏览，资源申请与使用需登录。</li>
+              <li>数据在平台内使用，不提供下载带出。</li>
+              <li>需求合作由双方线下沟通，平台不参与具体合作过程。</li>
+            </ol>
+            <div class="notes-acts">
+              <a class="btn btn-ghost" href="关于平台-使用帮助.html">查看使用帮助 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a>
+              <button type="button" class="btn btn-primary" data-consult>合作咨询</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="about-inner footer-inner">
+    <div class="footer-brand">
+      <p class="f-name">
+        <svg width="26" height="26" viewBox="0 0 30 30" fill="none" aria-hidden="true"><path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#E4EEE8"/></svg>
+        北大荒智慧农业协同创新平台
+      </p>
+      <p class="f-slogan">面向农业研究与生产的开放协同平台。</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <h4>平台资源</h4>
+        <ul>
+          <li><a href="数据中心-数据集列表页.html">数据中心</a></li>
+          <li><a href="模型中心-模型列表页（调整）.html">模型中心</a></li>
+          <li><a href="课题中心-高保真原型.html">课题中心</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>关于平台</h4>
+        <ul>
+          <li><a href="关于平台-平台介绍.html">平台介绍</a></li>
+          <li><a href="关于平台-使用帮助.html">使用帮助</a></li>
+          <li><a href="关于平台-联系支持.html">联系我们</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <svg class="footer-wheat" width="220" height="180" viewBox="0 0 220 180" fill="none" aria-hidden="true">
+    <path d="M60 176C70 120 96 72 150 28" stroke="#E4EEE8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M96 96c-14-4-24-14-28-28 14 2 24 10 28 28Zm10-20c-2-14 2-27 12-37 5 13 2 26-12 37Zm16 10c12-8 26-9 39-4-9 11-23 14-39 4Zm-22 32c-14-3-24-12-29-26 14 1 25 9 29 26Zm8-24c-1-14 4-27 14-36 4 13 0 26-14 36Zm16 12c12-7 26-8 38-2-8 10-22 12-38 2Z" fill="#E4EEE8"/>
+  </svg>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script id="bdh-about-js">
+/* 「关于平台」模块交互：toast / 左侧跳转 / 问答折叠 / 帮助搜索 / 目录定位 */
+(function () {
+  "use strict";
+
+  /* ---------- toast ---------- */
+  var toastEl = document.getElementById("toast"), toastTimer = null;
+  function showToast(msg) {
+    if (!toastEl) { return; }
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2400);
+  }
+  window.aboutToast = showToast;
+  window.showToast = showToast;
+
+  /* ---------- 左侧栏目跳转 ----------
+     注意：toast 与移动端菜单开合已由统一导航脚本（bdh-portal-nav-js）委托处理，
+     本脚本不再重复挂监听（否则汉堡会被 toggle 两次＝点不开）。 */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var go = t.closest("[data-goto]");
+    if (go) { location.href = go.getAttribute("data-goto"); }
+  });
+
+  /* ---------- 问答折叠（原型默认折叠，可同时展开多条）---------- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var q = t.closest(".qa-q");
+    if (!q) { return; }
+    var item = q.parentNode;
+    var open = item.classList.toggle("open");
+    q.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  /* ---------- 帮助搜索（范围＝本帮助模块已发布标题、正文与问答）---------- */
+  var IDX = [
+    ["加入平台","使用帮助","了解平台加入方式与账号相关问题。","关于平台-使用帮助.html#join"],
+    ["如何申请加入？","加入平台","通过合作咨询提交机构、方向与成果等材料，由平台联系并开通账号。","关于平台-使用帮助.html#join-1"],
+    ["受邀用户如何入驻？","加入平台","按邀请要求提交入驻材料，由平台人员联系办理。","关于平台-使用帮助.html#join-2"],
+    ["无法登录怎么办？","加入平台","核对账号信息，仍无法登录时联系平台支持。","关于平台-使用帮助.html#join-3"],
+    ["数据使用","使用帮助","了解数据获取、使用方式与相关限制。","关于平台-使用帮助.html#data"],
+    ["在哪里查看样例？","数据使用","在数据集详情页查看元数据与公开样例。","关于平台-使用帮助.html#data-1"],
+    ["怎样使用数据？","数据使用","申请授权后，在科研开发空间挂载使用。","关于平台-使用帮助.html#data-2"],
+    ["能否下载数据？","数据使用","数据在平台内使用，不提供下载带出。","关于平台-使用帮助.html#data-3"],
+    ["模型使用","使用帮助","了解模型在线运行与调用方式。","关于平台-使用帮助.html#model"],
+    ["在哪里运行？","模型使用","从模型详情进入在线运行，按输入要求提交数据。","关于平台-使用帮助.html#model-1"],
+    ["怎样申请调用？","模型使用","在模型详情申请使用，按授权范围调用。","关于平台-使用帮助.html#model-2"],
+    ["接口文档在哪里？","模型使用","查看模型对外提供信息及对应接口文档。","关于平台-使用帮助.html#model-3"],
+    ["科研开发空间","使用帮助","了解科研开发空间的申请、使用与成果提交。","关于平台-使用帮助.html#space"],
+    ["如何开始研究？","科研开发空间","申请所需空间与资源，获批后进入开发环境。","关于平台-使用帮助.html#space-1"],
+    ["如何使用数据和模型？","科研开发空间","在空间内挂载已授权的资源。","关于平台-使用帮助.html#space-2"],
+    ["成果如何提交？","科研开发空间","整理成果材料并填写归属信息，提交后查看审核反馈。","关于平台-使用帮助.html#space-3"],
+    ["课题指南","使用帮助","了解课题申报流程与相关资料查询。","关于平台-使用帮助.html#topic"],
+    ["如何申报课题？","课题指南","按指南说明线下提交材料。","关于平台-使用帮助.html#topic-1"],
+    ["在哪里公示？","课题指南","在课题中心查看已发布的公示。","关于平台-使用帮助.html#topic-2"],
+    ["怎样查历年资料？","课题指南","在课题中心切换年度查看指南与档案。","关于平台-使用帮助.html#topic-3"],
+    ["需求联系","使用帮助","了解需求发布、联系及合作推进方式。","关于平台-使用帮助.html#demand"],
+    ["如何找需求？","需求联系","按方向、所需服务与关键词筛选。","关于平台-使用帮助.html#demand-1"],
+    ["怎样获取联系方式？","需求联系","登录后在需求详情点击我要联系。","关于平台-使用帮助.html#demand-2"],
+    ["如何跟进合作？","需求联系","获取联系方式后由双方线下自行沟通。","关于平台-使用帮助.html#demand-3"],
+    ["如何申请并使用数据","数据使用","在数据中心查找资源、查看公开样例，获授权后在科研开发空间内使用数据。","关于平台-数据使用指南.html#top"],
+    ["查找与预览","数据使用","进入数据中心，通过关键词和筛选条件查找数据，查看元数据、适用说明与公开样例。","关于平台-数据使用指南.html#sec1"],
+    ["提交使用申请","数据使用","在数据详情页点击申请使用，填写研究用途与所需资源，提交后等待审核。","关于平台-数据使用指南.html#sec2"],
+    ["在科研开发空间使用","数据使用","获授权后进入科研开发空间，挂载数据，在开发环境中读取与分析。","关于平台-数据使用指南.html#sec3"],
+    ["查看授权与有效期","数据使用","在个人中心查看授权状态与有效期；如需继续使用，联系平台管理员处理。","关于平台-数据使用指南.html#sec4"],
+    ["未登录能否查看数据？","数据使用","可查看公开目录与样例，申请使用需登录。","关于平台-数据使用指南.html#faq"],
+    ["申请被驳回后怎么办？","数据使用","根据反馈补充或修改申请材料后重新提交。","关于平台-数据使用指南.html#faq"],
+    ["已获授权但无法读取怎么办？","数据使用","检查授权有效期与挂载状态，再联系平台支持。","关于平台-数据使用指南.html#faq"],
+    ["开发者接入","开发者接入","面向已获授权的系统集成与模型调用，具体接口以对应服务文档为准。","关于平台-开发者接入.html#top"],
+    ["接入步骤","开发者接入","选择模型 → 申请使用 → 查阅接口文档 → 联调与使用。","关于平台-开发者接入.html#steps"],
+    ["接入前需要确认","开发者接入","服务版本、授权范围、鉴权方式、输入输出、调用限制、错误处理。","关于平台-开发者接入.html#precheck"],
+    ["接口文档指引","开发者接入","进入模型详情的对外提供区域，查看该模型对应的接口文档。","关于平台-开发者接入.html#docs"],
+    ["未获授权可以调用吗？","开发者接入","需先申请使用，获授权后按约定范围调用。","关于平台-开发者接入.html#faq"],
+    ["调用失败怎么办？","开发者接入","先核对服务版本、凭证状态与输入格式，再联系平台支持并提供错误信息。","关于平台-开发者接入.html#faq"],
+    ["部署说明","部署说明","了解平台内科研环境与模型服务的使用方式。专项部署需求通过合作咨询沟通。","关于平台-部署说明.html#top"],
+    ["平台内使用","部署说明","科研开发环境按需申请 CPU、GPU、内存和存储；模型服务获授权后按接口文档调用。","关于平台-部署说明.html#inside"],
+    ["专项部署咨询","部署说明","如需在指定环境部署或与业务系统集成，请先说明使用场景与环境条件。","关于平台-部署说明.html#custom"],
+    ["沟通前请准备","部署说明","业务目标、资源范围、运行环境、资源需求、集成方式、管理要求。","关于平台-部署说明.html#custom"],
+    ["部署相关说明","部署说明","部署由平台技术人员实施，数据与模型使用范围以授权约定为准。","关于平台-部署说明.html#notes"],
+    ["联系支持","联系支持","根据问题类型选择对应入口，便于获得准确的说明与帮助。","关于平台-联系支持.html#top"],
+    ["使用问题","联系支持","数据申请、模型调用或科研开发空间使用问题，可先查阅使用帮助。","关于平台-联系支持.html#entries"],
+    ["合作咨询","联系支持","加入平台、机构合作与专项部署需求，通过统一合作咨询入口沟通。","关于平台-联系支持.html#entries"],
+    ["需求沟通","联系支持","针对某条需求发布的合作，请在需求详情点击我要联系。","关于平台-联系支持.html#entries"],
+    ["联系平台","联系支持","官方电话与服务邮箱发布后在此展示。","关于平台-联系支持.html#contact"],
+    ["反馈问题时请准备","联系支持","页面或资源名称、发生时间与操作、错误提示或截图、联系方式。","关于平台-联系支持.html#feedback"],
+    ["课题申报联系谁？","联系支持","请查看相应课题指南中的联系信息并按要求线下提交。","关于平台-联系支持.html#faq"],
+    ["需求合作联系谁？","联系支持","登录后从需求详情获取发布方联系方式。","关于平台-联系支持.html#faq"],
+    ["资源申请状态在哪里看？","联系支持","登录个人中心查看我的申请及审核反馈。","关于平台-联系支持.html#faq"]
+  ];
+  var grid = document.getElementById("aboutGrid");
+  var panel = document.getElementById("searchPanel");
+  var list = document.getElementById("spList");
+  var titleEl = document.getElementById("spTitle");
+  var form = document.getElementById("searchForm");
+  var input = document.getElementById("searchInput");
+  var clearBtn = document.getElementById("spClear");
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function render(q) {
+    var key = String(q || "").trim().toLowerCase();
+    if (!key) { stopSearch(); return; }
+    var hits = IDX.filter(function (it) {
+      return (it[0] + it[1] + it[2]).toLowerCase().indexOf(key) >= 0;
+    });
+    if (!hits.length) {
+      titleEl.textContent = "搜索结果";
+      list.innerHTML = '<div class="sp-empty"><p><strong>未找到相关帮助内容</strong>，请尝试其他关键词。</p>'
+        + '<div class="sp-acts"><button type="button" class="btn btn-line" data-sp-empty-clear>清空搜索</button>'
+        + '<a class="btn btn-ghost" href="关于平台-联系支持.html">联系支持 <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h14"/><path d="m13 6.5 5.5 5.5-5.5 5.5"/></svg></a></div></div>';
+    } else {
+      titleEl.innerHTML = "搜索结果 · 共 <em>" + hits.length + "</em> 项";
+      list.innerHTML = hits.map(function (it) {
+        return '<a class="sp-item" href="' + it[3] + '"><b>' + esc(it[0]) + '</b>'
+          + '<small>所属栏目：' + esc(it[1]) + '</small><p>' + esc(it[2]) + '</p></a>';
+      }).join("");
+    }
+    if (grid) { grid.classList.add("is-searching"); }
+    if (panel) { panel.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+  }
+
+  function stopSearch() {
+    if (grid) { grid.classList.remove("is-searching"); }
+    if (list) { list.innerHTML = ""; }
+    if (input) { input.value = ""; }
+  }
+
+  if (form && input) {
+    form.addEventListener("submit", function (e) { e.preventDefault(); render(input.value); });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { stopSearch(); }
+    });
+  }
+  if (clearBtn) { clearBtn.addEventListener("click", stopSearch); }
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.closest && e.target.closest("[data-sp-empty-clear]")) { stopSearch(); }
+  });
+
+  /* ---------- 带 hash 进入：定位并展开 ---------- */
+  function openFromHash() {
+    var h = String(location.hash || "").replace(/^#/, "");
+    if (!h) { return; }
+    var el = document.getElementById(h);
+    if (!el) { return; }
+    if (el.classList.contains("qa")) {
+      el.classList.add("open");
+      var b = el.querySelector(".qa-q");
+      if (b) { b.setAttribute("aria-expanded", "true"); }
+    }
+    setTimeout(function () { el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80);
+  }
+  window.addEventListener("hashchange", openFromHash);
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", openFromHash); }
+  else { openFromHash(); }
+})();
+</script>
+<style id="portal-complete-style">
+#portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+
+/* ===== 0929 修复：本模块页头容器恒 max-width:1280px（与正文栅格对齐），
+   登录后「头像+姓名+退出+个人中心+合作咨询」共 365px 会与导航重叠 -31px
+   （未登录时动作区仅 166px，故此前未暴露）。容器不随视口变宽，
+   因此这里**不能**按视口断点处理，须无条件收窄到 245px。 ===== */
+header.site-header .header-actions .bdh-name{ display:none; }
+header.site-header .header-actions .bdh-logout{ display:none; }
+@media (max-width:1300px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* 1280px 容器里 245px 动作区得 60px 间距；再往下 .header-inner 会于 1279px 收窄到 1100，
+   245px 只剩 28px，故 1300 处收为「个人中心」单按钮（实测 ≥100px）。
+   留 1300（而非 1250）是为了覆盖 1279 断点生效前的 1251~1279 这段。 */
+</style>
+<dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
+<script id="portal-complete-script">
+(function(){
+ const dialog=document.getElementById('portalComplete');
+ const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ window.portalEscape=escape;
+ window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
+ window.portalClose=()=>dialog.close();
+ function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsult=function(kind='机构合作'){
+ portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
+ window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
+ window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
+ const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+})();
+</script>
+
+</body>
+</html>
