@@ -458,7 +458,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 footer .links a{color:inherit;text-decoration:none}
 footer .links a:hover{color:#fff;text-decoration:underline}
 </style>
-</head><body>
+<style>.environment-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:16px}.environment-select-grid label{min-width:0}[hidden]{display:none!important}@media(max-width:600px){.environment-select-grid{grid-template-columns:1fr}}</style></head><body>
 <header class="site-header">
   <div class="header-inner">
     <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
@@ -472,7 +472,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
       <a class="active" href="科研开发空间-交互原型(10).html" aria-current="page">科研开发空间</a>
       <a href="课题中心-高保真原型.html">课题中心</a>
       <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="关于平台-平台介绍.html">关于平台</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     </nav>
     <div class="header-actions">
       <div class="autharea">
@@ -491,7 +491,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     <a class="active" href="科研开发空间-交互原型(10).html" aria-current="page">科研开发空间</a>
     <a href="课题中心-高保真原型.html">课题中心</a>
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
     <button type="button" class="button button-primary" data-consult>合作咨询</button>
   </div>
@@ -567,42 +567,26 @@ const initialDatasetCatalog=[
 {id:'weather-daily',name:'农业气象逐日观测数据',version:'V1.2',type:'表格 / 时序',team:'all',path:'/mnt/data/weather-daily'}
 ];
 let applicationDataIds=[];
-function selectedInitialModel(){return initialModelCatalog.find(m=>m.id===$('#initial-model').value)}
-function selectedDevelopmentTool(){return document.querySelector('#apply-form input[name=ide]:checked')?.value||'JupyterLab 4'}
-function updateDevelopmentTool(){const heading=$('#selected-ide-name');if(heading)heading.textContent=selectedDevelopmentTool()}
+function selectedDevelopmentTool(){return $('#development-tool')?.value||'JupyterLab 4'}
+function selectedInitialModel(){
+ const selected=initialModelCatalog.find(m=>m.id===$('#initial-model').value);
+ const config={system:$('#environment-system').value,python:$('#environment-python').value,framework:$('#environment-framework').value,cuda:$('#environment-cuda').value,tool:selectedDevelopmentTool()};
+ return {id:selected?.id||'',name:selected?.name||'',version:selected?.version||'',imageId:'',image:'',config,
+ runtime:'Python '+config.python+(config.framework==='不预装框架'?'':' · '+config.framework),environment:config.system+(config.cuda==='不使用'?'':' · CUDA '+config.cuda),
+ minimum:{cpu:1,gpu:0,ram:1,storage:1},recommended:{cpu:4,gpu:0,ram:16,storage:100},gpuMemory:1,systemDisk:20};
+}
+function updateDevelopmentTool(){updateEnvironmentSummary()}
+function updateEnvironmentSummary(){const m=selectedInitialModel();$('#model-runtime').innerHTML=`<div class="env-heading"><strong>${esc(selectedDevelopmentTool())}</strong></div><div class="env-row"><span>环境组合</span><span>${esc(m.environment)} · ${esc(m.runtime)}</span></div>`;}
 function useModelDefaults(preserveStorage=false){
- const m=selectedInitialModel();
- for(const k of ['cpu','gpu','ram','storage']){
-  const input=$('#resource-'+k);
-  if(!(k==='storage'&&preserveStorage))input.value=m.recommended[k];
-  input.min=m.minimum[k];
-  $('#default-'+k).textContent='推荐 '+m.recommended[k]+({cpu:' 核',gpu:' 张',ram:' GB',storage:' GB'}[k]);
- }
- const supportsGpu=m.gpuRequired;
- $('#resource-gpu').readOnly=!supportsGpu;
- $('#resource-gpu').setAttribute('aria-readonly',String(!supportsGpu));
- $('#gpu-memory').value=m.gpuMemory||0;
- $('#gpu-memory').min=m.gpuMemory||0;
- $('#gpu-memory-row').hidden=!supportsGpu;
- $('#model-runtime').innerHTML=`<div class="env-heading"><span class="env-icon">⌘</span><strong id="selected-ide-name">${esc(selectedDevelopmentTool())}</strong><span class="env-tag">网页开发环境</span></div><div class="env-row"><span>开发镜像</span><strong>${esc(m.image)}</strong></div><div class="env-row"><span>运行环境</span><span>${esc(m.runtime)}</span></div><div class="env-row"><span>系统环境</span><span>${esc(m.environment.split(' · JupyterLab')[0])}</span></div><div class="env-row"><span>系统盘</span><span>${m.systemDisk} GB · 平台预留</span></div>`;
- $('#gpu-note').textContent=supportsGpu?'按镜像兼容性与单卡显存要求匹配 GPU，开通后显示实际卡型。':'当前为 CPU 开发镜像，无需配置 GPU。';
- $('#resource-form-error').textContent='';checkResourceHints();
+ const m=selectedInitialModel();for(const k of ['cpu','gpu','ram','storage']){const input=$('#resource-'+k);if(!(k==='storage'&&preserveStorage))input.value=m.recommended[k];input.min=m.minimum[k];$('#default-'+k).textContent='默认 '+m.recommended[k]+({cpu:' 核',gpu:' 张',ram:' GB',storage:' GB'}[k]);}
+ $('#resource-gpu').readOnly=false;$('#gpu-memory').value=16;$('#gpu-memory').min=1;$('#gpu-note').textContent='GPU 张数为 0 时不申请 GPU。';updateEnvironmentSummary();checkResourceHints();
 }
 function checkResourceHints(){
- const m=selectedInitialModel(),hard=[],soft=[],labels={cpu:'CPU',gpu:'GPU',ram:'内存',storage:'研究存储'};
- for(const k of ['cpu','gpu','ram','storage']){
-  const el=$('#resource-'+k),v=Number(el.value);
-  if(el.value===''||!Number.isSafeInteger(v)||v<m.minimum[k])hard.push(labels[k]+'至少为 '+m.minimum[k]+({cpu:' 核',gpu:' 张',ram:' GB',storage:' GB'}[k]));
-  else if(v<m.recommended[k])soft.push(labels[k]);
- }
- const gpu=Number($('#resource-gpu').value),mem=Number($('#gpu-memory').value);
- $('#gpu-memory-row').hidden=gpu===0;
- if(!m.gpuRequired&&gpu!==0)hard.push('当前镜像仅支持 CPU 配置');
- if(gpu>0&&(!Number.isSafeInteger(mem)||mem<m.gpuMemory))hard.push('单卡显存至少为 '+m.gpuMemory+' GB');
- $('#resource-form-error').textContent=hard.length?hard.join('；'):'';
- $('#resource-advice').textContent=!hard.length&&soft.length?soft.join('、')+'低于推荐配置，可提交，但较大任务可能受限。':'';
- $('#apply-config-summary').textContent=`${$('#resource-cpu').value||'—'} 核 CPU · ${$('#resource-ram').value||'—'} GB 内存 · ${gpu||0} 张 GPU`;
- return !hard.length;
+ const m=selectedInitialModel(),errors=[],labels={cpu:'CPU',gpu:'GPU',ram:'内存',storage:'研究存储'};
+ for(const k of ['cpu','gpu','ram','storage']){const el=$('#resource-'+k),v=Number(el.value);if(el.value===''||!Number.isSafeInteger(v)||v<m.minimum[k])errors.push(labels[k]+'需为不小于 '+m.minimum[k]+' 的整数');}
+ const gpu=Number($('#resource-gpu').value),mem=$('#gpu-memory');$('#gpu-memory-row').hidden=!(gpu>0);mem.required=gpu>0;mem.disabled=!(gpu>0);
+ if(gpu>0&&(!mem.value||!Number.isSafeInteger(Number(mem.value))||Number(mem.value)<1))errors.push('请填写单卡显存要求（正整数）');
+ $('#resource-form-error').textContent=errors.join('；');$('#resource-advice').textContent='';$('#apply-config-summary').textContent=`${$('#resource-cpu').value||'—'} 核 CPU · ${$('#resource-ram').value||'—'} GB 内存 · ${gpu||0} 张 GPU`;return !errors.length;
 }
 function renderApplicationData(){
  const team=$('#application-team').value;
@@ -625,10 +609,14 @@ function apply(){
  <label class="full duration-label">预计使用时长 <span class="optional-text">选填</span><div class="duration-input"><input name="durationDays" type="number" min="1" step="1" placeholder="例如 90" aria-label="预计使用天数"><span>天</span><small>用于资源安排，不作为自动结束研究的时间。</small></div></label>
  </div></section>
  <section class="application-section"><h3><span>02</span>开发环境</h3>
- <label>初始模型 <span class="required-star">*</span><select id="initial-model" name="model" required>${initialModelCatalog.map(m=>`<option value="${m.id}">${m.name} · ${m.version}</option>`).join('')}</select></label>
- <fieldset class="development-tool-options"><legend>开发工具 <span class="required-star">*</span></legend><div class="development-tool-choices"><label><input type="radio" name="ide" value="JupyterLab 4" checked required><span>JupyterLab</span></label><label><input type="radio" name="ide" value="VSCode" required><span>VSCode</span></label></div></fieldset>
- <div id="model-runtime" class="application-environment"></div>
- <p class="field-help">开发镜像随模型版本匹配。切换模型将更新计算配置，保留研究存储与已选数据。</p>
+ <label>关联模型 <span class="optional-text">选填</span><select id="initial-model" name="model"><option value="">不关联模型</option>${initialModelCatalog.map(m=>`<option value="${m.id}">${m.name} · ${m.version}</option>`).join('')}</select></label>
+ <div class="environment-select-grid">
+ <label>操作系统 <span class="required-star">*</span><select id="environment-system" required><option>Ubuntu 22.04</option><option>Ubuntu 20.04</option></select></label>
+ <label>Python 版本 <span class="required-star">*</span><select id="environment-python" required><option>3.10</option><option>3.11</option></select></label>
+ <label>开发框架 <span class="required-star">*</span><select id="environment-framework" required><option>PyTorch 2.2</option><option>scikit-learn 1.4</option><option>不预装框架</option></select></label>
+ <label>CUDA <span class="optional-text">选填</span><select id="environment-cuda"><option>不使用</option><option>12.1</option></select></label>
+ <label>开发工具 <span class="required-star">*</span><select id="development-tool" name="ide" required><option value="JupyterLab 4">JupyterLab</option><option value="VSCode">VS Code</option></select></label>
+ </div><div id="model-runtime" class="application-environment"></div>
  </section>
  <section class="application-section"><h3><span>03</span>计算与存储<button type="button" class="link" id="restore-application-defaults">恢复推荐配置</button></h3>
  <div class="resource-input-grid">${[['cpu','CPU','核',1],['ram','内存','GB',1],['gpu','GPU','张',0],['storage','研究存储','GB',1]].map(([key,label,unit,min])=>`<div class="resource-input-box"><label for="resource-${key}">${label} <span class="required-star">*</span><small id="default-${key}"></small></label><div class="resource-number"><input id="resource-${key}" name="${key}" type="number" min="${min}" step="1" required aria-label="${label}"><span>${unit}</span></div></div>`).join('')}</div>
@@ -646,8 +634,7 @@ function apply(){
  modal.classList.add('resource-apply');
  modal.setAttribute('aria-labelledby','modal-title');
  useModelDefaults();renderApplicationData();
- document.querySelectorAll('#apply-form input[name=ide]').forEach(input=>input.onchange=updateDevelopmentTool);
- $('#initial-model').onchange=()=>useModelDefaults(true);
+ document.querySelectorAll('.environment-select-grid select').forEach(input=>input.onchange=updateEnvironmentSummary);
  $('#restore-application-defaults').onclick=()=>useModelDefaults(false);
  for(const k of ['cpu','gpu','ram','storage'])$('#resource-'+k).oninput=checkResourceHints;
  $('#gpu-memory').oninput=checkResourceHints;
@@ -668,7 +655,7 @@ function apply(){
  if(days&&(!Number.isSafeInteger(Number(days))||Number(days)<1)){$('#resource-form-error').textContent='预计使用时长需为正整数。';return;}
  const data=applicationDataIds.map(id=>initialDatasetCatalog.find(d=>d.id===id)).filter(d=>d&&(d.team==='all'||d.team===f.get('team'))).map(d=>({id:d.id,name:d.name,version:d.version,path:d.path,access:'只读'}));
  const gpuMemory=values.gpu?Number(f.get('gpuMemory')):0;
- const s={id:Date.now(),name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',applicationSchema:11,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment.split(' · JupyterLab')[0]+' · '+selectedDevelopmentTool(),error:''}};
+ const s={id:Date.now(),name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
  try{const requests=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');if(!Array.isArray(requests))throw new Error('Invalid local applications');requests.unshift(s);localStorage.setItem('agri-space-applications-v8',JSON.stringify(requests));}catch{$('#resource-form-error').textContent='本地申请记录保存失败，请检查浏览器存储后重试。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
  spaces.unshift(s);archived=false;$('#archive').checked=false;query='';$('#search').value='';role='全部';spacePage=1;closeModal();render();toast('空间申请已提交');
  };
@@ -678,8 +665,8 @@ $('#apply').onclick=apply;
 try{const applications=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');for(const a of applications.reverse())if(!spaces.some(s=>s.id===a.id))spaces.unshift(a);}catch{}
 const resourceCardBase=renderCards;renderCards=function(){resourceCardBase();document.querySelectorAll('#cards .card').forEach(card=>{const button=card.querySelector('[data-progress],[data-space],.actions button');const match=button?.getAttribute('onclick')?.match(/\((\d+)\)/);const id=Number(button?.dataset.progress||button?.dataset.space||match?.[1]);const s=spaces.find(x=>x.id===id);if(!s)return;card.querySelector('.config').innerHTML=`<span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 / ${s.storage||200} GB 存储`;})};
 const modelProgressBase=progress;progress=function(id){
- modelProgressBase(id);const s=spaces.find(x=>x.id===id);if(!s.model)return;
- $('#modal-content .modal-body').insertAdjacentHTML('beforeend',`<div class="detail-section"><h3>申请配置</h3><p class="hint">所属团队：${esc(s.team)}<br>研究用途：${esc(s.desc)}<br>初始模型：${esc(s.model)} ${esc(s.modelVersion)}<br>开发工具：${esc(s.ide||'JupyterLab 4')}<br>开发镜像：${esc(s.image||'—')}<br>运行环境：${esc(s.compute?.runtime||'—')}<br>预计使用时长：${s.durationDays?esc(s.durationDays)+' 天':'未填写'}</p><div class="detail-grid"><span>CPU：${s.cpu} 核</span><span>GPU：${s.gpu} 张${s.gpu?' · 单卡 ≥'+s.gpuMemory+' GB':''}</span><span>内存：${s.ram} GB</span><span>研究存储：${s.storage} GB</span><span>系统盘：${s.systemDisk} GB</span></div><p class="hint">研究目录：${esc(s.workspacePath||'/mnt/workspace')} · 可读写</p></div><div class="detail-section"><h3>初始数据</h3>${s.datasets?.length?s.datasets.map(d=>`<div class="application-progress-data"><strong>${esc(d.name)} · ${esc(d.version)}</strong><p class="hint">${esc(d.path)} · ${esc(d.access)}</p></div>`).join(''):'<p class="hint">未选择，可在空间开通后挂载。</p>'}</div>`);
+ modelProgressBase(id);const s=spaces.find(x=>x.id===id);if(!s)return;
+ $('#modal-content .modal-body').insertAdjacentHTML('beforeend',`<div class="detail-section"><h3>申请配置</h3><p class="hint">所属团队：${esc(s.team)}<br>研究用途：${esc(s.desc)}<br>初始模型：${esc(s.model||'未关联')} ${esc(s.modelVersion||'')}<br>开发工具：${esc(s.ide||'JupyterLab 4')}<br>开发镜像：${esc(s.image||'—')}<br>运行环境：${esc(s.compute?.runtime||'—')}<br>预计使用时长：${s.durationDays?esc(s.durationDays)+' 天':'未填写'}</p><div class="detail-grid"><span>CPU：${s.cpu} 核</span><span>GPU：${s.gpu} 张${s.gpu?' · 单卡 ≥'+s.gpuMemory+' GB':''}</span><span>内存：${s.ram} GB</span><span>研究存储：${s.storage} GB</span><span>系统盘：${s.systemDisk} GB</span></div><p class="hint">研究目录：${esc(s.workspacePath||'/mnt/workspace')} · 可读写</p></div><div class="detail-section"><h3>初始数据</h3>${s.datasets?.length?s.datasets.map(d=>`<div class="application-progress-data"><strong>${esc(d.name)} · ${esc(d.version)}</strong><p class="hint">${esc(d.path)} · ${esc(d.access)}</p></div>`).join(''):'<p class="hint">未选择，可在空间开通后挂载。</p>'}</div>`);
 };
 render();
 </script>
@@ -723,6 +710,9 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
 </style>
 <style id="portal-complete-style">
 #portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
 <dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
 <script id="portal-complete-script">
@@ -745,4 +735,4 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
 })();
 </script>
 
-</body></html>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body></html>

@@ -726,7 +726,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
       <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
       <a href="课题中心-高保真原型.html">课题中心</a>
       <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
     </nav>
     <div class="header-actions">
       <div class="account autharea" id="authArea">
@@ -745,7 +745,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
     <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
     <a href="课题中心-高保真原型.html">课题中心</a>
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-    <a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a class="active" href="关于平台-平台介绍.html" aria-current="page">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
     <button type="button" class="button button-primary" data-consult>合作咨询</button>
   </div>
@@ -1045,6 +1045,9 @@ header.site-header .header-actions .bdh-logout{ display:none; }
 /* 1280px 容器里 245px 动作区得 60px 间距；再往下 .header-inner 会于 1279px 收窄到 1100，
    245px 只剩 28px，故 1300 处收为「个人中心」单按钮（实测 ≥100px）。
    留 1300（而非 1250）是为了覆盖 1279 断点生效前的 1251~1279 这段。 */
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
 <dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
 <script id="portal-complete-script">
@@ -1067,5 +1070,5 @@ header.site-header .header-actions .bdh-logout{ display:none; }
 })();
 </script>
 
-</body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
 </html>

@@ -759,6 +759,31 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 #dialogBody .purpose-row input[type=checkbox]{width:17px;height:17px;min-width:0;min-height:0;flex:none;margin:0;padding:0;border:0;accent-color:#005653}
 #dialogBody .purpose-hint{font-size:12px;color:#6f7f95;margin:8px 0 0;line-height:1.7}
 </style>
+<style id="model-lineage-style">
+.outcome-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;white-space:nowrap;border:1px solid #dce8cd;background:#edf4e5;color:#426321;border-radius:4px;font-size:11px;font-weight:500;line-height:20px;padding:0 7px;}
+
+.lineage-tabs{display:flex;gap:4px;margin:0 20px 16px;padding:4px;background:#f1f5f2;border:1px solid #e0e8e2;border-radius:6px}
+.lineage-tab{flex:1;border:0;background:transparent;color:#61776b;font:inherit;font-size:13px;border-radius:4px;padding:8px 4px;cursor:pointer}
+.lineage-tab[aria-selected="true"]{background:#fff;color:#005653;font-weight:600;box-shadow:0 1px 4px #183c2514}
+.lineage-tab:focus-visible,.vh-link:focus-visible,.lineage-node a:focus-visible{outline:2px solid #005653;outline-offset:3px}
+#historyPanel [hidden]{display:none!important}#transformBox{padding:0 20px 12px}
+.history-caption{font-size:12px;color:#718378;line-height:1.7;margin:0 0 14px}
+.version-timeline{list-style:none;padding:0;margin:0 0 10px 5px}
+.version-timeline .vh-item{position:relative;border:0;border-left:1px solid #cbdcd2;padding:0 0 20px 18px;margin:0;background:none}
+.version-timeline .vh-item:last-child{border-color:transparent;padding-bottom:0}
+.version-timeline .vh-item:before{content:'';position:absolute;left:-5px;top:5px;width:9px;height:9px;border-radius:50%;background:#cbdcd2;border:2px solid #fff;box-sizing:border-box}
+.version-timeline .vh-item.cur:before{background:#005653;box-shadow:0 0 0 3px #e4eeea}
+.version-timeline .vh-hd{flex-wrap:wrap;gap:5px 8px}.version-timeline .vh-hd .vd{width:100%;margin:0}.version-timeline .vh-note{margin-top:5px}
+.vh-link{font:inherit;font-size:12px;border:0;background:transparent;color:#005653;padding:6px 0 0;cursor:pointer}
+.history-foot{padding:10px 0 12px;border-top:1px solid #e5ece7;font-size:12px;line-height:1.7;color:#718378}
+.lineage-group{margin:14px 0}.lineage-label{font-size:12px;font-weight:600;color:#586f62;margin-bottom:8px}
+.lineage-empty{border:1px dashed #dce5df;border-radius:5px;padding:12px;color:#87968c;font-size:12px;line-height:1.6;background:#fafcfb}
+.lineage-node{border:1px solid #dce6de;background:#fff;border-radius:6px;padding:12px;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.lineage-node.current{border-color:#accabd;background:#f1f7f3}.lineage-node a{font-weight:600;color:#005653;text-decoration:none}.lineage-node a:hover{text-decoration:underline}
+.lineage-node .node-meta{font-size:11px;color:#718378;margin-top:5px}.lineage-current-label{font-size:11px;color:#005653;margin-bottom:4px}
+.lineage-branches{list-style:none;padding:0 0 0 16px;margin:0 0 0 5px;border-left:1px solid #bfd2c5}.lineage-branches li{position:relative;padding-bottom:10px}.lineage-branches li:before{content:'';position:absolute;left:-17px;top:20px;width:16px;border-top:1px solid #bfd2c5}
+.lineage-source{font-size:12px;line-height:1.8;color:#718378;margin:12px 0 0}.lineage-source b{font-weight:500;color:#4b6356}
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -779,7 +804,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
       <a href="课题中心-高保真原型.html">课题中心</a>
       <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="关于平台-平台介绍.html">关于平台</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     </nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
@@ -798,7 +823,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
     <a href="课题中心-高保真原型.html">课题中心</a>
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
     <button type="button" class="button button-primary" data-consult>合作咨询</button>
   </div>
@@ -822,12 +847,17 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
           </div>
           
           <div class="panel meta-card">
-            <h2 class="sec-title">来源与权属<span class="sub">成果提交时声明</span></h2>
+            <h2 class="sec-title">来源与权属</h2>
             <div id="originBox"></div>
           </div>
-          <div class="panel meta-card">
-            <h2 class="sec-title">版本历史<span class="sub">同一能力契约的历次发布</span></h2>
-            <div id="verBox"></div>
+          <div class="panel meta-card" id="historyPanel">
+            <h2 class="sec-title">版本与成果关系</h2>
+            <div class="lineage-tabs" role="tablist" aria-label="版本与成果关系">
+              <button type="button" class="lineage-tab" role="tab" id="historyVersionTab" aria-selected="true" aria-controls="verBox" onclick="switchHistory('versions')">版本迭代</button>
+              <button type="button" class="lineage-tab" role="tab" id="historyTransformTab" aria-selected="false" aria-controls="transformBox" onclick="switchHistory('transforms')">成果转化</button>
+            </div>
+            <div id="verBox" role="tabpanel" aria-labelledby="historyVersionTab"></div>
+            <div id="transformBox" role="tabpanel" aria-labelledby="historyTransformTab" hidden></div>
           </div>
           <div class="redline">
             <b>使用红线</b>
@@ -1246,7 +1276,9 @@ function toggleVerMenu(e){
   VER_OPEN=!VER_OPEN;renderHead();
 }
 function pickVer(v){
-  VER_OPEN=false;CUR._v=v;
+  VER_OPEN=false;if(!versOf(CUR).some(function(x){return x.v===v;}))return;
+  CUR._v=v;
+  var url=new URL(location.href),params=new URLSearchParams(url.search.slice(1)||url.hash.slice(1));params.set('n',CUR.name);params.set('v',v);if(url.search){url.search=params.toString();}else{url.hash=params.toString();}history.replaceState(null,'',url);
   renderHead();renderIntro();renderCases();renderSide();
   toast(v===curVerOf(CUR).v?('已切换到当前版本 '+v):('已切换到历史版本 '+v+'（只读 · 仅供复现，不支持运行）'));
 }
@@ -1267,7 +1299,7 @@ function renderHead(){
   document.getElementById('headBox').innerHTML=
     '<div class="head-left">'+
       '<div class="head-top"><span class="head-ic">'+CUR.ic+'</span><h1>'+CUR.name+'</h1>'+sceneTags+
-        '<span class="mk zone">'+CUR.type+'</span>'+verChip+'</div>'+
+        outcomeBadge(CUR)+'<span class="mk zone">'+CUR.type+'</span>'+verChip+'</div>'+
       '<div class="head-sub"><span class="at">提供方</span><b>'+CUR.owner+'</b>'+
         '<span>·</span><span>作物 '+CUR.crop.join('/')+'</span><span>·</span><span class="at">'+CUR.abbr.replace(/\s*v[\d.]+$/,'')+'</span></div>'+
       '<div class="head-meta">'+hm(String(CUR.calls),'被调用','取数口径：调用日志表按「模型 + 会话/任务」去重计数；页面试跑与 API 调用均计入（热度），失败调用不计入')+'<span class="hm-sep">|</span>'+hm(cv.d,'更新')+
@@ -1343,7 +1375,7 @@ function abilityBlock(){
 
 function ORIGIN_OF(m){
   if(CUR_SRC_COURSE[m.name]) return '课题成果 · '+CUR_SRC_COURSE[m.name];
-  return m.open ? '课题成果（结题登记）' : '平台自建能力';
+  return '未登记成果来源';
 }
 function HOLDER_OF(m){
   if(/全重实验室/.test(m.owner)) return '智慧农场技术与系统全国重点实验室';
@@ -1352,7 +1384,7 @@ function HOLDER_OF(m){
   return '北大荒农垦集团 · 平台运营方';
 }
 
-var CUR_SRC_COURSE={
+var MODEL_OUTCOME_SOURCES={
   '水稻估产模型（卫星+气象多源）':'2026 年度指南《主要作物产量遥感估测》',
   '玉米产量预测模型（时序）':'2026 年度指南《主要作物产量遥感估测》',
   '大豆估产与长势联动模型':'2026 年度指南《主要作物产量遥感估测》',
@@ -1368,6 +1400,56 @@ var CUR_SRC_COURSE={
   '林草湿地变化检测模型':'2026 年度指南《林草湿地变化监测》',
   '无人机巡田作业监测模型':'2026 年度指南《农机作业与设施监测》'
 };
+// 成果标识仅依据已有成果来源；不根据模型类型、提供方或开放状态推断。
+function isOutcomeModel(m){return Object.prototype.hasOwnProperty.call(MODEL_OUTCOME_SOURCES,m.name);}
+function outcomeBadge(m){return isOutcomeModel(m)?'<span class="outcome-badge">成果模型</span>':'';}
+
+var CUR_SRC_COURSE=MODEL_OUTCOME_SOURCES;
+
+// 跨模型成果转化关系与同一模型的版本记录分别存储。
+// 当前文件没有已登记的转化关系，不按模型名称、相同指南或版本号猜测关联。
+// 记录结构：{source:{name,version},target:{name,version}}，指向已有模型及具体版本。
+var MODEL_TRANSFORMS=[];
+var HISTORY_VIEW='versions';
+function switchHistory(view){
+  HISTORY_VIEW=view==='transforms'?'transforms':'versions';
+  var v=HISTORY_VIEW==='versions';
+  document.getElementById('verBox').hidden=!v;
+  document.getElementById('transformBox').hidden=v;
+  document.getElementById('historyVersionTab').setAttribute('aria-selected',String(v));
+  document.getElementById('historyTransformTab').setAttribute('aria-selected',String(!v));
+}
+function validModelRef(ref){
+  if(!ref)return false;
+  var m=MD.filter(function(m){return m.name===ref.name;})[0];
+  return !!m&&versOf(m).some(function(v){return v.v===ref.version;});
+}
+function modelRefLink(ref){return location.pathname+'#n='+encodeURIComponent(ref.name)+'&v='+encodeURIComponent(ref.version);}
+function transformationNode(ref,relation){
+  return '<li><div class="lineage-node"><a href="'+esc(modelRefLink(ref))+'">'+esc(ref.name)+'</a><div class="node-meta">'+esc(ref.version)+' · '+esc(relation)+'</div></div></li>';
+}
+function renderModelHistory(){
+  var sv=selVerOf(CUR),vl=versOf(CUR);
+  document.getElementById('verBox').innerHTML='<p class="history-caption">同一模型的历次更新</p><ol class="version-timeline">'+vl.map(function(x){
+    var selected=x.v===sv.v;
+    return '<li class="vh-item'+(x.cur?' cur':'')+(selected?' sel':'')+'"><div class="vh-hd"><span class="vv">'+esc(x.v)+'</span>'+(x.cur?'<span class="cta">当前版本</span>':'')+(selected?'<span class="vt-now">正在查看</span>':'')+'<span class="vd">'+esc(x.d)+'</span></div><div class="vh-note">'+esc(x.n)+'</div>'+(selected?'':'<button type="button" class="vh-link" data-version="'+esc(x.v)+'">查看此版本 →</button>')+'</li>';
+  }).join('')+'</ol><div class="history-foot">历史版本仅供查看说明，不支持在线运行与申请使用。</div>';
+  document.querySelectorAll('#verBox [data-version]').forEach(function(button){button.onclick=function(){pickVer(button.dataset.version);};});
+  var relations=MODEL_TRANSFORMS.filter(function(r){return validModelRef(r.source)&&validModelRef(r.target)&&r.source.name!==r.target.name;});
+  var sources=relations.filter(function(r){return r.target.name===CUR.name;});
+  var results=relations.filter(function(r){return r.source.name===CUR.name&&r.source.version===sv.v;});
+  function branches(items,source){
+    if(!items.length)return '<div class="lineage-empty">'+(source?'暂无已登记的来源模型':'该版本暂无已登记的转化成果')+'</div>';
+    return '<ul class="lineage-branches">'+items.map(function(r){return transformationNode(source?r.source:r.target,source?'转化为本模型 '+r.target.version:'基于 '+r.source.version+' 转化');}).join('')+'</ul>';
+  }
+  document.getElementById('transformBox').innerHTML='<p class="history-caption">基于已有模型形成的新成果模型，与版本升级分开展示。</p>'+
+    '<div class="lineage-group"><div class="lineage-label">来源模型</div>'+branches(sources,true)+'</div>'+
+    '<div class="lineage-node current"><div class="lineage-current-label">当前查看</div><strong>'+esc(CUR.name)+'</strong><div class="node-meta">'+esc(sv.v)+' '+outcomeBadge(CUR)+'</div></div>'+
+    '<div class="lineage-group"><div class="lineage-label">转化成果 · 基于 '+esc(sv.v)+'</div>'+branches(results,false)+'</div>'+
+    (isOutcomeModel(CUR)?'<p class="lineage-source">成果来源<br><b>'+esc(MODEL_OUTCOME_SOURCES[CUR.name])+'</b></p>':'');
+  switchHistory(HISTORY_VIEW);
+}
+
 function renderSide(){
   var meta='';
   function kv(k,v){meta+='<div class="kv"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
@@ -1384,24 +1466,13 @@ function renderSide(){
   
   var og='';
   function okv(k,v){og+='<div class="kv"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
-  okv('成果来源',ORIGIN_OF(CUR));
+  okv(isOutcomeModel(CUR)?'成果来源':'模型来源',ORIGIN_OF(CUR));
   okv('归属方',HOLDER_OF(CUR));
   okv('授权范围','模型权重与训练数据不随调用提供；授权后在平台内可在线运行（科研开发空间内做研究），对外仅授接口调用');
   okv('可否对外',CUR.open?'可对外提供（已通过合规审核与服务测试）':'仅平台内部使用（未经运营标记「可对外」）');
   var ogBox=document.getElementById('originBox'); if(ogBox) ogBox.innerHTML=og;
 
-  document.getElementById('verBox').innerHTML=
-    vl.map(function(x){
-      var isSel=(x.v===sv.v);
-      return '<div class="vh-item'+(x.cur?' cur':'')+(isSel?' sel':'')+'">'+
-        '<div class="vh-hd"><span class="vv">'+x.v+'</span>'+(x.cur?'<span class="cta">当前版本</span>':'')+
-        (isSel?'<span class="vt-now">正在查看</span>':'')+
-        '<span class="vd">'+x.d+'</span></div>'+
-        '<div class="vh-note">'+x.n+'</div>'+
-        (isSel?'':'<span class="vh-link" onclick="pickVer(\''+x.v+'\')">切到该版本查看 →</span>')+
-      '</div>';
-    }).join('')+
-    '<div class="vh-note" style="margin-top:10px;">口径：同一模型的历史版本＝<b>同一能力契约</b>的历次发布；若某次发布变更了输入输出契约，则作为<b>新模型</b>独立上架（同族互链）。<b>历史版本仅供复现，不支持在线运行与申请调用。</b></div>';
+  renderModelHistory();
 }
 
 
@@ -1624,10 +1695,14 @@ function openCommercial(kind){if(!CUR.open||!isCurVer(CUR)){toast('当前模型�
 }
 function submitDemo(){var form=document.querySelector('.application-form');var row=form.querySelector('#purposeRow'),selected=row?checkedPurposes():[];if(row&&!selected.length){toast('请选择授权用途（可多选）');return;}var fields=[...form.querySelectorAll('label')].filter(x=>!x.closest('#researchFields')||document.getElementById('researchFields').style.display!=='none').map(x=>{var c=x.querySelector('input:not([type=checkbox]),textarea,select');return c?x.textContent.split(String.fromCharCode(10))[0].trim()+': '+c.value:''}).filter(Boolean);if(row)fields.splice(Math.min(2,fields.length),0,'授权用途: '+purposeText(selected));var item=portalSaveApplication({name:CUR.name,version:selVerOf(CUR).v,purpose:row?purposeText(selected):'',reason:fields.join('；')});if(!item){toast('浏览器无法保存，请保留申请内容后重试');return;}document.getElementById('detailDialog').close();portalApplicationReceipt(item);} 
 
+window.addEventListener('hashchange',render);
 render();
 </script>
 <style id="portal-complete-style">
 #portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
 <dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
 <script id="portal-complete-script">
@@ -1650,5 +1725,5 @@ render();
 })();
 </script>
 
-</body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
 </html>

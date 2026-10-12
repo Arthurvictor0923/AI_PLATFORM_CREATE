@@ -735,7 +735,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
       <a href="课题中心-高保真原型.html">课题中心</a>
       <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="关于平台-平台介绍.html">关于平台</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     </nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
@@ -754,7 +754,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
     <a href="课题中心-高保真原型.html">课题中心</a>
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
     <button type="button" class="button button-primary" data-consult>合作咨询</button>
   </div>
@@ -1672,6 +1672,9 @@ window.addEventListener('resize', function(){ if(map){ updateScale(); try{ map.c
 </script>
 <style id="portal-complete-style">
 #portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
 <dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
 <script id="portal-complete-script">
@@ -1694,5 +1697,5 @@ window.addEventListener('resize', function(){ if(map){ updateScale(); try{ map.c
 })();
 </script>
 
-</body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
 </html>

@@ -715,7 +715,9 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   else { initAuth(); }
 })();
 </script>
-</head>
+<style id="dataset-detail-alignment">
+.head-right .btn-query,.head-right .btn-apply{width:132px;min-height:40px;justify-content:center}.btn-query{display:inline-flex;align-items:center;border:1px solid var(--brand);border-radius:4px;padding:0 16px;background:white;color:var(--brand);font-size:14px}.btn-query:disabled{border-color:#dbe4df;color:#94a49b;background:#f6f8f6;cursor:not-allowed}.outcome-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;line-height:22px;padding:0 8px;margin-top:7px;border:1px solid #dce8cd;border-radius:4px;background:#edf4e5;color:#426321}.tag.technical{background:#f2f5f3;color:#65796d}.meta-card .kv .v{overflow-wrap:anywhere}.head-tags .tag{height:auto;min-height:24px;white-space:normal}.head-top h1{flex:1;min-width:0}.head-right{max-width:220px}.form-readonly{overflow-wrap:anywhere}@media(max-width:700px){.head-right{max-width:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}.head-right .btn-query,.head-right .btn-apply{flex:1;width:auto}.head-right .authorize-note{width:100%;text-align:left;white-space:normal}.summary .head-top h1{font-size:22px}}
+</style></head>
 <body>
 <header class="site-header">
   <div class="container header-inner">
@@ -730,7 +732,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
       <a href="课题中心-高保真原型.html">课题中心</a>
       <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="关于平台-平台介绍.html">关于平台</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     </nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
@@ -749,7 +751,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
     <a href="课题中心-高保真原型.html">课题中心</a>
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-    <a href="关于平台-平台介绍.html">关于平台</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
     <button type="button" class="button button-primary" data-consult>合作咨询</button>
   </div>
@@ -824,7 +826,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       <div class="modal-hd"><h3>申请使用（科研开发空间）</h3><button type="button" class="modal-close" onclick="closeApplyModal()" aria-label="关闭"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <div class="modal-bd">
         <div class="form-row"><label class="form-label">数据集</label><div class="form-readonly" id="apName">—</div></div>
-        <div class="form-row"><label class="form-label">数据形态</label><div class="form-readonly" id="apForm">—</div></div>
+        <div class="form-row"><label class="form-label">数据格式</label><div class="form-readonly" id="apForm">—</div></div>
         <div class="form-row"><label class="form-label">申请日期</label><div class="form-readonly" id="apDate">—</div></div>
         <div class="form-row"><label class="form-label">授权用途<span class="req">*</span></label>
           <select class="form-ctrl" id="apUse">
@@ -1000,7 +1002,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       switchTab('preview');
       toast('当前角色已获授权 · 已打开数据预览，无需申请');
     }
-  function renderHeadRight(){ var w=document.getElementById('applyWrap'); if(w&&CUR_D) w.innerHTML=applyBtnHtml(CUR_D)+'<p class="authorize-note">'+authNote()+'</p>'; }
+  function renderHeadRight(){ var w=document.getElementById('applyWrap'); if(w&&CUR_D) w.innerHTML=imageQueryBtnHtml(CUR_D)+applyBtnHtml(CUR_D)+'<p class="authorize-note">'+authNote()+'</p>'; }
   function applyUse(){
     if(isHighRole()){ startUse(); return; }
     var s=getApplyState(CUR_D.name);
@@ -1009,7 +1011,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   }
   function openApplyModal(){
     document.getElementById('apName').textContent=CUR_D.name;
-    document.getElementById('apForm').textContent=CUR_D.form;
+    document.getElementById('apForm').textContent=CUR_D.format.join('、');
     document.getElementById('apDate').textContent=new Date().toISOString().slice(0,10);
     document.getElementById('apUse').value='';
     document.getElementById('apNote').value='';
@@ -1104,6 +1106,15 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     {name:'作物长势 · 多时相栅格影像合集',form:'栅格影像合集',crop:['水稻','大豆','玉米'],src:'zone',year:2026,upd:'2026-06-30',apply:138,zone:'growth',owner:'全重实验室 · 数据建设组',scale:'1000 景',title:'作物长势多时相栅格影像合集',desc:'覆盖 2026 年作物生育期的多时相栅格影像合集，逐景带时间戳与地块编码等属性，支撑长势时序分析与地块级对照。',relNote:'本合集与「地块产量属性表」关联，连接键为「地块编码 + 年份」。需联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。'},
     {name:'地块产量属性表',form:'结构化表',crop:['水稻','大豆','玉米'],src:'zone',year:2026,upd:'2026-07-01',apply:54,zone:'growth',owner:'全重实验室 · 数据建设组',scale:'2.1 万行',title:'地块产量属性表（结构化）',desc:'以地块为粒度的产量属性表，含地块编码、年份、作物、实测产量与对应影像时间戳等字段，可作独立查询与建模输入。',preview:'<table><thead><tr><th>地块编码</th><th>年份</th><th>作物</th><th>实测产量(kg)</th><th>影像时间戳</th></tr></thead><tbody><tr><td>DK-001</td><td>2026</td><td>水稻</td><td>612.4</td><td>2026-06-12</td></tr><tr><td>DK-002</td><td>2026</td><td>玉米</td><td>738.9</td><td>2026-06-12</td></tr></tbody></table><p style="margin-top:8px;color:#999;font-size:12px;">（以上为地块产量属性表的部分字段样例）</p>',relNote:'本表与「作物长势 · 多时相栅格影像合集」关联，连接键为「地块编码 + 年份」。需与影像联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。'}
   ];
+
+
+  // Same explicit prototype metadata as the current dataset list.
+  var DETAIL_METADATA={"作物长势 · 地面实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["作物模型", "精准感控"]}, "作物长势 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["AI 数智基础", "精准感控"]}, "作物长势 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"]}, "作物长势 · 遥感反演长势分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"]}, "土壤 · 网格实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县 / 友谊镇", "researchDirections": ["资源环境", "作物模型"]}, "土壤 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境"]}, "土壤 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 双鸭山市", "researchDirections": ["资源环境"]}, "土壤 · 遥感反演养分分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境", "精准感控"]}, "补贴核查 · 多时相卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["规模化应用"]}, "补贴核查 · 遥感解译作物分布": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["AI 数智基础", "规模化应用"]}, "补贴核查 · 申报记录（脱敏）": {"dataKind": "原始数据", "format": ["Excel", "JSON / JSONL"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市", "researchDirections": ["规模化应用"]}, "作物产量 · 地面测产数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型"]}, "作物产量 · 无人机多期影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "精准感控"]}, "作物产量 · 卫星多时相影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 鹤岗市", "researchDirections": ["作物模型"]}, "作物产量 · 遥感反演产量分布": {"dataKind": "成果数据", "format": ["GeoTIFF", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "规模化应用"]}, "林草湿 · 基准/监测期卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市 / 鹤山农场", "researchDirections": ["资源环境"]}, "林草湿 · 变化图斑数据": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["资源环境", "规模化应用"]}, "遥感植被指数产品（NDVI/EVI）": {"dataKind": "成果数据", "format": ["GeoTIFF", "NetCDF"], "annotation": "有标注", "region": "黑龙江省 / 哈尔滨市；黑龙江省 / 佳木斯市", "researchDirections": ["作物模型", "精准感控"]}, "耕地地块遥感底图（县域）": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市", "researchDirections": ["资源环境", "规模化应用"]}, "农田气象观测记录（站网）": {"dataKind": "原始数据", "format": ["CSV", "NetCDF"], "annotation": "无标注", "region": "黑龙江省 / 绥化市", "researchDirections": ["资源环境", "作物模型"]}, "标准影像产品（Sentinel 系列）": {"dataKind": "原始数据", "format": ["GeoTIFF", "HDF5"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["AI 数智基础", "资源环境"]}, "作物长势 · 多时相栅格影像合集": {"dataKind": "原始数据", "format": ["GeoTIFF", "JSON / JSONL"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市 / 富锦市；黑龙江省 / 佳木斯市 / 同江市", "researchDirections": ["作物模型", "精准感控"]}, "地块产量属性表": {"dataKind": "成果数据", "format": ["Parquet", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["AI 数智基础", "作物模型"]}};
+  DS.forEach(function(d){Object.assign(d,DETAIL_METADATA[d.name]||{});});
+  try{var savedMetadata=Object.values(JSON.parse(localStorage.getItem('bdh-asset-metadata-1010')||'{}'));DS.forEach(function(d){var saved=savedMetadata.find(function(x){return x.kind==='dataset'&&x.name===d.name;});if(saved){if(saved.format)d.format=Array.isArray(saved.format)?saved.format:String(saved.format).split(/[、,;]/).filter(Boolean);if(saved.annotation)d.annotation=saved.annotation;}});}catch(e){}
+  function imageQueryAvailable(d){return (d.format||[]).some(function(f){return /GeoTIFF|JPEG|PNG|HDF5/.test(f);});}
+  function imageQueryBtnHtml(d){return '<button type="button" class="btn-query" onclick="queryImage()"'+(imageQueryAvailable(d)?'':' disabled title="本数据集不包含可查询影像"')+'>影像查询</button>';}
+  function queryImage(){if(CUR_D&&imageQueryAvailable(CUR_D))openMapEngine(CUR_D.name,CUR_D.form,regionOf(CUR_D));}
 
   function zoneNameOf(z){var t=ZONES.filter(function(x){return x.zone===z;})[0];return t?t.name:'';}
   function zoneIcOf(z){return zoneIconOf(z);}
@@ -1256,9 +1267,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
         '</section>';
     }
     /* ③ 影像类数据：两种形态之后统一给「进入影像查询」入口（不改业务流） */
-    if(geo){
-      out+='<div class="pv-actions"><span class="pv-go" data-name="'+d.name+'" data-form="'+d.form+'" data-zn="'+zn+'" onclick="openMapEngineFromEl(this)">进入影像查询 →</span></div>';
-    }
+
     return out;
   }
   function openMapEngine(name, form, region){
@@ -1314,8 +1323,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   }
   function buildIntroEditor(d){
     return ''+
-      '<div class="intro-body rich-text" id="introBody">'+introHtml(d)+'</div>'+
-      '<div class="intro-hint">数据介绍（含关键参数）由数据提供方在「个人中心 · 我发布的数据」中以富文本编辑维护，数据中心仅做展示。</div>';
+      '<div class="intro-body rich-text" id="introBody">'+introHtml(d)+'</div>';
   }
 
   function render(){
@@ -1334,20 +1342,18 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       /* ⭐0917 摘要卡左侧＝缩略图（形态随数据形态变化），对齐示意图；降级态退回浅绿底线框图 */
       headThumbHtml(d)+
       '<div class="head-left">'+
-        '<div class="head-top"><h1>'+d.name+'</h1></div>'+
+        '<div class="head-top"><h1>'+d.name+'</h1>'+(d.dataKind==='成果数据'?'<span class="outcome-badge">成果数据</span>':'')+'</div>'+
         (d.desc?'<p class="head-desc">'+d.desc+'</p>':'')+
         '<div class="head-tags">'+
-          (zn?'<span class="tag">'+zn+'</span>':'')+
-          '<span class="tag" title="区域（行政区划）——后台上架数据时必须界定">'+regionOf(d)+'</span>'+
-          '<span class="tag">'+d.form+'</span>'+
-          '<span class="tag">'+d.crop.join('/')+'</span>'+
-          '<span class="tag">'+d.year+'</span>'+
+          d.researchDirections.map(function(v){return '<span class="tag">'+v+'</span>';}).join('')+
+          d.format.map(function(v){return '<span class="tag technical">'+v+'</span>';}).join('')+
+          '<span class="tag technical">'+d.annotation+'</span>'+
         '</div>'+
         '<div class="head-sub"><span class="at">提供方</span><b>'+d.owner+'</b></div>'+
         '<div class="head-meta">'+hm(String(d.apply),'次申请','申请次数＝本数据卡被申请的次数（按数据卡统计，供资产活性取数）；不含已撤回申请')+'<span class="hm-sep">|</span>'+hm(d.upd,'更新')+'</div>'+
       '</div>'+
       /* ⭐0917 授权说明对齐示意图：摘要卡内只作一行短句；完整授权范围见右栏「数据基本信息」 */
-      '<div class="head-right" id="applyWrap">'+applyBtnHtml(d)+
+      '<div class="head-right" id="applyWrap">'+imageQueryBtnHtml(d)+applyBtnHtml(d)+
         '<p class="authorize-note">'+authNote()+'</p></div>';
 
     document.getElementById('pane-intro').innerHTML=
@@ -1360,12 +1366,12 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     function kv(k,v){meta+='<div class="kv"><span class="k">'+k+'</span><span class="v">'+(v||'—')+'</span></div>';}
     kv('数据名称','<b>'+d.name+'</b>');
     if(zn)kv('所属专题',zn);
-    kv('数据形态',d.form);
-    kv('作物类型',d.crop.join('/')||'—');
-    kv('数据年份',String(d.year));
-    /* ⭐0915 新增三行（断点 B8 / B18）：与列表页筛选维度、与「成果提交」表单字段对齐 */
-    kv('区域（行政区划）',regionOf(d));
-    kv('数据来源',originOf(d));
+    kv('研究方向',d.researchDirections.join(' / '));
+    kv('作物',d.crop.join(' / '));
+    kv('覆盖区域',regionOf(d));
+    kv('覆盖年份',String(d.year));
+    kv('数据格式',d.format.join('、'));
+    kv('标注情况',d.annotation);
     kv('权属归属',holderOf(d));
     kv('授权范围','仅限平台「科研开发空间」内使用；不下载、不出域、不向第三方分发');
     document.getElementById('metaBox').innerHTML=meta;
@@ -1378,6 +1384,9 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 
 <style id="portal-complete-style">
 #portalComplete{width:min(700px,calc(100vw - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid #d9e5df;border-radius:10px;background:#fff;color:#173b32;box-shadow:0 20px 70px #12362a44;font:14px/1.65 "Microsoft YaHei",sans-serif}#portalComplete::backdrop{background:#102a2466}#portalComplete *{box-sizing:border-box}#portalComplete .pcx-head{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid #e3ebe7}#portalComplete h2{font-size:20px;margin:0}#portalComplete h3{font-size:16px;margin:18px 0 8px}#portalComplete .pcx-body{padding:20px 26px}#portalComplete .pcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#portalComplete label{display:block;color:#334e45;font-weight:500}#portalComplete label.full{grid-column:1/-1}#portalComplete input:not([type=checkbox]),#portalComplete select,#portalComplete textarea{display:block;width:100%;margin-top:7px;padding:9px 11px;border:1px solid #cadbd2;border-radius:5px;background:#fff;color:#213e33;font:inherit}#portalComplete textarea{min-height:104px;resize:vertical}#portalComplete .pcx-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 26px;border-top:1px solid #e3ebe7;background:#f8fbf9}#portalComplete button,#portalComplete .pcx-link{padding:8px 15px;border:1px solid #cbded3;border-radius:5px;color:#215b45;background:white;cursor:pointer;font:inherit;text-decoration:none}#portalComplete button.primary{color:white;background:#216348;border-color:#216348}#portalComplete .pcx-note{font-size:12px;color:#718479;margin:10px 0}#portalComplete .pcx-success{padding:16px;background:#edf7f0;border:1px solid #d1e5d8;border-radius:6px}#portalComplete .pcx-record{padding:14px 0;border-bottom:1px solid #e3ebe7}#portalComplete .pcx-error{color:#ad302b}#portalComplete table{border-collapse:collapse;width:100%}#portalComplete td,#portalComplete th{padding:9px;border-bottom:1px solid #e3ebe7;text-align:left}#portalComplete pre{white-space:pre-wrap;word-break:break-word;background:#f3f7f5;padding:14px}#portalComplete [hidden]{display:none!important}@media(max-width:550px){#portalComplete .pcx-grid{grid-template-columns:1fr}}
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
 <dialog id="portalComplete" aria-labelledby="pcxTitle"></dialog>
 <script id="portal-complete-script">
@@ -1400,5 +1409,5 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 })();
 </script>
 
-</body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
 </html>

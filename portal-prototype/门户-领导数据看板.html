@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>数据看板 · 北大荒智慧农业协同创新平台</title>
+<style>
+:root{--brand:#064c43;--heading:#123b35;--ink:#263b38;--muted:#687973;--line:#dfe7e1;--canvas:#f4f8f5;--soft:#edf6f2;--gold:#927021;--gold-soft:#fbf3dc;--radius:8px;--font:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:14px/1.55 var(--font)}button,input,select{font:inherit}button,a,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer;color:inherit}a{color:var(--brand);text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #287a68;outline-offset:3px}button:disabled{opacity:.4;cursor:default}h1,h2,h3,p{margin:0}button{border:0;background:none}svg{display:block}button svg,a svg{flex:none}button,a,select{touch-action:manipulation}[hidden]{display:none!important}.num{font-family:Arial,var(--font);font-variant-numeric:tabular-nums}.muted{color:var(--muted)}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.site-header{background:#fff;border-bottom:1px solid var(--line);position:relative;z-index:20}.header-inner{height:80px;max-width:1880px;margin:auto;padding:0 32px;display:flex;align-items:center;gap:30px}.brand{display:flex;align-items:center;gap:10px;white-space:nowrap;color:var(--heading);font-size:22px;font-weight:600;letter-spacing:0}.brand svg{width:30px;height:30px}.main-nav{margin-left:auto;display:flex;align-self:stretch;align-items:stretch;gap:23px;white-space:nowrap}.main-nav a{display:flex;align-items:center;padding:0 2px;color:var(--ink);font-size:15px;position:relative}.main-nav a:hover{color:var(--brand)}.main-nav .active{font-weight:600;color:var(--brand)}.main-nav .active:after{content:"";height:2px;background:var(--brand);position:absolute;bottom:0;left:0;right:0}.header-actions{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:13px}.avatar{width:30px;height:30px;border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--brand);font-weight:600}.readonly{color:var(--muted);font-size:12px;border-left:1px solid var(--line);padding-left:12px;margin-left:4px}.menu-toggle{display:none;width:36px;height:36px;border:1px solid var(--line);border-radius:6px;align-items:center;justify-content:center}.mobile-nav{padding:0 20px 12px;display:flex;gap:10px;flex-wrap:wrap}.mobile-nav a{padding:7px 9px;border-radius:5px}.mobile-nav .active{background:var(--soft);font-weight:600}
+.dashboard{max-width:1880px;padding:0 32px 18px;margin:auto}.page-head{height:77px;display:flex;align-items:center;justify-content:space-between;gap:20px}.title-row{display:flex;align-items:center;gap:12px}.title-row h1{font-size:24px;letter-spacing:.5px;color:var(--heading);font-weight:600}.demo-badge{font-size:11px;color:#64786d;border:1px solid #d5e2da;border-radius:4px;padding:2px 7px;white-space:nowrap}.head-meta{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:12px;margin-top:5px}.toolbar{display:flex;gap:10px;align-items:center}.year-label{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px}.select{border:1px solid #cddbd3;border-radius:6px;background:white;height:36px;padding:0 31px 0 12px;color:var(--ink);appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23687973' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;cursor:pointer}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 14px;border:1px solid #cddbd3;border-radius:6px;background:#fff;font-size:13px;white-space:nowrap}.btn:hover{background:var(--soft);border-color:#93b3a2}.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}.btn.primary:hover{background:#043d36}.icon-btn{width:36px;padding:0}.link{color:var(--brand);font-size:12px;padding:2px 0;white-space:nowrap;display:inline-flex;gap:5px;align-items:center}.link:hover{text-decoration:underline}.chev{font-family:Arial;font-size:17px;font-weight:400;line-height:1}.caps{font-size:11px;letter-spacing:.8px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px;margin-bottom:16px}.kpi{text-align:left;position:relative;border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:14px 17px 12px;min-width:0;transition:border-color .15s}.kpi:hover{border-color:#8eafa2}.kpi-label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;white-space:nowrap}.kpi .metric{display:flex;align-items:baseline;gap:6px;margin-top:7px;color:var(--heading);font-size:31px;line-height:1.05;font-weight:600}.metric small{font:12px var(--font);color:var(--muted)}.kpi-foot{font-size:11px;color:#78857f;margin-top:8px;white-space:nowrap}.kpi .kpi-arrow{position:absolute;right:12px;top:13px;color:#91a89d;opacity:0}.kpi:hover .kpi-arrow{opacity:1}.kpi.emphasis{background:var(--brand);border-color:var(--brand)}.kpi.emphasis .metric,.kpi.emphasis .metric small{color:#fff}.kpi.emphasis .kpi-label,.kpi.emphasis .kpi-foot{color:#d3e5dc}.kpi.emphasis .kpi-arrow{color:#d3e5dc}
+.board-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);min-width:0;display:flex;flex-direction:column;overflow:hidden}.panel-head{height:53px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;flex:none}.panel-head h2{font-size:16px;font-weight:600;color:var(--heading);white-space:nowrap}.panel-head .scope{font-size:11px;color:var(--muted);margin-left:9px;font-weight:400}.panel-head .actions{display:flex;align-items:center;gap:14px}.panel-body{padding:0 18px 16px;min-height:0;flex:1}.collab{grid-column:span 3;min-height:300px}.outcomes{grid-column:span 5;min-height:300px}.conversion{grid-column:span 4;min-height:300px}.projects{grid-column:span 4;min-height:292px}.landing{grid-column:span 5;min-height:292px}.asset{grid-column:span 3;min-height:292px}
+.institution-row{display:grid;grid-template-columns:56px minmax(0,1fr) 42px;align-items:center;gap:12px;margin:6px 0 13px}.institution-row .kind{font-size:12px;color:var(--muted)}.track{height:6px;background:#edf2ed;border-radius:3px;overflow:hidden}.track i{display:block;height:100%;background:#267263;border-radius:3px}.institution-row b{text-align:right;font-weight:500;font-size:13px}.institution-list{padding-top:3px}.institution-item{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:5px 0;font-size:12px}.institution-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.institution-item small{font-size:11px;color:var(--muted);white-space:nowrap}.submetrics{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px;padding-top:12px;border-top:1px solid var(--line);gap:8px}.submetrics b{font-size:21px;font-weight:500;color:var(--heading);display:block;line-height:1.2}.submetrics span{display:block;font-size:11px;color:var(--muted);margin-top:3px}.seg{display:inline-flex;gap:2px;border-radius:5px;background:#f0f5f1;padding:3px;flex:none}.seg button{padding:3px 9px;color:var(--muted);font-size:12px;border-radius:3px;white-space:nowrap}.seg button.active{background:white;color:var(--brand);box-shadow:0 1px 3px #103e2e0c;font-weight:600}.outcome-numbers{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:10px}.outcome-numbers button{text-align:left;padding:0 14px;border-right:1px solid var(--line)}.outcome-numbers button:first-child{padding-left:0}.outcome-numbers button:last-child{border:0}.outcome-numbers span{display:block;color:var(--muted);font-size:12px}.outcome-numbers b{font-size:24px;font-weight:500;color:var(--heading);margin-right:5px}.outcome-numbers small{color:var(--muted);font-size:11px}.chart-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);padding-top:1px}.chart-meta .legend{display:flex;gap:6px;align-items:center}.legend i{display:block;width:16px;height:2px;background:var(--brand)}.trend-chart{width:100%;height:141px;margin-top:2px;overflow:visible}.trend-chart text{font:11px var(--font);fill:#849087}.chart-dot{fill:white;stroke:var(--brand);stroke-width:2}.chart-dot:hover{fill:var(--brand)}.usage-empty{min-height:183px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;background:#f9fbf9;border-radius:6px;margin-top:6px}.usage-empty strong{font-size:16px;color:var(--heading);font-weight:500}.usage-empty p{color:var(--muted);font-size:12px;text-align:center;max-width:320px}.usage-metrics{display:flex;justify-content:center;gap:32px;font-size:12px;color:var(--muted);width:100%;padding-top:7px}.usage-metrics b{display:block;text-align:center;font-size:22px;color:#92a399;font-weight:400}
+.conversion-list{display:flex;flex-direction:column;gap:1px}.conversion-item{width:100%;display:block;padding:8px 0 11px;text-align:left;border-bottom:1px solid #e7eee7}.conversion-item:first-child{padding-top:0}.conversion-item:last-child{border-bottom:0;padding-bottom:0}.conversion-item:hover .conversion-name{color:var(--brand);text-decoration:underline}.conversion-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.conversion-name{font-size:13px;font-weight:500;color:var(--heading)}.conversion-percent{font-size:27px;line-height:1.15;color:var(--brand);font-weight:600}.conversion-percent small{font-size:13px;font-weight:400;margin-left:2px}.conversion-base{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:5px 0 7px;color:var(--muted);font-size:11px}.conversion-base b{color:var(--heading);font-weight:500}.conversion .track{height:5px}.conversion .scope{font-size:10px}.conversion-empty{font-size:11px;color:var(--muted)}
+.compact-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}.compact-table th{font-size:11px;color:var(--muted);font-weight:400;text-align:left;background:#f6f9f6;padding:8px 10px}.compact-table td{padding:9px 10px;border-bottom:1px solid #edf1ee;vertical-align:middle}.compact-table tr:last-child td{border:0}.compact-table .cell-main{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block;font-weight:500;color:var(--ink);padding:0;text-align:left;font-size:12px}.compact-table .cell-main:hover{color:var(--brand);text-decoration:underline}.compact-table small{display:block;font-size:10px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-table .status-cell{text-align:right}.badge{display:inline-block;border-radius:4px;font-size:11px;padding:2px 7px;background:#eaf4ee;color:#276551;white-space:nowrap;font-weight:400}.badge.gray{background:#f0f3f0;color:#6a7a70}.badge.amber{background:var(--gold-soft);color:var(--gold)}.compact-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);padding-top:9px}.table-panel-body{display:flex;flex-direction:column}.project-summary{display:flex;gap:12px;margin-bottom:10px;align-items:center;font-size:11px;color:var(--muted)}.project-summary i{width:6px;height:6px;display:inline-block;background:#3a7a5f;border-radius:50%;margin-right:4px}.project-summary i.gray{background:#a4b6a9}.project-summary i.amber{background:#c3ab67}.landing .compact-table td{padding:10px}.landing .panel-body{padding-bottom:10px}.landing .compact-table th:first-child{width:43%}.landing .compact-table th:nth-child(2){width:39%}.landing .compact-table th:last-child{width:18%;text-align:right}
+.asset-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.asset-stat{min-width:0;text-align:center;background:#f6f9f6;border-radius:5px;padding:10px 2px}.asset-stat strong{display:block;font-size:19px;font-weight:500;color:var(--heading);line-height:1.25}.asset-stat span{font-size:11px;color:var(--muted)}.asset-stat .label{color:var(--ink);margin-bottom:5px;display:block}.asset-note{font-size:11px;color:var(--muted);padding:10px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.dormant-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:12px;color:var(--muted)}.dormant-row strong{font-size:14px;font-weight:500;color:var(--gold)}.resource-empty{border:1px dashed #dfe6df;padding:11px 10px;border-radius:6px;margin-top:11px;color:var(--muted);font-size:11px;line-height:1.7}.resource-empty .link{display:flex;justify-content:space-between;margin-top:7px;font-size:11px}
+.continuity{display:flex;align-items:center;gap:26px;background:#edf4ee;border:1px solid #dde8de;border-radius:6px;margin-top:16px;padding:11px 15px;font-size:12px;color:var(--muted)}.continuity .lead{color:var(--heading);font-weight:600;display:flex;align-items:center;gap:8px}.continuity .lead i{width:6px;height:6px;border-radius:50%;background:#658f71}.continuity b{color:var(--heading);font-weight:500;margin-left:7px}.continuity .end{margin-left:auto;color:#839084;font-size:11px}.site-footer{border-top:1px solid #dbe5db;padding:12px 32px;max-width:1880px;margin:auto;display:flex;align-items:center;justify-content:space-between;color:#819087;font-size:11px;gap:20px}.site-footer a{color:#6c8274}.site-footer .foot-links{display:flex;gap:20px}.site-footer .foot-name{color:#6a7e70}
+.drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(1020px,88vw);max-width:none;height:100dvh;max-height:none;padding:0;border:0;border-left:1px solid var(--line);background:#fff;color:var(--ink);box-shadow:-12px 0 55px #0a392522;z-index:100}.drawer::backdrop{background:#193e3538}.drawer[open]{display:flex;flex-direction:column}.drawer-head{padding:23px 26px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);flex:none}.drawer-title{flex:1}.drawer-title h2{font-size:21px;color:var(--heading);font-weight:600}.drawer-title p{font-size:12px;color:var(--muted);margin-top:5px}.drawer-close{border:1px solid var(--line);border-radius:6px;width:32px;height:32px;display:grid;place-items:center;font-size:21px;color:var(--muted)}.drawer-content{padding:22px 26px;overflow:auto;flex:1}.drawer-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:17px}.searchbox{height:36px;border:1px solid #cddbd3;border-radius:6px;min-width:180px;width:280px;padding:0 11px;max-width:100%}.drawer-count{font-size:12px;color:var(--muted);margin-left:auto}.drawer-foot{display:flex;justify-content:space-between;align-items:center;padding:15px 26px;border-top:1px solid var(--line);background:#fafcf9;gap:12px;font-size:12px;color:var(--muted);flex:none}.drawer-table-wrap{overflow-x:auto}.detail-table{border-collapse:collapse;width:100%;font-size:13px;min-width:570px}.detail-table th{text-align:left;white-space:nowrap;background:#f2f7f2;font-size:12px;font-weight:500;color:#61796a}.detail-table th,.detail-table td{padding:12px 11px;border-bottom:1px solid var(--line);vertical-align:top}.detail-table td{line-height:1.7}.detail-table td small{display:block;color:var(--muted);font-size:11px}.detail-table .td-name{color:var(--brand);text-align:left;padding:0;font-size:13px;max-width:260px}.detail-table .td-name:hover{text-decoration:underline}.no-records{text-align:center;padding:55px 20px;color:var(--muted);font-size:13px}.pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:19px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.pager .btn{height:32px;padding:0 12px}.pager .select{height:32px;font-size:12px}.scope-note{padding:12px 14px;background:#f3f7f1;border-radius:6px;font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:20px}.definition-list{display:grid;grid-template-columns:1fr 1fr;gap:17px 24px}.definition-list dt{color:var(--muted);font-size:12px;margin-bottom:5px}.definition-list dd{margin:0;font-size:14px;line-height:1.8;word-break:break-word}.detail-section{margin-top:25px}.detail-section h3{font-size:15px;color:var(--heading);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}.detail-section p{font-size:13px;line-height:1.9;color:#5d7567}.detail-back{display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px;color:var(--brand)}.rule-block{padding:16px 0;border-bottom:1px solid var(--line)}.rule-block h3{font-size:15px;color:var(--heading);margin-bottom:8px;font-weight:600}.rule-block p{font-size:13px;color:var(--muted);line-height:1.9}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(14px);background:var(--brand);color:white;border-radius:6px;padding:10px 19px;opacity:0;pointer-events:none;z-index:999;transition:.16s;font-size:13px}.toast.show{opacity:1;transform:translateX(-50%)}body.dialog-open{overflow:hidden}.fullscreen .dashboard{max-width:none}.fullscreen .site-footer{display:none}
+@media(min-width:1700px) and (min-height:1000px){.page-head{height:84px}.kpi{padding:18px 20px 16px}.kpi .metric{font-size:35px}.kpi-foot{margin-top:10px}.collab,.outcomes,.conversion{min-height:325px}.projects,.landing,.asset{min-height:316px}.panel-head{height:58px}.panel-head h2{font-size:17px}.institution-row{margin-bottom:17px}.institution-item{font-size:13px;padding:6px 0}.submetrics{margin-top:17px}.trend-chart{height:161px}.outcome-numbers b{font-size:28px}.compact-table td{padding-top:12px;padding-bottom:12px}.landing .compact-table td{padding-top:13px;padding-bottom:13px}.asset-stat{padding:15px 2px}.asset-note{padding:14px 0}.resource-empty{padding:14px 10px}.continuity{padding:13px 17px}.site-footer{padding-top:14px;padding-bottom:14px}}
+@media(max-width:1480px){.header-inner{gap:22px;padding:0 24px}.brand{font-size:19px}.main-nav{gap:17px}.main-nav a{font-size:14px}.readonly{display:none}.dashboard{padding-left:24px;padding-right:24px}.kpis{gap:10px}.kpi{padding:13px}.panel-head,.panel-body{padding-left:15px;padding-right:15px}.panel-head .scope{display:none}.board-grid{gap:12px}.institution-row{gap:8px}.perf-hint{font-size:10px}.continuity{gap:22px}.compact-table th,.compact-table td{padding-left:7px;padding-right:7px}.landing .compact-table td{padding-left:7px;padding-right:7px}}
+@media(max-width:1250px){.header-inner{height:68px;gap:15px}.brand{font-size:17px}.brand svg{width:26px;height:26px}.main-nav{gap:12px}.main-nav a{font-size:13px}.header-actions .username{display:none}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.collab{grid-column:span 5}.outcomes{grid-column:span 7}.conversion{grid-column:span 5}.projects{grid-column:span 7}.landing{grid-column:span 7}.asset{grid-column:span 5}.panel-head .scope{display:inline}.continuity{gap:18px;flex-wrap:wrap}.continuity .end{display:none}.compact-table td{padding:12px 10px}.site-footer{font-size:10px}}
+@media(max-width:1000px){.main-nav{display:none}.header-actions{margin-left:auto}.menu-toggle{display:flex}.header-inner{height:64px}.header-actions .username{display:inline}.page-head{height:auto;padding:20px 0;align-items:flex-start;gap:14px;flex-wrap:wrap}.toolbar{margin-left:auto}.title-row h1{font-size:22px}.kpi .metric{font-size:29px}.collab,.conversion,.projects,.landing,.asset,.outcomes{grid-column:span 6}.landing .compact-table th:first-child{width:46%}.landing .compact-table th:nth-child(2){width:34%}.landing .compact-table th:last-child{width:20%}.drawer{width:94vw}.continuity{font-size:11px}.site-footer .foot-links{display:none}}
+@media(max-width:700px){.header-inner,.dashboard{padding-left:14px;padding-right:14px}.brand{font-size:15px;gap:7px}.brand svg{width:25px}.header-actions .username,.header-actions .avatar{display:none}.page-head{padding:16px 0}.head-meta{font-size:11px;gap:10px}.toolbar{width:100%;margin:0;gap:8px}.year-label{margin-right:auto;font-size:12px;gap:6px}.btn{font-size:12px;padding:0 11px}.icon-btn{padding:0}.kpis{gap:8px;margin-bottom:12px}.kpi{padding:12px 10px}.kpi-label{font-size:11px}.kpi .metric{font-size:26px}.kpi-foot{font-size:9px}.board-grid{gap:12px}.collab,.conversion,.projects,.landing,.asset,.outcomes{grid-column:span 12;min-height:0}.outcomes{order:0}.collab{order:1}.conversion{order:2}.projects{order:3}.landing{order:4}.asset{order:5}.panel-body{padding-bottom:15px}.panel-head{height:51px}.trend-chart{height:150px}.institution-list{display:grid;grid-template-columns:1fr 1fr;gap:1px 18px}.asset-stats{gap:8px}.continuity{margin-top:12px;gap:8px 20px;padding:12px}.continuity .lead{width:100%}.site-footer{padding:12px 14px;display:block}.site-footer .foot-name{display:none}.drawer{width:100vw}.drawer-head{padding:18px}.drawer-content{padding:18px}.drawer-foot{padding:12px 18px}.drawer-title h2{font-size:19px}.definition-list{gap:16px;grid-template-columns:1fr}.drawer-controls .searchbox{flex:1;width:auto}.drawer-count{width:100%;margin-top:2px}.drawer .btn{font-size:11px}.title-row{gap:8px}}
+@media print{.site-header,.toolbar,.site-footer,.link,.seg,.drawer,.toast{display:none!important}.dashboard{padding:0;max-width:none}.page-head{height:55px}.kpis{grid-template-columns:repeat(8,1fr)}.board-grid{grid-template-columns:repeat(12,1fr)}.panel{break-inside:avoid}.collab,.asset{grid-column:span 3}.outcomes,.landing{grid-column:span 5}.conversion,.projects{grid-column:span 4}.continuity{font-size:10px}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* 1012-导航8项：收起阈值 1099 -> 1199 */
+@media (min-width:1001px) and (max-width:1199px){.main-nav{display:none}.menu-toggle{display:flex}}
+</style>
+</head>
+<body>
+<header class="site-header">
+ <div class="header-inner">
+  <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg viewBox="0 0 30 30" fill="none" aria-hidden="true"><path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/><path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round"/></svg><span>北大荒智慧农业协同创新平台</span></a>
+  <nav class="main-nav" aria-label="一级导航"><a href="index.html">首页</a><a href="数据中心-数据集列表页.html">数据中心</a><a href="模型中心-模型列表页（调整）.html">模型中心</a><a href="科研开发空间-交互原型(10).html">科研开发空间</a><a href="课题中心-高保真原型.html">课题中心</a><a href="需求中心-高保真原型%20(1).html">需求中心</a><a href="门户-领导数据看板.html" class="active" aria-current="page">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a></nav>
+  <div class="header-actions"><span class="avatar" aria-hidden="true">张</span><span class="username">张明</span><span class="readonly">只读</span><button id="menuButton" class="menu-toggle" aria-controls="mobileNav" aria-expanded="false" aria-label="展开一级导航"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+ </div>
+ <nav class="mobile-nav" id="mobileNav" aria-label="移动端一级导航" hidden></nav>
+</header>
+<main class="dashboard" id="dashboard">
+ <div class="page-head"><div><div class="title-row"><h1>平台数据看板</h1><span class="demo-badge">原型演示</span></div><div class="head-meta"><span>科研协同 · 资源积累 · 成果应用</span><span>截至 2026-10-10</span></div></div><div class="toolbar"><label class="year-label" for="year">课题年度<select class="select" id="year"><option value="all">全部年度</option><option value="2026">2026 年度</option><option value="2025">2025 年度</option></select></label><button class="btn primary" id="exportSummary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>导出汇总</button><button class="btn icon-btn" id="fullscreen" aria-label="全屏查看" title="全屏查看"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg></button></div></div>
+ <section class="kpis" id="kpis" aria-label="平台概况"></section>
+ <div class="board-grid">
+  <section class="panel collab"><div class="panel-head"><h2>协同参与<span class="scope" data-project-scope></span></h2><button class="link" data-open="institutions">机构明细<span class="chev">›</span></button></div><div class="panel-body" id="collabBody"></div></section>
+  <section class="panel outcomes"><div class="panel-head"><h2>成果产出与使用</h2><div class="seg" role="tablist" aria-label="成果统计"><button role="tab" class="active" id="tabOutput" aria-selected="true" aria-controls="outputPanel">成果产出</button><button role="tab" id="tabUsage" aria-selected="false" aria-controls="usagePanel">使用情况</button></div></div><div class="panel-body"><div id="outputPanel" role="tabpanel" aria-labelledby="tabOutput"><div class="outcome-numbers" id="outcomeNumbers"></div><div class="chart-meta"><span id="chartCaption"></span><span class="legend"><i></i>成果登记</span></div><div id="trendContainer"></div></div><div id="usagePanel" role="tabpanel" aria-labelledby="tabUsage" hidden><div class="usage-empty"><strong>使用统计口径待建</strong><p>模型调用与有效使用的计量规则尚未确定。</p><div class="usage-metrics"><div><b>—</b>模型调用</div><div><b>—</b>数据使用申请</div><div><b>—</b>空间实例</div></div><button class="link" data-rule="usage">查看统计口径<span class="chev">›</span></button></div></div></div></section>
+  <section class="panel conversion"><div class="panel-head"><h2>成果转化成效<span class="scope" data-project-scope></span></h2><button class="link" data-rule="conversion">查看口径</button></div><div class="panel-body"><div class="conversion-list" id="conversionList"></div></div></section>
+  <section class="panel projects"><div class="panel-head"><h2>课题进展<span class="scope" data-project-scope></span></h2><button class="link" data-open="projects">全部课题<span class="chev">›</span></button></div><div class="panel-body table-panel-body"><div class="project-summary" id="projectSummary"></div><table class="compact-table"><thead><tr><th style="width:51%">课题 / 承担单位</th><th style="width:23%">负责人</th><th style="width:26%;text-align:right">状态</th></tr></thead><tbody id="projectRows"></tbody></table><div class="compact-foot"><span id="projectCount"></span><button class="link" data-open="projects">查看课题台账</button></div></div></section>
+  <section class="panel landing"><div class="panel-head"><h2>成果落地</h2><button class="link" data-open="landings">落地明细<span class="chev">›</span></button></div><div class="panel-body table-panel-body"><table class="compact-table"><thead><tr><th>成果 / 产品业务线</th><th>使用方 / 参与人</th><th>应用状态</th></tr></thead><tbody id="landingRows"></tbody></table><div class="compact-foot"><span id="landingCount"></span><button class="link" data-rule="landing">查看口径</button></div></div></section>
+  <section class="panel asset"><div class="panel-head"><h2>资源活性<span class="scope">当前目录</span></h2><button class="link" data-open="assets">资源台账<span class="chev">›</span></button></div><div class="panel-body"><div class="asset-stats" id="assetStats"></div><div class="asset-note"><span>汇聚 · 纳管 · 复用 · 迭代</span><button class="link" data-rule="assets">查看口径</button></div><div class="dormant-row"><span>沉睡资产率</span><strong>— <span style="font-size:11px">口径待建</span></strong></div><div class="resource-empty">尚无可统计的最近使用时间。<button class="link" data-open="dormant">查看资源最近使用记录<span class="chev">›</span></button></div></div></section>
+ </div>
+ <div class="continuity"><span class="lead"><i></i>平台持续运行</span><span>目录最近更新<b id="latestUpdate"></b></span><span>本年登记成果<b id="currentOutcomes"></b></span><span>连续活跃周数<b style="font-size:11px;color:var(--gold)">口径待建</b></span><span class="end">演示记录 · 非正式统计结果</span></div>
+</main>
+<footer class="site-footer"><span class="foot-name">北大荒智慧农业协同创新平台</span><span>本页记录用于原型演示；未确定的指标不计算现值与完成率。</span><div class="foot-links"><a href="关于平台-平台介绍.html">关于平台</a><a href="关于平台-使用帮助.html">使用帮助</a></div></footer>
+<dialog class="drawer" id="detailDrawer" aria-labelledby="drawerTitle"><div class="drawer-head"><div class="drawer-title"><h2 id="drawerTitle"></h2><p id="drawerSubtitle"></p></div><button class="drawer-close" id="closeDrawer" aria-label="关闭明细">×</button></div><div class="drawer-content" id="drawerContent"></div><div class="drawer-foot"><span>原型演示数据</span><div style="display:flex;gap:9px"><button class="btn" id="drawerExport">导出明细</button><button class="btn" id="drawerDone">关闭</button></div></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:24px">请启用 JavaScript 查看统计数据和明细。</p></noscript>
+<script id="catalogData" type="application/json">{
+  "models": [
+    {
+      "name": "水稻估产模型（卫星+气象多源）",
+      "mtype": "农业机理模型",
+      "crop": [
+        "水稻"
+      ],
+      "capabilities": [
+        "产量预测"
+      ],
+      "type": "回归估测",
+      "owner": "全重实验室 · 作物建模组",
+      "upd": "2026-06-18",
+      "ver": "v2.3",
+      "id": "M01"
+    },
+    {
+      "name": "玉米产量预测模型（时序）",
+      "mtype": "农业机理模型",
+      "crop": [
+        "玉米"
+      ],
+      "capabilities": [
+        "产量预测"
+      ],
+      "type": "时序预测",
+      "owner": "东北农业大学 · 遥感团队",
+      "upd": "2026-06-10",
+      "ver": "v1.8",
+      "id": "M02"
+    },
+    {
+      "name": "大豆估产与长势联动模型",
+      "mtype": "农业机理模型",
+      "crop": [
+        "大豆"
+      ],
+      "capabilities": [
+        "产量预测",
+        "长势监测"
+      ],
+      "type": "回归估测",
+      "owner": "哈工大 · 智慧农业团队",
+      "upd": "2026-05-28",
+      "ver": "v1.5",
+      "id": "M03"
+    },
+    {
+      "name": "水稻长势动态监测模型",
+      "mtype": "农业专业模型",
+      "crop": [
+        "水稻"
+      ],
+      "capabilities": [
+        "长势监测"
+      ],
+      "type": "图像分类",
+      "owner": "全重实验室 · 长势监测组",
+      "upd": "2026-06-22",
+      "ver": "v3.1",
+      "id": "M04"
+    },
+    {
+      "name": "玉米长势异常识别模型",
+      "mtype": "农业专业模型",
+      "crop": [
+        "玉米"
+      ],
+      "capabilities": [
+        "长势监测"
+      ],
+      "type": "图像分类",
+      "owner": "东北农业大学 · 遥感团队",
+      "upd": "2026-06-05",
+      "ver": "v1.2",
+      "id": "M05"
+    },
+    {
+      "name": "稻瘟病识别模型",
+      "mtype": "农业专业模型",
+      "crop": [
+        "水稻"
+      ],
+      "capabilities": [
+        "病虫害识别"
+      ],
+      "type": "图像分类",
+      "owner": "植保与病理方向课题组",
+      "upd": "2026-06-15",
+      "ver": "v2.0",
+      "id": "M06"
+    },
+    {
+      "name": "玉米大斑病检测模型",
+      "mtype": "农业专业模型",
+      "crop": [
+        "玉米"
+      ],
+      "capabilities": [
+        "病虫害识别"
+      ],
+      "type": "目标检测",
+      "owner": "东北农业大学 · 植保团队",
+      "upd": "2026-05-20",
+      "ver": "v1.4",
+      "id": "M07"
+    },
+    {
+      "name": "补贴核查 · 种植面积比对模型",
+      "mtype": "基础与农业增强模型",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "capabilities": [
+        "补贴核查"
+      ],
+      "type": "语义分割",
+      "owner": "业务数据与核查课题组",
+      "upd": "2026-06-08",
+      "ver": "v2.6",
+      "id": "M08"
+    },
+    {
+      "name": "土壤养分反演模型（五项）",
+      "mtype": "农业机理模型",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "capabilities": [
+        "土壤养分"
+      ],
+      "type": "回归估测",
+      "owner": "全重实验室 · 土壤组",
+      "upd": "2026-06-20",
+      "ver": "v1.9",
+      "id": "M09"
+    },
+    {
+      "name": "作物种植结构识别模型",
+      "mtype": "基础与农业增强模型",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "capabilities": [
+        "作物与地块识别"
+      ],
+      "type": "图像分类",
+      "owner": "遥感解译与样本标注组",
+      "upd": "2026-05-30",
+      "ver": "v2.1",
+      "id": "M10"
+    },
+    {
+      "name": "耕地地块分割模型",
+      "mtype": "基础与农业增强模型",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "capabilities": [
+        "作物与地块识别",
+        "补贴核查"
+      ],
+      "type": "语义分割",
+      "owner": "哈工大 · 智慧农业团队",
+      "upd": "2026-06-12",
+      "ver": "v1.7",
+      "id": "M11"
+    },
+    {
+      "name": "育秧棚识别模型",
+      "mtype": "农业专业模型",
+      "crop": [
+        "水稻"
+      ],
+      "capabilities": [
+        "作物与地块识别"
+      ],
+      "type": "目标检测",
+      "owner": "业务数据与核查课题组",
+      "upd": "2026-05-16",
+      "ver": "v1.1",
+      "id": "M12"
+    },
+    {
+      "name": "林草湿地变化检测模型",
+      "mtype": "基础与农业增强模型",
+      "crop": [
+        "林草湿地"
+      ],
+      "capabilities": [
+        "变化监测"
+      ],
+      "type": "语义分割",
+      "owner": "生态监测课题组",
+      "upd": "2026-06-25",
+      "ver": "v2.4",
+      "id": "M13"
+    },
+    {
+      "name": "无人机巡田作业监测模型",
+      "mtype": "基础与农业增强模型",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "capabilities": [
+        "作物与地块识别"
+      ],
+      "type": "目标检测",
+      "owner": "东北农业大学 · 智慧农场团队",
+      "upd": "2026-06-02",
+      "ver": "v1.3",
+      "id": "M14"
+    }
+  ],
+  "datasets": [
+    {
+      "name": "作物长势 · 地面实测数据",
+      "desc": "基于农田地面调查获取的作物长势实测数据，包含株高、叶面积等指标。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "地面实测",
+      "year": 2026,
+      "upd": "2026-06-30",
+      "zone": "growth",
+      "region": "建三江分公司",
+      "id": "D01"
+    },
+    {
+      "name": "作物长势 · 无人机正射影像",
+      "desc": "基于无人机航测获取的高分辨率正射影像数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "无人机影像",
+      "year": 2026,
+      "upd": "2026-06-29",
+      "zone": "growth",
+      "region": "建三江分公司",
+      "id": "D02"
+    },
+    {
+      "name": "作物长势 · 卫星影像",
+      "desc": "多源卫星遥感影像，包含光学影像数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "卫星影像",
+      "year": 2026,
+      "upd": "2026-06-30",
+      "zone": "growth",
+      "region": "建三江分公司",
+      "id": "D03"
+    },
+    {
+      "name": "作物长势 · 遥感反演长势分布",
+      "desc": "基于遥感影像反演的作物长势空间分布数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "遥感反演产品",
+      "year": 2026,
+      "upd": "2026-06-28",
+      "zone": "growth",
+      "region": "建三江分公司",
+      "id": "D04"
+    },
+    {
+      "name": "土壤 · 网格实测数据",
+      "desc": "基于土壤网格采样的实测数据，包含土壤理化性质指标。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "地面实测",
+      "year": 2026,
+      "upd": "2026-06-28",
+      "zone": "soil",
+      "region": "红兴隆分公司",
+      "id": "D05"
+    },
+    {
+      "name": "土壤 · 无人机正射影像",
+      "desc": "基于无人机获取的土壤表面影像数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "无人机影像",
+      "year": 2026,
+      "upd": "2026-06-27",
+      "zone": "soil",
+      "region": "红兴隆分公司",
+      "id": "D06"
+    },
+    {
+      "name": "土壤 · 卫星影像",
+      "desc": "多源卫星遥感影像，包含土壤相关遥感数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "卫星影像",
+      "year": 2026,
+      "upd": "2026-06-28",
+      "zone": "soil",
+      "region": "红兴隆分公司",
+      "id": "D07"
+    },
+    {
+      "name": "土壤 · 遥感反演养分分布",
+      "desc": "基于遥感影像反演的土壤养分空间分布数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "遥感反演产品",
+      "year": 2026,
+      "upd": "2026-06-26",
+      "zone": "soil",
+      "region": "红兴隆分公司",
+      "id": "D08"
+    },
+    {
+      "name": "补贴核查 · 多时相卫星影像",
+      "desc": "覆盖申报期的多时相卫星影像，用于作物种植情况比对。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "卫星影像",
+      "year": 2026,
+      "upd": "2026-05-12",
+      "zone": "subsidy",
+      "region": "牡丹江分公司",
+      "id": "D09"
+    },
+    {
+      "name": "补贴核查 · 遥感解译作物分布",
+      "desc": "经解译形成的作物种植分布数据，以地块为单元。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "遥感解译产品",
+      "year": 2026,
+      "upd": "2026-05-14",
+      "zone": "subsidy",
+      "region": "牡丹江分公司",
+      "id": "D10"
+    },
+    {
+      "name": "补贴核查 · 申报记录（脱敏）",
+      "desc": "脱敏后的种植申报记录，包含作物与地块信息。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "业务申报数据",
+      "year": 2026,
+      "upd": "2026-05-15",
+      "zone": "subsidy",
+      "region": "牡丹江分公司",
+      "id": "D11"
+    },
+    {
+      "name": "作物产量 · 地面测产数据",
+      "desc": "田间实收测产记录，以地块为单位登记产量。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "地面实测",
+      "year": 2026,
+      "upd": "2026-06-30",
+      "zone": "yield",
+      "region": "宝泉岭分公司",
+      "id": "D12"
+    },
+    {
+      "name": "作物产量 · 无人机多期影像",
+      "desc": "生育期多期无人机影像，按航次整理。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "无人机影像",
+      "year": 2026,
+      "upd": "2026-06-29",
+      "zone": "yield",
+      "region": "宝泉岭分公司",
+      "id": "D13"
+    },
+    {
+      "name": "作物产量 · 卫星多时相影像",
+      "desc": "覆盖生育期的多时相卫星影像数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "卫星影像",
+      "year": 2026,
+      "upd": "2026-06-30",
+      "zone": "yield",
+      "region": "宝泉岭分公司",
+      "id": "D14"
+    },
+    {
+      "name": "作物产量 · 遥感反演产量分布",
+      "desc": "基于遥感影像反演的产量空间分布数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "form": "遥感反演产品",
+      "year": 2026,
+      "upd": "2026-06-28",
+      "zone": "yield",
+      "region": "宝泉岭分公司",
+      "id": "D15"
+    },
+    {
+      "name": "林草湿 · 基准/监测期卫星影像",
+      "desc": "基准期与监测期的两期卫星影像，用于变化比对。",
+      "crop": [
+        "林草湿地"
+      ],
+      "src": "zone",
+      "form": "卫星影像",
+      "year": 2025,
+      "upd": "2025-08-10",
+      "zone": "eco",
+      "region": "北安分公司",
+      "id": "D16"
+    },
+    {
+      "name": "林草湿 · 变化图斑数据",
+      "desc": "两期影像比对提取的变化图斑数据。",
+      "crop": [
+        "林草湿地"
+      ],
+      "src": "zone",
+      "form": "遥感解译产品",
+      "year": 2025,
+      "upd": "2025-08-12",
+      "zone": "eco",
+      "region": "北安分公司",
+      "id": "D17"
+    },
+    {
+      "name": "遥感植被指数产品（NDVI/EVI）",
+      "desc": "由卫星影像计算生成的植被指数栅格产品。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "catalog",
+      "form": "遥感反演产品",
+      "year": 2026,
+      "upd": "2026-06-20",
+      "region": "哈尔滨有限公司",
+      "id": "D18"
+    },
+    {
+      "name": "耕地地块遥感底图（县域）",
+      "desc": "以县域为范围的耕地地块遥感底图数据。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "catalog",
+      "form": "遥感解译产品",
+      "year": 2025,
+      "upd": "2025-11-02",
+      "region": "佳木斯市",
+      "id": "D19"
+    },
+    {
+      "name": "农田气象观测记录（站网）",
+      "desc": "观测站网记录的气象要素数据，按日整理。",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "catalog",
+      "form": "地面实测",
+      "year": 2026,
+      "upd": "2026-07-01",
+      "region": "绥化分公司",
+      "id": "D20"
+    },
+    {
+      "name": "标准影像产品（Sentinel 系列）",
+      "desc": "Sentinel 系列标准影像产品，按景整理。",
+      "crop": [
+        "林草湿地"
+      ],
+      "src": "catalog",
+      "form": "卫星影像",
+      "year": 2026,
+      "upd": "2026-06-15",
+      "region": "九三分公司",
+      "id": "D21"
+    },
+    {
+      "name": "作物长势 · 多时相栅格影像合集",
+      "form": "栅格影像合集",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "year": 2026,
+      "upd": "2026-06-30",
+      "zone": "growth",
+      "owner": "全重实验室 · 数据建设组",
+      "scale": "1000 景",
+      "title": "作物长势多时相栅格影像合集",
+      "desc": "覆盖 2026 年作物生育期的多时相栅格影像合集，逐景带时间戳与地块编码等属性，支撑长势时序分析与地块级对照。",
+      "relNote": "本合集与「地块产量属性表」关联，连接键为「地块编码 + 年份」。需联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。",
+      "region": "建三江分公司",
+      "id": "D22"
+    },
+    {
+      "name": "地块产量属性表",
+      "form": "结构化表",
+      "crop": [
+        "水稻",
+        "大豆",
+        "玉米"
+      ],
+      "src": "zone",
+      "year": 2026,
+      "upd": "2026-07-01",
+      "zone": "growth",
+      "owner": "全重实验室 · 数据建设组",
+      "scale": "2.1 万行",
+      "title": "地块产量属性表（结构化）",
+      "desc": "以地块为粒度的产量属性表，含地块编码、年份、作物、实测产量与对应影像时间戳等字段，可作独立查询与建模输入。",
+      "relNote": "本表与「作物长势 · 多时相栅格影像合集」关联，连接键为「地块编码 + 年份」。需与影像联合分析时，请在科研开发空间中自行按连接键组合；数据中心不提供目录 join 与联合分析入口。",
+      "region": "宝泉岭分公司",
+      "id": "D23"
+    }
+  ],
+  "sources": {
+    "水稻估产模型（卫星+气象多源）": "2026 年度指南《主要作物产量遥感估测》",
+    "玉米产量预测模型（时序）": "2026 年度指南《主要作物产量遥感估测》",
+    "大豆估产与长势联动模型": "2026 年度指南《主要作物产量遥感估测》",
+    "水稻长势动态监测模型": "2026 年度指南《主要作物长势智能监测》",
+    "玉米长势异常识别模型": "2026 年度指南《主要作物长势智能监测》",
+    "稻瘟病识别模型": "2026 年度指南《主要作物病虫害智能识别》",
+    "玉米大斑病检测模型": "2026 年度指南《主要作物病虫害智能识别》",
+    "补贴核查 · 种植面积比对模型": "2026 年度指南《耕地与种植结构遥感解译》",
+    "土壤养分反演模型（五项）": "2026 年度指南《耕地质量遥感反演与精准施肥》",
+    "作物种植结构识别模型": "2026 年度指南《耕地与种植结构遥感解译》",
+    "耕地地块分割模型": "2026 年度指南《耕地与种植结构遥感解译》",
+    "育秧棚识别模型": "2026 年度指南《耕地与种植结构遥感解译》",
+    "林草湿地变化检测模型": "2026 年度指南《林草湿地变化监测》",
+    "无人机巡田作业监测模型": "2026 年度指南《农机作业与设施监测》"
+  },
+  "versions": {
+    "水稻估产模型（卫星+气象多源）": 2,
+    "大豆估产与长势联动模型": 1,
+    "稻瘟病识别模型": 1,
+    "耕地地块分割模型": 1
+  }
+}</script>
+<script>
+'use strict';
+// Prototype-only records: resource catalogue reuses the current portal HTML;
+// leadership-specific fixtures use the September 24 design examples.
+// Never add calls/active-user estimates or write these fixtures into the existing business stores.
+const CATALOG=JSON.parse(document.getElementById('catalogData').textContent);
+const FIXTURE={
+ orgs:[
+  {id:'O1',name:'哈尔滨工业大学',type:'高校',years:[2025,2026],team:'智慧农业团队',pi:'李东博'},
+  {id:'O2',name:'南京信息工程大学',type:'高校',years:[2025,2026],team:'黑土遥感研究组',pi:'陈曦'},
+  {id:'O3',name:'哈尔滨工程大学',type:'高校',years:[2026],team:'农田气象研究组',pi:'张松源'},
+  {id:'O4',name:'中国农业大学',type:'高校',years:[2025],team:'作物植保研究组',pi:'王岩'},
+  {id:'O5',name:'福建农林大学',type:'高校',years:[2025],team:'稻米品质研究组',pi:'刘畅'},
+  {id:'O6',name:'黑龙江省农业科学院',type:'科研院所',years:[2026],team:'水稻研究组',pi:'王强'},
+  {id:'O7',name:'北大荒信息有限公司',type:'企业',years:[2025,2026],team:'农业数据应用组',pi:''}
+ ],
+ projects:[
+  {id:'K-2026-014',name:'寒地水稻产量遥感估测方法',pi:'李东博',org:'O1',year:2026,status:'在研',guide:'主要作物产量遥感估测'},
+  {id:'K-2026-011',name:'黑土有机质高光谱反演',pi:'陈曦',org:'O2',year:2026,status:'在研',guide:'耕地质量遥感反演与精准施肥'},
+  {id:'K-2026-006',name:'农田多源气象数据同化',pi:'张松源',org:'O3',year:2026,status:'在研',guide:'农田气象灾害监测'},
+  {id:'BH2026-013',name:'寒地水稻高产栽培研究',pi:'王强',org:'O6',year:2026,status:'在研',guide:'2026年度智慧农业开放课题指南'},
+  {id:'K-2025-009',name:'大豆病害图像识别模型',pi:'王岩',org:'O4',year:2025,status:'已结题',guide:'主要作物病虫害智能识别'},
+  {id:'K-2025-003',name:'粳稻品质无损检测',pi:'刘畅',org:'O5',year:2025,status:'已结题',guide:'作物品质无损检测'}
+ ],
+ outcomes:[
+  {id:'CG01',name:'水稻估产模型（卫星+气象多源）',kind:'模型',resource:'M01',project:'K-2026-014',date:'2026-04-18',shelf:true},
+  {id:'CG02',name:'土壤养分反演模型（五项）',kind:'模型',resource:'M09',project:'K-2026-011',date:'2026-05-12',shelf:true},
+  {id:'CG03',name:'农田多源气象同化数据',kind:'数据',resource:null,project:'K-2026-006',date:'2026-06-08',shelf:false},
+  {id:'CG04',name:'水稻长势动态监测模型',kind:'模型',resource:'M04',project:'BH2026-013',date:'2026-07-12',shelf:true},
+  {id:'CG05',name:'作物长势 · 多时相栅格影像合集',kind:'数据',resource:'D22',project:'K-2026-014',date:'2026-08-20',shelf:true},
+  {id:'CG06',name:'寒地水稻栽培观测数据',kind:'数据',resource:null,project:'BH2026-013',date:'2026-09-15',shelf:false},
+  {id:'CG07',name:'大豆病害图像识别模型',kind:'模型',resource:null,project:'K-2025-009',date:'2025-08-16',shelf:true},
+  {id:'CG08',name:'粳稻品质无损检测数据',kind:'数据',resource:null,project:'K-2025-003',date:'2025-10-12',shelf:true}
+ ],
+ landings:[
+  {id:'L1',outcomeId:'CG01',name:'水稻估产模型（卫星+气象多源）',ver:'v2.3',project:'K-2026-014',business:'智慧农业产品线',unit:'建三江分公司农业生产部',person:'王磊',status:'已应用',date:'2026-09-15',place:'建三江分公司',issue:'田间测产与遥感估产结果的对照',result:'形成水稻估产对比报告，用于生产分析。',participant:'农场侧参加估产结果对照与应用反馈（演示记录）。'},
+  {id:'L2',outcomeId:'CG07',name:'大豆病害图像识别模型',ver:'v1.1',project:'K-2025-009',business:'农业服务业务线',unit:'八五九农场农业技术推广中心',person:'李静',status:'已应用',date:'2026-09-20',place:'八五九农场核心示范田',issue:'病害早期识别与田间验证',result:'完成病害识别结果的田间核对。',participant:'农场侧参加图像采集、识别核对及反馈（演示记录）。'},
+  {id:'L3',outcomeId:null,name:'农田气象灾情预警模型',ver:'v1.0',project:'K-2026-006',business:'集团应急指挥',unit:'友谊农场气象站',person:'张明',status:'试验验证',date:'2026-09-24',place:'友谊农场气象站',issue:'气象预警结果与观测记录验证',result:'正在进行观测数据与预警结果比对。',participant:''},
+  {id:'L4',outcomeId:null,name:'遥感作物分类模型',ver:'v1.4',project:null,business:'一张图业务线',unit:'七星农场',person:'赵鹏',status:'试验验证',date:'2026-09-25',place:'七星农场',issue:'作物分类结果的样本核验',result:'开展地块样本与分类结果核验。',participant:''}
+ ]
+};
+const STATE={year:'all',tab:'output',view:'',query:'',filter:'',page:1,pageSize:8,entity:null};
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const orgBy=id=>FIXTURE.orgs.find(x=>x.id===id);
+const projBy=id=>FIXTURE.projects.find(x=>x.id===id);
+const badge=(v)=>'<span class="badge '+(['试验验证','已结题','未上架'].includes(v)?'gray':/待|未统计/.test(v)?'amber':'')+'">'+esc(v)+'</span>';
+const projectScope=()=>STATE.year==='all'?'全部年度':STATE.year+' 年度';
+const selectedProjects=()=>FIXTURE.projects.filter(x=>STATE.year==='all'||x.year===Number(STATE.year));
+const selectedOrgs=()=>FIXTURE.orgs.filter(x=>STATE.year==='all'||x.years.includes(Number(STATE.year)));
+const selectedOutcomes=()=>FIXTURE.outcomes.filter(x=>STATE.year==='all'||projBy(x.project)?.year===Number(STATE.year));
+const selectedLandings=()=>FIXTURE.landings.filter(x=>STATE.year==='all'||projBy(x.project)?.year===Number(STATE.year));
+const resourceRows=()=>[
+ ...CATALOG.models.map(x=>({...x,kind:'模型',version:x.ver,updated:x.upd,owner:x.owner||'未记录',service:!['玉米长势异常识别模型','育秧棚识别模型'].includes(x.name),lastUse:null})),
+ ...CATALOG.datasets.map(x=>({...x,kind:'数据集',version:'未记录',updated:x.upd,owner:x.owner||'未记录',lastUse:null}))
+];
+function metrics(){const p=selectedProjects(),o=selectedOrgs(),r=selectedOutcomes(),a=resourceRows();return[
+ {key:'teams',label:'参与科研团队',value:o.filter(x=>x.team).length,unit:'支',note:projectScope(),target:'teams'},
+ {key:'orgs',label:'参与机构',value:o.length,unit:'家',note:projectScope(),target:'institutions'},
+ {key:'projects',label:'在研课题',value:p.filter(x=>x.status==='在研').length,unit:'项',note:'课题共 '+p.length+' 项',target:'projects'},
+ {key:'outcomes',label:'登记成果',value:r.length,unit:'项',note:'已上架 '+r.filter(x=>x.shelf).length+' 项',target:'outcomes',emphasis:true},
+ {key:'models',label:'纳管模型',value:CATALOG.models.length,unit:'个',note:'当前模型目录',target:'models'},
+ {key:'datasets',label:'数据集',value:CATALOG.datasets.length,unit:'个',note:'当前数据目录',target:'datasets'},
+ {key:'services',label:'服务已发布',value:a.filter(x=>x.kind==='模型'&&x.service).length,unit:'个',note:'当前模型服务',target:'services'},
+ {key:'online',label:'可在线使用',value:a.filter(x=>x.kind==='模型'&&x.service).length,unit:'个',note:'当前模型服务',target:'online'}
+];}
+function uniqueById(rows){return [...new Map(rows.map(x=>[x.id,x])).values()];}
+function outcomeApplications(outcomeId){return FIXTURE.landings.filter(x=>x.outcomeId===outcomeId);}
+function isAppliedOutcome(outcomeId){return outcomeApplications(outcomeId).some(x=>x.status==='已应用'&&String(x.participant||'').trim());}
+function outcomeApplicationLabel(outcomeId){return isAppliedOutcome(outcomeId)?'已应用':outcomeApplications(outcomeId).some(x=>x.status==='试验验证')?'试验验证':'暂无应用记录';}
+function conversionStats(){
+ const projects=uniqueById(selectedProjects()),outcomes=uniqueById(selectedOutcomes()),projectIds=new Set(projects.map(x=>x.id));
+ const produced=new Set(outcomes.map(x=>x.project).filter(id=>projectIds.has(id))).size;
+ return [
+  {key:'projectOutput',label:'课题成果产出率',numerator:produced,denominator:projects.length,unit:'项课题',done:'已产出成果',view:'projectConversion'},
+  {key:'shelf',label:'成果上架率',numerator:outcomes.filter(x=>x.shelf).length,denominator:outcomes.length,unit:'项成果',done:'已上架',view:'outcomeConversion'},
+  {key:'application',label:'成果应用率',numerator:outcomes.filter(x=>isAppliedOutcome(x.id)).length,denominator:outcomes.length,unit:'项成果',done:'已应用',view:'outcomeApplication'}
+ ].map(x=>({...x,percent:x.denominator?x.numerator/x.denominator*100:null}));
+}
+function percentText(value){return value===null?'—':value.toFixed(1)+'%';}
+function projectOutcomeCount(projectId){return uniqueById(selectedOutcomes()).filter(x=>x.project===projectId).length;}
+function renderConversion(){
+ $('conversionList').innerHTML=conversionStats().map(x=>'<button class="conversion-item" data-open="'+x.view+'" aria-label="'+esc(x.label+' '+percentText(x.percent)+'，'+x.numerator+'/'+x.denominator+x.unit+x.done+'，查看明细')+'"><div class="conversion-top"><span class="conversion-name">'+x.label+'</span><span class="conversion-percent num">'+(x.percent===null?'—':x.percent.toFixed(1)+'<small>%</small>')+'</span></div><div class="conversion-base"><span>'+x.done+' <b class="num">'+x.numerator+' / '+x.denominator+'</b> '+x.unit+'</span><span>'+(x.denominator?'查看明细 ›':'暂无统计对象')+'</span></div><div class="track"><i style="width:'+(x.percent===null?0:Math.min(100,x.percent))+'%"></i></div></button>').join('');
+}
+function trendSVG(){const chartYear=STATE.year==='all'?2026:Number(STATE.year),months=[4,5,6,7,8,9,10],rows=selectedOutcomes().filter(x=>x.date.startsWith(String(chartYear))),values=months.map(m=>rows.filter(x=>Number(x.date.slice(5,7))===m).length),max=Math.max(2,...values),xs=months.map((_,i)=>28+i*76),ys=values.map(v=>105-v/max*79);$('chartCaption').textContent=chartYear+' 年 4—10 月 · 新登记成果（项）';return '<svg class="trend-chart" viewBox="0 0 506 140" role="img" aria-label="'+esc(chartYear+'年成果登记趋势：'+months.map((m,i)=>m+'月'+values[i]+'项').join('，'))+'">'+[0,max].map(v=>'<line x1="28" y1="'+(105-v/max*79)+'" x2="490" y2="'+(105-v/max*79)+'" stroke="#e8eee8" stroke-width="1"/><text x="7" y="'+(109-v/max*79)+'">'+v+'</text>').join('')+'<polyline points="'+xs.map((x,i)=>x+','+ys[i]).join(' ')+'" fill="none" stroke="#176450" stroke-width="2.2" stroke-linejoin="round"/>'+months.map((m,i)=>'<g><circle class="chart-dot" cx="'+xs[i]+'" cy="'+ys[i]+'" r="3.5"><title>'+chartYear+'年'+m+'月：'+values[i]+'项</title></circle><text x="'+xs[i]+'" y="132" text-anchor="middle">'+m+'月</text>'+(values[i]?'<text x="'+xs[i]+'" y="'+(ys[i]-11)+'" text-anchor="middle" style="fill:#306954">'+values[i]+'</text>':'')+'</g>').join('')+'</svg>';}
+function render(){
+ $('kpis').innerHTML=metrics().map(m=>'<button class="kpi '+(m.emphasis?'emphasis':'')+'" data-open="'+m.target+'" aria-label="'+esc(m.label+' '+m.value+m.unit+'，查看明细')+'"><span class="kpi-label">'+m.label+'</span><span class="metric num">'+m.value+'<small>'+m.unit+'</small></span><div class="kpi-foot">'+m.note+'</div><span class="kpi-arrow">›</span></button>').join('');
+ document.querySelectorAll('[data-project-scope]').forEach(n=>n.textContent=projectScope());
+ const orgs=selectedOrgs(),max=Math.max(1,...['高校','科研院所','企业'].map(t=>orgs.filter(x=>x.type===t).length)),repeated=orgs.filter(x=>x.years.length>=2).length,newCount=orgs.filter(x=>Math.min(...x.years)===Number(STATE.year==='all'?2026:STATE.year)).length,piRepeat=orgs.filter(x=>x.pi&&x.years.length>=2).length;
+ $('collabBody').innerHTML=['高校','科研院所','企业'].map((t,i)=>{const n=orgs.filter(x=>x.type===t).length;return '<div class="institution-row"><span class="kind">'+t+'</span><div class="track"><i style="width:'+n/max*100+'%;background:'+['#276c59','#6c9880','#a9bda6'][i]+'"></i></div><b class="num">'+n+'<span style="font-size:10px;color:#7f8d83"> 家</span></b></div>'}).join('')+'<div class="institution-list">'+orgs.slice(0,3).map(x=>'<div class="institution-item"><span title="'+esc(x.name)+'">'+esc(x.name)+'</span><small>'+x.type+'</small></div>').join('')+'</div><div class="submetrics"><div><b class="num">'+repeated+'</b><span>持续参与机构</span></div><div><b class="num">'+newCount+'</b><span>'+(STATE.year==='all'?'本年':'当年')+'新增机构</span></div><div><b class="num">'+piRepeat+'</b><span>连续参与 PI</span></div></div>';
+ const o=selectedOutcomes(),l=selectedLandings();$('outcomeNumbers').innerHTML=[['登记成果',o.length,'outcomes'],['成果已上架',o.filter(x=>x.shelf).length,'shelved'],['已有落地记录',l.length,'landings']].map(([t,n,v])=>'<button data-open="'+v+'"><span>'+t+'</span><b class="num">'+n+'</b><small>项</small></button>').join('');$('trendContainer').innerHTML=trendSVG();
+ renderConversion();
+ const p=selectedProjects();$('projectSummary').innerHTML=['在研','已结题'].map((s,i)=>'<span><i class="'+(i?'gray':'')+'"></i>'+s+' <b>'+p.filter(x=>x.status===s).length+'</b></span>').join('')+'<span style="margin-left:auto">指南 '+new Set(p.map(x=>x.guide)).size+' 个方向</span>';
+ $('projectRows').innerHTML=p.slice(0,4).map(x=>'<tr><td><button class="cell-main" title="'+esc(x.name)+'" data-entity="project:'+x.id+'">'+esc(x.name)+'</button><small title="'+esc(orgBy(x.org)?.name)+'">'+esc(orgBy(x.org)?.name)+'</small></td><td>'+esc(x.pi)+'</td><td class="status-cell">'+badge(x.status)+'</td></tr>').join('')||'<tr><td colspan="3" class="no-records">暂无课题</td></tr>';$('projectCount').textContent='共 '+p.length+' 项 · 当前展示 '+Math.min(4,p.length)+' 项';
+ $('landingRows').innerHTML=l.slice(0,4).map(x=>'<tr><td><button class="cell-main" title="'+esc(x.name)+'" data-entity="landing:'+x.id+'">'+esc(x.name)+'</button><small>'+esc(x.business)+'</small></td><td><span class="cell-main" title="'+esc(x.unit)+'">'+esc(x.unit)+'</span><small>'+esc(x.person)+'</small></td><td class="status-cell">'+badge(x.status)+'</td></tr>').join('')||'<tr><td colspan="3" class="no-records">暂无关联的落地记录</td></tr>';$('landingCount').textContent='已应用 '+l.filter(x=>x.status==='已应用'&&x.participant).length+' 项 · 试验验证 '+l.filter(x=>x.status==='试验验证').length+' 项';
+ const total=resourceRows().length;$('assetStats').innerHTML=[['汇聚',total,'项'],['纳管',total,'项'],['复用','—','待统计'],['迭代',Object.keys(CATALOG.versions).length,'个模型']].map(([t,n,u])=>'<div class="asset-stat"><span class="label">'+t+'</span><strong class="num">'+n+'</strong><span>'+u+'</span></div>').join('');
+ $('latestUpdate').textContent=resourceRows().map(x=>x.updated).filter(Boolean).sort().at(-1);$('currentOutcomes').textContent=FIXTURE.outcomes.filter(x=>x.date.startsWith('2026')).length+' 项';
+}
+const VIEWS={
+ institutions:{title:'协同参与机构',sub:'机构类型、参与年度与科研团队',cols:['机构名称','机构类型','参与年度','科研团队','负责人'],filters:['高校','科研院所','企业'],rows:()=>selectedOrgs(),filter:x=>x.type,cells:x=>[x.name,x.type,x.years.join('、'),x.team,x.pi||'未记录']},
+ teams:{title:'参与科研团队',sub:'按所选年度展示关联科研团队',cols:['科研团队','所属机构','负责人','参与年度'],rows:()=>selectedOrgs().filter(x=>x.team),cells:x=>[x.team,x.name,x.pi||'未记录',x.years.join('、')]},
+ projects:{title:'课题状态台账',sub:'课题档案只读查看',cols:['课题编号 / 名称','负责人','承担 / 依托单位','年度','状态'],filters:['在研','已结题'],rows:selectedProjects,filter:x=>x.status,cells:x=>[x.id+' / '+x.name,x.pi,orgBy(x.org)?.name,x.year,x.status],entity:'project'},
+ outcomes:{title:'成果登记明细',sub:'成果类型、来源课题与上架情况',cols:['成果名称','类型','来源课题','登记日期','上架情况'],filters:['模型','数据'],rows:selectedOutcomes,filter:x=>x.kind,cells:x=>[x.name,x.kind,projBy(x.project)?.name||'未关联',x.date,x.shelf?'已上架':'未上架'],entity:'outcome'},
+ shelved:{title:'已上架成果',sub:'登记成果中已完成上架的记录',cols:['成果名称','类型','来源课题','登记日期','上架情况'],filters:['模型','数据'],rows:()=>selectedOutcomes().filter(x=>x.shelf),filter:x=>x.kind,cells:x=>[x.name,x.kind,projBy(x.project)?.name||'未关联',x.date,'已上架'],entity:'outcome'},
+ landings:{title:'成果落地明细',sub:'成果、业务线与具体使用方',cols:['成果 / 版本','产品 / 业务线','使用单位 / 参与人','应用状态'],filters:['已应用','试验验证'],rows:selectedLandings,filter:x=>x.status,cells:x=>[x.name+' '+x.ver,x.business,x.unit+' · '+x.person,x.status],entity:'landing'},
+ assets:{title:'资源台账',sub:'当前门户目录 · 不随课题年度筛选变化',cols:['资源名称','类型','当前版本','适用作物','更新时间'],filters:['模型','数据集'],rows:resourceRows,filter:x=>x.kind,cells:x=>[x.name,x.kind,x.version,(x.crop||[]).join('、')||'未记录',x.updated],entity:'resource'},
+ models:{title:'纳管模型',sub:'当前模型目录',cols:['模型名称','模型类型','当前版本','适用作物','服务状态'],rows:()=>resourceRows().filter(x=>x.kind==='模型'),cells:x=>[x.name,x.mtype,x.version,x.crop.join('、'),x.service?'服务已发布':'服务未发布'],entity:'resource'},
+ datasets:{title:'数据集目录',sub:'当前数据目录',cols:['数据集名称','数据形态','适用作物','覆盖区域','更新时间'],rows:()=>resourceRows().filter(x=>x.kind==='数据集'),cells:x=>[x.name,x.form,x.crop.join('、'),x.region||'未记录',x.updated],entity:'resource'},
+ services:{title:'已发布的模型服务',sub:'沿用当前门户模型服务发布状态',cols:['模型名称','当前版本','提供团队','更新时间'],rows:()=>resourceRows().filter(x=>x.kind==='模型'&&x.service),cells:x=>[x.name,x.version,x.owner,x.updated],entity:'resource'},
+ online:{title:'可在线使用的模型',sub:'沿用当前门户在线使用入口；不等同于已产生调用',cols:['模型名称','当前版本','提供团队','业务能力'],rows:()=>resourceRows().filter(x=>x.kind==='模型'&&x.service),cells:x=>[x.name,x.version,x.owner,(x.capabilities||[]).join('、')],entity:'resource'},
+ dormant:{title:'资源最近使用记录',sub:'无最近使用时间时，不判定沉睡状态或计算沉睡天数',cols:['资源名称','类型','最近使用','未使用天数','判定'],filters:['模型','数据集'],rows:resourceRows,filter:x=>x.kind,cells:x=>[x.name,x.kind,'未接入','—','口径待建'],entity:'resource'},
+ projectConversion:{title:'课题成果产出明细',sub:'每项课题只计一次；可查看其关联成果数量',cols:['课题编号 / 名称','负责人','承担 / 依托单位','成果数量','成果记录'],filters:['已有成果','暂无成果'],rows:()=>uniqueById(selectedProjects()),filter:x=>projectOutcomeCount(x.id)?'已有成果':'暂无成果',cells:x=>[x.id+' / '+x.name,x.pi,orgBy(x.org)?.name,projectOutcomeCount(x.id)+' 项',projectOutcomeCount(x.id)?'已有成果':'暂无成果'],entity:'project'},
+ outcomeConversion:{title:'成果上架明细',sub:'以登记成果为分母，已上架成果为分子',cols:['成果名称','类型','来源课题','登记日期','上架情况'],filters:['已上架','未上架'],rows:()=>uniqueById(selectedOutcomes()),filter:x=>x.shelf?'已上架':'未上架',cells:x=>[x.name,x.kind,projBy(x.project)?.name||'未关联',x.date,x.shelf?'已上架':'未上架'],entity:'outcome'},
+ outcomeApplication:{title:'成果应用明细',sub:'以登记成果为分母；同一成果在多个单位应用仅计一次，试验验证不计入已应用',cols:['成果名称','类型','来源课题','应用情况','实际使用方'],filters:['已应用','试验验证','暂无应用记录'],rows:()=>uniqueById(selectedOutcomes()),filter:x=>outcomeApplicationLabel(x.id),cells:x=>[x.name,x.kind,projBy(x.project)?.name||'未关联',outcomeApplicationLabel(x.id),[...new Set(outcomeApplications(x.id).filter(r=>r.status==='已应用'&&String(r.participant||'').trim()).map(r=>r.unit))].join('、')||'—'],entity:'outcome'}
+};
+function filteredRows(){const v=VIEWS[STATE.view];if(!v)return[];const q=STATE.query.trim().toLocaleLowerCase();return v.rows().filter(x=>(!STATE.filter||v.filter?.(x)===STATE.filter)&&(!q||v.cells(x).join(' ').toLocaleLowerCase().includes(q)));}
+function openDrawer(view){STATE.view=view;STATE.query='';STATE.filter='';STATE.page=1;STATE.entity=null;const v=VIEWS[view];if(!v)return;$('drawerTitle').textContent=v.title;$('drawerSubtitle').textContent=v.sub+(['institutions','teams','projects','outcomes','shelved','landings','projectConversion','outcomeConversion','outcomeApplication'].includes(view)?' · '+projectScope():'');$('drawerExport').hidden=false;$('drawerContent').innerHTML=(view==='dormant'?'<div class="scope-note">沉睡资产率的观察周期、有效使用范围尚待确认。没有使用记录不能直接判断为从未使用，亦不以 0 天替代缺失时间。</div>':'')+'<div class="drawer-controls"><label class="sr-only" for="drawerQuery">检索当前明细</label><input class="searchbox" id="drawerQuery" placeholder="搜索名称、单位或负责人" value="">'+(v.filters?'<label class="sr-only" for="drawerFilter">筛选明细</label><select class="select" id="drawerFilter"><option value="">全部</option>'+v.filters.map(t=>'<option>'+esc(t)+'</option>').join('')+'</select>':'')+'<span class="drawer-count" id="drawerCount"></span></div><div id="drawerTable"></div><div id="drawerPager"></div>';
+ $('drawerQuery').addEventListener('input',e=>{STATE.query=e.target.value;STATE.page=1;renderDrawerTable()});$('drawerFilter')?.addEventListener('change',e=>{STATE.filter=e.target.value;STATE.page=1;renderDrawerTable()});renderDrawerTable();showDialog();
+}
+function renderDrawerTable(){const v=VIEWS[STATE.view],rows=filteredRows(),totalPages=Math.max(1,Math.ceil(rows.length/STATE.pageSize));STATE.page=Math.min(totalPages,STATE.page);const pageRows=rows.slice((STATE.page-1)*STATE.pageSize,STATE.page*STATE.pageSize);$('drawerCount').textContent='共 '+rows.length+' 条';$('drawerTable').innerHTML='<div class="drawer-table-wrap"><table class="detail-table"><thead><tr>'+v.cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+pageRows.map(r=>'<tr>'+v.cells(r).map((c,i)=>'<td>'+(i===0&&v.entity?'<button class="td-name" data-entity="'+v.entity+':'+esc(r.id)+'">'+esc(c)+'</button>':(['在研','已结题','已应用','试验验证','已上架','未上架','口径待建','待验收','待核实'].includes(c)?badge(c):esc(c)))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'+(rows.length?'':'<div class="no-records">没有匹配记录，请调整关键词或筛选条件。</div>');$('drawerPager').innerHTML='<div class="pager"><label for="pageSize">每页</label><select class="select" id="pageSize">'+[8,16,32].map(n=>'<option value="'+n+'" '+(STATE.pageSize===n?'selected':'')+'>'+n+' 条</option>').join('')+'</select><button class="btn" id="prevPage" '+(STATE.page<=1?'disabled':'')+'>上一页</button><span>'+STATE.page+' / '+totalPages+'</span><button class="btn" id="nextPage" '+(STATE.page>=totalPages?'disabled':'')+'>下一页</button></div>';$('pageSize').onchange=e=>{STATE.pageSize=Number(e.target.value);STATE.page=1;renderDrawerTable()};$('prevPage').onclick=()=>{if(STATE.page>1){STATE.page--;renderDrawerTable()}};$('nextPage').onclick=()=>{if(STATE.page<totalPages){STATE.page++;renderDrawerTable()}};}
+function showDialog(){if(!$('detailDrawer').open)$('detailDrawer').showModal();document.body.classList.add('dialog-open');}
+function closeDrawer(){$('detailDrawer').close();document.body.classList.remove('dialog-open');}
+const RULES={
+ conversion:{title:'成果转化统计口径',items:[['课题成果产出率','已关联至少一项登记成果的课题数 ÷ 所选年度课题总数。一个课题产出多个成果，课题数仍只计一次；产出成果不等于课题已经结题。'],['成果上架率','已上架成果数 ÷ 所选课题年度关联的登记成果总数。'],['成果应用率','登记成果中已有实际应用记录的成果数 ÷ 登记成果总数。同一成果在多个单位使用仍只计一次；试验验证不计入已应用。'],['年度范围','三个比例均跟随“课题年度”筛选，统计这些课题截至当前已登记、已上架、已应用的成果。分母为零时不计算比例。']]},
+ usage:{title:'使用统计口径',items:[['模型调用','尚未确定 API 调用与页面试跑的计量范围、统计周期、去重及排除规则；当前不累计调用量，暂不计算统计值。'],['活跃科研用户','仅登录不计入活跃；有效科研行为、科研用户范围和年度去重方式尚待确定。'],['数据使用与空间实例','分别展示数据使用申请与空间实例记录，不将不同单位的行为相乘，也不拼成一个未经确认的“协作量”。']]},
+ assets:{title:'资源活性口径',items:[['汇聚 / 纳管','当前原型只具有模型、数据两个目录，均按独立资源去重计数；无独立汇聚台账，不另外构造汇聚阶段数量。'],['复用','有效调用或使用申请的范围未定，当前不计算复用率。'],['迭代','沿用模型列表中的版本更新标记，展示有更新记录的模型数；不按版本号大小推断更新次数。'],['沉睡资产率','观察周期与有效使用行为尚未确定；缺少最近使用时间时，不计算沉睡天数，也不判定资源沉睡。']]},
+ landing:{title:'成果落地口径',items:[['已应用','需具备农场侧人员参与记录，才能标记为已应用。只有部署、发布或团队自行测试，均不等同于生产应用。'],['试验验证','仍处于场景验证，或未形成农场侧参与记录的成果，展示为试验验证。'],['案例与效果','明细保留具体成果、业务线、使用单位、参与人和验证说明。当前内容为文档演示案例；未接入经济效益数据，不填写收益估算值。']]}
+};
+function openRule(key){const rule=RULES[key];if(!rule)return;STATE.entity={type:'rule',id:key};STATE.view='';$('drawerTitle').textContent=rule.title;$('drawerSubtitle').textContent='指标边界与当前情况';$('drawerExport').hidden=true;$('drawerContent').innerHTML=rule.items.map(([t,d])=>'<section class="rule-block"><h3>'+t+'</h3><p>'+d+'</p></section>').join('');showDialog();}
+function showEntity(type,id){let row,title,pairs=[],sections=[],view=$('detailDrawer').open?STATE.view:'';const opened=$('detailDrawer').open;if(type==='project'){row=projBy(id);if(!row)return;title=row.name;pairs=[['课题编号',row.id],['课题年度',row.year],['负责人',row.pi],['承担 / 依托单位',orgBy(row.org)?.name],['状态',row.status],['指南方向',row.guide]];const os=FIXTURE.outcomes.filter(x=>x.project===id);sections=[['关联成果',os.length?os.map(x=>x.name+' · '+x.kind+' · '+x.date+' · '+(x.shelf?'已上架':'未上架')).join('\n'):'暂无关联成果记录']];view=view||'projects';}
+ else if(type==='outcome'){row=FIXTURE.outcomes.find(x=>x.id===id);if(!row)return;title=row.name;pairs=[['成果类型',row.kind],['登记日期',row.date],['来源课题',projBy(row.project)?.name],['课题负责人',projBy(row.project)?.pi],['上架情况',row.shelf?'已上架':'未上架'],['资源目录关联',row.resource||'未关联'],['应用情况',outcomeApplicationLabel(row.id)]];const apps=outcomeApplications(row.id);sections=[['关联应用记录',apps.length?apps.map(x=>x.unit+' · '+x.person+' · '+x.status).join('\n'):'暂无关联应用记录']];view=view||'outcomes';}
+ else if(type==='landing'){row=FIXTURE.landings.find(x=>x.id===id);if(!row)return;title=row.name;pairs=[['当前版本',row.ver],['产品 / 业务线',row.business],['使用单位',row.unit],['参与人',row.person],['应用状态',row.status],['记录日期',row.date],['来源课题',projBy(row.project)?.name||'未关联'],['应用地点',row.place]];sections=[['应用问题',row.issue],['业务结果',row.result],['农场侧参与记录',row.participant||'尚未形成参与记录，当前为试验验证。']];view=view||'landings';}
+ else if(type==='resource'){row=resourceRows().find(x=>x.id===id);if(!row)return;title=row.name;pairs=[['资源类型',row.kind],['当前版本',row.version],['提供团队',row.owner],['适用作物',(row.crop||[]).join('、')],['更新时间',row.updated],['最近一次使用','未接入']];if(row.kind==='模型'){pairs.push(['服务状态',row.service?'服务已发布':'服务未发布'],['业务能力',(row.capabilities||[]).join('、')]);sections.push(['成果来源',CATALOG.sources[row.name]||'未关联']);}else{pairs.push(['数据形态',row.form],['覆盖区域',row.region||'未记录']);sections.push(['数据介绍',row.desc||'未记录']);}view=view||'assets';}
+ else return;
+ const previous=opened&&VIEWS[STATE.view]?{view:STATE.view,query:STATE.query,filter:STATE.filter,page:STATE.page}:null;STATE.entity={type,id};STATE.view=view;$('drawerTitle').textContent=title;$('drawerSubtitle').textContent='只读详情 · 演示记录';$('drawerExport').hidden=true;$('drawerContent').innerHTML='<button class="detail-back" id="backToList">‹ 返回'+(VIEWS[view]?.title||'明细')+'</button><dl class="definition-list">'+pairs.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v||'未记录')+'</dd></div>').join('')+'</dl>'+sections.map(([k,v])=>'<section class="detail-section"><h3>'+esc(k)+'</h3><p style="white-space:pre-line">'+esc(v)+'</p></section>').join('');$('backToList').onclick=()=>{openDrawer(view);if(previous){STATE.query=previous.query;STATE.filter=previous.filter;STATE.page=previous.page;$('drawerQuery').value=STATE.query;if($('drawerFilter'))$('drawerFilter').value=STATE.filter;renderDrawerTable();}};showDialog();
+}
+function csvCell(x){let s=String(x??'');if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
+function makeCSV(rows){return '\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n');}
+function downloadCSV(rows,name){const blob=new Blob([makeCSV(rows)],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('已导出 CSV，文件内保留演示数据标记');}
+function summaryRows(){return [['数据性质','原型演示，非正式统计结果'],['课题年度',projectScope()],['统计日期','2026-10-10'],['指标','现值','单位','统计范围'],...metrics().map(x=>[x.label,x.value,x.unit,x.note]),[],['转化指标','比例','计入数量','总数量','统计范围'],...conversionStats().map(x=>[x.label,percentText(x.percent),x.numerator,x.denominator,projectScope()+' · '+x.unit])];}
+function exportDetail(){const v=VIEWS[STATE.view];if(!v)return;downloadCSV([['数据性质','原型演示，非正式统计结果'],['明细',v.title],['范围',v.sub],['课题年度',projectScope()],['关键词',STATE.query],['筛选',STATE.filter||'全部'],v.cols,...filteredRows().map(v.cells)],v.title+'-演示数据-20261010.csv');}
+function toast(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),2600);}
+function selectTab(name){STATE.tab=name;const isOutput=name==='output';$('outputPanel').hidden=!isOutput;$('usagePanel').hidden=isOutput;[['tabOutput',isOutput],['tabUsage',!isOutput]].forEach(([id,on])=>{$(id).classList.toggle('active',on);$(id).setAttribute('aria-selected',String(on));$(id).tabIndex=on?0:-1;});}
+document.addEventListener('click',e=>{const open=e.target.closest('[data-open]');if(open){openDrawer(open.dataset.open);return}const rule=e.target.closest('[data-rule]');if(rule){openRule(rule.dataset.rule);return}const entity=e.target.closest('[data-entity]');if(entity){const [type,id]=entity.dataset.entity.split(':');showEntity(type,id);}});
+$('year').onchange=e=>{STATE.year=e.target.value;render();};$('tabOutput').onclick=()=>selectTab('output');$('tabUsage').onclick=()=>selectTab('usage');['tabOutput','tabUsage'].forEach(id=>$(id).addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const out=e.key==='Home'||e.key!=='End'&&STATE.tab!=='output';selectTab(out?'output':'usage');$(out?'tabOutput':'tabUsage').focus();}}));
+$('exportSummary').onclick=()=>downloadCSV(summaryRows(),'平台数据看板-汇总-演示数据-20261010.csv');$('drawerExport').onclick=exportDetail;$('closeDrawer').onclick=closeDrawer;$('drawerDone').onclick=closeDrawer;$('detailDrawer').addEventListener('close',()=>document.body.classList.remove('dialog-open'));$('detailDrawer').addEventListener('click',e=>{if(e.target===$('detailDrawer')){const b=$('detailDrawer').getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)closeDrawer();}});
+$('mobileNav').innerHTML=document.querySelector('.main-nav').innerHTML;$('menuButton').onclick=()=>{const expanded=$('menuButton').getAttribute('aria-expanded')==='true';$('mobileNav').hidden=expanded;$('menuButton').setAttribute('aria-expanded',String(!expanded));};
+$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen();}else if(document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();}else{document.body.classList.toggle('fullscreen');toast('已切换宽屏查看');}}catch{document.body.classList.toggle('fullscreen');toast('已切换宽屏查看');}};document.addEventListener('fullscreenchange',()=>{document.body.classList.toggle('fullscreen',!!document.fullscreenElement);$('fullscreen').setAttribute('aria-label',document.fullscreenElement?'退出全屏':'全屏查看');});
+render();selectTab('output');
+// Keep deterministic data functions available for the prototype's validation harness.
+window.Board={state:STATE,catalog:CATALOG,fixture:FIXTURE,metrics,conversionStats,percentText,projectOutcomeCount,outcomeApplications,isAppliedOutcome,resourceRows,selectedProjects,selectedOrgs,selectedOutcomes,selectedLandings,filteredRows,summaryRows,makeCSV,render,openDrawer,showEntity,openRule};
+</script>
+</body>
+</html>
