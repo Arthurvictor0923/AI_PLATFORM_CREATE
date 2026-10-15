@@ -807,7 +807,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -->
-<style id="research-directions-style">[data-group="direction"] .rf-options{max-height:none;overflow:visible}.ds-card{height:344px;grid-template-rows:44px 104px 92px 34px}.ds-card .ds-fields{height:92px}.ds-fields .research-field{margin-top:auto}.research-field .k{flex-shrink:0}.research-field .vv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.ds-card .region-field{min-height:36px!important}@media(max-width:700px){.ds-card{height:388px;grid-template-rows:44px 104px 104px 66px}.ds-card .ds-fields{height:104px}}</style></head>
+<style id="research-directions-style">[data-group="direction"] .rf-options{max-height:none;overflow:visible}.ds-card{height:344px;grid-template-rows:44px 104px 92px 34px}.ds-card .ds-fields{height:92px}.ds-fields .research-field{margin-top:auto}.research-field .k{flex-shrink:0}.research-field .vv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.ds-card .region-field{min-height:36px!important}@media(max-width:700px){.ds-card{height:388px;grid-template-rows:44px 104px 104px 66px}.ds-card .ds-fields{height:104px}}</style><script src="assets/portal-org.js"></script>
+<style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+</head>
 <body data-page-node-id="d7Y2HJhz2sd86AKBNF7Ix2">
 
 <!-- ==================== 公共导航（规范 §顶部导航） ==================== -->
@@ -1038,7 +1040,7 @@ var AUTH_LS_KEY='LS_AUTH_APPS';
 function getApps(){
   try{var a=JSON.parse(localStorage.getItem(AUTH_LS_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}
 }
-function applyZoneAll(zone){
+function applyZoneAll(zone){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('数据由负责人为科研空间申请，成员不能单独申请。');return;}
   if(isHighRole()){toast('当前角色已获授权，无需申请');return;}
   if(!requireAuth())return;
   var list=DS.filter(function(d){return d.zone===zone;});
@@ -1046,7 +1048,7 @@ function applyZoneAll(zone){
   var apps=getApps();var added=0;
   list.forEach(function(d){
     var ex=apps.some(function(a){return a.name===d.name&&a.status==='pending';});
-    if(!ex){apps.push({appId:'A'+Date.now()+'_'+added,name:d.name,form:d.form,use:'专题批量申请',note:'专题「'+zoneNameOf(zone)+'」批量申请',submittedAt:new Date().toISOString().slice(0,10),status:'pending'});added++;}
+    if(!ex){apps.push({applicantId:PortalOrg.current().id,applicant:PortalOrg.current().name,appId:'A'+Date.now()+'_'+added,name:d.name,form:d.form,use:'专题批量申请',note:'专题「'+zoneNameOf(zone)+'」批量申请',submittedAt:new Date().toISOString().slice(0,10),status:'pending'});added++;}
   });
   try{localStorage.setItem(AUTH_LS_KEY,JSON.stringify(apps));}catch(e){toast('本地存储不可用，申请未保存');return;}
   toast('已提交专题「'+zoneNameOf(zone)+'」'+added+' 个数据集的使用申请，可在「我的数据授权」查看');
@@ -1350,6 +1352,7 @@ function metaHtml(d){
     '</div>';
 }
 function actsHtml(){
+  if(window.PortalOrg&&!PortalOrg.isLeader())return '<div class="ds-acts"><button type="button" class="text-link">查看详情</button><button type="button" disabled title="数据由负责人为科研空间申请" style="border:0;background:transparent;color:#8b9992">由负责人申请</button></div>';
   var high=isHighRole();
   return '<div class="ds-acts"><button type="button" class="text-link">查看详情'+ico(ICONS['chev'])+'</button>'+
     '<span class="apply-btn" data-act="'+(high?'use':'apply')+'">'+(high?'开始使用':'申请使用')+'</span></div>';
@@ -1757,5 +1760,7 @@ window.addEventListener('resize',()=>{if(innerWidth>1199&&side.classList.contain
 renderZoneList();renderAll();
 })();
 </script>
+<!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
+<script src="assets/portal-access.js"></script>
 </body>
 </html>

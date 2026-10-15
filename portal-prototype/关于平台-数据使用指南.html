@@ -711,6 +711,8 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
   else { initAuth(); }
 })();
 </script>
+<script src="assets/portal-org.js"></script>
+<style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
 </head>
 <body>
 <header class="site-header">
@@ -830,8 +832,8 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
               <div class="step">
                 <span class="step-no">4</span>
                 <div class="step-body">
-                  <h3>查看授权与有效期</h3>
-                  <p>在个人中心查看授权状态与有效期；如需继续使用，联系平台管理员处理。</p>
+                  <h3>查看授权状态</h3>
+                  <p>在个人中心查看授权状态；数据仅在获准科研空间内使用。</p>
                 </div>
               </div>
             </section>
@@ -854,7 +856,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
                 </div>
                 <div class="faq">
                   <span class="q">Q</span>
-                  <div><b>已获授权但无法读取怎么办？</b><p>检查授权有效期与挂载状态，再联系平台支持。</p></div>
+                  <div><b>已获授权但无法读取怎么办？</b><p>检查当前授权范围、空间访问权限与挂载状态，再联系平台支持。</p></div>
                 </div>
               </div>
             </section>
@@ -870,7 +872,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
             <a href="#sec1">查找与预览</a>
             <a href="#sec2">提交使用申请</a>
             <a href="#sec3">在科研开发空间使用</a>
-            <a href="#sec4">查看授权与有效期</a>
+            <a href="#sec4">查看授权状态</a>
             <a href="#faq">常见问题</a>
           </aside>
         </div>
@@ -980,10 +982,10 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
     ["查找与预览","数据使用","进入数据中心，通过关键词和筛选条件查找数据，查看元数据、适用说明与公开样例。","关于平台-数据使用指南.html#sec1"],
     ["提交使用申请","数据使用","在数据详情页点击申请使用，填写研究用途与所需资源，提交后等待审核。","关于平台-数据使用指南.html#sec2"],
     ["在科研开发空间使用","数据使用","获授权后进入科研开发空间，挂载数据，在开发环境中读取与分析。","关于平台-数据使用指南.html#sec3"],
-    ["查看授权与有效期","数据使用","在个人中心查看授权状态与有效期；如需继续使用，联系平台管理员处理。","关于平台-数据使用指南.html#sec4"],
+    ["查看授权状态","数据使用","在个人中心查看授权状态；数据仅在获准科研空间内使用。","关于平台-数据使用指南.html#sec4"],
     ["未登录能否查看数据？","数据使用","可查看公开目录与样例，申请使用需登录。","关于平台-数据使用指南.html#faq"],
     ["申请被驳回后怎么办？","数据使用","根据反馈补充或修改申请材料后重新提交。","关于平台-数据使用指南.html#faq"],
-    ["已获授权但无法读取怎么办？","数据使用","检查授权有效期与挂载状态，再联系平台支持。","关于平台-数据使用指南.html#faq"],
+    ["已获授权但无法读取怎么办？","数据使用","检查当前授权范围、空间访问权限与挂载状态，再联系平台支持。","关于平台-数据使用指南.html#faq"],
     ["开发者接入","开发者接入","面向已获授权的系统集成与模型调用，具体接口以对应服务文档为准。","关于平台-开发者接入.html#top"],
     ["接入步骤","开发者接入","选择模型 → 申请使用 → 查阅接口文档 → 联调与使用。","关于平台-开发者接入.html#steps"],
     ["接入前需要确认","开发者接入","服务版本、授权范围、鉴权方式、输入输出、调用限制、错误处理。","关于平台-开发者接入.html#precheck"],
@@ -1117,5 +1119,7 @@ header.site-header .header-actions .bdh-logout{ display:none; }
 })();
 </script>
 
-<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
+<script src="assets/portal-access.js"></script>
+</body>
 </html>

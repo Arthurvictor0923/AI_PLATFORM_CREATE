@@ -28,13 +28,132 @@
 /* 1012-导航8项：收起阈值 1099 -> 1199 */
 @media (min-width:1001px) and (max-width:1199px){.main-nav{display:none}.menu-toggle{display:flex}}
 </style>
+<script>
+/* 2026-10-14: local prototype data. Production identity and authorization require server checks. */
+(function () {
+  'use strict';
+  const KEY = 'bdh-owner-teams-20261014', SESSION = 'bdh-portal-account-20261014';
+  const org = '黑龙江省农业科学院';
+  const adminDemo = {id:'u-admin',name:'平台管理员',login:'admin.demo',kind:'admin',orgId:'org-platform',org:'平台管理',ownerId:null,permissions:['dashboard:view']};
+  const seed = {
+    schema: 1,
+    accounts: [
+      adminDemo,
+      {id:'u-zhang',name:'张研究员',login:'zhang.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-li',name:'李晓',login:'li.xiao',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-wang',name:'王宁',login:'wang.ning',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-zhao',name:'赵晨',login:'zhao.chen',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-chen',name:'陈老师',login:'chen.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-sun',name:'孙悦',login:'sun.yue',kind:'member',orgId:'org-hla',org,ownerId:'u-chen'},
+      {id:'u-liu',name:'刘老师',login:'liu.research',kind:'leader',orgId:'org-hla',org,ownerId:null}
+    ],
+    teams: [
+      {id:'t-rice',name:'寒地水稻研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'多源遥感与作物监测方法研究',memberIds:['u-zhang','u-li','u-wang'],spaceIds:['1','2','5','7']},
+      {id:'t-disaster',name:'农业灾害研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'农田旱情与土壤墒情研究',memberIds:['u-zhang','u-li'],spaceIds:['3','4']},
+      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun','u-zhang'],spaceIds:['6']}
+    ],
+    invitations: []
+  };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  function read() {try {const s=JSON.parse(localStorage.getItem(KEY));if(s?.schema===1&&Array.isArray(s.accounts)&&Array.isArray(s.teams))return s;}catch{}return clone(seed);}
+  function save(s) {try {localStorage.setItem(KEY,JSON.stringify(s));}catch {throw Error('保存失败，请检查浏览器存储后重试。');}window.dispatchEvent(new CustomEvent('portal-org-change'));}
+  if(!localStorage.getItem(KEY))save(clone(seed));
+  const existing=read();if(!existing.accounts.some(a=>a.id===adminDemo.id)){existing.accounts.push(clone(adminDemo));save(existing);}
+  function current() {const s=read();return s.accounts.find(a=>a.id===localStorage.getItem(SESSION))||s.accounts.find(a=>a.id==='u-zhang')||s.accounts[0];}
+  const newId = p => p+'-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  function leader() {const a=current();if(a.kind!=='leader')throw Error('仅负责人可以管理成员账号和创建团队。');return a;}
+  function managedTeam(s,id) {const t=s.teams.find(t=>t.id===id);if(!t||t.ownerId!==current().id)throw Error('仅当前团队负责人可以管理该团队。');return t;}
+  function memberEligible(t,a) {return !!a&&a.orgId===t.orgId&&a.kind==='member'&&a.ownerId===t.ownerId;}
+  const O = window.PortalOrg = {
+    KEY, SESSION, read, current,
+    isLogged:()=>!!localStorage.getItem(SESSION),
+    signOut:()=>{localStorage.removeItem(SESSION);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    account:id=>read().accounts.find(a=>a.id===id),
+    team:id=>read().teams.find(t=>t.id===id),
+    isLeader:()=>current().kind==='leader',
+    canViewDashboard:()=>!!localStorage.getItem(SESSION)&&current().kind==='admin'&&current().permissions?.includes('dashboard:view'),
+    roleLabel:a=>a.kind==='admin'?'管理员':a.kind==='leader'?'负责人':'成员',
+    myTeams:()=>read().teams.filter(t=>t.memberIds.includes(current().id)),
+    managedAccounts:()=>read().accounts.filter(a=>a.kind==='member'&&a.ownerId===current().id),
+    canViewTeam:id=>!!read().teams.find(t=>t.id===id&&t.memberIds.includes(current().id)),
+    canManageTeam:id=>!!read().teams.find(t=>t.id===id&&t.ownerId===current().id),
+    spaceTeam:id=>read().teams.find(t=>(t.spaceIds||[]).includes(String(id))),
+    spaceMembers(id) {const s=read(),t=this.spaceTeam(id);return t?t.memberIds.filter(a=>(s.spaceMembers?.[String(id)]||t.memberIds).includes(a)):[];},
+    canViewSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canViewTeam(t.id)&&this.spaceMembers(id).includes(current().id);},
+    setSpaceMembers(id,ids) {const s=read(),t=this.spaceTeam(id);if(!t||!this.canManageSpace(id))throw Error('仅本团队负责人可以管理空间成员。');if(ids.some(a=>!t.memberIds.includes(a)))throw Error('只能选择当前团队成员。');s.spaceMembers??={};s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];save(s);},
+    canManageSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canManageTeam(t.id);},
+    select(id) {if(!read().accounts.some(a=>a.id===id))throw Error('账号不存在。');localStorage.setItem(SESSION,id);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    createMember(fields) {
+      const a=leader(),s=read(),name=String(fields.name||'').trim(),login=String(fields.login||'').trim();
+      if(!name||!login)throw Error('请填写姓名和登录账号。');
+      if(/\s/.test(login))throw Error('登录账号不能包含空格。');
+      if(s.accounts.some(x=>x.login.toLowerCase()===login.toLowerCase()))throw Error('登录账号已存在，请使用其他账号；已有成员无需重复创建。');
+      if(!String(fields.password||'').trim())throw Error('请填写初始密码。');
+      const member={id:newId('u'),name,login,kind:'member',orgId:a.orgId,org:a.org,ownerId:a.id};
+      s.accounts.push(member);save(s);return member; // Password is deliberately not stored by this prototype.
+    },
+    updateProfile(name) {const s=read(),a=s.accounts.find(x=>x.id===current().id);if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    editMember(id,name) {leader();const s=read(),a=s.accounts.find(a=>a.id===id&&a.ownerId===current().id&&a.kind==='member');if(!a)throw Error('只能维护自己关联的成员账号。');if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    createTeam(fields) {const a=leader(),s=read(),name=String(fields.name||'').trim();if(!name)throw Error('请填写团队名称。');const t={id:newId('t'),name,description:String(fields.description||'').trim(),orgId:a.orgId,org:a.org,ownerId:a.id,memberIds:[a.id],spaceIds:[]};s.teams.push(t);save(s);return t;},
+    addMembers(id,ids) {const s=read(),t=managedTeam(s,id);if(!ids.length)throw Error('请选择要添加的成员。');if(ids.some(id=>!memberEligible(t,s.accounts.find(a=>a.id===id))))throw Error('只能添加本机构且归属当前负责人的普通成员。');t.memberIds=[...new Set([...t.memberIds,...ids])];save(s);},
+    removeMember(id,accountId) {const s=read(),t=managedTeam(s,id);if(accountId===t.ownerId)throw Error('不能移除团队负责人。');t.memberIds=t.memberIds.filter(x=>x!==accountId);save(s);},
+    invite(id,accountId) {
+      const s=read(),t=managedTeam(s,id),a=s.accounts.find(a=>a.id===accountId);
+      if(!a||a.kind!=='leader'||a.orgId!==t.orgId||a.id===current().id)throw Error('只能邀请本机构已有的独立负责人。');
+      if(t.memberIds.includes(a.id))throw Error('该负责人已加入当前团队。');
+      if(s.invitations.some(i=>i.teamId===id&&i.to===accountId&&i.status==='pending'))throw Error('邀请已发出，请等待对方回应。');
+      const i={id:newId('inv'),teamId:id,from:current().id,to:accountId,status:'pending',time:new Date().toLocaleString('zh-CN')};s.invitations.push(i);save(s);return i;
+    },
+    answer(id,decision) {
+      const s=read(),i=s.invitations.find(x=>x.id===id),a=current();if(!i||i.to!==a.id||i.status!=='pending')throw Error('该邀请已处理或不属于当前账号。');
+      if(!['accepted','declined'].includes(decision))throw Error('无效操作。');
+      const t=s.teams.find(t=>t.id===i.teamId);if(!t||a.kind!=='leader'||a.orgId!==t.orgId)throw Error('当前账号不符合团队邀请条件。');
+      if(decision==='accepted')t.memberIds=[...new Set([...t.memberIds,a.id])];i.status=decision;i.processedAt=new Date().toISOString();save(s);
+    },
+    cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
+    escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+  };
+  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+})();
+
+if(location.protocol==="file:"&&!PortalOrg.isLogged())PortalOrg.select("u-admin");
+
+</script>
+<style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<style id="portal-header-alignment">
+
+/* Navigation dimensions and typography follow the supplied portal homepage. */
+#boardPortalHeader{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #dfe7e1;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
+#boardPortalHeader .header-inner{width:min(1360px,calc(100% - 80px));max-width:none;height:80px;margin-inline:auto;padding:0;display:flex;align-items:center;gap:32px}
+#boardPortalHeader .brand{display:flex;align-items:center;gap:10px;color:#123b35;font-size:22px;font-weight:600;line-height:30px;letter-spacing:0;white-space:nowrap}
+#boardPortalHeader .brand svg{width:30px;height:30px;flex:none}
+#boardPortalHeader .main-nav{display:flex;align-self:auto;align-items:center;gap:20px;margin-inline:auto;white-space:nowrap}
+#boardPortalHeader .main-nav a{position:relative;display:inline-flex;align-items:center;height:80px;padding:0 2px;color:#263b38;font:500 14px/22px "Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:none;border:none}
+#boardPortalHeader .main-nav a:hover,#boardPortalHeader .main-nav a.active{color:#064c43}
+#boardPortalHeader .main-nav a.active{font-weight:600}
+#boardPortalHeader .main-nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#064c43}
+#boardPortalHeader .header-actions{display:flex;align-items:center;gap:16px;flex:none;margin:0;font-size:14px}
+#boardPortalHeader .avatar{display:inline-grid;place-items:center;width:30px;height:30px;flex:none;border-radius:50%;background:#005653;color:#fff;font-size:13px;font-weight:600}
+#boardPortalHeader .username{display:inline;color:#10213a;font-size:14px;line-height:22px}
+#boardPortalHeader .readonly{display:inline;color:#687973;font-size:12px;border-left:1px solid #dfe7e1;padding-left:12px;margin-left:0}
+#boardPortalHeader .menu-toggle{display:none;width:44px;height:44px;border:1px solid #8a9f98;border-radius:6px;background:#fff;align-items:center;justify-content:center;flex:none}
+#boardPortalHeader .menu-toggle svg{width:20px;height:20px}
+#boardPortalHeader .mobile-nav{display:block;border-top:1px solid #dfe7e1;background:#fff;padding:16px 24px 24px;margin:0}
+#boardPortalHeader .mobile-nav a{display:block;width:100%;text-align:left;padding:12px 0;border:0;border-bottom:1px solid #dfe7e1;border-radius:0;background:none;color:#263b38;font-size:15px;font-weight:400;line-height:1.55}
+#boardPortalHeader .mobile-nav a.active{color:#064c43;background:none;font-weight:600}
+@media(min-width:1200px){#boardPortalHeader .mobile-nav{display:none}}
+@media(max-width:1400px){#boardPortalHeader .username{display:none}#boardPortalHeader .readonly{display:none}}
+@media(max-width:1279px){#boardPortalHeader .header-inner{width:calc(100% - 48px);height:64px}#boardPortalHeader .main-nav{gap:16px}#boardPortalHeader .main-nav a{height:64px}}
+@media(max-width:1199px){#boardPortalHeader .main-nav{display:none}#boardPortalHeader .header-actions{margin-left:auto}#boardPortalHeader .menu-toggle{display:inline-flex}}
+@media(max-width:767px){#boardPortalHeader .header-inner{width:calc(100% - 32px);gap:12px}#boardPortalHeader .brand{gap:8px;font-size:16px;line-height:24px}#boardPortalHeader .brand svg{width:24px;height:24px}#boardPortalHeader .header-actions{gap:8px}#boardPortalHeader .avatar{display:none}}
+</style>
 </head>
 <body>
-<header class="site-header">
+<header class="site-header" id="boardPortalHeader">
  <div class="header-inner">
   <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg viewBox="0 0 30 30" fill="none" aria-hidden="true"><path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/><path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round"/></svg><span>北大荒智慧农业协同创新平台</span></a>
   <nav class="main-nav" aria-label="一级导航"><a href="index.html">首页</a><a href="数据中心-数据集列表页.html">数据中心</a><a href="模型中心-模型列表页（调整）.html">模型中心</a><a href="科研开发空间-交互原型(10).html">科研开发空间</a><a href="课题中心-高保真原型.html">课题中心</a><a href="需求中心-高保真原型%20(1).html">需求中心</a><a href="门户-领导数据看板.html" class="active" aria-current="page">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a></nav>
-  <div class="header-actions"><span class="avatar" aria-hidden="true">张</span><span class="username">张明</span><span class="readonly">只读</span><button id="menuButton" class="menu-toggle" aria-controls="mobileNav" aria-expanded="false" aria-label="展开一级导航"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+  <div class="header-actions"><span class="avatar" aria-hidden="true">张</span><span class="username">张明</span><span class="readonly">只读</span><button id="menuButton" class="menu-toggle" aria-controls="mobileNav" aria-expanded="false" aria-label="展开一级导航"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
  </div>
  <nav class="mobile-nav" id="mobileNav" aria-label="移动端一级导航" hidden></nav>
 </header>
@@ -822,6 +941,1728 @@ $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement){await docum
 render();selectTab('output');
 // Keep deterministic data functions available for the prototype's validation harness.
 window.Board={state:STATE,catalog:CATALOG,fixture:FIXTURE,metrics,conversionStats,percentText,projectOutcomeCount,outcomeApplications,isAppliedOutcome,resourceRows,selectedProjects,selectedOrgs,selectedOutcomes,selectedLandings,filteredRows,summaryRows,makeCSV,render,openDrawer,showEntity,openRule};
+</script>
+<!-- devdoc-1012:start --><script>
+/* ============================================================================
+   北大荒智慧农业协同创新平台 · 前端门户端
+   页面开发说明（📋 字段说明）+ 交互演示指引（🧪 交互演示指引）
+   ---------------------------------------------------------------------------
+   用途：给开发 / 测试 / 产品看「这一页有哪些字段、字段类型与长度、必填与校验、
+        状态如何流转、点哪里会发生什么」。形态与《洛书模型服务平台》的
+        image-custom-list.html / model-deployment.html 一致（悬浮入口 + 抽屉 + 分 Tab
+        的字段说明表 / 交互指引表），配色改用本项目门户品牌色。
+
+   设计口径（与门户端视觉体系一致，不用旧蓝皮 #2f54eb / #23ada4）
+     brand #005653 · soft #edf6f2 · page #f4f8f5 · text #10213a
+     secondary #526078 · border #dce5e9 · radius 8
+
+   字段长度口径来源（撰写时逐条对齐，未凭空编写）：
+     ① 本原型真实 DOM：带 maxlength 的输入直接采用其上限
+     ② 《模型上架元数据与接入配置_字段清单_v1_20260910.md》：模型字段、输入/输出 schema、
+        输入介质 ≤500MB、空间参考 CGCS2000（EPSG:4490）/ 分辨率 ≤2m、异步触发阈值、服务测试六项
+     ③ 《需求中心-定版功能清单与功能点-20260916.md》：需求对象字段与长度、获取记录字段、需求类型字典
+     ④ assets/meeting/meeting-core.js 内 M.schemas 与提交校验（版本号正则、必填、文件后缀）
+   凡本项目文档未定义、由原型尺度或行业惯例给出的参考值，一律标「建议」，并在抽屉底部注明。
+
+   权限说明按账号身份、团队归属和具体操作展示；本轮规则见 portal-org.js / portal-access.js。
+   成员账号绑定负责人，同负责人多团队；原型切换账号不代表生产授权实现。
+
+   本文件不依赖 Meeting 内核，可独立加载；不改动任何既有共享脚本。
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var BRAND = '#005653';
+  var DOCS = {};
+
+  /* ========================== 渲染层（通用） ============================ */
+  var CSS = [
+    '.mtdev-group{position:fixed;right:24px;bottom:24px;z-index:960;display:flex;gap:8px;width:max-content;cursor:grab;user-select:none;transition:opacity .2s}',
+    'body:has(dialog[open]) .mtdev-group,.mtdev-group.mtdev-dim{opacity:0;pointer-events:none}',
+    '.mtdev-btn{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:19px;font-size:14px;font-weight:500;white-space:nowrap;border:1px solid transparent;font-family:inherit;cursor:pointer;transition:all .2s}',
+    '.mtdev-btn.guide{background:' + BRAND + ';color:#fff;box-shadow:0 4px 12px rgba(0,86,83,.28)}',
+    '.mtdev-btn.guide:hover{background:#0a6b66;transform:translateY(-1px)}',
+    '.mtdev-btn.field{background:#edf6f2;color:' + BRAND + ';border-color:#c6ddd4;box-shadow:0 4px 12px rgba(0,86,83,.12)}',
+    '.mtdev-btn.field:hover{background:#dceee6;transform:translateY(-1px)}',
+    '.mtdev-mask{display:none;position:fixed;inset:0;background:rgba(10,30,28,.45);z-index:12000;align-items:center;justify-content:center}',
+    '.mtdev-mask.on{display:flex}',
+    '.mtdev-drawer{background:#fff;border-radius:8px;width:780px;max-width:92vw;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(6,40,38,.28)}',
+    '.mtdev-hd{display:flex;align-items:center;gap:10px;padding:16px 22px;border-bottom:1px solid #dce5e9;background:#f4f8f5;flex-shrink:0}',
+    '.mtdev-hd b{font-size:16px;color:#10213a;flex:1;font-weight:600}',
+    '.mtdev-hd .p{font-size:12px;color:#526078;white-space:nowrap}',
+    '.mtdev-x{font-size:16px;color:#526078;background:none;border:0;cursor:pointer;padding:2px 8px;border-radius:4px;line-height:1.4}',
+    '.mtdev-x:hover{color:#10213a;background:#e6efeb}',
+    '.mtdev-bd{padding:20px 22px;overflow-y:auto;flex:1;color:#10213a;font-size:13.5px;line-height:1.7}',
+    '.mtdev-tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:1px solid #dce5e9;margin:-4px 0 16px}',
+    '.mtdev-tab{padding:8px 14px;font-size:13.5px;color:#526078;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}',
+    '.mtdev-tab:hover{color:' + BRAND + '}',
+    '.mtdev-tab.on{color:' + BRAND + ';border-bottom-color:' + BRAND + ';font-weight:600}',
+    '.mtdev-sec{margin-bottom:22px}', '.mtdev-sec:last-child{margin-bottom:2px}',
+    '.mtdev-sec h4{margin:0 0 10px;font-size:14px;color:#10213a;font-weight:600}',
+    '.mtdev-intro{background:#f4f8f5;border-left:3px solid ' + BRAND + ';padding:12px 14px;border-radius:0 6px 6px 0;margin-bottom:18px;color:#31445c}',
+    '.mtdev-tw{overflow-x:auto;border:1px solid #dce5e9;border-radius:6px}',
+    '.mtdev-tw table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto}',
+    '.mtdev-tw-fx table{table-layout:fixed}',
+    '.mtdev-tw-fx .mtdev-tag{white-space:normal}',
+    '.mtdev-tw th,.mtdev-tw td{padding:8px 11px;text-align:left;border-bottom:1px solid #eef3f1;vertical-align:top;white-space:normal;word-break:break-word;overflow-wrap:anywhere}',
+    '.mtdev-tw th{background:#f4f8f5;color:#526078;font-weight:600;white-space:nowrap;position:sticky;top:0}',
+    '.mtdev-tw tr:last-child td{border-bottom:0}',
+    '.mtdev-tw td:first-child{font-weight:600;color:#10213a}',
+    '.mtdev-tw td code,.mtdev-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f4f8f5;border:1px solid #e4ecea;border-radius:3px;padding:0 4px;font-size:12px;color:#0a4b48;word-break:break-all;overflow-wrap:anywhere}',
+    '.mtdev-note{margin-top:8px;font-size:12px;color:#526078;line-height:1.65}',
+    '.mtdev-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;white-space:nowrap}',
+    '.mtdev-tag.do{background:#e6f4ec;color:#1a7f5a}',
+    '.mtdev-tag.no{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.req{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.mid{background:#eaf0fb;color:#3b6fb6}',
+    '.mtdev-tag.info{background:#edf6f2;color:' + BRAND + '}',
+    '.mtdev-tag.opt{background:#f0f2f5;color:#526078}',
+    '.mtdev-tag.warn{background:#fdf4e3;color:#b7791f}',
+    '.mtdev-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 14px}',
+    '.mtdev-flow i{font-style:normal;background:#edf6f2;color:' + BRAND + ';border:1px solid #c6ddd4;border-radius:14px;padding:3px 10px;font-size:12px}',
+    '.mtdev-flow s{text-decoration:none;color:#7d8c9c;font-size:12px}'
+  ].join('');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* 单元格状态标记：以 {{tag}} 开头时渲染为彩色标签
+     tag ∈ do 可用·免申请（绿） / mid 需申请（蓝） / opt 不显示·不适用（灰） / warn 注意（黄） / no 禁用（红） / info 品牌色 */
+  function cellHTML(c) {
+    var s = (c == null ? '' : String(c));
+    var m = /^\{\{(\w+)\}\}([\s\S]*)$/.exec(s);
+    if (m) return '<span class="mtdev-tag ' + m[1] + '">' + m[2] + '</span>';
+    return s;
+  }
+
+  function tableHTML(sec) {
+    var h = '<div class="mtdev-tw' + (sec.w ? ' mtdev-tw-fx' : '') + '"><table>';
+    if (sec.w) {
+      h += '<colgroup>';
+      sec.w.forEach(function (w) { h += '<col style="width:' + w + '">'; });
+      h += '</colgroup>';
+    }
+    h += '<thead><tr>';
+    sec.head.forEach(function (c) { h += '<th>' + c + '</th>'; });
+    h += '</tr></thead><tbody>';
+    sec.rows.forEach(function (r) {
+      h += '<tr>';
+      r.forEach(function (c) { h += '<td>' + cellHTML(c) + '</td>'; });
+      h += '</tr>';
+    });
+    return h + '</tbody></table></div>' + (sec.note ? '<p class="mtdev-note">' + sec.note + '</p>' : '');
+  }
+
+  function tabBody(tab) {
+    var h = '';
+    (tab.sections || []).forEach(function (s) {
+      h += '<div class="mtdev-sec"><h4>' + s.title + '</h4>' + tableHTML(s) + '</div>';
+    });
+    return h;
+  }
+
+  function drawerHTML(overlayId, bodyId, title, sub, tabs, prefix) {
+    var h = '<div class="mtdev-mask" id="' + overlayId + '">' +
+      '<div class="mtdev-drawer"><div class="mtdev-hd"><b>' + title + '</b>' +
+      (sub ? '<span class="p">' + sub + '</span>' : '') +
+      '<button class="mtdev-x" type="button" title="关闭（Esc）">✕</button></div>' +
+      '<div class="mtdev-bd" id="' + bodyId + '"><div class="mtdev-tabs">';
+    tabs.forEach(function (t, i) {
+      h += '<div class="mtdev-tab' + (i === 0 ? ' on' : '') + '" data-t="' + prefix + i + '">' + t.label + '</div>';
+    });
+    h += '</div>';
+    tabs.forEach(function (t, i) {
+      h += '<div class="mtdev-tabpane" id="' + prefix + i + '"' + (i === 0 ? '' : ' style="display:none"') + '>' + tabBody(t) + '</div>';
+    });
+    return h + '</div></div></div>';
+  }
+
+  function bindTabs(root) {
+    root.querySelectorAll('.mtdev-tab').forEach(function (t) {
+      t.onclick = function () {
+        root.querySelectorAll('.mtdev-tab').forEach(function (x) { x.classList.remove('on'); });
+        t.classList.add('on');
+        root.querySelectorAll('.mtdev-tabpane').forEach(function (p) { p.style.display = 'none'; });
+        var pane = root.querySelector('#' + t.dataset.t);
+        if (pane) pane.style.display = '';
+      };
+    });
+  }
+
+  function resetTabs(root) {
+    var tabs = root.querySelectorAll('.mtdev-tab');
+    var panes = root.querySelectorAll('.mtdev-tabpane');
+    tabs.forEach(function (t, i) { t.classList.toggle('on', i === 0); });
+    panes.forEach(function (p, i) { p.style.display = i === 0 ? '' : 'none'; });
+    var bd = root.querySelector('.mtdev-bd');
+    if (bd) bd.scrollTop = 0;
+  }
+
+  /* 悬浮按钮组与抽屉头部可拖拽（拖完抑制一次点击，避免误触） */
+  function draggable(el, handle, onMove) {
+    handle = handle || el;
+    var st = null;
+    handle.addEventListener('mousedown', function (e) {
+      if (e.button !== 0 || (e.target.closest && e.target.closest('.mtdev-x'))) return;
+      var r = el.getBoundingClientRect();
+      st = { sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, w: r.width, h: r.height, moved: false };
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!st) return;
+      var dx = e.clientX - st.sx, dy = e.clientY - st.sy;
+      if (!st.moved && Math.abs(dx) + Math.abs(dy) > 4) st.moved = true;
+      if (!st.moved) return;
+      if (el.style.position !== 'fixed') {
+        el.style.position = 'fixed'; el.style.margin = '0';
+        el.style.left = st.ox + 'px'; el.style.top = st.oy + 'px';
+        el.style.right = 'auto'; el.style.bottom = 'auto';
+      }
+      var mx = Math.max(0, window.innerWidth - st.w), my = Math.max(0, window.innerHeight - st.h);
+      el.style.left = Math.min(mx, Math.max(0, st.ox + dx)) + 'px';
+      el.style.top = Math.min(my, Math.max(0, st.oy + dy)) + 'px';
+      if (onMove) onMove();
+    });
+    document.addEventListener('mouseup', function () {
+      if (!st) return;
+      if (st.moved) {
+        var sup = function (ev) { ev.preventDefault(); ev.stopPropagation(); document.removeEventListener('click', sup, true); };
+        document.addEventListener('click', sup, true);
+      }
+      st = null;
+    });
+  }
+
+  /* ============================== 内容 ============================== */
+  /* 字段说明表列定义统一为：字段 / 类型 / 长度·取值 / 必填 / 说明与校验
+     交互指引表列定义统一为：交互场景 / 触发方式 / 预期效果 */
+
+  DOCS['__default__'] = {
+    name: '页面',
+    intro: '本页为门户端的说明 / 展示类页面，无业务表单字段。',
+    field: [{ label: '📄 页面结构', sections: [{ title: '内容区块', head: ['区块', '说明'], rows: [['页面标题区', 'h1 + 一句说明'], ['正文区', '静态图文内容'], ['页脚', '平台资源 / 关于平台 / 备案信息']] }] }],
+    guide: [{ label: '🧭 通用交互', sections: [{ title: '导航与入口', head: ['交互场景', '触发方式', '预期效果'], rows: [['顶部一级导航', '点击第 1~8 项', '跳转到对应模块首页'], ['登录 / 合作咨询', '点击页头按钮', '未登录时弹出登录弹窗；合作咨询跳「联系支持」']] }] }]
+  };
+
+  /* ---------------------------------------------------------------- 1 首页 */
+  DOCS['index.html'] = {
+    name: '门户首页',
+    intro: '对外门面页。承载平台定位、四个业务板块入口、通知公告与合作咨询入口。本页<b>不产生业务数据</b>，内容由后台「门户管理」维护后展示。',
+    field: [
+      {
+        label: '🏠 首页区块与字段', sections: [
+          {
+            title: '一、页面区块与字段', head: ['区块', '字段', '类型', '长度 / 取值', '说明'], rows: [
+              ['页头', '一级导航', '枚举 · 8 项', '首页 / 数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心 / 数据看板 / 关于平台', '当前项加下划线；页头高 64px'],
+              ['首屏轮播', '轮播屏（5 屏）', '对象数组', '每屏：标题 / 副标题 / 背景图 / 主按钮', '自动播放 + 指示器可点；深色遮罩保证文字可读'],
+              ['板块入口', '四张入口卡', '对象数组', '特色数据集 / 研究与成果模型 / 课题指南 / 示范与验证基地', '每卡：标题、一句说明、跳转链接'],
+              ['通知公告', '公告条目', '对象数组', '标题 + 日期 + 详情链接', '取后台「门户管理 · 通知公告」已发布内容'],
+              ['合作咨询', 'CTA 区块', '文本', '标题 + 说明 + 按钮', '按钮跳「关于平台 · 联系支持」'],
+              ['页脚', '四个分组', '静态', '平台资源 / 关于平台 / 联系方式 / 备案与版权', '页脚底色 rgb(0,80,78)']
+            ]
+          },
+          {
+            title: '二、内容来源（谁能改）', head: ['展示内容', '数据来源', '维护端', '说明'], rows: [
+              ['通知公告', '公告对象', '运营管理 · 门户管理 · 通知公告', '三态：草稿 / 已发布 / 已下线，仅已发布对外'],
+              ['首页文案与轮播图', '首页内容配置', '运营管理 · 门户管理 · 首页内容', '演示图占位，正式由运营上传'],
+              ['特色数据集', '数据集对象', '数据中心（公开状态=已公开）', '只展示已公开且元数据完整的数据集'],
+              ['研究与成果模型', '模型对象', '模型中心（已收录）', '收录动作在运营侧，用户侧看不到「上架」字样'],
+              ['课题指南', '课题 / 指南对象', '课题管理', '展示开放课题指南与公示信息']
+            ], note: '⚠️ 本页曾挂过「成果转化效果」入口，已按拍板口径删除——成果转化看板不属门户，统一由一级导航「数据看板」承载。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🧭 首页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['轮播切换', '点击指示器 / 自动播放；键盘 ←→', '切换 5 屏，当前屏指示器高亮'],
+              ['一级导航', '点击页头 8 项中任一项', '跳转到对应模块首页，当前项加下划线'],
+              ['板块入口', '点击任一入口卡 / 「查看全部」', '跳转到数据中心 / 模型中心 / 课题中心列表页'],
+              ['通知公告', '点击任一条', '跳转公告详情页'],
+              ['合作咨询', '点击「合作咨询 →」', '跳转「关于平台 · 联系支持」'],
+              ['登录门控', '未登录时点击发布 / 申请类入口', '弹出登录弹窗（演示登录态），不直接跳业务表单']
+            ]
+          },
+          {
+            title: '二、演示口径', head: ['项', '说明'], rows: [
+              ['演示数据', '轮播图、公告、入口卡数量均为演示值；正式内容由后台「门户管理」维护'],
+              ['不做的统计', '本页不展示调用量、经济价值等无数据来源的指标'],
+              ['响应式', '1100–1199px 收起一级导航为汉堡入口，避免 8 项撑破页宽']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ----------------------------------------------------------- 2 地图引擎 */
+  DOCS['map-engine.html'] = {
+    name: '遥感影像检索 · 地图引擎',
+    intro: '遥感影像的检索与预览页。左侧为查询条件，右侧为天地图底图 + 结果叠加；「申请全量数据」走数据申请流程。',
+    field: [
+      {
+        label: '🛰 查询条件字段', sections: [
+          {
+            title: '一、查询条件（左侧栏）', head: ['字段', '类型', '长度 / 取值', '必填', '说明与校验'], rows: [
+              ['数据类型', '枚举', '卫星影像 / 无人机影像', '—', '切换后下方字段组随之变化'],
+              ['卫星 / 传感器', '下拉 · 单选', 'GF2 / GF1 / Sentinel-2 / Landsat-8 …', '<span class="mtdev-tag req">是</span>', '带 <code>*</code> 标识，不选不允许提交'],
+              ['检索区域', '下拉 · 单选', '建三江 / 友谊农场 / 八五九农场 …', '<span class="mtdev-tag req">是</span>', '与「预设区域 / 地图框选 / 当前视图」二选一，框选优先'],
+              ['时间范围', '日期区间', '起止日期', '<span class="mtdev-tag opt">否</span>', '结束日期早于开始日期时报错'],
+              ['云量', '单选', '不限 / ≤10% / ≤20% / ≤30%', '<span class="mtdev-tag opt">否</span>', '仅卫星影像有效'],
+              ['影像标识', '文本', '建议 ≤64 字符', '<span class="mtdev-tag opt">否</span>', '如 <code>GF2_PMS1_20260612_建三江</code>'],
+              ['影像文件名', '文本', '支持通配符', '<span class="mtdev-tag opt">否</span>', '如 <code>*.tif</code>、<code>GF2_*.tif</code>'],
+              ['影像 ID', '文本', '建议 ≤32 字符', '<span class="mtdev-tag opt">否</span>', '如 <code>IMG-20260612-001</code>'],
+              ['光谱类型', '下拉', '多光谱 / 全色 / 高光谱', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['分辨率 / 航高', '下拉', '≤2m / ≤5m / …', '<span class="mtdev-tag opt">否</span>', '无人机数据用「航高」口径'],
+              ['覆盖地块', '文本', '建议 ≤64 字符', '<span class="mtdev-tag opt">否</span>', '如「建三江 / 友谊农场」'],
+              ['采集日期', '日期区间', '起止日期', '<span class="mtdev-tag opt">否</span>', '无人机数据分列于此'],
+              ['要素类型', '下拉', '地块 / 道路 / 沟渠 …', '<span class="mtdev-tag opt">否</span>', '矢量图层检索用'],
+              ['行政区', '下拉', '黑龙江省下属区县', '<span class="mtdev-tag opt">否</span>', '与检索区域互斥时可任选其一'],
+              ['面积（亩）', '数值 · 区间', '≥0，最小 ≤ 最大', '<span class="mtdev-tag opt">否</span>', '最小大于最大时报错'],
+              ['年份', '下拉', '2021—2026', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['坐标系', '下拉', '<code>CGCS2000</code> / <code>WGS84</code>', '<span class="mtdev-tag opt">否</span>', '平台空间参考默认 CGCS2000（EPSG:4490）'],
+              ['叠加透明度', '滑杆', '0—100', '—', '只影响预览，不影响检索结果']
+            ]
+          },
+          {
+            title: '二、查询结果字段', head: ['字段', '类型', '说明'], rows: [
+              ['结果计数', '数字', '当前条件下命中的影像 / 要素条数'],
+              ['影像条目', '对象', '缩略图、影像标识、采集日期、云量、分辨率、坐标系'],
+              ['底图切换', '枚举', '<code>影像图</code> / <code>矢量图</code>（天地图）'],
+              ['申请全量数据', '按钮', '提交数据申请，进入数据使用申请流程（不在本页出结果）']
+            ], note: '底图为天地图在线服务（演示用 tk）；正式环境由平台统一配置，密钥不得写在前端。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🗺 检索与地图交互', sections: [
+          {
+            title: '一、检索交互', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['提交查询', '填好条件后点「提交查询」', '结果面板刷新计数与条目列表；地图叠加更新'],
+              ['必填校验', '不选「卫星 / 传感器」直接提交', '字段下方提示，且不发起查询'],
+              ['区间校验', '面积最小 > 最大 或 结束日期 < 开始日期', '提示取值范围错误'],
+              ['空间范围选择', '点「预设区域」/「地图框选」/「当前视图」', '三种方式互斥，地图框选优先于预设区域'],
+              ['结果与地图联动', '点击结果条目', '地图定位到该影像范围并高亮'],
+              ['申请全量数据', '点「申请全量数据」', '登录门控 → 数据申请表单；提交后进入授权流程']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 3 数据中心 · 数据集列表页 */
+  DOCS['数据中心-数据集列表页.html'] = {
+    name: '数据中心 · 数据集列表',
+    intro: '数据集的检索与浏览页。筛选条件支持多选并与 URL 同步（<code>m_形态 / m_格式 / m_标注</code>），刷新与分享后可还原；未维护元数据的数据集归入「未填写」。',
+    field: [
+      {
+        label: '🗂 数据集字段', sections: [
+          {
+            title: '一、数据集对象（字段与后台元数据一致）', head: ['字段', '类型', '长度 / 取值', '必填', '说明与校验'], rows: [
+              ['数据集编号', '文本 · 只读', '<code>DS</code> + 日期 + 3 位序号', '系统生成', '如 <code>DS20260923018</code>，唯一'],
+              ['数据名称', '文本', '建议 ≤60 字符', '<span class="mtdev-tag req">是</span>', '列表主标题，卡片上超长省略'],
+              ['提供方', '文本', '建议 ≤40 字符', '<span class="mtdev-tag req">是</span>', '机构 / 团队名称'],
+              ['数据简介', '多行文本', '建议 ≤300 字符', '<span class="mtdev-tag req">是</span>', '卡片与详情摘要区共用'],
+              ['标签', '多值文本', '建议 ≤5 个', '<span class="mtdev-tag opt">否</span>', '英文逗号 / 顿号分隔'],
+              ['版本号', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '<span class="mtdev-tag req">是</span>', '不允许中文与空格；错误提示「版本号请使用字母、数字、点或连字符」'],
+              ['数据形态', '枚举 · 单选', '遥感影像 / 矢量 / 表格 / 时序 / 图像 / 文本', '<span class="mtdev-tag req">是</span>', '左侧筛选「数据形态」直接取该字段'],
+              ['数据格式', '文本', '如 <code>GeoTIFF</code> / <code>CSV</code> / <code>SHP</code> / <code>ZIP</code>', '<span class="mtdev-tag req">是</span>', '与筛选「数据格式」一致'],
+              ['标注情况', '枚举 · 单选', '有标注 / 无标注', '<span class="mtdev-tag req">是</span>', '决定「可训练 / 仅参考」的口径'],
+              ['数据规模', '文本', '如「12.6 万条」「256 景」', '<span class="mtdev-tag req">是</span>', '数值 + 单位，不做换算'],
+              ['适用作物', '文本', '水稻 / 玉米 / 大豆 …', '<span class="mtdev-tag opt">否</span>', '供筛选与检索'],
+              ['区域', '文本', '黑龙江省下属农区', '<span class="mtdev-tag opt">否</span>', '与数据中心区域口径一致'],
+              ['数据年份', '文本 / 年份', '如 <code>2021—2025</code>', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['权属归属', '枚举', '个人 / 团队 / 单位 / 联合', '<span class="mtdev-tag req">是</span>', '联合可多填归属方'],
+              ['授权范围', '枚举', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '<span class="mtdev-tag req">是</span>', '决定申请审批链与能否对外'],
+              ['公开状态', '枚举 · 系统', '<code>on</code> 已公开 / <code>off</code> 未维护 / <code>down</code> 已下架', '系统', '仅「已公开」出现在列表；下架不出现在任何列表'],
+              ['更新人 / 更新时间', '系统', '时间戳', '系统', '审计留痕，卡片右下角展示']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['关键词', '文本输入', '数据名称 / 作物 / 关键词', '占位文案：搜索数据名称、作物或关键词'],
+              ['发布时间', '下拉', '不限 / 近一年 / 近三年 …', '按数据集更新时间过滤'],
+              ['数据形态', '多选', '由元数据取值聚合并计数', '点击后 URL 追加 <code>m_modality=…</code>'],
+              ['数据格式', '多选', '由元数据取值聚合并计数', 'URL 追加 <code>m_format=…</code>'],
+              ['标注情况', '多选', '有标注 / 无标注 / 未填写', 'URL 追加 <code>m_annotation=…</code>'],
+              ['更多筛选', '折叠区', '作物 / 区域 / 时间', '默认折叠，避免首屏被筛选占满'],
+              ['视图', '切换', '卡片 / 列表', '同一数据两种呈现，保留已选条件'],
+              ['排序', '下拉', '综合 / 最新 / 引用最多', '默认综合排序']
+            ], note: '筛选项的计数来自当前其它条件已选后的结果集（联级计数），不是全量计数。'
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['20%', '16%', '16%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['卡片主操作', '{{do}}开始使用', '{{mid}}申请使用', '按钮文案由 <code>actsHtml()</code> 按 <code>isHighRole()</code> 切换；两者都先过 <code>requireAuth()</code>'],
+              ['点击卡片主操作', '{{do}}进详情·开预览', '{{mid}}进详情·弹申请', '跳转带 <code>&amp;use=1</code> / <code>&amp;apply=1</code>，由详情页据此决定落点'],
+              ['专题条件栏「申请本专题全部 →」', '{{opt}}不显示', '{{do}}显示', '仅当已选「专题」筛选且为低权限时出现，见 <code>renderCtx()</code>'],
+              ['调用「申请本专题全部」', '{{opt}}不适用', '{{do}}批量写申请', '按钮对高权限不出现；被直接调用时高权限亦早退并提示「当前角色已获授权，无需申请」'],
+              ['查看详情 / 搜索 / 筛选 / 视图切换', '{{do}}可用', '{{do}}可用', '与本页角色无关'],
+              ['未登录时点申请类入口', '{{warn}}先登录', '{{warn}}先登录', '<code>requireAuth()</code>；两角色一致']
+            ]
+          },
+          {
+            title: '二、判定口径与数据落点', w: ['20%', '80%'], head: ['项', '说明'], rows: [
+              ['角色变量', '<code>ROLE</code>，默认 <code>\'low\'</code>；<code>isHighRole()</code> 判 <code>ROLE === \'high\'</code>'],
+              ['角色切换入口', '页头右上头像下拉「切换为高权限（免申请）/ 切换为低权限科研人员」，运行时执行 <code>switchRole()</code>'],
+              ['申请记录落点', '<code>localStorage</code> 键 <code>LS_AUTH_APPS</code>，单条字段 <code>{appId, name, form, use, note, submittedAt, status:\'pending\'}</code>'],
+              ['登录门控', '<code>requireAuth()</code>：未登录先弹登录，登录成功后继续原动作，不丢失目标数据集'],
+              ['原型 vs 生产', '原型只建模 2 个角色用于演示；生产由中台统一身份与权限接管，角色划分以中台为准']
+            ], note: '⚠️ 高权限「免申请」≠「无限制」：仍受数据集公开状态与授权范围约束——未公开数据不进入本列表，已下架数据任何角色都看不到。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与筛选交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['关键词搜索', '输入框输入后回车 / 点「搜索」', '结果刷新，页码回到第 1 页'],
+              ['多选筛选', '勾选任一「数据形态 / 数据格式 / 标注情况」', '结果与计数实时更新，URL 同步为 <code>m_*</code>，可复制分享'],
+              ['刷新还原', '带着 <code>m_*</code> 参数的 URL 刷新页面', '筛选状态与结果一并还原'],
+              ['进一步筛选', '展开「更多筛选：作物、区域与时间」', '显示其余条件组，已选项沿用'],
+              ['视图切换', '点「卡片 / 列表」', '仅切换呈现，不改变结果集'],
+              ['清空筛选条件', '点「清空筛选条件」', '清空所有条件与 <code>m_*</code> 参数，回到初始结果'],
+              ['分页', '底部翻页 / 切每页条数', '切每页条数后回到第 1 页'],
+              ['进入详情', '点卡片或「查看详情」', '跳转数据集详情页（携带数据集编号）']
+            ]
+          },
+          {
+            title: '二、元数据缺失时的口径', head: ['情况', '处理', '原因'], rows: [
+              ['<code>pub=off</code> 且未维护', '不出现在列表', '未公开数据不对门户开放'],
+              ['元数据字段为空', '筛选值归入「未填写」并在界面注明', '避免用假值填充、也不隐藏条目'],
+              ['已下架 <code>down</code>', '列表不展示，仅后台可见', '下架是运营动作，门户不出现']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* --------------------------------------------- 4 数据中心 · 数据集详情 */
+  DOCS['数据中心-数据集详情.html'] = {
+    name: '数据中心 · 数据集详情',
+    intro: '单个数据集的说明、样例预览与使用申请入口。用户侧只有两个动作：<b>申请使用</b>（授权）与<b>声明成果数据</b>（提交成果）。',
+    field: [
+      {
+        label: '📄 数据基本信息', sections: [
+          {
+            title: '一、基本信息字段', head: ['字段', '类型', '长度 / 取值', '说明'], rows: [
+              ['数据名称', '文本', '—', '页头 h1，与列表一致'],
+              ['数据集编号', '文本 · 只读', '<code>DS</code> + 日期 + 序号', '用于跨页定位与接口入参'],
+              ['提供方', '文本', '—', '机构 / 团队'],
+              ['数据形态 / 格式', '枚举 / 文本', '遥感影像 / 矢量 / 表格 / 时序 …', '决定预览区的呈现形态'],
+              ['标注情况', '枚举', '有标注 / 无标注', '有标注 → 可训练'],
+              ['数据规模', '文本', '12.6 万条 / 256 景 …', '展示值，不做换算'],
+              ['时间范围', '文本', '2021—2025', '观测 / 采集时间跨度'],
+              ['空间范围与坐标系', '文本', '<code>CGCS2000</code>（EPSG:4490）', '平台空间参考统一口径'],
+              ['适用作物 / 区域', '文本', '水稻 / 玉米 / 大豆', '检索用'],
+              ['版本', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '与数据集对象同源'],
+              ['权属归属 / 授权范围', '枚举', '个人 / 团队 / 单位 / 联合；仅平台内使用 …', '决定申请审批链'],
+              ['简介', '富文本', '建议 ≤2000 字符', '介绍 Tab 正文，模板：数据介绍 / 关键参数 / 适用方向'],
+              ['更新人 / 更新时间', '系统', '时间戳', '审计留痕']
+            ]
+          },
+          {
+            title: '二、数据预览字段', head: ['项', '类型', '说明'], rows: [
+              ['样例表头', '文本数组', '来自数据集字段定义（逐列展示字段名）'],
+              ['样例行', '对象数组', '演示数据，正式环境取前 N 行真实样例'],
+              ['分页', '控件', '样例分页，不影响全量数据'],
+              ['数据二次查询', '按钮', '在样例上按字段值做包含匹配，返回「匹配 N 条样例记录」']
+            ], note: '样例预览只读；如需全量数据，走「申请使用」，平台不做数据导出。'
+          },
+          {
+            title: '三、申请使用（科研开发空间）表单', head: ['字段', '类型', '长度 / 取值', '必填', '校验'], rows: [
+              ['数据集', '只读', '当前数据集名称', '—', '自动带出，不可改'],
+              ['数据格式', '只读', '如 <code>GeoTIFF</code> / 样例表', '—', '自动带出'],
+              ['申请日期', '日期', '系统当天', '—', '自动带出'],
+              ['授权用途', '下拉 · 单选', '科研研究 / 模型训练与验证 / 教学 / 其他', '<span class="mtdev-tag req">是</span>', '不选不能提交'],
+              ['使用说明 / 拟用科研开发空间范围', '多行文本', '建议 ≤500 字符', '<span class="mtdev-tag opt">否</span>', '占位示例：在科研开发空间内基于本数据卡进行长势模型训练与验证，不导出'],
+              ['承诺勾选', '复选框', '我已阅读并承诺遵守上述数据使用要求', '<span class="mtdev-tag req">是</span>', '不勾选不允许提交']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['20%', '16%', '16%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['页头主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>applyBtnHtml()</code>；低权限若已有待审批申请则显示「已申请 · 待审批」并禁用'],
+              ['主按钮下方说明文案', '{{info}}已获授权·无需申请', '{{info}}获批后使用', '<code>authNote()</code> 原文：高权限「当前角色已获授权 · 可直接使用，无需申请」，低权限「获批后在科研开发空间内使用」'],
+              ['点击「开始使用」', '{{do}}开数据预览', '{{opt}}不适用', '<code>startUse()</code> → <code>switchTab(\'preview\')</code>，并提示已获授权'],
+              ['点击「申请使用」', '{{opt}}不适用', '{{do}}弹申请表单', '<code>applyUse()</code>；若被高权限直接调用则转 <code>startUse()</code>'],
+              ['已存在待审批申请', '{{opt}}不适用', '{{warn}}按钮禁用', '提示去「我的数据授权」查看；<code>getApplyState()</code> 判 <code>status===\'pending\'</code>'],
+              ['成果声明 / 数据二次查询 / Tab 切换', '{{do}}可用', '{{do}}可用', '与本页角色无关'],
+              ['未登录时点主按钮', '{{warn}}先登录', '{{warn}}先登录', '<code>requireAuth()</code>；两角色一致']
+            ]
+          },
+          {
+            title: '二、申请表单在两种角色下的可见性', w: ['30%', '14%', '16%', '40%'], head: ['表单字段', '平台管理员', '科研人员', '说明'], rows: [
+              ['数据集 / 数据格式 / 申请日期', '{{opt}}不出现（不开弹窗）', '{{do}}只读，自动带出', '整个弹窗仅低权限会打开'],
+              ['授权用途', '{{opt}}—', '{{do}}必填 · 下拉单选', '不选无法提交'],
+              ['使用说明 / 拟用科研开发空间范围', '{{opt}}—', '{{do}}选填 · 多行文本', '建议 ≤500 字符'],
+              ['承诺勾选', '{{opt}}—', '{{do}}必填 · 复选框', '不勾选无法提交']
+            ], note: '⚠️ 原型只建模 2 个角色；生产环境的角色与授权来源以中台「统一身份 + 后台授权管理」为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 详情页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['Tab 切换', '点「数据介绍 / 数据预览」', '切换正文区，不刷新页面'],
+              ['申请使用', '点「申请使用」按钮', '弹出申请表单（授权用途 + 使用说明 + 承诺勾选）'],
+              ['提交申请', '填好后点「提交申请」', '校验通过 → 提示已提交，进入授权审批流程；未勾选承诺时提示'],
+              ['取消申请', '点「取消」/ ✕ / 遮罩', '关闭弹窗，不产生记录'],
+              ['数据二次查询', '点「数据二次查询」', '切到预览并弹出查询框，按字段值过滤样例行，显示匹配条数'],
+              ['声明成果数据', '点「声明成果数据」', '打开成果提交表单（成果数据 · 14 项元数据 + 介绍 + 材料）'],
+              ['未登录门控', '未登录点申请类按钮', '先走登录，再回到申请']
+            ]
+          },
+          {
+            title: '二、口径提醒', head: ['项', '说明'], rows: [
+              ['用户侧动作只有两个', '「申请使用」与「声明成果数据」；收录 / 上架是运营侧内部动作，不出现在用户界面'],
+              ['不提供下载', '门户不提供原始数据下载，全部在科研开发空间内使用'],
+              ['授权范围', '按具体账号或团队、资源及用途判定使用资格']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 5 模型中心 · 模型列表页 */
+  DOCS['模型中心-模型列表页（调整）.html'] = {
+    name: '模型中心 · 模型列表',
+    intro: '已收录模型的检索与浏览页。左侧为多维筛选（模型类型 / 业务能力 / 适用作物 / 更新时间 / 技术任务），右侧为模型卡片。列表只展示<b>已收录</b>的模型。',
+    field: [
+      {
+        label: '🤖 模型卡片字段', sections: [
+          {
+            title: '一、模型对象字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['模型名称', '文本', '建议 ≤60 字符', '<span class="mtdev-tag req">是</span>', '卡片主标题；后台新建模型时系统生成编号 <code>MDL-YYYY-N00000</code>'],
+              ['模型简称 / 英文名', '文本', '建议 ≤40 字符，不含版本号', '<span class="mtdev-tag opt">否</span>', '如 <code>RiceYield-SatWx</code>'],
+              ['提供方', '文本', '机构 / 团队 / 个人（按权属归属）', '<span class="mtdev-tag req">是</span>', '来自成果提交的署名方式'],
+              ['业务分类', '受控字典', '如产量预测 / 长势监测 / 病虫害识别 …', '<span class="mtdev-tag req">是</span>', '由运营维护，不允许提交人自造'],
+              ['技术任务', '受控字典 · 单选', '图像分类 / 目标检测 / 语义分割 / 回归估测 / 时序预测', '<span class="mtdev-tag req">是</span>', '决定结果区渲染形态，也是筛选维度'],
+              ['适用作物', '受控字典 · 多选', '水稻 / 玉米 / 大豆 …', '<span class="mtdev-tag req">是</span>', '与数据中心作物口径对齐'],
+              ['场景标签', '受控字典', '限 3 个', '<span class="mtdev-tag opt">否</span>', '页头展示，超出折叠'],
+              ['版本号', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '<span class="mtdev-tag req">是</span>', '当前版本以 chip 标识「当前版本」'],
+              ['被调用次数', '数字 · 系统', '≥0', '系统', '试跑 + API 调用计数'],
+              ['更新时间', '系统', '时间戳', '系统', '上架 / 更新时间取系统时间']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['关键词', '文本输入', '名称或业务问题', '占位：搜索名称或业务问题，如：玉米倒伏识别'],
+              ['模型类型', '多选', '受控字典', '按技术任务分组展示'],
+              ['业务能力', '多选', '受控字典', '按业务分类展示'],
+              ['适用作物', '多选', '水稻 / 玉米 / 大豆 …', '与数据中心作物口径一致'],
+              ['更新时间', '下拉', '近一月 / 近半年 / 近一年', '—'],
+              ['技术任务', '多选', '5 类受控字典', '决定结果区形态口径'],
+              ['仅我收藏', '复选框', '本地收藏（浏览器本地存储）', '演示态；正式环境随账号持久化']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['22%', '15%', '15%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['卡片「在线试用」', '{{do}}可用', '{{do}}可用', '两角色一致：试用免审批，跳「模型运行台」；受上架状态拦截，见下表'],
+              ['卡片主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>actionsOf(m)</code> 按 <code>isHighRole()</code> 切换文案'],
+              ['点击主按钮', '{{do}}跳模型运行台', '{{mid}}弹使用申请', '<code>startUse()</code> / <code>openModelAction(m,\'use\')</code>'],
+              ['收藏 / 搜索 / 多维筛选 / 清空筛选', '{{do}}可用', '{{do}}可用', '与本页角色无关']
+            ]
+          },
+          {
+            title: '二、同页的另两条分支轴（非角色）', w: ['14%', '14%', '46%', '26%'], head: ['分支轴', '取值', '对可用性的影响', '对应实现'], rows: [
+              ['模型上架状态', '已上架 / 未上架', '未上架时「在线试用」与主按钮均被拦截并给出提示', '<code>svcUnpublished(m)</code> → <code>SVC_MSG</code>'],
+              ['登录态', '已登录 / 未登录', '未登录点「开始使用」先弹登录，登录后进运行台', '<code>startUse()</code> 内 <code>if(!LOGGED)</code>']
+            ], note: '⚠️ 三条分支互相独立、别混为一谈：<b>角色</b>决定按钮文案，<b>上架状态</b>与<b>登录态</b>决定动作能否继续。原型只建模 2 个角色，实际以中台为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与筛选交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['搜索模型', '输入关键词回车', '卡片列表实时过滤'],
+              ['多维筛选', '勾选左侧任一维度', '结果更新，已选项可单独取消'],
+              ['收藏', '点卡片「收藏」或勾选「仅我收藏」', '收藏状态本地保存；「仅我收藏」只显示已收藏项'],
+              ['查看详情', '点卡片', '跳转模型详情页（模型介绍 / 应用案例 / 对外提供 / 版本迭代 / 成果转化）'],
+              ['进入运行台', '点「在线试用」/「开始使用」', '跳转「模型运行台」；未授权时先走申请'],
+              ['清空筛选', '点「筛选」面板内清空', '恢复全部结果']
+            ]
+          },
+          {
+            title: '二、展示口径', head: ['项', '说明'], rows: [
+              ['只展示已收录', '运营侧决定是否收录进模型中心，「上架」是内部动作，用户侧无此词'],
+              ['未授权不可用', '能看见 ≠ 能调用；无授权时按钮引导至申请'],
+              ['结果区形态', '由「技术任务」决定（分类 / 检测 / 分割 / 回归 / 时序）']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 6 模型中心 · 模型详情 */
+  DOCS['模型中心-模型详情（调整）.html'] = {
+    name: '模型中心 · 模型详情',
+    intro: '单个模型的介绍、接入信息与成果转化链路。右栏「服务与接入信息」的字段来自运营侧「能力共享 · 接口管理 / 服务上架」，不是提交人填写的。',
+    field: [
+      {
+        label: '🔌 服务与接入信息', sections: [
+          {
+            title: '一、右栏 · 服务与接入信息（来源：能力共享）', head: ['字段', '类型', '取值 / 示例', '说明'], rows: [
+              ['能力形态', '枚举', '沙箱试用 / API；同步 / 异步', '决定「在线试用」的呈现方式'],
+              ['接口与调用', '文本', '<code>REST /v1/infer</code>（同步返回）', '大批量输入自动转异步任务'],
+              ['鉴权方式', '文本', '平台统一身份 + 授权令牌', 'API 调用需个人密钥，密钥不落前端'],
+              ['限流与配额', '文本', 'QPS / 并发 / 日配额', '是否计入个人配额由平台策略决定'],
+              ['输入介质与大小上限', '枚举 + 数值', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX，单文件 ≤500 MB', '与试用区上传提示同源'],
+              ['空间参考与精度', '文本', '<code>CGCS2000</code>（EPSG:4490），分辨率 ≤2 m', '近景类模型写「无空间参考要求」'],
+              ['异步触发阈值', '条件必填', '预计耗时 &gt; 30 秒 或 单次输入 &gt; 500 MB', '决定按钮是「▶ 运行」还是「提交并运行」'],
+              ['结果留存与下载', '文本', '结果文件可下载；留存 N 天；是否提供 ZIP', '—'],
+              ['服务测试记录', '记录 · 硬门槛', '连通性 / 鉴权 / 输入校验 / 输出结构 / 耗时 / 错误码', '六项测试通过方可发布；每次版本更新须重测']
+            ], note: '⭐ 唯一真源：输入 / 输出 schema 是唯一真源，试用参数面板、API 文档、结果文件格式都必须由它派生。'
+          },
+          {
+            title: '二、来源与权属 / 版本与成果关系', head: ['字段', '类型', '取值', '说明'], rows: [
+              ['来源', '枚举', '自主开发 / 合作成果 / 其他', '成果提交时填写'],
+              ['权属归属', '枚举 · 可多选', '个人 / 团队 / 单位 / 联合', '联合可多填归属方'],
+              ['署名方式', '文本', '论文署名 / 著作权人示例', '页头「提供方」显示名'],
+              ['依托课题', '关联', '课题编号', '有则引导到结题成果登记'],
+              ['授权范围', '枚举', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '决定申请调用审批链'],
+              ['敏感级别', '枚举', '公开 / 内部 / 涉密-仅登记不展示', '涉密带警示，不对外展示'],
+              ['版本号 + 变更说明', '文本', '每次迭代登记', '页头版本 chip'],
+              ['当前版本开关', '单选 · 唯一', '唯一生效版本', '历史版本只读、可追溯'],
+              ['成果关系', '关联', '成果 ID', '与个人中心「提交成果记录」同一份数据']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['22%', '15%', '15%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['页头「在线试用」', '{{do}}可用', '{{do}}可用', '两角色一致：试用免审批，跳「模型运行台」'],
+              ['页头主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>renderHeadCta()</code> 按 <code>isHighRole()</code> 切换'],
+              ['主按钮下方说明文案', '{{info}}已获授权·无需申请', '{{info}}试用免审批', '高权限原文「当前角色已获授权 · 可直接使用，无需申请」；低权限「试用免审批 · 业务与科研使用均在此申请」'],
+              ['切换 Tab / 查看右栏接入信息', '{{do}}可用', '{{do}}可用', '与本页角色无关']
+            ]
+          },
+          {
+            title: '二、同页的另两条分支轴（非角色）', w: ['14%', '14%', '46%', '26%'], head: ['分支轴', '取值', '对可用性的影响', '对应实现'], rows: [
+              ['版本状态', '当前版本 / 历史版本', '历史版本 → 页头改显示只读 chip「历史版本 · 只读」，仅保留「回到当前版本」；<b>在线试用与使用按钮全部不出现</b>', '<code>isCurVer(CUR)</code> 早退分支'],
+              ['对外开放状态', '已开放 / 未开放', '「对外提供」Tab 的「申请 API 调用 / 申请订阅」按钮禁用并给出说明', '<code>available = CUR.open &amp;&amp; isCurVer(CUR)</code>'],
+              ['登录态', '已登录 / 未登录', '未登录点申请类入口先走登录', '<code>requireAuth()</code>']
+            ], note: '⚠️ 「申请 API 调用 / 申请订阅」<b>不按角色区分</b>，只受版本状态与对外开放状态控制——不要把它写成角色权限。原型只建模 2 个角色，实际以中台为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 详情页交互', sections: [
+          {
+            title: '一、Tab 与入口', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['切换 Tab', '点「模型介绍 / 应用案例 / 对外提供 / 版本迭代 / 成果转化」', '切换正文区，不刷新页面'],
+              ['在线试用', '点「在线试用」', '跳转「模型运行台」页（不在详情页内嵌运行）'],
+              ['申请调用 / 开始使用', '点按钮', '已授权 → 直接进运行台；未授权 → 走授权申请'],
+              ['版本切换', '点版本 chip', '查看历史版本（只读），当前版本以标识区分'],
+              ['查看接入信息', '右栏「服务与接入信息」', '只读展示；如需修改，由运营在能力共享登记']
+            ]
+          },
+          {
+            title: '二、成果转化链路（本页「成果转化」Tab）', head: ['环节', '执行方', '说明'], rows: [
+              ['提交成果', '科研负责人', '个人中心提交本人成果；空间内仅当前团队负责人可提交团队成果'],
+              ['成果承接', '平台运营', '承接动作不在科研空间列表页发生'],
+              ['合规审核', '平台运营', '通过 / 驳回 / 拒绝（单级三态）'],
+              ['镜像构建 / 部署', '平台', '属「服务发布」的内部前置步骤，不单独对外'],
+              ['服务发布', '平台 / 接入工程师', '在能力共享登记接口与配额；发布 ≠ 授权 ≠ 上架（三者正交）']
+            ], note: '⛔ 全平台不使用「成果转化编排台」「发布流水线」等提法。'
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 7 模型中心 · 运行台 */
+  DOCS['模型中心-模型运行台.html'] = {
+    name: '模型中心 · 模型运行台',
+    intro: '模型的试跑与结果查看页。参数面板由模型的<b>输入 schema</b> 直接渲染；同步任务点「▶ 运行」，异步任务点「提交并运行」。',
+    field: [
+      {
+        label: '▶ 运行参数字段', sections: [
+          {
+            title: '一、参数区（按输入 schema 渲染）', head: ['区域', '字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['输入数据', '按 schema 逐字段', '文件 / 数值 / 文本 / 枚举', '受「输入介质与大小上限」约束', '<span class="mtdev-tag req">是</span>', '必填项以 <code>*</code> 标识；介质类型不符时报错'],
+              ['输入数据', '文件上传', '—', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX，单文件 ≤500 MB', '视字段', '超出上限提示，不进入排队'],
+              ['可调参数', '按 schema 逐字段', '数值 / 枚举', '含默认值与取值范围', '<span class="mtdev-tag opt">否</span>', '不填取默认值'],
+              ['运行方式', '系统判定', '同步 / 异步', '预计耗时 &gt; 30 秒 或 输入 &gt; 500 MB → 异步', '系统', '决定按钮文案与是否可关页']
+            ], note: '输入 schema 逐字段定义：字段名 / 类型 / 单位 / 是否必填 / 默认值 / 取值范围或枚举 / 说明。'
+          },
+          {
+            title: '二、运行记录与结果字段', head: ['字段', '类型', '说明'], rows: [
+              ['记录号', '文本', '运行记录唯一标识'],
+              ['提交时间 / 提交人', '系统', '审计留痕'],
+              ['状态', '枚举', '排队中 / 运行中 / 成功 / 失败 / 已取消'],
+              ['耗时', '数字（秒）', '实际执行耗时；失败时显示失败原因'],
+              ['输入摘要', '文本', '文件数 / 体量 / 主要参数'],
+              ['结果文件', '文件列表', '结果形态与格式由输出 schema 决定：csv / geojson / tif / zip'],
+              ['留存策略', '文本', '留存 N 天；是否提供 ZIP 打包下载'],
+              ['错误码 / 原因', '文本', '失败时可读原因（人能看懂）']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 运行台交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['新建运行', '点「+ 新建运行」', '展开参数面板（输入数据 + 可调参数）'],
+              ['参数校验', '必填未填 / 介质不符 / 超限', '字段下方提示，不发起请求'],
+              ['同步运行', '点「▶ 运行」', '按钮进入执行态，结果区刷新输出'],
+              ['异步运行', '点「提交并运行」', '生成运行记录（排队中 → 运行中 → 成功/失败），可关页后回来查看'],
+              ['查看结果', '点运行记录', '结果区展示输出内容与结果文件清单，可下载'],
+              ['查看历史', '「运行记录」列表', '按时间倒序展示本模型全部运行记录']
+            ]
+          },
+          {
+            title: '二、与详情页的关系', head: ['项', '说明'], rows: [
+              ['入口', '模型列表 / 详情页的「在线试用」「开始使用」都跳到本页'],
+              ['数据来源', '参数面板与结果形态均由输入 / 输出 schema 派生，不在前端另写一份'],
+              ['不做的展示', '不展示无数据来源的调用量、经济价值等统计']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 8 科研开发空间 · 空间列表 */
+  DOCS['科研开发空间-交互原型(10).html'] = {
+    name: '科研开发空间 · 空间列表',
+    intro: '科研空间的列表与申请入口。空间需申请、审批通过后才「可用」，用户进入空间后可挂载数据 / 模型、上传研究文件、提交成果。',
+    field: [
+      {
+        label: '🧪 空间申请表单', sections: [
+          {
+            title: '一、申请科研空间字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['空间名称', '文本', '建议 ≤40 字符', '<span class="mtdev-tag req">是</span>', '同一团队内不重名'],
+              ['所属团队', '文本', '科研团队', '<span class="mtdev-tag req">是</span>', '决定数据隔离范围（团队级）'],
+              ['研究用途', '多行文本', '建议 ≤300 字符', '<span class="mtdev-tag req">是</span>', '说明研究目标与拟用资源'],
+              ['关联模型', '下拉', '选择已收录模型（可空）', '<span class="mtdev-tag opt">否</span>', '不关联也可提交'],
+              ['开发镜像', '下拉 / 文本', '如 <code>pytorch:2.0-cuda11.7</code>', '<span class="mtdev-tag req">是</span>', '平台提供基础镜像清单'],
+              ['运行环境', '下拉', 'Python / R / 自定义', '<span class="mtdev-tag req">是</span>', '与开发工具联动'],
+              ['系统环境', '文本', '基础镜像详情', '<span class="mtdev-tag opt">否</span>', '只读展示'],
+              ['开发工具', '下拉', 'JupyterLab / VS Code / RStudio', '<span class="mtdev-tag req">是</span>', '进入空间后打开对应 IDE'],
+              ['CPU（核）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '受平台配额约束'],
+              ['内存（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '—'],
+              ['GPU（张）', '数值', '≥0，整数', '<span class="mtdev-tag req">是</span>', '0 表示不需要 GPU'],
+              ['单卡显存（GB）', '数值', '≥0，整数', '条件必填', 'GPU &gt; 0 时必填'],
+              ['研究存储（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '用于挂载数据与研究文件'],
+              ['系统盘（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '—']
+            ]
+          },
+          {
+            title: '二、空间对象字段', head: ['字段', '类型', '取值', '说明'], rows: [
+              ['空间名称 / 所属团队', '文本', '—', '列表主标题与小字'],
+              ['状态', '枚举', '申请中 / 可用 / 已驳回 / 已拒绝', '审批三态对应：通过 → 可用；驳回；拒绝'],
+              ['开发实例状态', '枚举', '未开通 / 已停止 / 运行中', '审批通过后按需启动'],
+              ['已归档', '布尔', '是 / 否', '勾选「已归档」只看归档空间'],
+              ['挂载资源数', '数字', '数据 + 模型', '列表卡片展示']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与申请交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['搜索空间', '输入空间名称', '列表实时过滤'],
+              ['查看已归档', '勾选「已归档」', '只显示已归档空间'],
+              ['申请科研空间', '点「申请科研空间」', '登录门控 → 申请表单（14 项）；提交后状态=申请中'],
+              ['进入空间', '点空间卡片', '跳转空间详情页（已挂载资源 / 研究文件 / 开发实例 / 成员 / 成果记录）'],
+              ['状态变化', '审批通过后回到列表', '状态由「申请中」变「可用」，开发实例可启动'],
+              ['申请被驳回 / 拒绝', '查看驳回原因', '列表与详情展示审批意见，可修改后重新申请']
+            ]
+          },
+          {
+            title: '二、权限与隔离口径', head: ['项', '说明'], rows: [
+              ['数据隔离', '按机构和团队范围校验；账号归属负责人，团队成员关系独立管理'],
+              ['谁可管理', '当前团队负责人管理空间；普通成员和受邀负责人可参与获准研究，不可管理或提交成果'],
+              ['研究已结束', '仅可查看，不允许继续提交成果'],
+              ['空间与算力申请', '由当前团队负责人办理，均需审批；资源免审批按具体团队或账号配置']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 9 科研开发空间 · 空间详情 */
+  DOCS['科研开发空间-详情页(9).html'] = {
+    name: '科研开发空间 · 空间详情',
+    intro: '单个科研空间的工作台：已挂载资源、研究文件、开发实例、协作成员、历史成果上传记录。用户侧成果入口是「提交成果」，成果承接不在本页发生。',
+    field: [
+      {
+        label: '🗂 空间详情字段', sections: [
+          {
+            title: '一、各区块字段', head: ['区块', '字段', '类型', '说明'], rows: [
+              ['空间头信息', '空间名称 / 团队 / 状态', '文本 / 枚举', '状态取自申请审批结果'],
+              ['已挂载资源', '数据 / 模型', '对象数组', '「挂载数据」从数据中心已授权数据中选择'],
+              ['研究文件', '文件名称', '文本', '支持上传与替换；表头：文件名称 / 类型 / 更新人 / 更新时间'],
+              ['研究文件', '类型 / 更新人 / 更新时间', '文本 / 文本 / 时间', '审计留痕'],
+              ['开发实例', '实例状态 / 算力规格', '枚举 / 文本', 'CPU / 内存 / GPU / 显存 / 存储来自申请配置'],
+              ['协作成员', '姓名 / 角色', '文本 / 枚举', '负责人可「管理成员」增删'],
+              ['成果记录', '成果名称', '文本', '成果模型 / 成果数据，同一份数据在个人中心也可见'],
+              ['成果记录', '类型 / 版本', '枚举 / 文本', '成果模型（镜像包）/ 成果数据'],
+              ['成果记录', '提交人 / 时间', '文本 / 时间', '—'],
+              ['成果记录', '审批状态', '枚举', '待审批 / 已通过 / 已驳回 / 已拒绝']
+            ]
+          },
+          {
+            title: '二、上传与成果提交口径', head: ['动作', '字段 / 文件', '限制', '说明'], rows: [
+              ['上传研究文件', '文件（可多选）', '不限制类型，空文件不允许', '仅空间内可见，不自动成为成果'],
+              ['打包开发镜像', '文件', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '成果模型选「镜像包」时使用'],
+              ['提交成果', '成果类型', '成果数据 / 成果模型', '用户侧唯一动作：提交成果'],
+              ['提交成果', '元数据', '成果模型 16 项 / 成果数据 14 项', '字段见个人中心「字段说明」同表'],
+              ['提交成果', '介绍内容', '富文本，必填', '模板：模型概述 / 输入输出规范 / 业务能力 / 输出示例'],
+              ['提交成果', '成果材料', '必填（已有材料可保留）', '同一成果可修改后重新提交']
+            ], note: '⛔ 不以「上架」表述用户动作；「是否收录 / 是否对外」由运营判定。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 空间详情交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['挂载数据', '点「挂载数据」', '弹出已授权数据 / 模型清单，勾选后挂载到本空间'],
+              ['上传文件', '点「↥ 上传文件」', '选择文件后写入研究文件表，刷新「更新人 / 更新时间」'],
+              ['管理成员', '点「管理成员」', '增删空间成员并设定角色（负责人可操作）'],
+              ['提交成果', '点「提交成果」', '先选成果类型（数据 / 模型），再填元数据与材料；提交后状态=待审批'],
+              ['调试成果', '点「调试」', '对已提交成果做演示性调试（原型不执行真实镜像）'],
+              ['查看审批状态', '「历史成果上传记录」', '看到待审批 / 已通过 / 已驳回 / 已拒绝；被驳回可修改后重新提交'],
+              ['只读态', '研究已结束', '提交类按钮不可用，提示「研究已结束，成果仅可查看」']
+            ]
+          },
+          {
+            title: '二、成果流向', head: ['从', '到', '说明'], rows: [
+              ['本页「提交成果」', '个人中心「我的成果」', '同一份记录，两处可见'],
+              ['运营「审批中心」', '验收通过', '通过后进入资源管理，由运营继续部署与服务发布'],
+              ['承接动作', '（不在本页）', '科研空间列表页不出承接入口，承接在运营侧'],
+              ['服务发布', '能力共享', '发布 ≠ 授权 ≠ 上架，三者正交']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 10 科研开发空间 · IDE 编辑页 */
+  DOCS['科研开发空间-IDE编辑页.html'] = {
+    name: '科研开发空间 · 开发环境（IDE）',
+    intro: '空间内打开的开发环境演示页（无页头外壳，属工具页）。用于演示命令面板、单元格执行与内核状态。',
+    field: [
+      {
+        label: '🖥 环境与字段', sections: [
+          {
+            title: '一、界面字段', head: ['区域', '字段 / 控件', '类型', '取值', '说明'], rows: [
+              ['顶部', '开发工具', '下拉', '<code>JupyterLab</code> / <code>VS Code</code> / <code>RStudio</code>', '与申请时选择一致'],
+              ['顶部', '文件或命令搜索', '搜索输入', '按文件名 / 命令名匹配', '快捷键 <code>Ctrl K</code> 唤起'],
+              ['顶部', '返回空间', '按钮', '—', '回到空间详情页'],
+              ['菜单栏', '文件 / 编辑 / 视图 / 运行 / 内核 / 终端', '菜单', '—', '演示态，部分项为占位'],
+              ['底部面板', '运行输出 / 问题', 'Tab', '—', '切换执行输出与问题列表'],
+              ['状态栏', '内核状态', '枚举', '空闲 / 忙碌 / 未连接算力', '演示态默认「未连接算力」']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 环境交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['唤起命令面板', '按 <code>Ctrl K</code> 或点顶部搜索框', '展开文件 / 命令搜索'],
+              ['运行单元格', '点单元格「▶」或菜单「运行」', '底部「运行输出」追加结果'],
+              ['切换单元格', '点击单元格', '当前单元格高亮（selected）'],
+              ['切换面板', '点「运行输出 / 问题」', '底部面板切换'],
+              ['连接算力', '状态栏提示', '演示态不连真实算力，正式环境由平台调度'],
+              ['返回空间', '点「返回空间」', '回到科研空间详情页']
+            ]
+          },
+          {
+            title: '二、说明', head: ['项', '说明'], rows: [
+              ['无页头', '工具页不挂门户一级导航，页面高度铺满'],
+              ['演示边界', '本页不执行真实模型与镜像，仅演示交互'],
+              ['正式形态', '由平台调度实际开发实例，IDE 内数据留存在团队空间']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------------------ 11 课题中心 */
+  DOCS['课题中心-高保真原型.html'] = {
+    name: '课题中心',
+    intro: '课题的展示页（<b>纯展示</b>）：开放课题指南与立项课题清单。申报、评审、签约全部线下进行，本平台不做在线申报。',
+    field: [
+      {
+        label: '📚 课题字段', sections: [
+          {
+            title: '一、课题对象字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['课题编号', '文本 · 唯一', '<code>BH</code> + 年份 + 3 位序号', '系统', '如 <code>BH2026-021</code>，唯一，可检索'],
+              ['课题名称', '文本', '建议 ≤80 字符', '<span class="mtdev-tag req">是</span>', '列表主标题'],
+              ['团队负责人', '文本', '姓名', '<span class="mtdev-tag req">是</span>', '是「人」；<b>不是承担单位</b>'],
+              ['所属 / 承担单位', '文本', '盖章的单位（高校 / 院所）', '<span class="mtdev-tag req">是</span>', '承担 / 依托单位 = 盖章那家，不是公司'],
+              ['项目类型', '受控字典', '重点 / 面上 / 青年', '<span class="mtdev-tag req">是</span>', '—'],
+              ['资助金额', '数值', '万元', '<span class="mtdev-tag opt">否</span>', '展示值，不做汇总口径'],
+              ['状态', '受控字典', '拟立项 / 在研 / 已结题 / 未立项 / 已终止', '系统', '状态由运营维护'],
+              ['公示开始 / 结束', '日期', '起 ≤ 止', '条件必填', '结束早于开始时报错「公示结束不能早于开始」'],
+              ['关联指南', '关联', '指南名称', '<span class="mtdev-tag opt">否</span>', '同一课题可关联一份指南'],
+              ['课题方向', '受控字典', '软件 / 算法方向、硬件方向', '<span class="mtdev-tag opt">否</span>', '未设置时展示「未设置」']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['年度', '复选框组', '全部年度 / 2026 年度 / 2024 年度', '可多选，默认全部年度'],
+              ['关键词', '搜索输入', '课题名称 / 编号 / 团队负责人 / 单位', '占位：搜索课题名称、编号、团队负责人或单位'],
+              ['下载课题清单', '按钮', '导出当前筛选结果为清单', '只含展示字段，不含隐私信息']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🧭 展示页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['按年度筛选', '勾选「2026 年度」等', '清单只保留所选年度课题'],
+              ['搜索课题', '输入名称 / 编号 / 负责人 / 单位', '实时过滤清单'],
+              ['下载清单', '点「↓ 下载课题清单」', '导出当前筛选结果'],
+              ['查看课题详情', '点课题行', '展开 / 跳转课题详情（编号、指南、负责人、单位、类型、方向、状态、公示期）'],
+              ['看开放课题指南', '「开放课题」区块', '展示指南名称与截止信息']
+            ]
+          },
+          {
+            title: '二、业务口径（防误做）', head: ['项', '口径'], rows: [
+              ['申报方式', '申报、评审、签约全部线下进行'],
+              ['禁止文案', '⛔ 不出现「投标 / 中标」，不提供在线申报按钮'],
+              ['承担单位', '指盖章的单位（高校 / 院所），不是平台运营公司'],
+              ['数据来源', '课题台账由后台「课题管理」维护，门户只读展示']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------------------ 12 需求中心 */
+  DOCS['需求中心-高保真原型 (1).html'] = {
+    name: '需求中心',
+    intro: '农业需求与科研能力的对接入口（轻量）：展示需求 + 联系方式留痕，<b>平台不做撮合</b>。发布需求需登录，提交后由平台运营审核，通过后才对外展示。',
+    field: [
+      {
+        label: '📣 需求对象字段', sections: [
+          {
+            title: '一、发布需求表单（用户侧）', head: ['字段', '类型', '长度 / 取值', '必填', '校验与说明'], rows: [
+              ['需求标题', '单行文本', '≤40 字（原型已限）', '<span class="mtdev-tag req">是</span>', '占位：一句话说清要解决什么问题，例如：寒地水稻倒伏面积遥感核查'],
+              ['需求方向', '下拉 · 受控字典', '见「需求方向字典」', '<span class="mtdev-tag req">是</span>', '只可选不可自造'],
+              ['涉及作物', '单行文本', '建议 ≤40 字', '<span class="mtdev-tag opt">否</span>', '如：水稻、玉米、大豆'],
+              ['所需服务', '单选 / 多选', '受控字典', '<span class="mtdev-tag req">是</span>', '与需求方向对应'],
+              ['需求概述', '多行文本', '≤200 字（原型已限）', '<span class="mtdev-tag req">是</span>', '显示在需求中心列表卡片上'],
+              ['希望解决的问题', '多行文本', '建议 ≤1000 字', '<span class="mtdev-tag req">是</span>', '说明现状、具体问题与期望效果'],
+              ['已有资料', '多行文本', '建议 ≤500 字', '<span class="mtdev-tag opt">否</span>', '可提供哪些数据、资料或现场条件'],
+              ['需要完成的工作', '多行文本', '一行一条', '<span class="mtdev-tag req">是</span>', '按行拆分，列表渲染为条目'],
+              ['预期交付成果', '单行文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>', '如：核查报告、统计表'],
+              ['期望交付时间', '单行文本', '自由文本 / 日期', '<span class="mtdev-tag opt">否</span>', '如：2026年12月前'],
+              ['发布单位', '单行文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>', '企业 / 农场 / 部门'],
+              ['联系人', '单行文本', '姓名', '<span class="mtdev-tag req">是</span>', '与电话 / 邮箱同组'],
+              ['电话', '文本 · 校验', '座机带区号；手机 11 位', '条件必填', '电话与邮箱至少填一项'],
+              ['邮箱', 'email · 校验', '如 <code>name@example.com</code>', '条件必填', '格式错误时提示'],
+              ['同意条款', '复选框', '—', '<span class="mtdev-tag req">是</span>', '文案：提交后由平台运营审核，通过后内容与联系方式对外展示；仅限本次需求沟通，不得用于营销推广，平台不参与双方合作']
+            ]
+          },
+          {
+            title: '二、字典与状态', head: ['项', '取值', '说明'], rows: [
+              ['需求方向 / 需求类型', '<code>数据标注</code> / <code>算法与模型开发</code> / <code>遥感解译</code> / <code>数据采集与处理</code> / <code>技术咨询</code> / <code>其他</code>', '受控字典，由运营维护；「科研课题」不属需求类型'],
+              ['需求状态', '待审核 / 发布中 / 已发布 / 已下架', '用户提交 → <b>待审核</b> → 运营通过 → 对外展示'],
+              ['获取次数', '数字', '按人去重计数'],
+              ['发布时间', '时间戳', '系统自动'],
+              ['更新人 / 更新时间', '系统', '审计留痕']
+            ], note: '⚠️ 用户提交的需求必须先在运营侧审核通过才能对外；⚠️ 后台「需求管理」当前需补「待审核」 Tab 与通过 / 驳回动作。'
+          },
+          {
+            title: '三、获取记录字段（联系方式留痕）', head: ['字段', '类型', '说明'], rows: [
+              ['记录 ID / 需求 ID', '文本', '关联需求对象'],
+              ['获取人', '文本', '用户 + 姓名'],
+              ['所属机构 / 团队', '文本', '用于运营判断哪类机构在关注'],
+              ['获取时间', '时间戳', '同一人对同一需求仅一条'],
+              ['状态', '枚举', '已获取联系方式 / 已对接 / 未匹配'],
+              ['未匹配原因', '枚举 · 选填', '算力不足 / 数据涉密 / 档期冲突 / 能力不匹配 / 需求方撤回'],
+              ['标记人 / 标记时间', '文本 / 时间', '需求方或获取方任一方可标']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与发布交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['关键词搜索', '输入需求名称 / 业务问题 / 服务内容', '列表实时过滤'],
+              ['多维筛选', '展开「需求方向」「所需服务」多选', '结果与计数更新'],
+              ['排序 / 每页条数', '底部与顶部下拉', '列表重排；切每页条数回第 1 页'],
+              ['查看需求详情', '点需求卡片', '展开概述、希望解决的问题、需要完成的工作、预期交付成果、期望时间'],
+              ['获取联系方式', '点「联系方式」', '登录门控；登录后展示联系人 / 电话 / 邮箱，并写入一条获取记录（留痕）'],
+              ['发布需求', '点「＋ 发布需求」', '<b>未登录</b>：弹「登录后查看 / 发布」提示，提供「模拟登录并继续」；<b>已登录</b>：打开发布表单'],
+              ['提交审核', '填完点「提交审核」', '校验通过 → 状态=待审核，提示已提交，等待平台运营审核'],
+              ['取消发布', '点「取消」/ ✕ / 遮罩', '关闭表单，不产生记录']
+            ]
+          },
+          {
+            title: '二、合规与边界', head: ['项', '说明'], rows: [
+              ['平台角色', '只做展示与留痕，<b>不做撮合、不参与双方合作</b>'],
+              ['联系方式用途', '仅限本次需求沟通，不得用于营销推广（页面已明示）'],
+              ['对外展示条件', '运营审核通过后，需求内容与联系方式才对外展示'],
+              ['获取留痕', '同一人对同一需求只记一条，供运营观察关注度']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* -------------------------------------------------- 13 领导数据看板 */
+  DOCS['门户-领导数据看板.html'] = {
+    name: '数据看板',
+    intro: '面向领导的一级导航页（已替代门户首页原有的「成果转化效果」入口）。只展示<b>有数据来源</b>的指标，不编造调用量与经济价值。',
+    field: [
+      {
+        label: '📊 指标与口径', sections: [
+          {
+            title: '一、指标口径', head: ['指标区块', '统计对象', '计算口径', '数据来源'], rows: [
+              ['协同参与', '参与单位 / 团队 / 活跃用户', '按机构与团队去重计数', '团队与账号数据'],
+              ['成果产出与使用', '已提交成果 / 验收通过 / 已在用', '成果台账按状态分档统计', '成果台账（提交与审批记录）'],
+              ['成果转化成效', '服务发布 / 开放在线使用', '服务发布记录 + 在线使用开关', '能力共享 · 服务发布记录'],
+              ['课题进展', '课题总数 / 在研 / 已结题', '按课题状态分组', '课题台账'],
+              ['成果落地', '落地场景 / 使用方 / 应用状态', '落地明细表逐条登记', '落地明细'],
+              ['资源活性', '资源最近使用记录', '按资源被使用时间倒序', '资源使用记录']
+            ]
+          },
+          {
+            title: '二、明细表字段', head: ['表', '字段', '说明'], rows: [
+              ['课题台账', '课题 / 承担单位', '课题名称 + 承担单位（盖章单位）'],
+              ['课题台账', '负责人', '团队负责人（人）'],
+              ['课题台账', '状态', '拟立项 / 在研 / 已结题 / 未立项 / 已终止'],
+              ['落地明细', '成果 / 产品业务线', '成果名称与所属业务线'],
+              ['落地明细', '使用方 / 参与人', '应用方与参与人'],
+              ['落地明细', '应用状态', '试用 / 在用 / 已停用'],
+              ['机构明细', '机构维度聚合', '点「机构明细›」展开'],
+              ['资源台账', '资源名称 / 类型 / 最近使用', '点「资源台账›」展开']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 看板交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['管理员演示', '左下角预览账号选择平台管理员，再点顶部数据看板', '显示完整看板；科研负责人和成员不显示该入口'],
+              ['切换年度', '下拉选择年度', '所有 KPI 与明细表按年度重算'],
+              ['钻取明细', '点「机构明细›」「落地明细›」「资源台账›」', '展开对应明细表或抽屉'],
+              ['查看统计口径', '点「查看统计口径›」', '展开口径说明（每项指标怎么算、数据取自哪里）'],
+              ['导出', '点「导出汇总」/「导出明细」', '导出当前视角汇总 / 明细细表'],
+              ['成果产出 / 使用情况', '点 Tab', '在本页内切换成果的两类视图'],
+              ['关闭明细', '点「关闭」/ ✕', '收起明细弹层']
+            ]
+          },
+          {
+            title: '二、边界（重要）', head: ['项', '说明'], rows: [
+              ['只读', '领导侧视图为只读，不提供任何编辑动作'],
+              ['单一数据源', '<b>同一数据源两个视图</b>（全重 / 集团），绝不建两套后台'],
+              ['不展示无来源指标', '调用量、经济价值等尚无数据来源的指标一律不展示，并在页内注明'],
+              ['归属', '成果转化看板归「数据看板」一级导航承载，门户首页不再挂该类入口']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* -------------------------------------------------------- 14 个人中心 */
+  DOCS['个人中心-高保真原型.html'] = {
+    name: '个人中心',
+    intro: '科研用户的个人工作台：个人概览、消息中心、我的模型 / 数据 / 需求 / 团队 / 收藏、账号设置。成果提交与需求发布都在本页完成。',
+    field: [
+      {
+        label: '📤 成果提交 · 成果模型', sections: [
+          {
+            title: '一、成果模型元数据（16 项，全部必填）', head: ['字段', '键名', '类型', '长度 / 取值', '校验'], rows: [
+              ['模型名称', '<code>name</code>', '文本', '建议 ≤60 字符', '非空'],
+              ['模型简称', '<code>abbr</code>', '文本', '建议 ≤40 字符', '非空'],
+              ['提供方', '<code>provider</code>', '文本', '机构 / 团队', '非空'],
+              ['业务分类', '<code>business</code>', '文本 / 字典', '受控字典', '非空'],
+              ['技术任务', '<code>task</code>', '文本 / 字典', '图像分类 / 目标检测 / 语义分割 / 回归估测 / 时序预测', '非空'],
+              ['适用作物', '<code>crop</code>', '文本', '水稻 / 玉米 / 大豆 …', '非空'],
+              ['版本号', '<code>version</code>', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '非空 + 格式校验'],
+              ['权属归属', '<code>owner</code>', '文本 / 字典', '个人 / 团队 / 单位 / 联合', '非空'],
+              ['授权范围', '<code>license</code>', '文本 / 字典', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '非空'],
+              ['运行环境', '<code>runtime</code>', '文本', '如 <code>PyTorch 2.0 / CUDA 11.7</code>', '非空'],
+              ['推荐算力卡型', '<code>gpuType</code>', '文本', '如 <code>A100 / V100</code>', '非空'],
+              ['GPU 卡数', '<code>gpuCount</code>', '数值', '≥0 整数（<code>min=0 step=1</code>）', '非空'],
+              ['单卡显存（GB）', '<code>gpuMemory</code>', '数值', '≥0 整数', '非空'],
+              ['CPU 要求（核）', '<code>cpu</code>', '数值', '≥0 整数', '非空'],
+              ['内存要求（GB）', '<code>memory</code>', '数值', '≥0 整数', '非空'],
+              ['存储要求（GB）', '<code>storage</code>', '数值', '≥0 整数', '非空'],
+              ['推理精度', '<code>precision</code>', '文本', '如 <code>FP16 / FP32</code>', '非空']
+            ]
+          },
+          {
+            title: '二、成果材料与提交结果', head: ['项', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['介绍内容', '富文本', '模板：模型概述 / 输入输出规范 / 业务能力 / 输出示例', '<span class="mtdev-tag req">是</span>', '空内容不允许提交'],
+              ['成果材料形式', '单选', '镜像包 / 模型文件与说明', '<span class="mtdev-tag req">是</span>', '决定下方文件类型限制'],
+              ['镜像包文件', '文件', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '条件必填', '后缀不符提示「请选择 Docker / OCI 镜像包」'],
+              ['模型文件与说明', '文件（可多选）', '<code>.pkl .joblib .onnx .pt .pth .py .json .yaml .yml .txt .md .pdf .zip</code>', '条件必填', '—'],
+              ['空文件校验', '—', '不允许 0 字节', '—', '提示「不能提交空文件」'],
+              ['成果记录 ID', '系统', '<code>CG-</code> + 时间戳 base36', '系统', '提交时生成，用于审批跟踪'],
+              ['提交状态', '枚举', '待审批 / 已通过 / 已驳回 / 已拒绝', '系统', '驳回后可「修改并重新提交」'],
+              ['审批记录', '时间线', '动作 / 人 / 时间 / 意见', '系统', '与后台审批中心同源']
+            ]
+          },
+          {
+            title: '三、成果数据元数据（14 项，全部必填）', head: ['字段', '键名', '类型', '长度 / 取值'], rows: [
+              ['数据名称', '<code>name</code>', '文本', '建议 ≤60 字符'],
+              ['提供方', '<code>provider</code>', '文本', '机构 / 团队'],
+              ['数据简介', '<code>summary</code>', '多行文本', '建议 ≤300 字符'],
+              ['标签', '<code>tags</code>', '文本', '建议 ≤5 个'],
+              ['版本号', '<code>version</code>', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>'],
+              ['数据形态', '<code>modality</code>', '单选', '遥感影像 / 矢量 / 表格 / 时序 / 图像 / 文本'],
+              ['数据格式', '<code>format</code>', '文本', '如 <code>GeoTIFF</code> / <code>CSV</code> / <code>SHP</code>'],
+              ['标注情况', '<code>annotation</code>', '单选', '有标注 / 无标注'],
+              ['数据规模', '<code>scale</code>', '文本', '如「12.6 万条」'],
+              ['适用作物', '<code>crop</code>', '文本', '水稻 / 玉米 / 大豆'],
+              ['区域', '<code>region</code>', '文本', '黑龙江省下属农区'],
+              ['数据年份', '<code>year</code>', '文本', '如 <code>2021—2025</code>'],
+              ['权属归属', '<code>owner</code>', '文本 / 字典', '个人 / 团队 / 单位 / 联合'],
+              ['授权范围', '<code>license</code>', '文本 / 字典', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🧾 发布需求表单', sections: [
+          {
+            title: '发布需求（与需求中心同一份表单）', head: ['字段', '类型', '长度 / 取值', '必填'], rows: [
+              ['需求标题', '文本', '≤40 字（原型已限）', '<span class="mtdev-tag req">是</span>'],
+              ['需求方向', '下拉字典', '6 类受控字典', '<span class="mtdev-tag req">是</span>'],
+              ['涉及作物', '文本', '建议 ≤40 字', '<span class="mtdev-tag opt">否</span>'],
+              ['所需服务', '单选 / 多选', '受控字典', '<span class="mtdev-tag req">是</span>'],
+              ['需求概述', '多行文本', '≤200 字（原型已限）', '<span class="mtdev-tag req">是</span>'],
+              ['希望解决的问题', '多行文本', '建议 ≤1000 字', '<span class="mtdev-tag req">是</span>'],
+              ['已有资料', '多行文本', '建议 ≤500 字', '<span class="mtdev-tag opt">否</span>'],
+              ['需要完成的工作', '多行文本', '一行一条', '<span class="mtdev-tag req">是</span>'],
+              ['预期交付成果', '文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>'],
+              ['期望交付时间', '文本', '自由文本 / 日期', '<span class="mtdev-tag opt">否</span>'],
+              ['发布单位', '文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>'],
+              ['联系人', '文本', '姓名', '<span class="mtdev-tag req">是</span>'],
+              ['电话 / 邮箱', '文本 / email', '座机带区号；手机 11 位', '<span class="mtdev-tag req">是</span>（至少一项）'],
+              ['同意条款', '复选框', '—', '<span class="mtdev-tag req">是</span>']
+            ]
+          },
+          {
+            title: '我的需求状态', head: ['状态', '含义', '用户可见动作'], rows: [
+              ['待审核', '已提交，运营未处理', '可查看，等待审核'],
+              ['发布中', '运营已通过，对外展示', '可查看'],
+              ['已发布', '正式对外', '可查看'],
+              ['已下架', '运营下架', '仅本人可见，标注原因']
+            ], note: '需求发布申请进入资源申请审批，审核通过后对外展示。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 个人中心交互', sections: [
+          {
+            title: '一、侧栏与提交', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['侧栏切换', '点「个人概览 / 消息中心 / 我的模型 / 我的数据 / 我的需求 / 我的团队 / 我的收藏 / 账号设置」', '右侧内容区切换（hash 定位）'],
+              ['发布需求', '「我的需求」→「＋ 发布需求」', '打开发布表单；未登录先走登录'],
+              ['提交需求', '填完点「提交审核」', '校验通过 → 状态=待审核，提示已提交'],
+              ['提交成果', '「我的模型 / 我的数据」→「提交成果」', '先选成果类型（数据 / 模型），再填元数据 + 介绍 + 材料'],
+              ['表单校验', '必填未填 / 版本号含中文 / 空文件', '字段下方或弹窗内提示，不提交'],
+              ['提交成功', '点「提交审批验收」', '写入成果记录并提示；「我的模型 / 我的数据」列表新增一条「待审批」'],
+              ['查看成果', '点记录「查看」', '展示元数据、介绍内容、成果材料（可下载）、审批记录时间线'],
+              ['调试 / 重新提交', '点「调试」或「修改后重新提交」', '调试为演示态；被驳回的成果可修改后重新提交'],
+              ['收藏模型', '模型卡片「收藏」', '本地记录收藏；「我的收藏」可查看']
+            ]
+          },
+          {
+            title: '二、校验规则一览', head: ['校验项', '规则', '提示文案'], rows: [
+              ['必填', '元数据 16/14 项均非空', '「请填写 + 字段名」'],
+              ['介绍内容', '富文本去除标签后非空', '「请填写介绍内容」'],
+              ['版本号', '<code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '「版本号请使用字母、数字、点或连字符」'],
+              ['材料非空', '不允许 0 字节文件', '「不能提交空文件」'],
+              ['镜像包后缀', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '「请选择 Docker / OCI 镜像包（.tar、.tar.gz、.tgz）」'],
+              ['材料必选', '首次提交必须选材料', '「请选择成果材料」'],
+              ['空间只读', '研究已结束的空间', '「研究已结束，成果仅可查看」'],
+              ['空间权限', '无管理权限的成员', '「当前空间不可提交成果」']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ==================== 15–20 关于平台（6 页 · 说明类） ==================== */
+  Object.assign(DOCS, {
+    '关于平台-平台介绍.html': {
+      name: '关于平台 · 平台介绍',
+      intro: '平台定位与参与方式说明页（静态内容 + 页头二级栏目）。供新用户了解平台提供什么、如何参与、使用须知。',
+      field: [
+        {
+          label: '📄 内容结构', sections: [
+            {
+              title: '一、页面区块', head: ['区块', '内容要素', '类型', '说明'], rows: [
+                ['页头二级栏目', '平台介绍 / 使用帮助 / 开发者接入 / 部署说明 / 联系支持', '导航 5 项', '当前项高亮；与门户一级导航并存'],
+                ['平台提供什么', '数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心', '5 张模块卡', '每卡：模块名 + 一句职责 + 跳转链接'],
+                ['如何参与', '科研老师与团队 / 企业用户', '2 组角色说明', '分别说明入驻、可用资源与入口'],
+                ['使用须知', '合规与使用边界', '条文列表', '含数据不导出、联系方式仅限本次沟通等口径'],
+                ['页脚', '平台资源 / 关于平台', '静态区块', '全站统一页脚']
+              ]
+            },
+            {
+              title: '二、文案口径（对外材料，须遵守）', head: ['项', '口径'], rows: [
+                ['定位表述', '写「平台定位为…」的现在时定型口径；不使用「现阶段 / 暂时 / 占比 / 各占一半」等过度期措辞'],
+                ['业务板块', '模型中心 + 数据中心 + 科研开发空间 + 需求中心（课题中心为展示）'],
+                ['禁止词', '「上架」不出现在用户侧；课题相关不出现「投标 / 中标」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 页面交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['二级栏目切换', '点「使用帮助 / 开发者接入 / 部署说明 / 联系支持」', '跳到对应说明页'],
+                ['模块卡跳转', '点任一模块卡', '跳转到该模块首页（数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心）'],
+                ['角色入口', '点「科研老师与团队 / 企业用户」区内的按钮', '跳到科研开发空间申请 / 需求中心（未登录先走登录）'],
+                ['搜索', '在「清空搜索」旁输入', '本页内检索（说明类页面为占位交互）']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-使用帮助.html': {
+      name: '关于平台 · 使用帮助',
+      intro: '帮助中心首页：按主题分组的常见问题，逐条可展开。共 6 组（加入平台 / 数据使用 / 模型使用 / 科研开发空间 / 课题指南 / 需求联系）。',
+      field: [
+        {
+          label: '📚 FAQ 结构', sections: [
+            {
+              title: '一、问题分组与条目', head: ['分组', '问题', '答案要点'], rows: [
+                ['1. 加入平台', '如何申请加入？', '科研团队经平台邀请或自主联系，需实名与单位信息'],
+                ['1. 加入平台', '受邀用户如何入驻？', '受邀入驻只影响入驻流程，<b>不影响资源权限</b>'],
+                ['1. 加入平台', '无法登录怎么办？', '走「联系支持」提交问题'],
+                ['2. 数据使用', '在哪里查看样例？', '数据中心 → 数据集详情 → 数据预览'],
+                ['2. 数据使用', '怎样使用数据？', '提交使用申请，获批后在科研开发空间内使用'],
+                ['2. 数据使用', '能否下载数据？', '平台不提供原始数据下载'],
+                ['3. 模型使用', '在哪里运行？', '模型运行台（列表 / 详情页的「在线试用」「开始使用」）'],
+                ['3. 模型使用', '怎样申请调用？', '未授权时点申请，走授权流程后可用'],
+                ['3. 模型使用', '接口文档在哪里？', '「开发者接入」页的接口文档指引'],
+                ['4. 科研开发空间', '如何开始研究？', '申请空间 → 审批通过 → 挂载数据 / 模型 → 进入 IDE'],
+                ['4. 科研开发空间', '成果如何提交？', '空间详情页「提交成果」选类型后填元数据与材料'],
+                ['5. 课题指南', '如何申报课题？', '申报线下进行，平台不做在线申报'],
+                ['5. 课题指南', '在哪里公示？', '课题中心展示开放指南与立项课题公示期'],
+                ['6. 需求联系', '如何找需求？', '需求中心按方向 / 服务筛选'],
+                ['6. 需求联系', '怎样获取联系方式？', '登录后点「联系方式」，系统留痕'],
+                ['6. 需求联系', '如何跟进合作？', '平台不参与撮合，双方自行对接']
+              ]
+            },
+            {
+              title: '二、字段说明', head: ['控件', '类型', '长度 / 取值', '说明'], rows: [
+                ['搜索使用问题', '搜索框', '建议 ≤50 字', '占位「搜索使用问题」；带「清空搜索」与「搜索」'],
+                ['问题条目', '折叠项', '标题 + 答案', '点击展开 / 收起'],
+                ['前往合作咨询', '按钮', '—', '跳「联系支持」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 帮助页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['搜索问题', '输入关键词后点「搜索」', '只保留命中的问题条目'],
+                ['清空搜索', '点「清空搜索」', '恢复全部问题'],
+                ['展开问题', '点问题标题', '就地展开答案（可再次点击收起）'],
+                ['跳转合作咨询', '点「前往合作咨询」', '跳到「联系支持」页'],
+                ['切到其它说明页', '点页头二级栏目', '跳转对应的说明页']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-开发者接入.html': {
+      name: '关于平台 · 开发者接入',
+      intro: '面向开发者的接入指引：4 步接入流程、接入前需要确认的事项（授权范围 / 鉴权 / 配额）、接口文档指引与常见问题。',
+      field: [
+        {
+          label: '🔌 接入说明', sections: [
+            {
+              title: '一、接入步骤', head: ['步骤', '名称', '要做的事', '前置条件'], rows: [
+                ['①', '选择模型', '在模型中心选择合适的模型与版本', '模型已被收录且对外提供'],
+                ['②', '申请使用', '提交调用申请，说明用途与调用量', '已登录；未获授权不可调用'],
+                ['③', '查阅接口文档', '获取输入 / 输出字段、鉴权与配额说明', '申请通过后可见'],
+                ['④', '联调与使用', '按文档联调，处理错误码与重试', '拿到凭证']
+              ]
+            },
+            {
+              title: '二、接口文档须确认的项（页面表格同源）', head: ['项目', '查看内容'], rows: [
+                ['服务版本', '所用模型及接口版本'],
+                ['授权范围', '可调用的服务及用途范围'],
+                ['鉴权方式', '凭证获取与请求携带方式'],
+                ['输入输出', '字段、数据格式及返回结果'],
+                ['调用限制', '配额、频率及任务限制'],
+                ['错误处理', '错误码、失败原因与重试说明']
+              ]
+            },
+            {
+              title: '三、接入前需要确认 / 常见问题', head: ['项', '内容'], rows: [
+                ['输入介质', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX；单文件 ≤500 MB'],
+                ['空间参考', '<code>CGCS2000</code>（EPSG:4490），分辨率 ≤2 m（近景类模型无空间参考要求）'],
+                ['异步阈值', '预计耗时 &gt; 30 秒 或 单次输入 &gt; 500 MB → 自动转异步任务'],
+                ['未获授权可以调用吗？', '<span class="mtdev-tag no">不可以</span> 必须先获得授权'],
+                ['调用失败怎么办？', '按错误码定位（连通 / 鉴权 / 入参 / 结构 / 超时），必要时联系支持'],
+                ['搜索控件', '搜索使用指南、常见问题（占位「搜索使用指南、常见问题」）']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 接入页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['查看步骤', '滚动「接入步骤」4 张卡', '每步含名称、动作与前置条件'],
+                ['查阅文档指引', '看「接口文档指引」表', '列出必须确认的 6 项内容'],
+                ['展开常见问题', '点问题标题', '就地展开答案'],
+                ['申请使用', '点步骤②内的申请入口', '未登录先登录；已登录进入调用申请'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-数据使用指南.html': {
+      name: '关于平台 · 如何申请并使用数据',
+      intro: '数据使用的分步指南：查找与预览 → 提交使用申请 → 在科研开发空间使用 → 查看授权状态。右侧带「本文目录」锚点。',
+      field: [
+        {
+          label: '📄 指南结构', sections: [
+            {
+              title: '一、四步流程', head: ['步骤', '名称', '用户动作', '系统行为'], rows: [
+                ['①', '查找与预览', '在数据中心按形态 / 格式 / 标注筛选，进详情看样例', '只展示已公开数据集'],
+                ['②', '提交使用申请', '填授权用途 + 使用说明，勾选承诺后提交', '进入授权审批流程'],
+                ['③', '在科研开发空间使用', '在空间内挂载该数据，用于研究与模型训练', '数据不导出，仅空间内使用'],
+                ['④', '查看授权状态', '在个人中心查看已获授权资源', '按当前授权范围使用']
+              ]
+            },
+            {
+              title: '二、字段与口径', head: ['项', '取值 / 说明'], rows: [
+                ['授权用途（申请时填）', '科研研究 / 模型训练与验证 / 教学 / 其他'],
+                ['使用说明（申请时填）', '建议 ≤500 字；示例：在科研开发空间内基于本数据卡进行长势模型训练与验证，不导出'],
+                ['承诺勾选', '不勾选不允许提交'],
+                ['授权状态', '按当前账号、团队和资源用途校验'],
+                ['免审批与已授权', '免审批按具体团队或账号配置具体模型、数据；已有授权按资源和用途核验，两者均不扩大成员申请权限'],
+                ['本文目录', '右侧锚点，点击滚动到对应小节']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 指南页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['目录跳转', '点右侧「本文目录」任一项', '滚动到对应小节'],
+                ['展开常见问题', '点问题标题', '就地展开答案'],
+                ['进入数据中心', '按正文指引点数据中心入口', '跳转数据集列表页'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-联系支持.html': {
+      name: '关于平台 · 联系支持',
+      intro: '支持入口页：按问题类型分流（使用问题 / 合作咨询 / 需求沟通），并说明反馈问题前需要准备的信息。',
+      field: [
+        {
+          label: '📮 联系与反馈', sections: [
+            {
+              title: '一、问题类型与去向', head: ['类型', '适用场景', '入口', '说明'], rows: [
+                ['使用问题', '登录、权限、数据与模型使用异常', '提交问题反馈', '需提供账号与操作时间'],
+                ['合作咨询', '机构合作、共建、专项部署', '填写合作咨询', '需说明单位与诉求'],
+                ['需求沟通', '对需求中心某条需求感兴趣', '需求中心「获取联系方式」', '平台不参与撮合，双方自行对接']
+              ]
+            },
+            {
+              title: '二、反馈问题时请准备（字段）', head: ['字段', '类型', '必填', '说明'], rows: [
+                ['问题描述', '多行文本', '<span class="mtdev-tag req">是</span>', '写清操作路径与现象'],
+                ['发生时间', '时间', '<span class="mtdev-tag req">是</span>', '便于查日志'],
+                ['账号 / 单位', '文本', '<span class="mtdev-tag opt">否</span>', '定位权限问题'],
+                ['截图 / 附件', '文件', '<span class="mtdev-tag opt">否</span>', '建议附截图'],
+                ['联系方式', '文本', '<span class="mtdev-tag req">是</span>', '便于回访'],
+                ['搜索控件', '搜索框', '—', '占位「搜索使用指南、常见问题」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 联系页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['提交问题反馈', '点「提交问题反馈」', '打开反馈表单，填必填项后提交'],
+                ['填写合作咨询', '点「填写合作咨询」', '打开合作咨询表单'],
+                ['查看咨询记录', '点「查看咨询记录」', '展示本人历史咨询与状态'],
+                ['展开常见咨询', '点问题标题', '就地展开答案'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-部署说明.html': {
+      name: '关于平台 · 部署说明',
+      intro: '部署方式说明页：平台内使用（科研开发环境 / 模型服务调用）与专项部署咨询的区别，以及沟通前需要准备的材料。',
+      field: [
+        {
+          label: '🚀 部署说明', sections: [
+            {
+              title: '一、两种使用方式', head: ['方式', '形态', '是否需要定制', '说明'], rows: [
+                ['平台内使用 · 科研开发环境', '空间 + 镜像 + 算力', '不需要', '申请科研空间后按配置使用，数据不导出'],
+                ['平台内使用 · 模型服务调用', 'API / 沙箱试用', '不需要', '按接口文档接入，受配额与限流约束'],
+                ['专项部署咨询', '私有化 / 定制部署', '需要', '走「填写合作咨询」，按项目评估']
+              ]
+            },
+            {
+              title: '二、沟通前请准备', head: ['项', '内容'], rows: [
+                ['使用场景', '业务目标与使用对象'],
+                ['部署环境', '现场 / 云、网络与数据安全要求'],
+                ['资源规模', '算力、存储、并发量的量级'],
+                ['数据情况', '数据形态、体量、涉密级别'],
+                ['时间计划', '期望上线时间与验收方式'],
+                ['搜索控件', '搜索使用指南、常见问题（占位）']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 部署页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['查看方式差异', '对比「平台内使用」与「专项部署咨询」两组', '明确是否需要定制评估'],
+                ['发起部署咨询', '点「合作咨询」类入口', '跳到「联系支持」页填写咨询'],
+                ['展开说明', '点「部署相关说明」下的条目', '就地展开说明'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  });
+
+
+  /* 2026-10-14：账号归属与团队成员关系分开，替换旧的高低角色免审批说明。 */
+  var permissionRows = [
+    ['创建成员账号', '个人中心创建本人关联账号；无团队也可', '不可创建'],
+    ['团队课题 / 需求关联', '当前团队负责人可维护其范围内的关联', '只查看，不可维护；受邀负责人同样按成员处理'],
+    ['我的课题', '按已加入团队汇总并查看内容', '按已加入团队汇总并查看内容'],
+    ['课题内容 / 状态维护', '按独立的后台课题管理权限判断', '团队成员身份不授予该权限'],
+    ['创建和管理团队', '管理自己创建的团队', '不可；仅参与关联负责人名下团队'],
+    ['添加普通成员', '只能选择本人已有成员账号，可加入多个本人团队', '不可邀请或添加'],
+    ['邀请已有负责人', '只邀请本机构独立负责人，等待接受 / 拒绝，可取消', '受邀负责人在该团队按普通成员参与'],
+    ['试用 / 申请模型在线使用', '登录后可试用；无使用资格时申请', '可以，无团队也可'],
+    ['申请数据 / 模型开发', '为本人负责团队及空间办理', '不可申请；可在获准空间参与使用和开发'],
+    ['科研空间 / 算力', '本人负责团队申请，均需审批', '不可申请；可进入获准团队空间'],
+    ['发布需求', '可提交，进入资源申请审批', '可提交，进入资源申请审批'],
+    ['正式提交成果', '可提交本人成果或本人负责团队成果', '不可正式提交']
+  ];
+  Object.keys(DOCS).forEach(function(file){
+    if(!/个人中心|模型中心|数据中心|科研开发空间/.test(file))return;
+    var d=DOCS[file];d.field=(d.field||[]).filter(function(t){return !t.label.includes('权限与角色');});
+    d.field.push({label:'🔐 权限与角色',sections:[{title:'账号身份、团队关系与操作权限',head:['操作','科研负责人','科研成员 / 受邀团队成员'],rows:permissionRows,note:'账号绑定负责人；移出团队不删除账号。免审批按指定团队或账号配置具体资源，不因负责人身份自动获得。'}]});
+  });
+  var personal=DOCS['个人中心-高保真原型.html'];
+  personal.intro='个人工作台：负责人在成员账号中建号，在我的团队中建队、添加成员和发送邀请。成员账号绑定负责人，可加入其名下多个团队。模型在线使用申请和需求发布保留个人入口。团队可关联课题和需求，我的课题按已加入团队汇总并提供内容详情。';
+  personal.field.unshift({label:'👥 成员账号与团队',sections:[
+    {title:'成员账号',head:['字段','输入 / 展示','约束'],rows:[['姓名','必填，最多 30 字','负责人维护关联成员资料'],['登录账号','必填，最多 80 字','全局唯一，不允许空格；已有账号不重复创建'],['初始密码','必填，密码输入框','原型不保存密码；生产接入账号服务'],['所属机构 / 关联负责人','只读','从当前负责人带出'],['已加入团队','多个标签或未加入团队','账号可以不关联任何团队']]},
+    {title:'团队与添加成员',head:['字段 / 对象','输入 / 展示','约束'],rows:[['团队名称','必填，最多 60 字','负责人创建'],['团队简介','选填，最多 300 字','可先创建团队后关联课题'],['关联课题 / 关联需求','分别选填，可关联多项','课题沿用单开发团队关系；需求保留原发布状态'],['机构 / 负责人','只读','创建时确定'],['已有成员','勾选本人关联账号','排除已加入当前团队的账号'],['已有负责人','同机构独立负责人列表','待回应 / 已接受 / 已拒绝 / 已取消；无管理员审批']]}
+  ]});
+  personal.guide.unshift({label:'👥 团队账号交互',sections:[{title:'本轮验证场景',head:['场景','操作','结果'],rows:[
+    ['无团队建号','切换刘老师 → 成员账号 → 创建','账号绑定刘老师，可暂不入队'],
+    ['同负责人多团队','张研究员 → 成员账号 → 查看李晓','一个账号关联两个团队'],
+    ['新建团队','我的团队 → 创建团队','填写团队资料，可独立选填关联课题和需求'],['关联课题 / 需求','团队详情 → 关联课题 / 关联需求','负责人选择已有记录，保存后与源记录关联'],['我的课题','个人中心 → 我的课题','按已加入团队汇总，支持筛选、分页和详情'],['成员查看课题','切换李晓或受邀负责人 → 我的课题','可查看课题内容和开发团队，无课题编辑或状态维护操作'],
+    ['添加成员','团队详情 → 添加成员 → 选择我的成员账号','直接加入，不另建账号'],
+    ['负责人邀请','添加成员 → 邀请已有负责人','受邀账号在我的团队接受 / 拒绝，发送方可取消'],
+    ['受邀团队权限','张研究员 → 粮食产量研究团队','显示普通成员，无团队管理入口'],
+    ['无团队成员','切换赵晨 → 我的模型 / 我的需求','保留试用、在线使用申请与需求发布；无数据 / 开发 / 空间申请'],
+    ['移除成员','团队详情 → 移除','只解除当前团队关系，保留账号及其他团队']
+  ]}]});
+
+  /* ============================== 注入 ============================== */
+  function inject() {
+    var file = decodeURIComponent(location.pathname.split('/').pop() || '');
+    var doc = DOCS[file];
+    if (!doc && file === '') doc = DOCS['index.html'];
+    if (!doc) doc = DOCS['__default__'];
+    if (!doc.field && !doc.guide) return;
+
+    var st = document.createElement('style');
+    st.textContent = CSS;
+    document.head.appendChild(st);
+
+    var fieldTabs = doc.field || DOCS['__default__'].field;
+    var guideTabs = doc.guide || DOCS['__default__'].guide;
+    var tagline = doc.name + (file ? '　·　' + file : '');
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML =
+      drawerHTML('mtdevFieldMask', 'mtdevFieldBody', '📋 字段说明 — ' + doc.name, tagline, fieldTabs, 'mtdevF') +
+      drawerHTML('mtdevGuideMask', 'mtdevGuideBody', '🧪 交互演示指引 — ' + doc.name, tagline, guideTabs, 'mtdevG') +
+      '<div class="mtdev-group">' +
+      '<button class="mtdev-btn field" type="button" title="字段说明（类型 / 长度 / 必填 / 校验）">📋 字段说明</button>' +
+      '<button class="mtdev-btn guide" type="button" title="交互演示指引（点什么、会发生什么）">🧪 交互演示指引</button>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    var group = wrap.querySelector('.mtdev-group');
+    var maskF = wrap.querySelector('#mtdevFieldMask');
+    var maskG = wrap.querySelector('#mtdevGuideMask');
+
+    var introHost = '<div class="mtdev-intro">' + (doc.intro || '') + '</div>';
+    wrap.querySelector('#mtdevFieldBody').insertAdjacentHTML('afterbegin', introHost);
+    wrap.querySelector('#mtdevGuideBody').insertAdjacentHTML('afterbegin', introHost);
+
+    var foot = '<p class="mtdev-note" style="margin-top:18px;border-top:1px dashed #dce5e9;padding-top:10px">' +
+      '说明：标「建议」的长度为本原型未设硬约束、按尺度与行业惯例给的参考值，最终以后端确认或接口文档为准；' +
+      '其余长度 / 取值均取自原型 <code>maxlength</code> 或项目字段清单（模型上架元数据字段清单 v1、需求中心定版）。' +
+      '<br>权限按负责人 / 成员身份、团队归属和资源用途分别校验。前端是本地交互演示，生产接口必须执行相同校验。' +
+      '</p>';
+    wrap.querySelector('#mtdevFieldBody').insertAdjacentHTML('beforeend', foot);
+
+    bindTabs(wrap.querySelector('#mtdevFieldBody'));
+    bindTabs(wrap.querySelector('#mtdevGuideBody'));
+
+    function open(mask) { mask.classList.add('on'); }
+    function close(mask) { mask.classList.remove('on'); resetTabs(mask.querySelector('.mtdev-bd')); }
+
+    group.querySelector('.mtdev-btn.field').onclick = function () { open(maskF); };
+    group.querySelector('.mtdev-btn.guide').onclick = function () { open(maskG); };
+    maskF.querySelector('.mtdev-x').onclick = function () { close(maskF); };
+    maskG.querySelector('.mtdev-x').onclick = function () { close(maskG); };
+    maskF.onclick = function (e) { if (e.target === maskF) close(maskF); };
+    maskG.onclick = function (e) { if (e.target === maskG) close(maskG); };
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (maskF.classList.contains('on')) close(maskF);
+      else if (maskG.classList.contains('on')) close(maskG);
+    });
+
+    draggable(group);
+    draggable(maskF.querySelector('.mtdev-drawer'), maskF.querySelector('.mtdev-hd'));
+    draggable(maskG.querySelector('.mtdev-drawer'), maskG.querySelector('.mtdev-hd'));
+
+    /* 页面自己的弹窗（原生 <dialog> 已在 CSS 里处理）若是 div 遮罩实现，
+       层级可能低于本按钮组；这里按「是否出现覆盖整屏的遮罩」自动避让，
+       不依赖各页类名（.modal-mask / .drawer-mask / 其它命名均适用）。 */
+    setInterval(function () {
+      var els = document.querySelectorAll('[class*=mask],[class*=overlay],[class*=backdrop],[class*=modal]');
+      var dim = false;
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (/mtdev/.test(el.className || '')) continue;
+        var cs = window.getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) continue;
+        var r = el.getBoundingClientRect();
+        if (r.width > window.innerWidth * 0.9 && r.height > window.innerHeight * 0.9) { dim = true; break; }
+      }
+      group.classList.toggle('mtdev-dim', dim);
+    }, 250);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject);
+  else inject();
+})();
+
+</script><!-- devdoc-1012:end -->
+<script>
+(function () {
+  'use strict';
+  function init(){
+    const O=window.PortalOrg, file=decodeURIComponent(location.pathname.split('/').pop()), q=s=>document.querySelector(s);
+    const notice=t=>window.toast?window.toast(t):window.Meeting?.toast(t);
+    const wrap=(name,fn)=>{const old=window[name];if(typeof old==='function')window[name]=function(...args){return fn(old,args,this);};};
+    const prune=()=>{document.querySelectorAll('[onclick*="switchRole"],[onclick*="toggleDemoAuth"]').forEach(n=>n.remove());if(!O.isLeader())document.querySelectorAll('[onclick*="Meeting.submit"],[onclick*="Meeting.pickOutcome"]').forEach(n=>n.remove());};
+    if(window.Meeting){['submit','pickOutcome','commitOutcome'].forEach(k=>{const old=Meeting[k];if(typeof old==='function')Meeting[k]=function(...args){if(!O.isLeader()||(file.startsWith('科研开发空间')&&!O.canManageSpace(new URLSearchParams(location.search).get('id')||'1'))){notice('当前账号不能正式提交成果。');return;}return old.apply(this,args);};});}
+    if(typeof LOGGED!=='undefined')LOGGED=O.isLogged();
+    if(typeof ROLE!=='undefined')ROLE='low';
+    if(typeof window.roleName==='function')window.roleName=()=>O.current().name;
+    if(typeof window.roleAvatar==='function')window.roleAvatar=()=>O.current().name[0];
+    if(typeof window.isHighRole==='function')window.isHighRole=()=>false;
+    wrap('renderAuthArea',(old,args,ctx)=>{const r=old.apply(ctx,args);prune();return r;});
+    wrap('doLogin',(old,args,ctx)=>{O.select(O.current().id);const r=old.apply(ctx,args);if(typeof LOGGED!=='undefined')LOGGED=true;window.renderAuthArea?.();return r;});
+    wrap('doLogout',(old,args,ctx)=>{O.signOut();return old.apply(ctx,args);});
+    document.addEventListener('click',ev=>{if(ev.target.closest('[data-bdh-login]')){O.select(O.current().id);if(typeof LOGGED!=='undefined')LOGGED=true;}else if(ev.target.closest('[data-bdh-logout]')){O.signOut();if(typeof LOGGED!=='undefined')LOGGED=false;}},true);
+    window.renderAuthArea?.();prune();
+
+    const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
+    const previewStyle=document.createElement('style');previewStyle.textContent=`
+      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
+      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
+      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
+      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
+      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
+    `;document.head.append(previewStyle);
+    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
+    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    window.PortalPreview={refresh:refreshPreview};
+    function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
+      if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      refreshPreview();
+    }
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
+
+
+    if(window.portalSaveApplication){const old=window.portalSaveApplication;window.portalSaveApplication=rec=>{
+      if(!O.isLogged()){notice('请先登录。');return null;}
+      if(!O.isLeader()&&(/科研|开发/.test(rec.purpose||'')||rec.space)){notice('成员仅可申请模型在线使用，不能申请开发或科研空间。');return null;}
+      const team=q('#otResearchTeam');if(/科研|开发/.test(rec.purpose||'')){if(!team||!O.canManageTeam(team.value)){notice('请选择本人负责的团队。');return null;}rec={...rec,teamId:team.value};}
+      return old({...rec,applicantId:O.current().id,applicant:O.current().name,usageType:/科研|开发/.test(rec.purpose||'')?'research':'online'});
+    };}
+    function restrictModelForm(){if(O.isLeader()){configureResearch();return;}const form=q('#modelApplyForm')||q('.application-form');if(!form)return;
+      form.querySelector('input[name="purpose"][value="research"]')?.closest('label').remove();
+      const biz=form.querySelector('input[name="purpose"][value="biz"]');if(biz)biz.checked=true;
+      form.querySelector('#researchFields')?.remove();
+      form.querySelector('.purpose-hint')?.remove();
+      const note=form.querySelector('#applyScopeNote');if(note)note.textContent='获批后在线使用当前模型。';
+      form.querySelectorAll('p').forEach(p=>{if(p.textContent.includes('勾选科研研究'))p.textContent='提交后可在个人中心查看模型使用申请。';});
+      const title=q('#dialogTitle');if(title)title.textContent='申请使用模型';
+    }
+    function configureResearch(){const host=q('#researchFields');if(!host||q('#otResearchTeam'))return;const own=O.myTeams().filter(t=>t.ownerId===O.current().id);host.insertAdjacentHTML('afterbegin',`<label>所属团队<select id="otResearchTeam" name="teamId"><option value="">请选择本人负责的团队</option>${own.map(t=>`<option value="${O.escape(t.id)}">${O.escape(t.name)}</option>`).join('')}</select></label>`);if(!own.length){const cb=q('input[name="purpose"][value="research"]');if(cb){cb.disabled=true;cb.closest('label').title='请先创建本人负责的团队';}}}
+    if(file.includes('模型中心-模型')&&!file.includes('运行台')){
+      ['openApply','openModelAction'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.isLogged()){notice('请先登录后申请使用。');return;}const r=old.apply(ctx,args);restrictModelForm();return r;}));
+      wrap('submitDemo',(old,args,ctx)=>{if(!O.isLeader()&&q('input[name="purpose"][value="research"]:checked')){notice('成员不能申请模型开发。');return;}return old.apply(ctx,args);});
+      const baseTrial=window.startTrial;if(baseTrial)window.startTrial=function(m){
+        if(!O.isLogged()){notice('请先登录后试用。');return;}
+        const model=typeof m==='object'?m:(typeof CUR!=='undefined'?CUR:null);if(!model)return;
+        if(typeof svcUnpublished==='function'&&svcUnpublished(model)){notice(typeof SVC_MSG!=='undefined'?SVC_MSG:'当前模型暂不可用');return;}
+        location.href='模型中心-模型运行台.html?mode=trial#n='+encodeURIComponent(model.name);
+      };
+    }
+    if(!O.isLeader()&&file==='模型中心-模型详情（调整）.html'){const n=document.querySelector('.auth-note');if(n)n.textContent='试用免审批 · 可申请模型在线使用';}
+    if(file==='模型中心-模型运行台.html'){
+      const trial=new URLSearchParams(location.search).get('mode')==='trial';
+      wrap('lockReason',(old,args,ctx)=>{
+        if(!O.isLogged())return '请先登录';
+        if(typeof isCurVer==='function'&&!isCurVer(CUR))return '历史版本不支持运行';
+        if(trial)return '';
+        let rows=[];try{rows=JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]');}catch{}
+        const authorized=rows.some(r=>(r.applicantId||'u-zhang')===O.current().id&&r.name===CUR.name&&['已通过','approved'].includes(r.status));
+        return authorized?'':'当前模型尚未取得在线使用授权';
+      });
+      if(typeof DEMO_AUTH!=='undefined')DEMO_AUTH=trial;
+      window.renderAll?.();window.syncLock?.();prune();
+    }
+    if(file.startsWith('数据中心')){
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      if(!O.isLeader()){
+        document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
+        wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
+      }
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+    }
+    if(file==='科研开发空间-交互原型(10).html'){
+      const all=spaces.slice(),scope=new URLSearchParams(location.search).get('team');
+      spaces=all.filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope)).map(s=>({...s,team:O.spaceTeam(s.id).name,role:O.canManageSpace(s.id)?'负责人':'成员'}));
+      permission=O.isLeader()?'owner':'member';if(!O.isLeader()||!O.myTeams().some(t=>t.ownerId===O.current().id))todos=[];
+      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader();
+      const oldApply=window.apply;window.apply=function(){
+        if(!O.isLeader()){notice('科研空间和算力由负责人申请。');return;}
+        const own=O.myTeams().filter(t=>t.ownerId===O.current().id);if(!own.length){notice('请先在个人中心创建团队。');return;}
+        oldApply();const select=q('#application-team');if(select)select.innerHTML=own.map(t=>`<option value="${O.escape(t.name)}" data-id="${t.id}">${O.escape(t.name)}</option>`).join('');
+        const form=q('#apply-form'),submit=form?.onsubmit;
+        if(form&&submit)form.onsubmit=function(ev){if(!O.isLeader()||!O.canManageTeam(select.selectedOptions[0]?.dataset.id)){ev.preventDefault();notice('当前账号不能为该团队申请空间。');return;}const before=new Set(spaces.map(s=>String(s.id)));const r=submit.call(this,ev);const added=spaces.filter(s=>!before.has(String(s.id)));if(added.length){const db=O.read(),t=db.teams.find(t=>t.id===select.selectedOptions[0].dataset.id);t.spaceIds=[...new Set([...(t.spaceIds||[]),...added.map(s=>String(s.id))])];localStorage.setItem(O.KEY,JSON.stringify(db));}return r;};
+      };if(btn)btn.onclick=window.apply;
+      window.render();
+    }
+    if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
+      const id=new URLSearchParams(location.search).get('id')||'1';
+      if(!O.canViewSpace(id)){
+        const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
+        ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});
+      }else if(file==='科研开发空间-详情页(9).html'){
+        space.role=O.canManageSpace(id)?'负责人':'成员';space.team=O.spaceTeam(id).name;
+        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:a.kind==='leader'&&a.id!==t.ownerId?'受邀负责人':'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
+        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${t.memberIds.map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${a.id}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
+        window.renderAll();const old=window.renderHeading;window.renderHeading=function(){old();document.querySelectorAll('.heading-meta b').forEach(b=>{if(b.textContent==='张三')b.textContent=O.account(O.spaceTeam(id).ownerId).name;});};window.renderHeading();
+      }
+    }
+
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
 </script>
 </body>
 </html>

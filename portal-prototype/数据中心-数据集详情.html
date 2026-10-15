@@ -717,7 +717,9 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 </script>
 <style id="dataset-detail-alignment">
 .head-right .btn-query,.head-right .btn-apply{width:132px;min-height:40px;justify-content:center}.btn-query{display:inline-flex;align-items:center;border:1px solid var(--brand);border-radius:4px;padding:0 16px;background:white;color:var(--brand);font-size:14px}.btn-query:disabled{border-color:#dbe4df;color:#94a49b;background:#f6f8f6;cursor:not-allowed}.outcome-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;line-height:22px;padding:0 8px;margin-top:7px;border:1px solid #dce8cd;border-radius:4px;background:#edf4e5;color:#426321}.tag.technical{background:#f2f5f3;color:#65796d}.meta-card .kv .v{overflow-wrap:anywhere}.head-tags .tag{height:auto;min-height:24px;white-space:normal}.head-top h1{flex:1;min-width:0}.head-right{max-width:220px}.form-readonly{overflow-wrap:anywhere}@media(max-width:700px){.head-right{max-width:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}.head-right .btn-query,.head-right .btn-apply{flex:1;width:auto}.head-right .authorize-note{width:100%;text-align:left;white-space:normal}.summary .head-top h1{font-size:22px}}
-</style></head>
+</style><script src="assets/portal-org.js"></script>
+<style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+</head>
 <body>
 <header class="site-header">
   <div class="container header-inner">
@@ -842,7 +844,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
         <div class="form-row"><label class="form-label">使用说明 / 拟用科研开发空间范围</label>
           <textarea class="form-ctrl" id="apNote" placeholder="如：在科研开发空间内基于本数据卡进行长势模型训练与验证，不导出。"></textarea>
         </div>
-        <div class="apply-commit"><b>数据使用承诺：</b>本申请数据仅在平台科研开发空间内使用，<b>不下载、不出域、不向第三方分发</b>；授权以本数据卡为最小单元，授权有效期于审批通过后确定。</div>
+        <div class="apply-commit"><b>数据使用承诺：</b>本申请数据仅在平台科研开发空间内使用，<b>不下载、不出域、不向第三方分发</b>；授权以本数据卡为最小单元，授权范围于审批通过后确定。</div>
         <label class="form-check"><input type="checkbox" id="apAgree"><span>我已阅读并承诺遵守上述数据使用要求</span></label>
       </div>
       <div class="modal-ft">
@@ -996,20 +998,20 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       }
       return '<button class="btn-apply" onclick="applyUse()">申请使用</button>';
     }
-    function startUse(){
+    function startUse(){if(window.PortalOrg&&!PortalOrg.isLeader()){if(!PortalOrg.myTeams().some(t=>t.spaceIds?.length)){toast('请先加入团队并获得科研空间访问权限。');return;}location.href='科研开发空间-交互原型(10).html';return;}
       if(!CUR_D)return;
       if(!requireAuth())return;
       switchTab('preview');
       toast('当前角色已获授权 · 已打开数据预览，无需申请');
     }
   function renderHeadRight(){ var w=document.getElementById('applyWrap'); if(w&&CUR_D) w.innerHTML=imageQueryBtnHtml(CUR_D)+applyBtnHtml(CUR_D)+'<p class="authorize-note">'+authNote()+'</p>'; }
-  function applyUse(){
+  function applyUse(){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('数据由负责人为科研空间申请，成员不能单独申请。');return;}
     if(isHighRole()){ startUse(); return; }
     var s=getApplyState(CUR_D.name);
     if(s.state==='pending'){ toast('申请已提交，等待审批；可在「我的数据授权」查看申请状态'); return; }
     openApplyModal();
   }
-  function openApplyModal(){
+  function openApplyModal(){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('数据由负责人为科研空间申请，成员不能单独申请。');return;}
     document.getElementById('apName').textContent=CUR_D.name;
     document.getElementById('apForm').textContent=CUR_D.format.join('、');
     document.getElementById('apDate').textContent=new Date().toISOString().slice(0,10);
@@ -1019,14 +1021,14 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     document.getElementById('applyMask').classList.add('open');
   }
   function closeApplyModal(){ document.getElementById('applyMask').classList.remove('open'); }
-  function submitApply(){
+  function submitApply(){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('数据由负责人为科研空间申请，成员不能单独申请。');return;}
     var use=document.getElementById('apUse').value;
     var note=document.getElementById('apNote').value.trim();
     var agree=document.getElementById('apAgree').checked;
     if(!use){ toast('请选择授权用途'); return; }
     if(!agree){ toast('请先勾选数据使用承诺'); return; }
     var apps=getApps();
-    apps.push({appId:'A'+Date.now(), name:CUR_D.name, form:CUR_D.form, use:use, note:note, submittedAt:new Date().toISOString().slice(0,10), status:'pending'});
+    apps.push({applicantId:PortalOrg.current().id,applicant:PortalOrg.current().name,appId:'A'+Date.now(), name:CUR_D.name, form:CUR_D.form, use:use, note:note, submittedAt:new Date().toISOString().slice(0,10), status:'pending'});
     try{ localStorage.setItem(AUTH_LS_KEY, JSON.stringify(apps)); }catch(e){ toast('本地存储不可用，申请未保存'); return; }
     closeApplyModal();
     renderHeadRight();
@@ -1409,5 +1411,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 })();
 </script>
 
-<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --></body>
+<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
+<script src="assets/portal-access.js"></script>
+</body>
 </html>
