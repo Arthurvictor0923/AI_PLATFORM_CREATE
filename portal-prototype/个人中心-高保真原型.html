@@ -435,10 +435,729 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 #pcModalBody h3:not(:first-child){margin-top:16px}
 @media(max-width:620px){.pub-grid,.pub-pair{grid-template-columns:1fr}.pub-body{padding:2px 14px 6px}.pub-agree{padding:12px 14px}#pcPublish .modal-head{padding:16px 14px}#pcPublish .modal-foot{padding:14px;flex-wrap:wrap;gap:10px}#pcPublish .modal-foot .foot-note{width:100%;margin-right:0}.pc-resource .pc-actions{width:100%;justify-content:flex-start}}
 </style>
-<script src="assets/portal-org.js"></script>
-<script src="assets/portal-work.js"></script>
+<script data-inline-source="assets/portal-org.js">
+/* 2026-10-14: local prototype data. Production identity and authorization require server checks. */
+(function () {
+  'use strict';
+  const KEY = 'bdh-owner-teams-20261014', SESSION = 'bdh-portal-account-20261014';
+  const org = '黑龙江省农业科学院';
+  const adminDemo = {id:'u-admin',name:'平台管理员',login:'admin.demo',kind:'admin',orgId:'org-platform',org:'平台管理',ownerId:null,permissions:['dashboard:view']};
+  const seed = {
+    schema: 1,
+    accounts: [
+      adminDemo,
+      {id:'u-zhang',name:'张研究员',login:'zhang.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-li',name:'李晓',login:'li.xiao',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-wang',name:'王宁',login:'wang.ning',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-zhao',name:'赵晨',login:'zhao.chen',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-chen',name:'陈老师',login:'chen.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-sun',name:'孙悦',login:'sun.yue',kind:'member',orgId:'org-hla',org,ownerId:'u-chen'},
+      {id:'u-liu',name:'刘老师',login:'liu.research',kind:'leader',orgId:'org-hla',org,ownerId:null}
+    ],
+    teams: [
+      {id:'t-rice',name:'寒地水稻研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'多源遥感与作物监测方法研究',memberIds:['u-zhang','u-li','u-wang'],spaceIds:['1','2','5','7']},
+      {id:'t-disaster',name:'农业灾害研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'农田旱情与土壤墒情研究',memberIds:['u-zhang','u-li'],spaceIds:['3','4']},
+      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun','u-zhang'],spaceIds:['6']}
+    ],
+    invitations: []
+  };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  function read() {try {const s=JSON.parse(localStorage.getItem(KEY));if(s?.schema===1&&Array.isArray(s.accounts)&&Array.isArray(s.teams))return s;}catch{}return clone(seed);}
+  function save(s) {try {localStorage.setItem(KEY,JSON.stringify(s));}catch {throw Error('保存失败，请检查浏览器存储后重试。');}window.dispatchEvent(new CustomEvent('portal-org-change'));}
+  if(!localStorage.getItem(KEY))save(clone(seed));
+  const existing=read();if(!existing.accounts.some(a=>a.id===adminDemo.id)){existing.accounts.push(clone(adminDemo));save(existing);}
+  function current() {const s=read();return s.accounts.find(a=>a.id===localStorage.getItem(SESSION))||s.accounts.find(a=>a.id==='u-zhang')||s.accounts[0];}
+  const newId = p => p+'-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  function leader() {const a=current();if(a.kind!=='leader')throw Error('仅负责人可以管理成员账号和创建团队。');return a;}
+  function managedTeam(s,id) {const t=s.teams.find(t=>t.id===id);if(!t||t.ownerId!==current().id)throw Error('仅当前团队负责人可以管理该团队。');return t;}
+  function memberEligible(t,a) {return !!a&&a.orgId===t.orgId&&a.kind==='member'&&a.ownerId===t.ownerId;}
+  const O = window.PortalOrg = {
+    KEY, SESSION, read, current,
+    isLogged:()=>!!localStorage.getItem(SESSION),
+    signOut:()=>{localStorage.removeItem(SESSION);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    account:id=>read().accounts.find(a=>a.id===id),
+    team:id=>read().teams.find(t=>t.id===id),
+    isLeader:()=>current().kind==='leader',
+    canViewDashboard:()=>!!localStorage.getItem(SESSION)&&current().kind==='admin'&&current().permissions?.includes('dashboard:view'),
+    roleLabel:a=>a.kind==='admin'?'管理员':a.kind==='leader'?'负责人':'成员',
+    myTeams:()=>read().teams.filter(t=>t.memberIds.includes(current().id)),
+    managedAccounts:()=>read().accounts.filter(a=>a.kind==='member'&&a.ownerId===current().id),
+    canViewTeam:id=>!!read().teams.find(t=>t.id===id&&t.memberIds.includes(current().id)),
+    canManageTeam:id=>!!read().teams.find(t=>t.id===id&&t.ownerId===current().id),
+    spaceTeam:id=>read().teams.find(t=>(t.spaceIds||[]).includes(String(id))),
+    spaceMembers(id) {const s=read(),t=this.spaceTeam(id);return t?t.memberIds.filter(a=>(s.spaceMembers?.[String(id)]||t.memberIds).includes(a)):[];},
+    canViewSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canViewTeam(t.id)&&this.spaceMembers(id).includes(current().id);},
+    setSpaceMembers(id,ids) {const s=read(),t=this.spaceTeam(id);if(!t||!this.canManageSpace(id))throw Error('仅本团队负责人可以管理空间成员。');if(ids.some(a=>!t.memberIds.includes(a)))throw Error('只能选择当前团队成员。');s.spaceMembers??={};s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];save(s);},
+    canManageSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canManageTeam(t.id);},
+    select(id) {if(!read().accounts.some(a=>a.id===id))throw Error('账号不存在。');localStorage.setItem(SESSION,id);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    createMember(fields) {
+      const a=leader(),s=read(),name=String(fields.name||'').trim(),login=String(fields.login||'').trim();
+      if(!name||!login)throw Error('请填写姓名和登录账号。');
+      if(/\s/.test(login))throw Error('登录账号不能包含空格。');
+      if(s.accounts.some(x=>x.login.toLowerCase()===login.toLowerCase()))throw Error('登录账号已存在，请使用其他账号；已有成员无需重复创建。');
+      if(!String(fields.password||'').trim())throw Error('请填写初始密码。');
+      const member={id:newId('u'),name,login,kind:'member',orgId:a.orgId,org:a.org,ownerId:a.id};
+      s.accounts.push(member);save(s);return member; // Password is deliberately not stored by this prototype.
+    },
+    updateProfile(name) {const s=read(),a=s.accounts.find(x=>x.id===current().id);if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    editMember(id,name) {leader();const s=read(),a=s.accounts.find(a=>a.id===id&&a.ownerId===current().id&&a.kind==='member');if(!a)throw Error('只能维护自己关联的成员账号。');if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    createTeam(fields) {const a=leader(),s=read(),name=String(fields.name||'').trim();if(!name)throw Error('请填写团队名称。');const t={id:newId('t'),name,description:String(fields.description||'').trim(),orgId:a.orgId,org:a.org,ownerId:a.id,memberIds:[a.id],spaceIds:[]};s.teams.push(t);save(s);return t;},
+    addMembers(id,ids) {const s=read(),t=managedTeam(s,id);if(!ids.length)throw Error('请选择要添加的成员。');if(ids.some(id=>!memberEligible(t,s.accounts.find(a=>a.id===id))))throw Error('只能添加本机构且归属当前负责人的普通成员。');t.memberIds=[...new Set([...t.memberIds,...ids])];save(s);},
+    removeMember(id,accountId) {const s=read(),t=managedTeam(s,id);if(accountId===t.ownerId)throw Error('不能移除团队负责人。');t.memberIds=t.memberIds.filter(x=>x!==accountId);save(s);},
+    invite(id,accountId) {
+      const s=read(),t=managedTeam(s,id),a=s.accounts.find(a=>a.id===accountId);
+      if(!a||a.kind!=='leader'||a.orgId!==t.orgId||a.id===current().id)throw Error('只能邀请本机构已有的独立负责人。');
+      if(t.memberIds.includes(a.id))throw Error('该负责人已加入当前团队。');
+      if(s.invitations.some(i=>i.teamId===id&&i.to===accountId&&i.status==='pending'))throw Error('邀请已发出，请等待对方回应。');
+      const i={id:newId('inv'),teamId:id,from:current().id,to:accountId,status:'pending',time:new Date().toLocaleString('zh-CN')};s.invitations.push(i);save(s);return i;
+    },
+    answer(id,decision) {
+      const s=read(),i=s.invitations.find(x=>x.id===id),a=current();if(!i||i.to!==a.id||i.status!=='pending')throw Error('该邀请已处理或不属于当前账号。');
+      if(!['accepted','declined'].includes(decision))throw Error('无效操作。');
+      const t=s.teams.find(t=>t.id===i.teamId);if(!t||a.kind!=='leader'||a.orgId!==t.orgId)throw Error('当前账号不符合团队邀请条件。');
+      if(decision==='accepted')t.memberIds=[...new Set([...t.memberIds,a.id])];i.status=decision;i.processedAt=new Date().toISOString();save(s);
+    },
+    cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
+    escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+  };
+  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+})();
+
+</script>
+<script data-inline-source="assets/portal-work.js">
+/* Shared project and demand records for the local portal prototype. */
+(function(){
+ 'use strict';
+ const O=window.PortalOrg,PK='bdh-projects-1010',DK='agri-demands-v1';
+ const seed={
+  "projects": [
+    {
+      "title": "水稻长势多源遥感反演方法研究",
+      "person": "张研究员",
+      "org": "黑龙江省农业科学院",
+      "type": "面上",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-01",
+      "amount": "20 万",
+      "code": "OF2026-01",
+      "name": "水稻长势多源遥感反演方法研究",
+      "who": "张研究员",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“水稻长势多源遥感反演方法研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true,
+      "teamId": "t-rice",
+      "responsibleAccountId": "u-zhang",
+      "orgId": "org-hla"
+    },
+    {
+      "title": "农田土壤水分智能感知方法研究",
+      "person": "张研究员",
+      "org": "黑龙江省农业科学院",
+      "type": "青年",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-02",
+      "amount": "5 万",
+      "code": "OF2026-02",
+      "name": "农田土壤水分智能感知方法研究",
+      "who": "张研究员",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“农田土壤水分智能感知方法研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true,
+      "teamId": "t-disaster",
+      "responsibleAccountId": "u-zhang",
+      "orgId": "org-hla"
+    },
+    {
+      "title": "农机自主作业决策与控制研究",
+      "person": "王强",
+      "org": "东北农业大学",
+      "type": "重点",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-03",
+      "amount": "50 万",
+      "code": "OF2026-03",
+      "name": "农机自主作业决策与控制研究",
+      "who": "王强",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“农机自主作业决策与控制研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true
+    },
+    {
+      "title": "作物生长机理与产量预测研究",
+      "person": "陈老师",
+      "org": "黑龙江省农业科学院",
+      "type": "面上",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-04",
+      "amount": "20 万",
+      "code": "OF2026-04",
+      "name": "作物生长机理与产量预测研究",
+      "who": "陈老师",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“作物生长机理与产量预测研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true,
+      "teamId": "t-yield",
+      "responsibleAccountId": "u-chen",
+      "orgId": "org-hla"
+    },
+    {
+      "title": "农业机器人精准执行技术研究",
+      "person": "陈晨",
+      "org": "江苏大学",
+      "type": "面上",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-05",
+      "amount": "20 万",
+      "code": "OF2026-05",
+      "name": "农业机器人精准执行技术研究",
+      "who": "陈晨",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“农业机器人精准执行技术研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true
+    },
+    {
+      "title": "农田多源信息融合感知研究",
+      "person": "张研究员",
+      "org": "黑龙江省农业科学院",
+      "type": "青年",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-06",
+      "amount": "5 万",
+      "code": "OF2026-06",
+      "name": "农田多源信息融合感知研究",
+      "who": "张研究员",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“农田多源信息融合感知研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true,
+      "teamId": "",
+      "responsibleAccountId": "u-zhang",
+      "orgId": "org-hla"
+    },
+    {
+      "title": "智慧农业集成应用技术研究",
+      "person": "刘老师",
+      "org": "黑龙江省农业科学院",
+      "type": "重点",
+      "year": "2026",
+      "guideId": "guide-2026",
+      "id": "OF2026-07",
+      "amount": "50 万",
+      "code": "OF2026-07",
+      "name": "智慧农业集成应用技术研究",
+      "who": "刘老师",
+      "guide": "2026 年度开放课题指南",
+      "st": "在研",
+      "summary": "本课题围绕“智慧农业集成应用技术研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2026-06-26",
+      "public": true,
+      "teamId": "",
+      "responsibleAccountId": "u-liu",
+      "orgId": "org-hla"
+    },
+    {
+      "title": "作物病害图像识别方法研究",
+      "person": "孙悦",
+      "org": "浙江大学",
+      "type": "青年",
+      "year": "2024",
+      "guideId": "guide-2024",
+      "id": "OF2024-01",
+      "amount": "5 万",
+      "code": "OF2024-01",
+      "name": "作物病害图像识别方法研究",
+      "who": "孙悦",
+      "guide": "2024 年度开放课题指南",
+      "st": "已结题",
+      "summary": "本课题围绕“作物病害图像识别方法研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2025-01-24",
+      "public": true
+    },
+    {
+      "title": "农田旱涝监测与风险识别研究",
+      "person": "吴昊",
+      "org": "武汉大学",
+      "type": "面上",
+      "year": "2024",
+      "guideId": "guide-2024",
+      "id": "OF2024-02",
+      "amount": "20 万",
+      "code": "OF2024-02",
+      "name": "农田旱涝监测与风险识别研究",
+      "who": "吴昊",
+      "guide": "2024 年度开放课题指南",
+      "st": "已结题",
+      "summary": "本课题围绕“农田旱涝监测与风险识别研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2025-01-24",
+      "public": true
+    },
+    {
+      "title": "农业生产数据质量评价研究",
+      "person": "郑琳",
+      "org": "东北农业大学",
+      "type": "面上",
+      "year": "2024",
+      "guideId": "guide-2024",
+      "id": "OF2024-03",
+      "amount": "20 万",
+      "code": "OF2024-03",
+      "name": "农业生产数据质量评价研究",
+      "who": "郑琳",
+      "guide": "2024 年度开放课题指南",
+      "st": "已结题",
+      "summary": "本课题围绕“农业生产数据质量评价研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2025-01-24",
+      "public": true
+    },
+    {
+      "title": "耕地地力遥感评价方法研究",
+      "person": "林青",
+      "org": "中国农业大学",
+      "type": "青年",
+      "year": "2024",
+      "guideId": "guide-2024",
+      "id": "OF2024-04",
+      "amount": "5 万",
+      "code": "OF2024-04",
+      "name": "耕地地力遥感评价方法研究",
+      "who": "林青",
+      "guide": "2024 年度开放课题指南",
+      "st": "已结题",
+      "summary": "本课题围绕“耕地地力遥感评价方法研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2025-01-24",
+      "public": true
+    },
+    {
+      "title": "农机作业路径协同优化研究",
+      "person": "许峰",
+      "org": "江苏大学",
+      "type": "重点",
+      "year": "2024",
+      "guideId": "guide-2024",
+      "id": "OF2024-05",
+      "amount": "50 万",
+      "code": "OF2024-05",
+      "name": "农机作业路径协同优化研究",
+      "who": "许峰",
+      "guide": "2024 年度开放课题指南",
+      "st": "已结题",
+      "summary": "本课题围绕“农机作业路径协同优化研究”开展研究，结合农业生产实际需求，探索数据处理、方法构建与验证方案。",
+      "objectives": [
+        "明确研究对象、应用条件与核心技术问题。",
+        "形成可验证的方法体系，开展对照分析与适用性评价。",
+        "整理研究过程及成果，为后续复用提供说明。"
+      ],
+      "research": [
+        "基础资料梳理与数据质量分析，建立研究样本和验证依据。",
+        "方法设计与关键技术研究，记录实验配置及处理流程。",
+        "开展验证与对比，分析误差来源和适用边界。",
+        "汇总研究成果，形成研究报告和技术说明。"
+      ],
+      "notice": "2025-01-24",
+      "public": true
+    },
+    {
+      "code": "BH2026-021",
+      "name": "黑土地碳汇监测与评估",
+      "guide": "2026年度黑土地保护专项指南",
+      "who": "张明",
+      "org": "作物科学研究所",
+      "type": "重点",
+      "from": "2026-09-18",
+      "to": "2026-09-25",
+      "st": "拟立项",
+      "year": "2026",
+      "public": true
+    },
+    {
+      "code": "BH2026-022",
+      "name": "农业遥感长势监测",
+      "guide": "2026年度智慧农业开放课题指南",
+      "who": "李娜",
+      "org": "农业信息研究中心",
+      "type": "面上",
+      "from": "2026-09-18",
+      "to": "2026-09-25",
+      "st": "拟立项",
+      "year": "2026",
+      "public": true
+    },
+    {
+      "code": "BH2026-013",
+      "name": "寒地水稻高产栽培研究",
+      "guide": "2026年度智慧农业开放课题指南",
+      "who": "王强",
+      "org": "黑龙江省农业科学院",
+      "type": "面上",
+      "from": "2026-03-15",
+      "to": "2026-03-22",
+      "st": "在研",
+      "year": "2026",
+      "public": true
+    },
+    {
+      "code": "BH2025-008",
+      "name": "大豆耐逆性研究",
+      "guide": "2025年度作物育种专项指南",
+      "who": "刘洋",
+      "org": "大豆研究所",
+      "type": "青年",
+      "from": "2025-07-10",
+      "to": "2025-07-17",
+      "st": "已结题",
+      "year": "2025",
+      "public": true
+    },
+    {
+      "code": "BH2026-019",
+      "name": "耕地保护与地力提升",
+      "guide": "2026年度黑土地保护专项指南",
+      "who": "陈雪",
+      "org": "耕地保护研究中心",
+      "type": "青年",
+      "from": "2026-09-18",
+      "to": "2026-09-25",
+      "st": "未立项",
+      "year": "2026",
+      "public": false
+    },
+    {
+      "code": "BH2025-011",
+      "name": "智慧农业多源数据建模",
+      "guide": "2025年度智慧农业开放课题指南",
+      "who": "赵磊",
+      "org": "农业数据中心",
+      "type": "重点",
+      "from": "2025-03-15",
+      "to": "2025-03-22",
+      "st": "已终止",
+      "year": "2025",
+      "public": true
+    }
+  ],
+  "demands": [
+    {
+      "title": "已有监测图件的分析与报告编制",
+      "direction": "分析评估",
+      "services": [
+        "图像解读",
+        "统计分析",
+        "报告编制"
+      ],
+      "summary": "已具备农田监测图件，委托团队解读变化情况、分析原因，形成专题分析报告。",
+      "publisher": "农业技术服务单位",
+      "date": "2026-09-17",
+      "problem": "现有监测图件已展示农田变化，但缺少对变化特征和可能原因的综合分析，希望将图件转化为可用于业务研判的专题报告。",
+      "material": "已有农田监测图件及对应时次说明，可在沟通后提供原始图件、相关统计资料和历史参考资料。",
+      "work": [
+        "梳理已有图件及资料，确认数据完整性与分析范围。",
+        "解读变化特征，结合已有资料开展统计分析与原因研判。",
+        "编制专题分析报告，注明分析依据及结论适用条件。"
+      ],
+      "output": "专题分析报告、主要变化统计表及必要的图件说明。",
+      "deadline": "沟通确认资料后，预计 4 周内完成。",
+      "id": "public-demand-01",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    },
+    {
+      "title": "种植现状现场调查与报告编制",
+      "direction": "调查摸底",
+      "services": [
+        "现场调查",
+        "数据采集",
+        "报告编制"
+      ],
+      "summary": "暂无基础数据，委托团队开展现场调查、数据采集与统计分析，交付调查数据及专题报告。",
+      "publisher": "农业管理单位",
+      "date": "2026-09-17",
+      "problem": "需要摸清当前种植现状，为后续管理提供基础资料。现阶段尚无可直接使用的调查数据，希望由科研团队统筹调查、采集与分析工作。",
+      "material": "暂无基础调查数据；发布方可协助对接现场，提供调查目标与工作条件说明。",
+      "work": [
+        "制定现场调查与采样方案，明确数据质量要求。",
+        "组织现场调查和数据采集，整理原始记录。",
+        "开展统计分析，形成种植现状调查报告。"
+      ],
+      "output": "规范化调查数据、现场记录、统计结果与种植现状专题报告。",
+      "deadline": "具体调查窗口及交付时间由双方沟通确认。",
+      "id": "public-demand-02",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    },
+    {
+      "title": "作物长势持续监测与风险提示",
+      "direction": "监测预警",
+      "services": [
+        "数据采集",
+        "统计分析",
+        "报告编制"
+      ],
+      "summary": "希望按月掌握作物长势变化，识别异常情况，定期提供监测结果与风险提示。",
+      "publisher": "农业生产企业",
+      "date": "2026-09-16",
+      "problem": "希望建立按月更新的长势监测服务，及时了解异常情况，为田间管理提供参考。",
+      "material": "可提供现有生产记录，监测所需补充资料由双方确认。",
+      "work": [
+        "明确监测目标、更新频率和数据采集方式。",
+        "定期分析长势变化并识别异常信号。",
+        "提交监测报告及需进一步核查的风险提示。"
+      ],
+      "output": "月度监测结果、变化统计与风险提示报告。",
+      "deadline": "按月提供，首期时间沟通确定。",
+      "id": "public-demand-03",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    },
+    {
+      "title": "受灾农田损失调查与评估",
+      "direction": "分析评估",
+      "services": [
+        "现场调查",
+        "统计分析",
+        "报告编制"
+      ],
+      "summary": "委托团队核查农田受灾情况，结合现场资料开展损失分析，形成评估报告。",
+      "publisher": "农业服务机构",
+      "date": "2026-09-15",
+      "problem": "希望通过现场核查和资料分析，客观了解农田受灾情况，为后续恢复生产提供参考。",
+      "material": "已有部分现场记录，可配合补充必要资料。",
+      "work": [
+        "核查现有资料，制定调查方案。",
+        "开展现场调查与损失统计分析。",
+        "编制评估报告并说明分析口径与局限。"
+      ],
+      "output": "现场调查记录、损失统计表与评估报告。",
+      "deadline": "现场条件具备后，预计 3 周内完成。",
+      "id": "public-demand-04",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    },
+    {
+      "title": "种植结构优化与管理建议",
+      "direction": "方案咨询",
+      "services": [
+        "数据整理",
+        "统计分析",
+        "方案编制"
+      ],
+      "summary": "结合现有生产资料与经营目标，分析种植安排，提出结构调整和田间管理建议。",
+      "publisher": "农业合作社",
+      "date": "2026-09-14",
+      "problem": "希望结合现有生产条件和经营目标，对下一周期种植安排开展综合分析，提出可执行的管理建议。",
+      "material": "可提供历史生产资料、现有资源条件及经营目标。",
+      "work": [
+        "梳理现有生产资料与资源条件。",
+        "对比不同种植安排的适用条件。",
+        "形成结构优化与田间管理建议。"
+      ],
+      "output": "种植结构优化方案、分析表及管理建议。",
+      "deadline": "预计 2026 年 11 月前完成。",
+      "id": "public-demand-05",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    },
+    {
+      "title": "作物估产方法研究与验证",
+      "direction": "技术研发",
+      "services": [
+        "数据整理",
+        "统计分析",
+        "模型开发"
+      ],
+      "summary": "围绕实际生产问题，开展数据整理、模型研究与效果验证，形成可复用研究成果。",
+      "publisher": "农业科研团队",
+      "date": "2026-09-13",
+      "problem": "需要研究适用于现有数据条件的作物估产方法，明确方法适用范围与验证结果。",
+      "material": "已有部分历史观测与产量资料，数据完整性需共同核验。",
+      "work": [
+        "整理数据并明确训练与验证数据划分。",
+        "开展方法研究、模型开发与对照分析。",
+        "记录实验过程，完成效果验证与适用性说明。"
+      ],
+      "output": "研究报告、可复用模型成果及实验验证记录。",
+      "deadline": "研究周期由双方根据资料与目标协商。",
+      "id": "public-demand-06",
+      "status": "发布中",
+      "mine": false,
+      "source": "public-demo"
+    }
+  ]
+};
+ const copy=x=>JSON.parse(JSON.stringify(x));
+ function read(key,fallback=[]){try{const rows=JSON.parse(localStorage.getItem(key));return Array.isArray(rows)?rows:copy(fallback);}catch{return copy(fallback);}}
+ function writeMany(items){const old=items.map(([k])=>[k,localStorage.getItem(k)]);try{for(const [k,v] of items)localStorage.setItem(k,JSON.stringify(v));}catch(e){for(const [k,v] of old){try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch{}}throw Error('未能保存关联，请重试。');}window.dispatchEvent(new CustomEvent('portal-work-change'));}
+ function initialize(){const s=O.read();if(s.workRelationsVersion===1)return;const p=read(PK),d=read(DK);for(const x of seed.projects)if(!p.some(r=>String(r.code||r.id)===x.code))p.push(copy(x));for(const x of seed.demands)if(!d.some(r=>r.id===x.id))d.push(copy(x));for(const t of s.teams){if(!Array.isArray(t.demandIds))t.demandIds=({'t-rice':['public-demand-03'],'t-disaster':['public-demand-04'],'t-yield':[]})[t.id]||[];}for(const x of p){if(x.teamId&&O.team(x.teamId))x.team=O.team(x.teamId).name;}s.workRelationsVersion=1;writeMany([[PK,p],[DK,d],[O.KEY,s]]);}
+ const projectId=p=>String(p.code||p.id||'');
+ function projects(){return read(PK).map(p=>({...p,id:projectId(p),code:projectId(p),name:p.name||p.title,who:p.who||p.person,st:p.st||p.status||'',teamId:p.teamId||''}));}
+ function published(d){return ['发布中','已发布','已获取联系方式'].includes(d.status);}
+ function myProjects(){const teams=new Set(O.myTeams().map(t=>t.id));return O.isLogged()?projects().filter(p=>p.teamId&&teams.has(p.teamId)):[];}
+ function candidates(teamId=''){const me=O.current();return projects().filter(p=>p.teamId===teamId&&teamId||((p.responsibleAccountId===me.id&&p.orgId===me.orgId)&&(!p.teamId||p.teamId===teamId)));}
+ function validate(pids,dids,t=null){if(!O.isLogged()||!O.isLeader()||(t&&!O.canManageTeam(t.id)))throw Error('仅当前团队负责人可以维护关联。');const allowed=new Set(candidates(t?.id||'').map(projectId)),ps=projects();if(pids.some(id=>!allowed.has(id)))throw Error('请选择本人范围内且未绑定其他开发团队的课题。');if(dids.some(id=>!read(DK).some(d=>d.id===id&&(published(d)||t?.demandIds?.includes(id)))))throw Error('请选择当前可见的已发布需求。');if(pids.some(id=>{const p=ps.find(p=>projectId(p)===id);return p.teamId&&p.teamId!==t?.id}))throw Error('该课题已绑定其他开发团队。');}
+ function setLinks(teamId,pids,dids){const t=O.team(teamId);if(!t)throw Error('团队不存在。');pids=[...new Set(pids)];dids=[...new Set(dids)];validate(pids,dids,t);const s=O.read(),p=read(PK);for(const x of p){const id=projectId(x);if(x.teamId===teamId&&!pids.includes(id)){x.teamId='';x.team='';}if(pids.includes(id)){x.teamId=teamId;x.team=t.name;}}s.teams.find(x=>x.id===teamId).demandIds=dids;writeMany([[PK,p],[O.KEY,s]]);}
+ initialize();
+ window.PortalWork={PK,DK,projects,myProjects,published,
+  project:id=>projects().find(p=>projectId(p)===id),
+  demands:()=>read(DK),publicDemands:()=>read(DK).filter(published),
+  demand:id=>read(DK).find(d=>d.id===id),
+  publicProjects:()=>projects().filter(p=>p.public!==false&&!['未立项'].includes(p.st)),
+  canViewProject:id=>myProjects().some(p=>projectId(p)===id),
+  teamProjects:id=>O.canViewTeam(id)?projects().filter(p=>p.teamId===id):[],
+  teamDemands:id=>O.canViewTeam(id)?read(DK).filter(d=>(O.team(id)?.demandIds||[]).includes(d.id)):[],
+  projectCandidates:candidates,
+  setLinks,
+  createTeam(fields,pids=[],dids=[]){validate(pids,dids);const before=localStorage.getItem(O.KEY),t=O.createTeam(fields);try{setLinks(t.id,pids,dids);return t;}catch(e){localStorage.setItem(O.KEY,before);throw e;}},
+  unlink(teamId,kind,id){const p=projects().filter(p=>p.teamId===teamId).map(projectId),d=O.team(teamId)?.demandIds||[];setLinks(teamId,kind==='project'?p.filter(x=>x!==id):p,kind==='demand'?d.filter(x=>x!==id):d);}
+ };
+})();
+
+</script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
-</head><body><header class="site-header">
+<style>
+.personal-security-row{display:flex;align-items:center;gap:24px;padding:24px 0;border-bottom:1px solid #e3ece7}.personal-security-row:last-child{border-bottom:0}.personal-security-row>div{flex:1}.personal-security-row h3{font-size:15px;font-weight:500;margin:0 0 8px}.personal-security-row p{margin:0;color:#74877d;font-size:13px}.personal-account-target{display:flex;flex-direction:column;gap:6px;margin:0 0 22px}.personal-account-target span{color:#73867a;font-size:13px}.personal-code-row{display:flex;gap:14px;align-items:center}.personal-code-row .ot-field{flex:1;min-width:0}.personal-code-row button{margin-top:6px;white-space:nowrap}.pc-outcomes #mt-outcomes{border:0;box-shadow:none;margin:0;padding:0}.pc-outcomes #mt-outcomes>.mt-toolbar{display:none}.pc-sidebar [hidden]{display:none!important}.pc-outcomes .mt-table{font-size:13px}.pc-outcomes .mt-table th{white-space:nowrap}.pc-outcomes .mt-table td{vertical-align:top}.pc-outcomes .personal-model-table td:first-child{min-width:160px}.pc-outcomes .mt-table-wrap{overflow:auto}.pc-recent>div{min-width:0}.pc-recent h3{overflow-wrap:anywhere}#personalAccountDialog input:focus{outline:2px solid #92c2ab;outline-offset:1px}@media(max-width:760px){.personal-security-row{gap:12px}.personal-code-row{gap:8px}.pc-outcomes .pc-heading{flex-wrap:wrap;gap:12px}}
+</style></head><body><header class="site-header">
   <div class="header-inner">
     <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
       <svg class="logo" viewBox="0 0 44 50" fill="none" aria-hidden="true"><path d="M12 46C23 36 23 20 35 5" stroke="#00635a" stroke-width="2.5"/><path d="M23 23C23 8 32 3 43 3C39 14 34 21 23 23" fill="#69a821"/><path d="M20 33C8 32 4 23 5 16C16 17 21 23 20 33" fill="#005653"/><path d="M21 35C26 26 33 24 41 25C35 35 29 38 21 35" fill="#08746d"/><path d="M16 39C7 36 4 40 3 47C11 47 16 45 16 39" fill="#63942d"/></svg>
@@ -570,11 +1289,11 @@ function submitDemand(){const v=id=>$(id).value.trim();const bad=[];
 }
 function initDemandForm(){$('pcPubDirection').innerHTML='<option value="">请选择需求方向</option>'+DEMAND_DIRECTIONS.map(d=>`<option>${d}</option>`).join('');$('pcPubServices').innerHTML=DEMAND_SERVICES.map(s=>`<label><input type="checkbox" value="${s}"><span>${s}</span></label>`).join('');$('pcPubServices').addEventListener('change',e=>{const l=e.target.closest('label');if(l)l.classList.toggle('on',e.target.checked);if($('pcPubServices').querySelector('input:checked'))$('pcPubServices').closest('.pub-field').classList.remove('invalid')});$('pcPublishForm').addEventListener('submit',e=>{e.preventDefault();submitDemand()});$('pcPubSummary').addEventListener('input',()=>{$('pcPubSummaryCount').textContent=$('pcPubSummary').value.length;$('pcPubSummary').closest('.pub-field').classList.remove('invalid')});$('pcPubTitle').addEventListener('input',()=>$('pcPubTitle').closest('.pub-field').classList.remove('invalid'));$('pcPubDirection').addEventListener('change',()=>$('pcPubDirection').closest('.pub-field').classList.remove('invalid'));['pcPubProblem','pcPubWork','pcPubOutput','pcPubPublisher','pcPubContact'].forEach(id=>$(id).addEventListener('input',()=>$(id).closest('.pub-field').classList.remove('invalid')));['pcPubPhone','pcPubEmail'].forEach(id=>$(id).addEventListener('input',()=>$('pcPubPair').classList.remove('invalid')))}
 initDemandForm();
-function render(){document.querySelectorAll('[data-nav]').forEach(b=>{const active=b.dataset.nav===(route==='team'?'teams':route==='project'?'projects':route);b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});$('pcUser').textContent=state.profile.name;document.querySelectorAll('.pc-unread').forEach(x=>{x.textContent=unread();x.hidden=!unread()});$('pcContent').innerHTML=route==='overview'?overview():route==='messages'?messages():route==='models'||route==='data'?resources(route):route==='projects'?(window.OwnerTeams?.projectsView?.()||''):route==='project'?(window.OwnerTeams?.projectView?.()||''):route==='accounts'?(window.OwnerTeams?.accountsView()||''):route==='teams'?teams():route==='team'?team():route==='favorites'?favorites():route==='demands'?demands():settings();const f=$('pcSearch');if(f)f.onsubmit=e=>{e.preventDefault();query=new FormData(f).get('query').trim();render()};const pf=$('profileForm');if(pf)pf.onsubmit=e=>{e.preventDefault();const d=new FormData(pf);state.profile={name:d.get('name').trim()||state.profile.name,org:d.get('org').trim()||state.profile.org};persist();render();toast('资料已保存到当前浏览器')};document.title=(document.querySelector('[data-nav].active')?.textContent.trim()||'个人中心')+' · 北大荒智慧农业协同创新平台'}
+function render(){document.querySelectorAll('[data-nav]').forEach(b=>{const active=b.dataset.nav===(route==='team'?'teams':route==='project'?'projects':route);b.classList.toggle('active',active);b.setAttribute('aria-current',active?'page':'false')});$('pcUser').textContent=state.profile.name;document.querySelectorAll('.pc-unread').forEach(x=>{x.textContent=unread();x.hidden=!unread()});$('pcContent').innerHTML=route==='overview'?overview():route==='messages'?messages():route==='models'||route==='data'?resources(route):route==='outcomes'?(window.OwnerTeams?.outcomesView?.()||''):route==='projects'?(window.OwnerTeams?.projectsView?.()||''):route==='project'?(window.OwnerTeams?.projectView?.()||''):route==='accounts'?(window.OwnerTeams?.accountsView()||''):route==='teams'?teams():route==='team'?team():route==='favorites'?favorites():route==='demands'?demands():settings();const f=$('pcSearch');if(f)f.onsubmit=e=>{e.preventDefault();query=new FormData(f).get('query').trim();render()};const pf=$('profileForm');if(pf)pf.onsubmit=e=>{e.preventDefault();const d=new FormData(pf);state.profile={name:d.get('name').trim()||state.profile.name,org:d.get('org').trim()||state.profile.org};persist();render();toast('资料已保存到当前浏览器')};document.title=(document.querySelector('[data-nav].active')?.textContent.trim()||'个人中心')+' · 北大荒智慧农业协同创新平台'}
 function modal(title,content,actions=''){if($('pcModal').open)$('pcModal').close();$('pcModalTitle').textContent=title;$('pcModalBody').innerHTML=content;$('pcModalFoot').innerHTML=actions+button('关闭','data-close');$('pcModal').showModal()}function toast(t){$('pcToast').textContent=t;$('pcToast').hidden=false;clearTimeout(window.pcTimer);window.pcTimer=setTimeout(()=>$('pcToast').hidden=true,2600)}function space(){location.href='科研开发空间-交互原型(10).html';}
 function detail(i,kind){const x=(kind==='models'?models:datasets)[i];modal(x.name,`<div class="pc-details"><p>资源所属：${x.provider}</p><p>${kind==='models'?'模型版本：'+x.version:'数据类型：'+x.kind}</p><p>状态：${x.status}</p>${x.space?'<p>关联科研空间：'+x.space+'</p>':'<p>'+x.desc+'</p>'}</div>`,(kind==='models'?button('收藏',`data-add-fav="${i}"`):'')+(x.status==='可使用'?button(kind==='models'?'使用模型':'进入科研空间',kind==='models'?`data-use="${i}"`:'data-space','primary'):''))}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;if(d.go){$('pcModal').close();go(d.go)}if(d.nav)go(d.nav);if('close'in d){$('pcModal').close();$('pcPublish').close()};if('space'in d)space();if(d.tab){tab=d.tab;query='';render()}if(d.msgFilter){msgFilter=d.msgFilter;render()}if(d.demandTab){demandTab=d.demandTab;render()}if('newDemand'in d)openDemandForm();if(d.demandView)demandDetail(d.demandView);if(d.demandEdit){$('pcModal').close();openDemandForm(d.demandEdit)}if(d.demandWithdraw)withdrawAsk(d.demandWithdraw);if(d.demandWithdrawOk)withdrawDo(d.demandWithdrawOk);if(d.teamTab){teamTab=d.teamTab;render()}if('readAll'in d){state.messages.forEach(m=>m.unread=false);persist();render()}if(d.message){const m=state.messages.find(x=>x.id===+d.message);m.unread=false;persist();render();modal(m.title,`<p>${m.time}</p><p>${E(m.body)}</p>`,button(m.route==='space'?'进入科研空间':'查看相关记录',m.route==='space'?'data-space':`data-related="${m.route}"`,'primary'))}if(d.related){$('pcModal').close();tab='申请记录';if(route===d.related)render();else{route=d.related;location.hash=route;render()}}if(d.resource!==undefined)detail(+d.resource,d.kind);if(d.app!==undefined){const x=applications[d.kind][+d.app];modal('申请详情',`<h3>${x.name}</h3><p>申请日期：${x.date}</p><p>当前状态：${badge(x.status)}</p><p>${E(x.reason)}</p>${x.space?'<p>关联空间：'+x.space+'</p>':''}`,x.space?button('查看科研空间','data-space','primary'):'')}if(d.use!==undefined){portalResource(models[+d.use].name,'模型',true)}if(d.favorite){const f=state.favorites.find(x=>x.id===+d.favorite);portalResource(f.name,f.type,false)}if(d.unfavorite){state.favorites=state.favorites.filter(x=>x.id!==+d.unfavorite);persist();render();toast('已取消收藏')}if(d.addFav!==undefined){const x=models[+d.addFav];if(!state.favorites.some(f=>f.name===x.name)){state.favorites.push({id:Date.now(),name:x.name,type:'模型',desc:x.desc||x.kind});persist()}toast('已加入我的收藏')}if(d.member){const m=members[+d.member];modal('调整成员角色',`<p>${m.name}</p><select id="memberRole" aria-label="团队角色"><option ${m.role==='普通成员'?'selected':''}>普通成员</option><option ${m.role==='团队管理员'?'selected':''}>团队管理员</option></select><p class="pc-note">仅演示当前页面内的角色调整。</p>`,button('保存',`data-save-member="${d.member}"`,'primary'))}if(d.saveMember){members[+d.saveMember].role=$('memberRole').value;$('pcModal').close();render();toast('已更新示例成员角色')}if(d.teamResource!==undefined){const x=(teamTab==='团队模型'?teamModels:teamData)[+d.teamResource];modal(x.name,`<p>归属团队：寒地水稻研究团队</p><p>版本：${x.version}</p><p>维护人：${x.person}</p><p>发布状态：${x.status}</p>`)}if(d.publish!==undefined){const x=(teamTab==='团队模型'?teamModels:teamData)[+d.publish];x.status='待审核';render();toast('示例发布申请已提交')}if(d.external)location.href=d.external==='模型中心'?'模型中心-模型列表页（调整）.html':'数据中心-数据集列表页.html'});
-window.addEventListener('hashchange',()=>{const next=location.hash.slice(1).split('?')[0];if(!['overview','messages','models','data','demands','projects','project','teams','team','accounts','favorites','settings'].includes(next)){go('overview');return}if(next!==route){tab=location.hash.includes('tab=applications')?'申请记录':'可使用';query=''}route=next;render();scrollTo(0,0)});$('pcModal').addEventListener('click',e=>{if(e.target===$('pcModal')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});if(PortalOrg.current().id!=='u-zhang'){models.splice(0);datasets.splice(0);applications.models=[];applications.data=[];if(!localStorage.getItem('agri-personal-v1:'+PortalOrg.current().id))state.favorites=[];}try{JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]').filter(x=>(x.applicantId||'u-zhang')===PortalOrg.current().id).forEach(x=>applications.models.unshift({name:x.name,date:x.date,status:x.status,reason:x.reason||x.description||'已提交使用申请',space:x.space||''}));JSON.parse(localStorage.getItem('LS_AUTH_APPS')||'[]').filter(x=>(x.applicantId||'u-zhang')===PortalOrg.current().id).forEach(x=>applications.data.unshift({name:x.name,date:x.submittedAt,status:x.status==='pending'?'审核中':x.status,reason:[x.use,x.note].filter(Boolean).join('；')}));}catch{}const initialRoute=location.hash.slice(1).split('?')[0];route=['overview','messages','models','data','demands','projects','project','teams','team','accounts','favorites','settings'].includes(initialRoute)?initialRoute:'overview';if(location.hash.includes('tab=applications'))tab='申请记录';render();
+window.addEventListener('hashchange',()=>{const next=location.hash.slice(1).split('?')[0];if(!['overview','messages','models','data','outcomes','demands','projects','project','teams','team','accounts','favorites','settings'].includes(next)){go('overview');return}if(next!==route){tab=location.hash.includes('tab=applications')?'申请记录':'可使用';query=''}route=next;render();scrollTo(0,0)});$('pcModal').addEventListener('click',e=>{if(e.target===$('pcModal')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});if(PortalOrg.current().id!=='u-zhang'){models.splice(0);datasets.splice(0);applications.models=[];applications.data=[];if(!localStorage.getItem('agri-personal-v1:'+PortalOrg.current().id)){state.favorites=[];state.messages=[];}}try{JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]').filter(x=>(x.applicantId||'u-zhang')===PortalOrg.current().id).forEach(x=>applications.models.unshift({name:x.name,date:x.date,status:x.status,reason:x.reason||x.description||'已提交使用申请',space:x.space||''}));JSON.parse(localStorage.getItem('LS_AUTH_APPS')||'[]').filter(x=>(x.applicantId||'u-zhang')===PortalOrg.current().id).forEach(x=>applications.data.unshift({name:x.name,date:x.submittedAt,status:x.status==='pending'?'审核中':x.status,reason:[x.use,x.note].filter(Boolean).join('；')}));}catch{}const initialRoute=location.hash.slice(1).split('?')[0];route=['overview','messages','models','data','outcomes','demands','projects','project','teams','team','accounts','favorites','settings'].includes(initialRoute)?initialRoute:'overview';if(location.hash.includes('tab=applications'))tab='申请记录';render();
 </script><script>
 
 function portalResource(name,type,run){
@@ -707,8 +1426,8 @@ if(F==='后台-模型管理.html'){
 if(F==='后台-数据集管理.html'){
  const base=window.renderGrid;window.renderGrid=()=>{base();QA('#dsGrid .ds-card').forEach(n=>{const id=n.dataset.id;QA.call(null,'#dsGrid .ds-card a[href]').filter(a=>a.closest('.ds-card')===n&&a.getAttribute('href').includes('详情编辑')).forEach(a=>{a.href=a.getAttribute('href').split('?')[0]+'?asset='+encodeURIComponent(id)})})};window.renderGrid();
 }
-if(F==='个人中心-高保真原型.html'){
- const base=window.resources;window.resources=kind=>base(kind)+M.recordsPanel(kind==='models'?'model':'dataset');M.refreshOutcomes=()=>window.render();window.render();
+if(F.startsWith('个人中心-')){
+ M.refreshOutcomes=()=>window.render();window.render();
 }
 if(F==='科研开发空间-详情页(9).html'){
  M.spaceContext={id:String(typeof spaceId!=='undefined'?spaceId:param.get('id')||'1'),name:typeof space!=='undefined'?space.name:Q('h1')?.textContent||'科研开发空间'};
@@ -874,8 +1593,8 @@ const cropOptions=['水稻','玉米','大豆','小麦'];
 let outcomeProjects=[];
 const outcomeEnvironmentFields=[['system','操作系统',['Ubuntu 22.04','Ubuntu 20.04']],['python','Python 版本',['3.10','3.11']],['framework','开发框架',['PyTorch 2.2','scikit-learn 1.4','不预装框架']],['cuda','CUDA',['不使用','12.1']]];
 const schemas={
- model:[['name','模型名称','text',null,true],['abbr','模型简称','text',null,true],['provider','提供方','text',null,true],['version','版本号','text',null,true],['business','业务分类','multi',['产量预测','长势监测','病虫害识别','补贴核查','土壤养分','作物与地块识别','变化监测'],true],['task','技术任务','multi',['图像分类','目标检测','语义分割','回归估测','时序预测'],true],['crop','适用作物','multi',cropOptions,true],['gpuType','推荐算力卡型','select',['NVIDIA A100 40GB','NVIDIA V100 32GB','NVIDIA RTX 4090 24GB','NVIDIA T4 16GB','CPU 推理（无 GPU）'],true],['gpuCount','GPU 卡数','number',null,true,'卡'],['gpuMemory','单卡显存要求','number',null,false,'GB'],['cpu','CPU 要求','number',null,false,'核'],['memory','内存要求','number',null,false,'GB'],['storage','存储要求','number',null,false,'GB'],['runtime','运行环境','environment'],['precision','推理精度','select',['FP16','FP32','INT8']],['source','成果来源','project',null,true],['owner','权属归属','text',null,true]],
- dataset:[['name','数据名称','text',null,true],['provider','提供方','text'],['version','版本号','text',null,true],['summary','数据简介','textarea'],['tags','标签','tags'],['dataType','数据类型','select',['结构化','非结构化'],true],['modality','数据形态','select',['表格','时序','无人机影像','遥感栅格','矢量','压缩包'],true],['crop','作物类型','multi',cropOptions,true],['year','数据年份','year'],['region','区域（行政区划）','select',['建三江分公司','红兴隆分公司','宝泉岭分公司']],['topic','关联专题','select',['作物长势','土壤墒情','产量估测']],['source','成果来源','project',null,true],['owner','权属归属','text']]
+ model:[['name','模型名称','text',null,true],['abbr','模型简称','text',null,true],['provider','提供方','text',null,true],['version','版本号','text',null,true],['business','业务分类','multi',['产量预测','长势监测','病虫害识别','补贴核查','土壤养分','作物与地块识别','变化监测'],true],['task','技术任务','multi',['图像分类','目标检测','语义分割','回归估测','时序预测'],true],['crop','适用作物','multi',cropOptions,true],['gpuType','推荐算力卡型','select',['NVIDIA A100 40GB','NVIDIA V100 32GB','NVIDIA RTX 4090 24GB','NVIDIA T4 16GB','CPU 推理（无 GPU）'],true],['gpuCount','GPU 卡数','number',null,true,'卡'],['gpuMemory','单卡显存要求','number',null,false,'GB'],['cpu','CPU 要求','number',null,false,'核'],['memory','内存要求','number',null,false,'GB'],['storage','存储要求','number',null,false,'GB'],['runtime','运行环境','environment'],['precision','推理精度','select',['FP16','FP32','INT8']],['source','关联课题（选填）','project',null,false],['owner','权属归属','text',null,true],['sourceDemandId','关联需求（选填）','demand',null,false]],
+ dataset:[['name','数据名称','text',null,true],['provider','提供方','text'],['version','版本号','text',null,true],['summary','数据简介','textarea'],['tags','标签','tags'],['dataType','数据类型','select',['结构化','非结构化'],true],['modality','数据形态','select',['表格','时序','无人机影像','遥感栅格','矢量','压缩包'],true],['crop','作物类型','multi',cropOptions,true],['year','数据年份','year'],['region','区域（行政区划）','select',['建三江分公司','红兴隆分公司','宝泉岭分公司']],['topic','关联专题','select',['作物长势','土壤墒情','产量估测']],['source','关联课题（选填）','project',null,false],['owner','权属归属','text']]
 };
 const richFields={model:[['intro','模型介绍',true,'填写模型介绍，可点击“查看模板”参考内容结构']],dataset:[['intro','数据介绍',true,'填写数据介绍，可点击“查看模板”参考内容结构']]};
 const outcomeTemplates={
@@ -894,6 +1613,7 @@ function field(spec,v){const [key,label,type='text',options,required=false,unit]
  if(type==='environment')return '<fieldset class="outcome-field outcome-wide outcome-runtime"><legend>运行环境 <span class="submission-required">*</span></legend><div class="outcome-grid">'+outcomeEnvironmentFields.map(([part,title,choices])=>{const value=v.environmentConfig[part],all=[...new Set(['',...choices,...(value?[value]:[])])];return '<div><label for="outcome-runtime-'+part+'">'+title+'</label><select id="outcome-runtime-'+part+'" name="runtime-'+part+'">'+all.map(option=>'<option value="'+esc(option)+'" '+(value===option?'selected':'')+'>'+esc(option||'请选择')+'</option>').join('')+'</select></div>';}).join('')+'</div></fieldset>';
  const need=key==='gpuMemory'?Number(v.gpuCount)>0:required,title='<label for="outcome-'+key+'">'+esc(label)+(need?' <b class="submission-required">*</b>':'')+'</label>',value=v[key]??'';let control;
  if(type==='project')control='<select id="outcome-source" name="sourceProjectId" '+(need?'required':'')+'><option value="">请选择课题</option>'+outcomeProjects.map(([id,title])=>'<option value="'+esc(id)+'" '+(v.sourceProjectId===id?'selected':'')+'>'+esc(title)+'</option>').join('')+'</select>';
+ else if(type==='demand')control='<select id="outcome-demand" name="sourceDemandId"><option value="">不关联需求</option>'+((window.PortalWork?.publicDemands()||[]).map(d=>'<option value="'+esc(d.id)+'" '+(v.sourceDemandId===d.id?'selected':'')+'>'+esc(d.title)+'</option>').join(''))+'</select>';
  else if(type==='select'){const choices=[...options];if(value&&!choices.includes(String(value)))choices.push(String(value));control='<select id="outcome-'+key+'" name="'+key+'" '+(need?'required':'')+'><option value="">请选择</option>'+choices.map(x=>'<option value="'+esc(x)+'" '+(value===x?'selected':'')+'>'+esc(x)+'</option>').join('')+'</select>';}
  else if(type==='textarea')control='<textarea id="outcome-'+key+'" name="'+key+'" rows="'+(key==='summary'?3:3)+'" maxlength="'+(key==='summary'?1000:500)+'" '+(need?'required':'')+'>'+esc(value)+'</textarea>';
  else if(type==='readonly')control='<div class="outcome-readonly">'+esc(value)+'</div><input type="hidden" name="'+key+'" value="'+esc(value)+'">';
@@ -941,7 +1661,7 @@ function simpleFieldError(messages){const box=$('#simple-errors');if(box)box.inn
 function captureDraft(){
  const form=$('#personal-model-form');if(!form)return;const data=new FormData(form),v=Object.fromEntries(data);
  for(const [key,,type]of schemas.model)if(type==='multi')v[key]=data.getAll(key);
- v.intro=safeHTML($('#outcome-intro').innerHTML);v.source=outcomeProjects.find(([id])=>id===v.sourceProjectId)?.[1]||'';
+ v.intro=safeHTML($('#outcome-intro').innerHTML);v.source=outcomeProjects.find(([id])=>id===v.sourceProjectId)?.[1]||'';v.sourceDemandName=window.PortalWork?.demand(v.sourceDemandId)?.title||'';
  v.environmentConfig={};for(const [key]of outcomeEnvironmentFields){v.environmentConfig[key]=data.get('runtime-'+key);delete v['runtime-'+key];}v.runtime=outcomeRuntimeText(v.environmentConfig);
  delete v.defaultAsset;valuesByKind.model={...valuesByKind.model,...v};
 }
@@ -963,7 +1683,7 @@ function renderModelForm(){
  modal.classList.remove('personal-debug');const v=valuesByKind.model;richRange=null;activeRichKey='intro';const assets=Object.values(M.assets()).filter(a=>a.kind==='model');
  const defaults=assets.length?'<label class="personal-default-asset">沿用已维护的资源资料（选填）<select name="defaultAsset" id="personal-model-defaults" onchange="fillPersonalModelDefaults(this.value)"><option value="">手动填写</option>'+assets.map(a=>'<option value="'+esc(a.id)+'" '+(a.id===submission.assetId?'selected':'')+'>'+esc(a.name)+' · '+esc(a.version||'')+'</option>').join('')+'</select></label>':'';
  const basic='<section class="outcome-card"><h3 class="outcome-card-title">模型基本信息</h3><div class="outcome-basic">'+coverHTML(v)+'<div class="outcome-grid">'+fieldsHTML(['name','abbr','provider','version','business','task','crop'],v)+'</div></div></section>';
- const side='<section class="outcome-card"><h3 class="outcome-card-title">推荐配置（性能要求）</h3><div class="outcome-card-body outcome-grid">'+fieldsHTML(['gpuType','gpuCount','gpuMemory','cpu','memory','storage','runtime','precision'],v)+'</div></section><section class="outcome-card"><h3 class="outcome-card-title">来源与权属</h3><div class="outcome-card-body outcome-grid outcome-grid-single">'+fieldsHTML(['source','owner'],v)+'</div></section>';
+ const side='<section class="outcome-card"><h3 class="outcome-card-title">推荐配置（性能要求）</h3><div class="outcome-card-body outcome-grid">'+fieldsHTML(['gpuType','gpuCount','gpuMemory','cpu','memory','storage','runtime','precision'],v)+'</div></section><section class="outcome-card"><h3 class="outcome-card-title">来源与权属</h3><div class="outcome-card-body outcome-grid outcome-grid-single">'+fieldsHTML(['source','sourceDemandId','owner'],v)+'</div></section>';
  showPersonalModal(submission.recordId?'编辑模型':'上传模型','<form id="personal-model-form" novalidate><div class="modal-body outcome-edit-body">'+defaults+imageSectionHTML()+basic+'<div class="outcome-editor-columns"><div class="outcome-editor-main">'+editorHTML(v)+'</div><aside class="outcome-editor-side">'+side+'</aside></div></div><div class="modal-footer"><div id="simple-errors" role="alert"></div><button type="button" onclick="closePersonalModel()">取消</button><button type="button" class="primary" id="personal-model-confirm" onclick="commitPersonalModel()">'+(submission.recordId?'保存修改':'上传模型')+'</button></div></form>');
  const form=$('#personal-model-form');for(const [key,,type]of schemas.model)if(type==='multi')updateOutcomeChoices(key);
  form.addEventListener('input',event=>{if(event.target.type!=='file')simpleFieldError([]);});form.addEventListener('change',event=>{if(event.target.type!=='file')simpleFieldError([]);});
@@ -1005,7 +1725,7 @@ function personalRowAction(label,action,id,disabled=false,reason=''){return '<bu
 const oldPersonalRecordsPanel=M.recordsPanel;
 M.recordsPanel=(kind='',space='')=>{
  if(kind!=='model')return oldPersonalRecordsPanel(kind,space);
- const rows=personalModelRows();return '<section class="mt-panel personal-model-records" id="mt-outcomes" data-personal-models="true"><div class="mt-toolbar"><h2 style="margin:0;flex:1">成果记录</h2>'+M.btn('上传模型','Meeting.submit("model")',true)+'</div><div class="mt-table-wrap"><table class="mt-table personal-model-table"><thead><tr><th>模型名称 / 版本</th><th>绑定课题</th><th>上传时间</th><th>部署与调试</th><th>审批状态</th><th>操作</th></tr></thead><tbody>'+rows.map(r=>{
+ const rows=personalModelRows();return '<section class="mt-panel personal-model-records" id="mt-outcomes" data-personal-models="true"><div class="mt-toolbar"><h2 style="margin:0;flex:1">成果记录</h2>'+M.btn('上传模型','Meeting.submit("model")',true)+'</div><div class="mt-table-wrap"><table class="mt-table personal-model-table"><thead><tr><th>模型名称 / 版本</th><th>关联课题</th><th>上传时间</th><th>部署与调试</th><th>审批状态</th><th>操作</th></tr></thead><tbody>'+rows.map(r=>{
   const editable=personalWritable(r.id),busy=personalBusy(r),ready=personalDeployed(r),passed=personalPassed(r),d=r.deployment,run=r.run;
   const deployment=d?.status==='preparing'?'部署中 '+d.progress+'%':ready?'已部署':d?.status==='failed'?'部署失败':'未部署';
   const debug=passed?'调试成功':run?.status==='running'?'调试中':run?.status==='failed'?'调试失败':run?.status==='stopped'?'调试已停止':'未调试';
@@ -1159,9 +1879,2041 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
 })();
 
 </script>
-<!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
-<link rel="stylesheet" href="assets/portal-teams.css">
-<script src="assets/portal-teams.js"></script>
-<script src="assets/portal-work-ui.js"></script>
-<script src="assets/portal-access.js"></script>
-</body></html>
+<!-- devdoc-1012:start --><script data-inline-source="assets/meeting/meeting-devdoc.js">
+/* ============================================================================
+   北大荒智慧农业协同创新平台 · 前端门户端
+   页面开发说明（📋 字段说明）+ 交互演示指引（🧪 交互演示指引）
+   ---------------------------------------------------------------------------
+   用途：给开发 / 测试 / 产品看「这一页有哪些字段、字段类型与长度、必填与校验、
+        状态如何流转、点哪里会发生什么」。形态与《洛书模型服务平台》的
+        image-custom-list.html / model-deployment.html 一致（悬浮入口 + 抽屉 + 分 Tab
+        的字段说明表 / 交互指引表），配色改用本项目门户品牌色。
+
+   设计口径（与门户端视觉体系一致，不用旧蓝皮 #2f54eb / #23ada4）
+     brand #005653 · soft #edf6f2 · page #f4f8f5 · text #10213a
+     secondary #526078 · border #dce5e9 · radius 8
+
+   字段长度口径来源（撰写时逐条对齐，未凭空编写）：
+     ① 本原型真实 DOM：带 maxlength 的输入直接采用其上限
+     ② 《模型上架元数据与接入配置_字段清单_v1_20260910.md》：模型字段、输入/输出 schema、
+        输入介质 ≤500MB、空间参考 CGCS2000（EPSG:4490）/ 分辨率 ≤2m、异步触发阈值、服务测试六项
+     ③ 《需求中心-定版功能清单与功能点-20260916.md》：需求对象字段与长度、获取记录字段、需求类型字典
+     ④ assets/meeting/meeting-core.js 内 M.schemas 与提交校验（版本号正则、必填、文件后缀）
+   凡本项目文档未定义、由原型尺度或行业惯例给出的参考值，一律标「建议」，并在抽屉底部注明。
+
+   权限说明按账号身份、团队归属和具体操作展示；本轮规则见 portal-org.js / portal-access.js。
+   成员账号绑定负责人，同负责人多团队；原型切换账号不代表生产授权实现。
+
+   本文件不依赖 Meeting 内核，可独立加载；不改动任何既有共享脚本。
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var BRAND = '#005653';
+  var DOCS = {};
+
+  /* ========================== 渲染层（通用） ============================ */
+  var CSS = [
+    '.mtdev-group{position:fixed;right:24px;bottom:24px;z-index:960;display:flex;gap:8px;width:max-content;cursor:grab;user-select:none;transition:opacity .2s}',
+    'body:has(dialog[open]) .mtdev-group,.mtdev-group.mtdev-dim{opacity:0;pointer-events:none}',
+    '.mtdev-btn{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:19px;font-size:14px;font-weight:500;white-space:nowrap;border:1px solid transparent;font-family:inherit;cursor:pointer;transition:all .2s}',
+    '.mtdev-btn.guide{background:' + BRAND + ';color:#fff;box-shadow:0 4px 12px rgba(0,86,83,.28)}',
+    '.mtdev-btn.guide:hover{background:#0a6b66;transform:translateY(-1px)}',
+    '.mtdev-btn.field{background:#edf6f2;color:' + BRAND + ';border-color:#c6ddd4;box-shadow:0 4px 12px rgba(0,86,83,.12)}',
+    '.mtdev-btn.field:hover{background:#dceee6;transform:translateY(-1px)}',
+    '.mtdev-mask{display:none;position:fixed;inset:0;background:rgba(10,30,28,.45);z-index:12000;align-items:center;justify-content:center}',
+    '.mtdev-mask.on{display:flex}',
+    '.mtdev-drawer{background:#fff;border-radius:8px;width:780px;max-width:92vw;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(6,40,38,.28)}',
+    '.mtdev-hd{display:flex;align-items:center;gap:10px;padding:16px 22px;border-bottom:1px solid #dce5e9;background:#f4f8f5;flex-shrink:0}',
+    '.mtdev-hd b{font-size:16px;color:#10213a;flex:1;font-weight:600}',
+    '.mtdev-hd .p{font-size:12px;color:#526078;white-space:nowrap}',
+    '.mtdev-x{font-size:16px;color:#526078;background:none;border:0;cursor:pointer;padding:2px 8px;border-radius:4px;line-height:1.4}',
+    '.mtdev-x:hover{color:#10213a;background:#e6efeb}',
+    '.mtdev-bd{padding:20px 22px;overflow-y:auto;flex:1;color:#10213a;font-size:13.5px;line-height:1.7}',
+    '.mtdev-tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:1px solid #dce5e9;margin:-4px 0 16px}',
+    '.mtdev-tab{padding:8px 14px;font-size:13.5px;color:#526078;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}',
+    '.mtdev-tab:hover{color:' + BRAND + '}',
+    '.mtdev-tab.on{color:' + BRAND + ';border-bottom-color:' + BRAND + ';font-weight:600}',
+    '.mtdev-sec{margin-bottom:22px}', '.mtdev-sec:last-child{margin-bottom:2px}',
+    '.mtdev-sec h4{margin:0 0 10px;font-size:14px;color:#10213a;font-weight:600}',
+    '.mtdev-intro{background:#f4f8f5;border-left:3px solid ' + BRAND + ';padding:12px 14px;border-radius:0 6px 6px 0;margin-bottom:18px;color:#31445c}',
+    '.mtdev-tw{overflow-x:auto;border:1px solid #dce5e9;border-radius:6px}',
+    '.mtdev-tw table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto}',
+    '.mtdev-tw-fx table{table-layout:fixed}',
+    '.mtdev-tw-fx .mtdev-tag{white-space:normal}',
+    '.mtdev-tw th,.mtdev-tw td{padding:8px 11px;text-align:left;border-bottom:1px solid #eef3f1;vertical-align:top;white-space:normal;word-break:break-word;overflow-wrap:anywhere}',
+    '.mtdev-tw th{background:#f4f8f5;color:#526078;font-weight:600;white-space:nowrap;position:sticky;top:0}',
+    '.mtdev-tw tr:last-child td{border-bottom:0}',
+    '.mtdev-tw td:first-child{font-weight:600;color:#10213a}',
+    '.mtdev-tw td code,.mtdev-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f4f8f5;border:1px solid #e4ecea;border-radius:3px;padding:0 4px;font-size:12px;color:#0a4b48;word-break:break-all;overflow-wrap:anywhere}',
+    '.mtdev-note{margin-top:8px;font-size:12px;color:#526078;line-height:1.65}',
+    '.mtdev-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;white-space:nowrap}',
+    '.mtdev-tag.do{background:#e6f4ec;color:#1a7f5a}',
+    '.mtdev-tag.no{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.req{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.mid{background:#eaf0fb;color:#3b6fb6}',
+    '.mtdev-tag.info{background:#edf6f2;color:' + BRAND + '}',
+    '.mtdev-tag.opt{background:#f0f2f5;color:#526078}',
+    '.mtdev-tag.warn{background:#fdf4e3;color:#b7791f}',
+    '.mtdev-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 14px}',
+    '.mtdev-flow i{font-style:normal;background:#edf6f2;color:' + BRAND + ';border:1px solid #c6ddd4;border-radius:14px;padding:3px 10px;font-size:12px}',
+    '.mtdev-flow s{text-decoration:none;color:#7d8c9c;font-size:12px}'
+  ].join('');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* 单元格状态标记：以 {{tag}} 开头时渲染为彩色标签
+     tag ∈ do 可用·免申请（绿） / mid 需申请（蓝） / opt 不显示·不适用（灰） / warn 注意（黄） / no 禁用（红） / info 品牌色 */
+  function cellHTML(c) {
+    var s = (c == null ? '' : String(c));
+    var m = /^\{\{(\w+)\}\}([\s\S]*)$/.exec(s);
+    if (m) return '<span class="mtdev-tag ' + m[1] + '">' + m[2] + '</span>';
+    return s;
+  }
+
+  function tableHTML(sec) {
+    var h = '<div class="mtdev-tw' + (sec.w ? ' mtdev-tw-fx' : '') + '"><table>';
+    if (sec.w) {
+      h += '<colgroup>';
+      sec.w.forEach(function (w) { h += '<col style="width:' + w + '">'; });
+      h += '</colgroup>';
+    }
+    h += '<thead><tr>';
+    sec.head.forEach(function (c) { h += '<th>' + c + '</th>'; });
+    h += '</tr></thead><tbody>';
+    sec.rows.forEach(function (r) {
+      h += '<tr>';
+      r.forEach(function (c) { h += '<td>' + cellHTML(c) + '</td>'; });
+      h += '</tr>';
+    });
+    return h + '</tbody></table></div>' + (sec.note ? '<p class="mtdev-note">' + sec.note + '</p>' : '');
+  }
+
+  function tabBody(tab) {
+    var h = '';
+    (tab.sections || []).forEach(function (s) {
+      h += '<div class="mtdev-sec"><h4>' + s.title + '</h4>' + tableHTML(s) + '</div>';
+    });
+    return h;
+  }
+
+  function drawerHTML(overlayId, bodyId, title, sub, tabs, prefix) {
+    var h = '<div class="mtdev-mask" id="' + overlayId + '">' +
+      '<div class="mtdev-drawer"><div class="mtdev-hd"><b>' + title + '</b>' +
+      (sub ? '<span class="p">' + sub + '</span>' : '') +
+      '<button class="mtdev-x" type="button" title="关闭（Esc）">✕</button></div>' +
+      '<div class="mtdev-bd" id="' + bodyId + '"><div class="mtdev-tabs">';
+    tabs.forEach(function (t, i) {
+      h += '<div class="mtdev-tab' + (i === 0 ? ' on' : '') + '" data-t="' + prefix + i + '">' + t.label + '</div>';
+    });
+    h += '</div>';
+    tabs.forEach(function (t, i) {
+      h += '<div class="mtdev-tabpane" id="' + prefix + i + '"' + (i === 0 ? '' : ' style="display:none"') + '>' + tabBody(t) + '</div>';
+    });
+    return h + '</div></div></div>';
+  }
+
+  function bindTabs(root) {
+    root.querySelectorAll('.mtdev-tab').forEach(function (t) {
+      t.onclick = function () {
+        root.querySelectorAll('.mtdev-tab').forEach(function (x) { x.classList.remove('on'); });
+        t.classList.add('on');
+        root.querySelectorAll('.mtdev-tabpane').forEach(function (p) { p.style.display = 'none'; });
+        var pane = root.querySelector('#' + t.dataset.t);
+        if (pane) pane.style.display = '';
+      };
+    });
+  }
+
+  function resetTabs(root) {
+    var tabs = root.querySelectorAll('.mtdev-tab');
+    var panes = root.querySelectorAll('.mtdev-tabpane');
+    tabs.forEach(function (t, i) { t.classList.toggle('on', i === 0); });
+    panes.forEach(function (p, i) { p.style.display = i === 0 ? '' : 'none'; });
+    var bd = root.querySelector('.mtdev-bd');
+    if (bd) bd.scrollTop = 0;
+  }
+
+  /* 悬浮按钮组与抽屉头部可拖拽（拖完抑制一次点击，避免误触） */
+  function draggable(el, handle, onMove) {
+    handle = handle || el;
+    var st = null;
+    handle.addEventListener('mousedown', function (e) {
+      if (e.button !== 0 || (e.target.closest && e.target.closest('.mtdev-x'))) return;
+      var r = el.getBoundingClientRect();
+      st = { sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, w: r.width, h: r.height, moved: false };
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!st) return;
+      var dx = e.clientX - st.sx, dy = e.clientY - st.sy;
+      if (!st.moved && Math.abs(dx) + Math.abs(dy) > 4) st.moved = true;
+      if (!st.moved) return;
+      if (el.style.position !== 'fixed') {
+        el.style.position = 'fixed'; el.style.margin = '0';
+        el.style.left = st.ox + 'px'; el.style.top = st.oy + 'px';
+        el.style.right = 'auto'; el.style.bottom = 'auto';
+      }
+      var mx = Math.max(0, window.innerWidth - st.w), my = Math.max(0, window.innerHeight - st.h);
+      el.style.left = Math.min(mx, Math.max(0, st.ox + dx)) + 'px';
+      el.style.top = Math.min(my, Math.max(0, st.oy + dy)) + 'px';
+      if (onMove) onMove();
+    });
+    document.addEventListener('mouseup', function () {
+      if (!st) return;
+      if (st.moved) {
+        var sup = function (ev) { ev.preventDefault(); ev.stopPropagation(); document.removeEventListener('click', sup, true); };
+        document.addEventListener('click', sup, true);
+      }
+      st = null;
+    });
+  }
+
+  /* ============================== 内容 ============================== */
+  /* 字段说明表列定义统一为：字段 / 类型 / 长度·取值 / 必填 / 说明与校验
+     交互指引表列定义统一为：交互场景 / 触发方式 / 预期效果 */
+
+  DOCS['__default__'] = {
+    name: '页面',
+    intro: '本页为门户端的说明 / 展示类页面，无业务表单字段。',
+    field: [{ label: '📄 页面结构', sections: [{ title: '内容区块', head: ['区块', '说明'], rows: [['页面标题区', 'h1 + 一句说明'], ['正文区', '静态图文内容'], ['页脚', '平台资源 / 关于平台 / 备案信息']] }] }],
+    guide: [{ label: '🧭 通用交互', sections: [{ title: '导航与入口', head: ['交互场景', '触发方式', '预期效果'], rows: [['顶部一级导航', '点击第 1~8 项', '跳转到对应模块首页'], ['登录 / 合作咨询', '点击页头按钮', '未登录时弹出登录弹窗；合作咨询跳「联系支持」']] }] }]
+  };
+
+  /* ---------------------------------------------------------------- 1 首页 */
+  DOCS['index.html'] = {
+    name: '门户首页',
+    intro: '对外门面页。承载平台定位、四个业务板块入口、通知公告与合作咨询入口。本页<b>不产生业务数据</b>，内容由后台「门户管理」维护后展示。',
+    field: [
+      {
+        label: '🏠 首页区块与字段', sections: [
+          {
+            title: '一、页面区块与字段', head: ['区块', '字段', '类型', '长度 / 取值', '说明'], rows: [
+              ['页头', '一级导航', '枚举 · 8 项', '首页 / 数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心 / 数据看板 / 关于平台', '当前项加下划线；页头高 64px'],
+              ['首屏轮播', '轮播屏（5 屏）', '对象数组', '每屏：标题 / 副标题 / 背景图 / 主按钮', '自动播放 + 指示器可点；深色遮罩保证文字可读'],
+              ['板块入口', '四张入口卡', '对象数组', '特色数据集 / 研究与成果模型 / 课题指南 / 示范与验证基地', '每卡：标题、一句说明、跳转链接'],
+              ['通知公告', '公告条目', '对象数组', '标题 + 日期 + 详情链接', '取后台「门户管理 · 通知公告」已发布内容'],
+              ['合作咨询', 'CTA 区块', '文本', '标题 + 说明 + 按钮', '按钮跳「关于平台 · 联系支持」'],
+              ['页脚', '四个分组', '静态', '平台资源 / 关于平台 / 联系方式 / 备案与版权', '页脚底色 rgb(0,80,78)']
+            ]
+          },
+          {
+            title: '二、内容来源（谁能改）', head: ['展示内容', '数据来源', '维护端', '说明'], rows: [
+              ['通知公告', '公告对象', '运营管理 · 门户管理 · 通知公告', '三态：草稿 / 已发布 / 已下线，仅已发布对外'],
+              ['首页文案与轮播图', '首页内容配置', '运营管理 · 门户管理 · 首页内容', '演示图占位，正式由运营上传'],
+              ['特色数据集', '数据集对象', '数据中心（公开状态=已公开）', '只展示已公开且元数据完整的数据集'],
+              ['研究与成果模型', '模型对象', '模型中心（已收录）', '收录动作在运营侧，用户侧看不到「上架」字样'],
+              ['课题指南', '课题 / 指南对象', '课题管理', '展示开放课题指南与公示信息']
+            ], note: '⚠️ 本页曾挂过「成果转化效果」入口，已按拍板口径删除——成果转化看板不属门户，统一由一级导航「数据看板」承载。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🧭 首页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['轮播切换', '点击指示器 / 自动播放；键盘 ←→', '切换 5 屏，当前屏指示器高亮'],
+              ['一级导航', '点击页头 8 项中任一项', '跳转到对应模块首页，当前项加下划线'],
+              ['板块入口', '点击任一入口卡 / 「查看全部」', '跳转到数据中心 / 模型中心 / 课题中心列表页'],
+              ['通知公告', '点击任一条', '跳转公告详情页'],
+              ['合作咨询', '点击「合作咨询 →」', '跳转「关于平台 · 联系支持」'],
+              ['登录门控', '未登录时点击发布 / 申请类入口', '弹出登录弹窗（演示登录态），不直接跳业务表单']
+            ]
+          },
+          {
+            title: '二、演示口径', head: ['项', '说明'], rows: [
+              ['演示数据', '轮播图、公告、入口卡数量均为演示值；正式内容由后台「门户管理」维护'],
+              ['不做的统计', '本页不展示调用量、经济价值等无数据来源的指标'],
+              ['响应式', '1100–1199px 收起一级导航为汉堡入口，避免 8 项撑破页宽']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ----------------------------------------------------------- 2 地图引擎 */
+  DOCS['map-engine.html'] = {
+    name: '遥感影像检索 · 地图引擎',
+    intro: '遥感影像的检索与预览页。左侧为查询条件，右侧为天地图底图 + 结果叠加；「申请全量数据」走数据申请流程。',
+    field: [
+      {
+        label: '🛰 查询条件字段', sections: [
+          {
+            title: '一、查询条件（左侧栏）', head: ['字段', '类型', '长度 / 取值', '必填', '说明与校验'], rows: [
+              ['数据类型', '枚举', '卫星影像 / 无人机影像', '—', '切换后下方字段组随之变化'],
+              ['卫星 / 传感器', '下拉 · 单选', 'GF2 / GF1 / Sentinel-2 / Landsat-8 …', '<span class="mtdev-tag req">是</span>', '带 <code>*</code> 标识，不选不允许提交'],
+              ['检索区域', '下拉 · 单选', '建三江 / 友谊农场 / 八五九农场 …', '<span class="mtdev-tag req">是</span>', '与「预设区域 / 地图框选 / 当前视图」二选一，框选优先'],
+              ['时间范围', '日期区间', '起止日期', '<span class="mtdev-tag opt">否</span>', '结束日期早于开始日期时报错'],
+              ['云量', '单选', '不限 / ≤10% / ≤20% / ≤30%', '<span class="mtdev-tag opt">否</span>', '仅卫星影像有效'],
+              ['影像标识', '文本', '建议 ≤64 字符', '<span class="mtdev-tag opt">否</span>', '如 <code>GF2_PMS1_20260612_建三江</code>'],
+              ['影像文件名', '文本', '支持通配符', '<span class="mtdev-tag opt">否</span>', '如 <code>*.tif</code>、<code>GF2_*.tif</code>'],
+              ['影像 ID', '文本', '建议 ≤32 字符', '<span class="mtdev-tag opt">否</span>', '如 <code>IMG-20260612-001</code>'],
+              ['光谱类型', '下拉', '多光谱 / 全色 / 高光谱', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['分辨率 / 航高', '下拉', '≤2m / ≤5m / …', '<span class="mtdev-tag opt">否</span>', '无人机数据用「航高」口径'],
+              ['覆盖地块', '文本', '建议 ≤64 字符', '<span class="mtdev-tag opt">否</span>', '如「建三江 / 友谊农场」'],
+              ['采集日期', '日期区间', '起止日期', '<span class="mtdev-tag opt">否</span>', '无人机数据分列于此'],
+              ['要素类型', '下拉', '地块 / 道路 / 沟渠 …', '<span class="mtdev-tag opt">否</span>', '矢量图层检索用'],
+              ['行政区', '下拉', '黑龙江省下属区县', '<span class="mtdev-tag opt">否</span>', '与检索区域互斥时可任选其一'],
+              ['面积（亩）', '数值 · 区间', '≥0，最小 ≤ 最大', '<span class="mtdev-tag opt">否</span>', '最小大于最大时报错'],
+              ['年份', '下拉', '2021—2026', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['坐标系', '下拉', '<code>CGCS2000</code> / <code>WGS84</code>', '<span class="mtdev-tag opt">否</span>', '平台空间参考默认 CGCS2000（EPSG:4490）'],
+              ['叠加透明度', '滑杆', '0—100', '—', '只影响预览，不影响检索结果']
+            ]
+          },
+          {
+            title: '二、查询结果字段', head: ['字段', '类型', '说明'], rows: [
+              ['结果计数', '数字', '当前条件下命中的影像 / 要素条数'],
+              ['影像条目', '对象', '缩略图、影像标识、采集日期、云量、分辨率、坐标系'],
+              ['底图切换', '枚举', '<code>影像图</code> / <code>矢量图</code>（天地图）'],
+              ['申请全量数据', '按钮', '提交数据申请，进入数据使用申请流程（不在本页出结果）']
+            ], note: '底图为天地图在线服务（演示用 tk）；正式环境由平台统一配置，密钥不得写在前端。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🗺 检索与地图交互', sections: [
+          {
+            title: '一、检索交互', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['提交查询', '填好条件后点「提交查询」', '结果面板刷新计数与条目列表；地图叠加更新'],
+              ['必填校验', '不选「卫星 / 传感器」直接提交', '字段下方提示，且不发起查询'],
+              ['区间校验', '面积最小 > 最大 或 结束日期 < 开始日期', '提示取值范围错误'],
+              ['空间范围选择', '点「预设区域」/「地图框选」/「当前视图」', '三种方式互斥，地图框选优先于预设区域'],
+              ['结果与地图联动', '点击结果条目', '地图定位到该影像范围并高亮'],
+              ['申请全量数据', '点「申请全量数据」', '登录门控 → 数据申请表单；提交后进入授权流程']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 3 数据中心 · 数据集列表页 */
+  DOCS['数据中心-数据集列表页.html'] = {
+    name: '数据中心 · 数据集列表',
+    intro: '数据集的检索与浏览页。筛选条件支持多选并与 URL 同步（<code>m_形态 / m_格式 / m_标注</code>），刷新与分享后可还原；未维护元数据的数据集归入「未填写」。',
+    field: [
+      {
+        label: '🗂 数据集字段', sections: [
+          {
+            title: '一、数据集对象（字段与后台元数据一致）', head: ['字段', '类型', '长度 / 取值', '必填', '说明与校验'], rows: [
+              ['数据集编号', '文本 · 只读', '<code>DS</code> + 日期 + 3 位序号', '系统生成', '如 <code>DS20260923018</code>，唯一'],
+              ['数据名称', '文本', '建议 ≤60 字符', '<span class="mtdev-tag req">是</span>', '列表主标题，卡片上超长省略'],
+              ['提供方', '文本', '建议 ≤40 字符', '<span class="mtdev-tag req">是</span>', '机构 / 团队名称'],
+              ['数据简介', '多行文本', '建议 ≤300 字符', '<span class="mtdev-tag req">是</span>', '卡片与详情摘要区共用'],
+              ['标签', '多值文本', '建议 ≤5 个', '<span class="mtdev-tag opt">否</span>', '英文逗号 / 顿号分隔'],
+              ['版本号', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '<span class="mtdev-tag req">是</span>', '不允许中文与空格；错误提示「版本号请使用字母、数字、点或连字符」'],
+              ['数据形态', '枚举 · 单选', '遥感影像 / 矢量 / 表格 / 时序 / 图像 / 文本', '<span class="mtdev-tag req">是</span>', '左侧筛选「数据形态」直接取该字段'],
+              ['数据格式', '文本', '如 <code>GeoTIFF</code> / <code>CSV</code> / <code>SHP</code> / <code>ZIP</code>', '<span class="mtdev-tag req">是</span>', '与筛选「数据格式」一致'],
+              ['标注情况', '枚举 · 单选', '有标注 / 无标注', '<span class="mtdev-tag req">是</span>', '决定「可训练 / 仅参考」的口径'],
+              ['数据规模', '文本', '如「12.6 万条」「256 景」', '<span class="mtdev-tag req">是</span>', '数值 + 单位，不做换算'],
+              ['适用作物', '文本', '水稻 / 玉米 / 大豆 …', '<span class="mtdev-tag opt">否</span>', '供筛选与检索'],
+              ['区域', '文本', '黑龙江省下属农区', '<span class="mtdev-tag opt">否</span>', '与数据中心区域口径一致'],
+              ['数据年份', '文本 / 年份', '如 <code>2021—2025</code>', '<span class="mtdev-tag opt">否</span>', '—'],
+              ['权属归属', '枚举', '个人 / 团队 / 单位 / 联合', '<span class="mtdev-tag req">是</span>', '联合可多填归属方'],
+              ['授权范围', '枚举', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '<span class="mtdev-tag req">是</span>', '决定申请审批链与能否对外'],
+              ['公开状态', '枚举 · 系统', '<code>on</code> 已公开 / <code>off</code> 未维护 / <code>down</code> 已下架', '系统', '仅「已公开」出现在列表；下架不出现在任何列表'],
+              ['更新人 / 更新时间', '系统', '时间戳', '系统', '审计留痕，卡片右下角展示']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['关键词', '文本输入', '数据名称 / 作物 / 关键词', '占位文案：搜索数据名称、作物或关键词'],
+              ['发布时间', '下拉', '不限 / 近一年 / 近三年 …', '按数据集更新时间过滤'],
+              ['数据形态', '多选', '由元数据取值聚合并计数', '点击后 URL 追加 <code>m_modality=…</code>'],
+              ['数据格式', '多选', '由元数据取值聚合并计数', 'URL 追加 <code>m_format=…</code>'],
+              ['标注情况', '多选', '有标注 / 无标注 / 未填写', 'URL 追加 <code>m_annotation=…</code>'],
+              ['更多筛选', '折叠区', '作物 / 区域 / 时间', '默认折叠，避免首屏被筛选占满'],
+              ['视图', '切换', '卡片 / 列表', '同一数据两种呈现，保留已选条件'],
+              ['排序', '下拉', '综合 / 最新 / 引用最多', '默认综合排序']
+            ], note: '筛选项的计数来自当前其它条件已选后的结果集（联级计数），不是全量计数。'
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['20%', '16%', '16%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['卡片主操作', '{{do}}开始使用', '{{mid}}申请使用', '按钮文案由 <code>actsHtml()</code> 按 <code>isHighRole()</code> 切换；两者都先过 <code>requireAuth()</code>'],
+              ['点击卡片主操作', '{{do}}进详情·开预览', '{{mid}}进详情·弹申请', '跳转带 <code>&amp;use=1</code> / <code>&amp;apply=1</code>，由详情页据此决定落点'],
+              ['专题条件栏「申请本专题全部 →」', '{{opt}}不显示', '{{do}}显示', '仅当已选「专题」筛选且为低权限时出现，见 <code>renderCtx()</code>'],
+              ['调用「申请本专题全部」', '{{opt}}不适用', '{{do}}批量写申请', '按钮对高权限不出现；被直接调用时高权限亦早退并提示「当前角色已获授权，无需申请」'],
+              ['查看详情 / 搜索 / 筛选 / 视图切换', '{{do}}可用', '{{do}}可用', '与本页角色无关'],
+              ['未登录时点申请类入口', '{{warn}}先登录', '{{warn}}先登录', '<code>requireAuth()</code>；两角色一致']
+            ]
+          },
+          {
+            title: '二、判定口径与数据落点', w: ['20%', '80%'], head: ['项', '说明'], rows: [
+              ['角色变量', '<code>ROLE</code>，默认 <code>\'low\'</code>；<code>isHighRole()</code> 判 <code>ROLE === \'high\'</code>'],
+              ['角色切换入口', '页头右上头像下拉「切换为高权限（免申请）/ 切换为低权限科研人员」，运行时执行 <code>switchRole()</code>'],
+              ['申请记录落点', '<code>localStorage</code> 键 <code>LS_AUTH_APPS</code>，单条字段 <code>{appId, name, form, use, note, submittedAt, status:\'pending\'}</code>'],
+              ['登录门控', '<code>requireAuth()</code>：未登录先弹登录，登录成功后继续原动作，不丢失目标数据集'],
+              ['原型 vs 生产', '原型只建模 2 个角色用于演示；生产由中台统一身份与权限接管，角色划分以中台为准']
+            ], note: '⚠️ 高权限「免申请」≠「无限制」：仍受数据集公开状态与授权范围约束——未公开数据不进入本列表，已下架数据任何角色都看不到。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与筛选交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['关键词搜索', '输入框输入后回车 / 点「搜索」', '结果刷新，页码回到第 1 页'],
+              ['多选筛选', '勾选任一「数据形态 / 数据格式 / 标注情况」', '结果与计数实时更新，URL 同步为 <code>m_*</code>，可复制分享'],
+              ['刷新还原', '带着 <code>m_*</code> 参数的 URL 刷新页面', '筛选状态与结果一并还原'],
+              ['进一步筛选', '展开「更多筛选：作物、区域与时间」', '显示其余条件组，已选项沿用'],
+              ['视图切换', '点「卡片 / 列表」', '仅切换呈现，不改变结果集'],
+              ['清空筛选条件', '点「清空筛选条件」', '清空所有条件与 <code>m_*</code> 参数，回到初始结果'],
+              ['分页', '底部翻页 / 切每页条数', '切每页条数后回到第 1 页'],
+              ['进入详情', '点卡片或「查看详情」', '跳转数据集详情页（携带数据集编号）']
+            ]
+          },
+          {
+            title: '二、元数据缺失时的口径', head: ['情况', '处理', '原因'], rows: [
+              ['<code>pub=off</code> 且未维护', '不出现在列表', '未公开数据不对门户开放'],
+              ['元数据字段为空', '筛选值归入「未填写」并在界面注明', '避免用假值填充、也不隐藏条目'],
+              ['已下架 <code>down</code>', '列表不展示，仅后台可见', '下架是运营动作，门户不出现']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* --------------------------------------------- 4 数据中心 · 数据集详情 */
+  DOCS['数据中心-数据集详情.html'] = {
+    name: '数据中心 · 数据集详情',
+    intro: '单个数据集的说明、样例预览与使用申请入口。用户侧只有两个动作：<b>申请使用</b>（授权）与<b>声明成果数据</b>（提交成果）。',
+    field: [
+      {
+        label: '📄 数据基本信息', sections: [
+          {
+            title: '一、基本信息字段', head: ['字段', '类型', '长度 / 取值', '说明'], rows: [
+              ['数据名称', '文本', '—', '页头 h1，与列表一致'],
+              ['数据集编号', '文本 · 只读', '<code>DS</code> + 日期 + 序号', '用于跨页定位与接口入参'],
+              ['提供方', '文本', '—', '机构 / 团队'],
+              ['数据形态 / 格式', '枚举 / 文本', '遥感影像 / 矢量 / 表格 / 时序 …', '决定预览区的呈现形态'],
+              ['标注情况', '枚举', '有标注 / 无标注', '有标注 → 可训练'],
+              ['数据规模', '文本', '12.6 万条 / 256 景 …', '展示值，不做换算'],
+              ['时间范围', '文本', '2021—2025', '观测 / 采集时间跨度'],
+              ['空间范围与坐标系', '文本', '<code>CGCS2000</code>（EPSG:4490）', '平台空间参考统一口径'],
+              ['适用作物 / 区域', '文本', '水稻 / 玉米 / 大豆', '检索用'],
+              ['版本', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '与数据集对象同源'],
+              ['权属归属 / 授权范围', '枚举', '个人 / 团队 / 单位 / 联合；仅平台内使用 …', '决定申请审批链'],
+              ['简介', '富文本', '建议 ≤2000 字符', '介绍 Tab 正文，模板：数据介绍 / 关键参数 / 适用方向'],
+              ['更新人 / 更新时间', '系统', '时间戳', '审计留痕']
+            ]
+          },
+          {
+            title: '二、数据预览字段', head: ['项', '类型', '说明'], rows: [
+              ['样例表头', '文本数组', '来自数据集字段定义（逐列展示字段名）'],
+              ['样例行', '对象数组', '演示数据，正式环境取前 N 行真实样例'],
+              ['分页', '控件', '样例分页，不影响全量数据'],
+              ['数据二次查询', '按钮', '在样例上按字段值做包含匹配，返回「匹配 N 条样例记录」']
+            ], note: '样例预览只读；如需全量数据，走「申请使用」，平台不做数据导出。'
+          },
+          {
+            title: '三、申请使用（科研开发空间）表单', head: ['字段', '类型', '长度 / 取值', '必填', '校验'], rows: [
+              ['数据集', '只读', '当前数据集名称', '—', '自动带出，不可改'],
+              ['数据格式', '只读', '如 <code>GeoTIFF</code> / 样例表', '—', '自动带出'],
+              ['申请日期', '日期', '系统当天', '—', '自动带出'],
+              ['授权用途', '下拉 · 单选', '科研研究 / 模型训练与验证 / 教学 / 其他', '<span class="mtdev-tag req">是</span>', '不选不能提交'],
+              ['使用说明 / 拟用科研开发空间范围', '多行文本', '建议 ≤500 字符', '<span class="mtdev-tag opt">否</span>', '占位示例：在科研开发空间内基于本数据卡进行长势模型训练与验证，不导出'],
+              ['承诺勾选', '复选框', '我已阅读并承诺遵守上述数据使用要求', '<span class="mtdev-tag req">是</span>', '不勾选不允许提交']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['20%', '16%', '16%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['页头主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>applyBtnHtml()</code>；低权限若已有待审批申请则显示「已申请 · 待审批」并禁用'],
+              ['主按钮下方说明文案', '{{info}}已获授权·无需申请', '{{info}}获批后使用', '<code>authNote()</code> 原文：高权限「当前角色已获授权 · 可直接使用，无需申请」，低权限「获批后在科研开发空间内使用」'],
+              ['点击「开始使用」', '{{do}}开数据预览', '{{opt}}不适用', '<code>startUse()</code> → <code>switchTab(\'preview\')</code>，并提示已获授权'],
+              ['点击「申请使用」', '{{opt}}不适用', '{{do}}弹申请表单', '<code>applyUse()</code>；若被高权限直接调用则转 <code>startUse()</code>'],
+              ['已存在待审批申请', '{{opt}}不适用', '{{warn}}按钮禁用', '提示去「我的数据授权」查看；<code>getApplyState()</code> 判 <code>status===\'pending\'</code>'],
+              ['成果声明 / 数据二次查询 / Tab 切换', '{{do}}可用', '{{do}}可用', '与本页角色无关'],
+              ['未登录时点主按钮', '{{warn}}先登录', '{{warn}}先登录', '<code>requireAuth()</code>；两角色一致']
+            ]
+          },
+          {
+            title: '二、申请表单在两种角色下的可见性', w: ['30%', '14%', '16%', '40%'], head: ['表单字段', '平台管理员', '科研人员', '说明'], rows: [
+              ['数据集 / 数据格式 / 申请日期', '{{opt}}不出现（不开弹窗）', '{{do}}只读，自动带出', '整个弹窗仅低权限会打开'],
+              ['授权用途', '{{opt}}—', '{{do}}必填 · 下拉单选', '不选无法提交'],
+              ['使用说明 / 拟用科研开发空间范围', '{{opt}}—', '{{do}}选填 · 多行文本', '建议 ≤500 字符'],
+              ['承诺勾选', '{{opt}}—', '{{do}}必填 · 复选框', '不勾选无法提交']
+            ], note: '⚠️ 原型只建模 2 个角色；生产环境的角色与授权来源以中台「统一身份 + 后台授权管理」为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 详情页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['Tab 切换', '点「数据介绍 / 数据预览」', '切换正文区，不刷新页面'],
+              ['申请使用', '点「申请使用」按钮', '弹出申请表单（授权用途 + 使用说明 + 承诺勾选）'],
+              ['提交申请', '填好后点「提交申请」', '校验通过 → 提示已提交，进入授权审批流程；未勾选承诺时提示'],
+              ['取消申请', '点「取消」/ ✕ / 遮罩', '关闭弹窗，不产生记录'],
+              ['数据二次查询', '点「数据二次查询」', '切到预览并弹出查询框，按字段值过滤样例行，显示匹配条数'],
+              ['声明成果数据', '点「声明成果数据」', '打开成果提交表单（成果数据 · 14 项元数据 + 介绍 + 材料）'],
+              ['未登录门控', '未登录点申请类按钮', '先走登录，再回到申请']
+            ]
+          },
+          {
+            title: '二、口径提醒', head: ['项', '说明'], rows: [
+              ['用户侧动作只有两个', '「申请使用」与「声明成果数据」；收录 / 上架是运营侧内部动作，不出现在用户界面'],
+              ['不提供下载', '门户不提供原始数据下载，全部在科研开发空间内使用'],
+              ['授权范围', '按具体账号或团队、资源及用途判定使用资格']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 5 模型中心 · 模型列表页 */
+  DOCS['模型中心-模型列表页（调整）.html'] = {
+    name: '模型中心 · 模型列表',
+    intro: '已收录模型的检索与浏览页。左侧为多维筛选（模型类型 / 业务能力 / 适用作物 / 更新时间 / 技术任务），右侧为模型卡片。列表只展示<b>已收录</b>的模型。',
+    field: [
+      {
+        label: '🤖 模型卡片字段', sections: [
+          {
+            title: '一、模型对象字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['模型名称', '文本', '建议 ≤60 字符', '<span class="mtdev-tag req">是</span>', '卡片主标题；后台新建模型时系统生成编号 <code>MDL-YYYY-N00000</code>'],
+              ['模型简称 / 英文名', '文本', '建议 ≤40 字符，不含版本号', '<span class="mtdev-tag opt">否</span>', '如 <code>RiceYield-SatWx</code>'],
+              ['提供方', '文本', '机构 / 团队 / 个人（按权属归属）', '<span class="mtdev-tag req">是</span>', '来自成果提交的署名方式'],
+              ['业务分类', '受控字典', '如产量预测 / 长势监测 / 病虫害识别 …', '<span class="mtdev-tag req">是</span>', '由运营维护，不允许提交人自造'],
+              ['技术任务', '受控字典 · 单选', '图像分类 / 目标检测 / 语义分割 / 回归估测 / 时序预测', '<span class="mtdev-tag req">是</span>', '决定结果区渲染形态，也是筛选维度'],
+              ['适用作物', '受控字典 · 多选', '水稻 / 玉米 / 大豆 …', '<span class="mtdev-tag req">是</span>', '与数据中心作物口径对齐'],
+              ['场景标签', '受控字典', '限 3 个', '<span class="mtdev-tag opt">否</span>', '页头展示，超出折叠'],
+              ['版本号', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '<span class="mtdev-tag req">是</span>', '当前版本以 chip 标识「当前版本」'],
+              ['被调用次数', '数字 · 系统', '≥0', '系统', '试跑 + API 调用计数'],
+              ['更新时间', '系统', '时间戳', '系统', '上架 / 更新时间取系统时间']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['关键词', '文本输入', '名称或业务问题', '占位：搜索名称或业务问题，如：玉米倒伏识别'],
+              ['模型类型', '多选', '受控字典', '按技术任务分组展示'],
+              ['业务能力', '多选', '受控字典', '按业务分类展示'],
+              ['适用作物', '多选', '水稻 / 玉米 / 大豆 …', '与数据中心作物口径一致'],
+              ['更新时间', '下拉', '近一月 / 近半年 / 近一年', '—'],
+              ['技术任务', '多选', '5 类受控字典', '决定结果区形态口径'],
+              ['仅我收藏', '复选框', '本地收藏（浏览器本地存储）', '演示态；正式环境随账号持久化']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['22%', '15%', '15%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['卡片「在线试用」', '{{do}}可用', '{{do}}可用', '两角色一致：试用免审批，跳「模型运行台」；受上架状态拦截，见下表'],
+              ['卡片主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>actionsOf(m)</code> 按 <code>isHighRole()</code> 切换文案'],
+              ['点击主按钮', '{{do}}跳模型运行台', '{{mid}}弹使用申请', '<code>startUse()</code> / <code>openModelAction(m,\'use\')</code>'],
+              ['收藏 / 搜索 / 多维筛选 / 清空筛选', '{{do}}可用', '{{do}}可用', '与本页角色无关']
+            ]
+          },
+          {
+            title: '二、同页的另两条分支轴（非角色）', w: ['14%', '14%', '46%', '26%'], head: ['分支轴', '取值', '对可用性的影响', '对应实现'], rows: [
+              ['模型上架状态', '已上架 / 未上架', '未上架时「在线试用」与主按钮均被拦截并给出提示', '<code>svcUnpublished(m)</code> → <code>SVC_MSG</code>'],
+              ['登录态', '已登录 / 未登录', '未登录点「开始使用」先弹登录，登录后进运行台', '<code>startUse()</code> 内 <code>if(!LOGGED)</code>']
+            ], note: '⚠️ 三条分支互相独立、别混为一谈：<b>角色</b>决定按钮文案，<b>上架状态</b>与<b>登录态</b>决定动作能否继续。原型只建模 2 个角色，实际以中台为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与筛选交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['搜索模型', '输入关键词回车', '卡片列表实时过滤'],
+              ['多维筛选', '勾选左侧任一维度', '结果更新，已选项可单独取消'],
+              ['收藏', '点卡片「收藏」或勾选「仅我收藏」', '收藏状态本地保存；「仅我收藏」只显示已收藏项'],
+              ['查看详情', '点卡片', '跳转模型详情页（模型介绍 / 应用案例 / 对外提供 / 版本迭代 / 成果转化）'],
+              ['进入运行台', '点「在线试用」/「开始使用」', '跳转「模型运行台」；未授权时先走申请'],
+              ['清空筛选', '点「筛选」面板内清空', '恢复全部结果']
+            ]
+          },
+          {
+            title: '二、展示口径', head: ['项', '说明'], rows: [
+              ['只展示已收录', '运营侧决定是否收录进模型中心，「上架」是内部动作，用户侧无此词'],
+              ['未授权不可用', '能看见 ≠ 能调用；无授权时按钮引导至申请'],
+              ['结果区形态', '由「技术任务」决定（分类 / 检测 / 分割 / 回归 / 时序）']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 6 模型中心 · 模型详情 */
+  DOCS['模型中心-模型详情（调整）.html'] = {
+    name: '模型中心 · 模型详情',
+    intro: '单个模型的介绍、接入信息与成果转化链路。右栏「服务与接入信息」的字段来自运营侧「能力共享 · 接口管理 / 服务上架」，不是提交人填写的。',
+    field: [
+      {
+        label: '🔌 服务与接入信息', sections: [
+          {
+            title: '一、右栏 · 服务与接入信息（来源：能力共享）', head: ['字段', '类型', '取值 / 示例', '说明'], rows: [
+              ['能力形态', '枚举', '沙箱试用 / API；同步 / 异步', '决定「在线试用」的呈现方式'],
+              ['接口与调用', '文本', '<code>REST /v1/infer</code>（同步返回）', '大批量输入自动转异步任务'],
+              ['鉴权方式', '文本', '平台统一身份 + 授权令牌', 'API 调用需个人密钥，密钥不落前端'],
+              ['限流与配额', '文本', 'QPS / 并发 / 日配额', '是否计入个人配额由平台策略决定'],
+              ['输入介质与大小上限', '枚举 + 数值', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX，单文件 ≤500 MB', '与试用区上传提示同源'],
+              ['空间参考与精度', '文本', '<code>CGCS2000</code>（EPSG:4490），分辨率 ≤2 m', '近景类模型写「无空间参考要求」'],
+              ['异步触发阈值', '条件必填', '预计耗时 &gt; 30 秒 或 单次输入 &gt; 500 MB', '决定按钮是「▶ 运行」还是「提交并运行」'],
+              ['结果留存与下载', '文本', '结果文件可下载；留存 N 天；是否提供 ZIP', '—'],
+              ['服务测试记录', '记录 · 硬门槛', '连通性 / 鉴权 / 输入校验 / 输出结构 / 耗时 / 错误码', '六项测试通过方可发布；每次版本更新须重测']
+            ], note: '⭐ 唯一真源：输入 / 输出 schema 是唯一真源，试用参数面板、API 文档、结果文件格式都必须由它派生。'
+          },
+          {
+            title: '二、来源与权属 / 版本与成果关系', head: ['字段', '类型', '取值', '说明'], rows: [
+              ['来源', '枚举', '自主开发 / 合作成果 / 其他', '成果提交时填写'],
+              ['权属归属', '枚举 · 可多选', '个人 / 团队 / 单位 / 联合', '联合可多填归属方'],
+              ['署名方式', '文本', '论文署名 / 著作权人示例', '页头「提供方」显示名'],
+              ['依托课题', '关联', '课题编号', '有则引导到结题成果登记'],
+              ['授权范围', '枚举', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '决定申请调用审批链'],
+              ['敏感级别', '枚举', '公开 / 内部 / 涉密-仅登记不展示', '涉密带警示，不对外展示'],
+              ['版本号 + 变更说明', '文本', '每次迭代登记', '页头版本 chip'],
+              ['当前版本开关', '单选 · 唯一', '唯一生效版本', '历史版本只读、可追溯'],
+              ['成果关系', '关联', '成果 ID', '与个人中心「提交成果记录」同一份数据']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🔐 权限与角色', sections: [
+          {
+            title: '一、角色 × 操作', w: ['22%', '15%', '15%', '48%'], head: ['操作 / 入口', '平台管理员（高权限）', '科研人员（低权限）', '说明与实现'], rows: [
+              ['页头「在线试用」', '{{do}}可用', '{{do}}可用', '两角色一致：试用免审批，跳「模型运行台」'],
+              ['页头主按钮', '{{do}}开始使用', '{{mid}}申请使用', '<code>renderHeadCta()</code> 按 <code>isHighRole()</code> 切换'],
+              ['主按钮下方说明文案', '{{info}}已获授权·无需申请', '{{info}}试用免审批', '高权限原文「当前角色已获授权 · 可直接使用，无需申请」；低权限「试用免审批 · 业务与科研使用均在此申请」'],
+              ['切换 Tab / 查看右栏接入信息', '{{do}}可用', '{{do}}可用', '与本页角色无关']
+            ]
+          },
+          {
+            title: '二、同页的另两条分支轴（非角色）', w: ['14%', '14%', '46%', '26%'], head: ['分支轴', '取值', '对可用性的影响', '对应实现'], rows: [
+              ['版本状态', '当前版本 / 历史版本', '历史版本 → 页头改显示只读 chip「历史版本 · 只读」，仅保留「回到当前版本」；<b>在线试用与使用按钮全部不出现</b>', '<code>isCurVer(CUR)</code> 早退分支'],
+              ['对外开放状态', '已开放 / 未开放', '「对外提供」Tab 的「申请 API 调用 / 申请订阅」按钮禁用并给出说明', '<code>available = CUR.open &amp;&amp; isCurVer(CUR)</code>'],
+              ['登录态', '已登录 / 未登录', '未登录点申请类入口先走登录', '<code>requireAuth()</code>']
+            ], note: '⚠️ 「申请 API 调用 / 申请订阅」<b>不按角色区分</b>，只受版本状态与对外开放状态控制——不要把它写成角色权限。原型只建模 2 个角色，实际以中台为准。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 详情页交互', sections: [
+          {
+            title: '一、Tab 与入口', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['切换 Tab', '点「模型介绍 / 应用案例 / 对外提供 / 版本迭代 / 成果转化」', '切换正文区，不刷新页面'],
+              ['在线试用', '点「在线试用」', '跳转「模型运行台」页（不在详情页内嵌运行）'],
+              ['申请调用 / 开始使用', '点按钮', '已授权 → 直接进运行台；未授权 → 走授权申请'],
+              ['版本切换', '点版本 chip', '查看历史版本（只读），当前版本以标识区分'],
+              ['查看接入信息', '右栏「服务与接入信息」', '只读展示；如需修改，由运营在能力共享登记']
+            ]
+          },
+          {
+            title: '二、成果转化链路（本页「成果转化」Tab）', head: ['环节', '执行方', '说明'], rows: [
+              ['提交成果', '科研负责人', '个人中心提交本人成果；空间内仅当前团队负责人可提交团队成果'],
+              ['成果承接', '平台运营', '承接动作不在科研空间列表页发生'],
+              ['合规审核', '平台运营', '通过 / 驳回 / 拒绝（单级三态）'],
+              ['镜像构建 / 部署', '平台', '属「服务发布」的内部前置步骤，不单独对外'],
+              ['服务发布', '平台 / 接入工程师', '在能力共享登记接口与配额；发布 ≠ 授权 ≠ 上架（三者正交）']
+            ], note: '⛔ 全平台不使用「成果转化编排台」「发布流水线」等提法。'
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------- 7 模型中心 · 运行台 */
+  DOCS['模型中心-模型运行台.html'] = {
+    name: '模型中心 · 模型运行台',
+    intro: '模型的试跑与结果查看页。参数面板由模型的<b>输入 schema</b> 直接渲染；同步任务点「▶ 运行」，异步任务点「提交并运行」。',
+    field: [
+      {
+        label: '▶ 运行参数字段', sections: [
+          {
+            title: '一、参数区（按输入 schema 渲染）', head: ['区域', '字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['输入数据', '按 schema 逐字段', '文件 / 数值 / 文本 / 枚举', '受「输入介质与大小上限」约束', '<span class="mtdev-tag req">是</span>', '必填项以 <code>*</code> 标识；介质类型不符时报错'],
+              ['输入数据', '文件上传', '—', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX，单文件 ≤500 MB', '视字段', '超出上限提示，不进入排队'],
+              ['可调参数', '按 schema 逐字段', '数值 / 枚举', '含默认值与取值范围', '<span class="mtdev-tag opt">否</span>', '不填取默认值'],
+              ['运行方式', '系统判定', '同步 / 异步', '预计耗时 &gt; 30 秒 或 输入 &gt; 500 MB → 异步', '系统', '决定按钮文案与是否可关页']
+            ], note: '输入 schema 逐字段定义：字段名 / 类型 / 单位 / 是否必填 / 默认值 / 取值范围或枚举 / 说明。'
+          },
+          {
+            title: '二、运行记录与结果字段', head: ['字段', '类型', '说明'], rows: [
+              ['记录号', '文本', '运行记录唯一标识'],
+              ['提交时间 / 提交人', '系统', '审计留痕'],
+              ['状态', '枚举', '排队中 / 运行中 / 成功 / 失败 / 已取消'],
+              ['耗时', '数字（秒）', '实际执行耗时；失败时显示失败原因'],
+              ['输入摘要', '文本', '文件数 / 体量 / 主要参数'],
+              ['结果文件', '文件列表', '结果形态与格式由输出 schema 决定：csv / geojson / tif / zip'],
+              ['留存策略', '文本', '留存 N 天；是否提供 ZIP 打包下载'],
+              ['错误码 / 原因', '文本', '失败时可读原因（人能看懂）']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 运行台交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['新建运行', '点「+ 新建运行」', '展开参数面板（输入数据 + 可调参数）'],
+              ['参数校验', '必填未填 / 介质不符 / 超限', '字段下方提示，不发起请求'],
+              ['同步运行', '点「▶ 运行」', '按钮进入执行态，结果区刷新输出'],
+              ['异步运行', '点「提交并运行」', '生成运行记录（排队中 → 运行中 → 成功/失败），可关页后回来查看'],
+              ['查看结果', '点运行记录', '结果区展示输出内容与结果文件清单，可下载'],
+              ['查看历史', '「运行记录」列表', '按时间倒序展示本模型全部运行记录']
+            ]
+          },
+          {
+            title: '二、与详情页的关系', head: ['项', '说明'], rows: [
+              ['入口', '模型列表 / 详情页的「在线试用」「开始使用」都跳到本页'],
+              ['数据来源', '参数面板与结果形态均由输入 / 输出 schema 派生，不在前端另写一份'],
+              ['不做的展示', '不展示无数据来源的调用量、经济价值等统计']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 8 科研开发空间 · 空间列表 */
+  DOCS['科研开发空间-交互原型(10).html'] = {
+    name: '科研开发空间 · 空间列表',
+    intro: '科研空间的列表与申请入口。空间需申请、审批通过后才「可用」，用户进入空间后可挂载数据 / 模型、上传研究文件、提交成果。',
+    field: [
+      {
+        label: '🧪 空间申请表单', sections: [
+          {
+            title: '一、申请科研空间字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['空间名称', '文本', '建议 ≤40 字符', '<span class="mtdev-tag req">是</span>', '同一团队内不重名'],
+              ['所属团队', '文本', '科研团队', '<span class="mtdev-tag req">是</span>', '决定数据隔离范围（团队级）'],
+              ['研究用途', '多行文本', '建议 ≤300 字符', '<span class="mtdev-tag req">是</span>', '说明研究目标与拟用资源'],
+              ['关联模型', '下拉', '选择已收录模型（可空）', '<span class="mtdev-tag opt">否</span>', '不关联也可提交'],
+              ['开发镜像', '下拉 / 文本', '如 <code>pytorch:2.0-cuda11.7</code>', '<span class="mtdev-tag req">是</span>', '平台提供基础镜像清单'],
+              ['运行环境', '下拉', 'Python / R / 自定义', '<span class="mtdev-tag req">是</span>', '与开发工具联动'],
+              ['系统环境', '文本', '基础镜像详情', '<span class="mtdev-tag opt">否</span>', '只读展示'],
+              ['开发工具', '下拉', 'JupyterLab / VS Code / RStudio', '<span class="mtdev-tag req">是</span>', '进入空间后打开对应 IDE'],
+              ['CPU（核）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '受平台配额约束'],
+              ['内存（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '—'],
+              ['GPU（张）', '数值', '≥0，整数', '<span class="mtdev-tag req">是</span>', '0 表示不需要 GPU'],
+              ['单卡显存（GB）', '数值', '≥0，整数', '条件必填', 'GPU &gt; 0 时必填'],
+              ['研究存储（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '用于挂载数据与研究文件'],
+              ['系统盘（GB）', '数值', '≥1，整数', '<span class="mtdev-tag req">是</span>', '—']
+            ]
+          },
+          {
+            title: '二、空间对象字段', head: ['字段', '类型', '取值', '说明'], rows: [
+              ['空间名称 / 所属团队', '文本', '—', '列表主标题与小字'],
+              ['状态', '枚举', '申请中 / 可用 / 已驳回 / 已拒绝', '审批三态对应：通过 → 可用；驳回；拒绝'],
+              ['开发实例状态', '枚举', '未开通 / 已停止 / 运行中', '审批通过后按需启动'],
+              ['已归档', '布尔', '是 / 否', '勾选「已归档」只看归档空间'],
+              ['挂载资源数', '数字', '数据 + 模型', '列表卡片展示']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与申请交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['搜索空间', '输入空间名称', '列表实时过滤'],
+              ['查看已归档', '勾选「已归档」', '只显示已归档空间'],
+              ['申请科研空间', '点「申请科研空间」', '登录门控 → 申请表单（14 项）；提交后状态=申请中'],
+              ['进入空间', '点空间卡片', '跳转空间详情页（已挂载资源 / 研究文件 / 开发实例 / 成员 / 成果记录）'],
+              ['状态变化', '审批通过后回到列表', '状态由「申请中」变「可用」，开发实例可启动'],
+              ['申请被驳回 / 拒绝', '查看驳回原因', '列表与详情展示审批意见，可修改后重新申请']
+            ]
+          },
+          {
+            title: '二、权限与隔离口径', head: ['项', '说明'], rows: [
+              ['数据隔离', '按机构和团队范围校验；账号归属负责人，团队成员关系独立管理'],
+              ['谁可管理', '当前团队负责人管理空间；普通成员和受邀负责人可参与获准研究，不可管理或提交成果'],
+              ['研究已结束', '仅可查看，不允许继续提交成果'],
+              ['空间与算力申请', '由当前团队负责人办理，均需审批；资源免审批按具体团队或账号配置']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 9 科研开发空间 · 空间详情 */
+  DOCS['科研开发空间-详情页(9).html'] = {
+    name: '科研开发空间 · 空间详情',
+    intro: '单个科研空间的工作台：已挂载资源、研究文件、开发实例、协作成员、历史成果上传记录。用户侧成果入口是「提交成果」，成果承接不在本页发生。',
+    field: [
+      {
+        label: '🗂 空间详情字段', sections: [
+          {
+            title: '一、各区块字段', head: ['区块', '字段', '类型', '说明'], rows: [
+              ['空间头信息', '空间名称 / 团队 / 状态', '文本 / 枚举', '状态取自申请审批结果'],
+              ['已挂载资源', '数据 / 模型', '对象数组', '「挂载数据」从数据中心已授权数据中选择'],
+              ['研究文件', '文件名称', '文本', '支持上传与替换；表头：文件名称 / 类型 / 更新人 / 更新时间'],
+              ['研究文件', '类型 / 更新人 / 更新时间', '文本 / 文本 / 时间', '审计留痕'],
+              ['开发实例', '实例状态 / 算力规格', '枚举 / 文本', 'CPU / 内存 / GPU / 显存 / 存储来自申请配置'],
+              ['协作成员', '姓名 / 角色', '文本 / 枚举', '负责人可「管理成员」增删'],
+              ['成果记录', '成果名称', '文本', '成果模型 / 成果数据，同一份数据在个人中心也可见'],
+              ['成果记录', '类型 / 版本', '枚举 / 文本', '成果模型（镜像包）/ 成果数据'],
+              ['成果记录', '提交人 / 时间', '文本 / 时间', '—'],
+              ['成果记录', '审批状态', '枚举', '待审批 / 已通过 / 已驳回 / 已拒绝']
+            ]
+          },
+          {
+            title: '二、上传与成果提交口径', head: ['动作', '字段 / 文件', '限制', '说明'], rows: [
+              ['上传研究文件', '文件（可多选）', '不限制类型，空文件不允许', '仅空间内可见，不自动成为成果'],
+              ['打包开发镜像', '文件', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '成果模型选「镜像包」时使用'],
+              ['提交成果', '成果类型', '成果数据 / 成果模型', '用户侧唯一动作：提交成果'],
+              ['提交成果', '元数据', '成果模型 16 项 / 成果数据 14 项', '字段见个人中心「字段说明」同表'],
+              ['提交成果', '介绍内容', '富文本，必填', '模板：模型概述 / 输入输出规范 / 业务能力 / 输出示例'],
+              ['提交成果', '成果材料', '必填（已有材料可保留）', '同一成果可修改后重新提交']
+            ], note: '⛔ 不以「上架」表述用户动作；「是否收录 / 是否对外」由运营判定。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 空间详情交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['挂载数据', '点「挂载数据」', '弹出已授权数据 / 模型清单，勾选后挂载到本空间'],
+              ['上传文件', '点「↥ 上传文件」', '选择文件后写入研究文件表，刷新「更新人 / 更新时间」'],
+              ['管理成员', '点「管理成员」', '增删空间成员并设定角色（负责人可操作）'],
+              ['提交成果', '点「提交成果」', '先选成果类型（数据 / 模型），再填元数据与材料；提交后状态=待审批'],
+              ['调试成果', '点「调试」', '对已提交成果做演示性调试（原型不执行真实镜像）'],
+              ['查看审批状态', '「历史成果上传记录」', '看到待审批 / 已通过 / 已驳回 / 已拒绝；被驳回可修改后重新提交'],
+              ['只读态', '研究已结束', '提交类按钮不可用，提示「研究已结束，成果仅可查看」']
+            ]
+          },
+          {
+            title: '二、成果流向', head: ['从', '到', '说明'], rows: [
+              ['本页「提交成果」', '个人中心「我的成果」', '同一份记录，两处可见'],
+              ['运营「审批中心」', '验收通过', '通过后进入资源管理，由运营继续部署与服务发布'],
+              ['承接动作', '（不在本页）', '科研空间列表页不出承接入口，承接在运营侧'],
+              ['服务发布', '能力共享', '发布 ≠ 授权 ≠ 上架，三者正交']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------ 10 科研开发空间 · IDE 编辑页 */
+  DOCS['科研开发空间-IDE编辑页.html'] = {
+    name: '科研开发空间 · 开发环境（IDE）',
+    intro: '空间内打开的开发环境演示页（无页头外壳，属工具页）。用于演示命令面板、单元格执行与内核状态。',
+    field: [
+      {
+        label: '🖥 环境与字段', sections: [
+          {
+            title: '一、界面字段', head: ['区域', '字段 / 控件', '类型', '取值', '说明'], rows: [
+              ['顶部', '开发工具', '下拉', '<code>JupyterLab</code> / <code>VS Code</code> / <code>RStudio</code>', '与申请时选择一致'],
+              ['顶部', '文件或命令搜索', '搜索输入', '按文件名 / 命令名匹配', '快捷键 <code>Ctrl K</code> 唤起'],
+              ['顶部', '返回空间', '按钮', '—', '回到空间详情页'],
+              ['菜单栏', '文件 / 编辑 / 视图 / 运行 / 内核 / 终端', '菜单', '—', '演示态，部分项为占位'],
+              ['底部面板', '运行输出 / 问题', 'Tab', '—', '切换执行输出与问题列表'],
+              ['状态栏', '内核状态', '枚举', '空闲 / 忙碌 / 未连接算力', '演示态默认「未连接算力」']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 环境交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['唤起命令面板', '按 <code>Ctrl K</code> 或点顶部搜索框', '展开文件 / 命令搜索'],
+              ['运行单元格', '点单元格「▶」或菜单「运行」', '底部「运行输出」追加结果'],
+              ['切换单元格', '点击单元格', '当前单元格高亮（selected）'],
+              ['切换面板', '点「运行输出 / 问题」', '底部面板切换'],
+              ['连接算力', '状态栏提示', '演示态不连真实算力，正式环境由平台调度'],
+              ['返回空间', '点「返回空间」', '回到科研空间详情页']
+            ]
+          },
+          {
+            title: '二、说明', head: ['项', '说明'], rows: [
+              ['无页头', '工具页不挂门户一级导航，页面高度铺满'],
+              ['演示边界', '本页不执行真实模型与镜像，仅演示交互'],
+              ['正式形态', '由平台调度实际开发实例，IDE 内数据留存在团队空间']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------------------ 11 课题中心 */
+  DOCS['课题中心-高保真原型.html'] = {
+    name: '课题中心',
+    intro: '课题的展示页（<b>纯展示</b>）：开放课题指南与立项课题清单。申报、评审、签约全部线下进行，本平台不做在线申报。',
+    field: [
+      {
+        label: '📚 课题字段', sections: [
+          {
+            title: '一、课题对象字段', head: ['字段', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['课题编号', '文本 · 唯一', '<code>BH</code> + 年份 + 3 位序号', '系统', '如 <code>BH2026-021</code>，唯一，可检索'],
+              ['课题名称', '文本', '建议 ≤80 字符', '<span class="mtdev-tag req">是</span>', '列表主标题'],
+              ['团队负责人', '文本', '姓名', '<span class="mtdev-tag req">是</span>', '是「人」；<b>不是承担单位</b>'],
+              ['所属 / 承担单位', '文本', '盖章的单位（高校 / 院所）', '<span class="mtdev-tag req">是</span>', '承担 / 依托单位 = 盖章那家，不是公司'],
+              ['项目类型', '受控字典', '重点 / 面上 / 青年', '<span class="mtdev-tag req">是</span>', '—'],
+              ['资助金额', '数值', '万元', '<span class="mtdev-tag opt">否</span>', '展示值，不做汇总口径'],
+              ['状态', '受控字典', '拟立项 / 在研 / 已结题 / 未立项 / 已终止', '系统', '状态由运营维护'],
+              ['公示开始 / 结束', '日期', '起 ≤ 止', '条件必填', '结束早于开始时报错「公示结束不能早于开始」'],
+              ['关联指南', '关联', '指南名称', '<span class="mtdev-tag opt">否</span>', '同一课题可关联一份指南'],
+              ['课题方向', '受控字典', '软件 / 算法方向、硬件方向', '<span class="mtdev-tag opt">否</span>', '未设置时展示「未设置」']
+            ]
+          },
+          {
+            title: '二、筛选项字段', head: ['筛选项', '类型', '取值', '说明'], rows: [
+              ['年度', '复选框组', '全部年度 / 2026 年度 / 2024 年度', '可多选，默认全部年度'],
+              ['关键词', '搜索输入', '课题名称 / 编号 / 团队负责人 / 单位', '占位：搜索课题名称、编号、团队负责人或单位'],
+              ['下载课题清单', '按钮', '导出当前筛选结果为清单', '只含展示字段，不含隐私信息']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🧭 展示页交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['按年度筛选', '勾选「2026 年度」等', '清单只保留所选年度课题'],
+              ['搜索课题', '输入名称 / 编号 / 负责人 / 单位', '实时过滤清单'],
+              ['下载清单', '点「↓ 下载课题清单」', '导出当前筛选结果'],
+              ['查看课题详情', '点课题行', '展开 / 跳转课题详情（编号、指南、负责人、单位、类型、方向、状态、公示期）'],
+              ['看开放课题指南', '「开放课题」区块', '展示指南名称与截止信息']
+            ]
+          },
+          {
+            title: '二、业务口径（防误做）', head: ['项', '口径'], rows: [
+              ['申报方式', '申报、评审、签约全部线下进行'],
+              ['禁止文案', '⛔ 不出现「投标 / 中标」，不提供在线申报按钮'],
+              ['承担单位', '指盖章的单位（高校 / 院所），不是平台运营公司'],
+              ['数据来源', '课题台账由后台「课题管理」维护，门户只读展示']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ------------------------------------------------------ 12 需求中心 */
+  DOCS['需求中心-高保真原型 (1).html'] = {
+    name: '需求中心',
+    intro: '农业需求与科研能力的对接入口（轻量）：展示需求 + 联系方式留痕，<b>平台不做撮合</b>。发布需求需登录，提交后由平台运营审核，通过后才对外展示。',
+    field: [
+      {
+        label: '📣 需求对象字段', sections: [
+          {
+            title: '一、发布需求表单（用户侧）', head: ['字段', '类型', '长度 / 取值', '必填', '校验与说明'], rows: [
+              ['需求标题', '单行文本', '≤40 字（原型已限）', '<span class="mtdev-tag req">是</span>', '占位：一句话说清要解决什么问题，例如：寒地水稻倒伏面积遥感核查'],
+              ['需求方向', '下拉 · 受控字典', '见「需求方向字典」', '<span class="mtdev-tag req">是</span>', '只可选不可自造'],
+              ['涉及作物', '单行文本', '建议 ≤40 字', '<span class="mtdev-tag opt">否</span>', '如：水稻、玉米、大豆'],
+              ['所需服务', '单选 / 多选', '受控字典', '<span class="mtdev-tag req">是</span>', '与需求方向对应'],
+              ['需求概述', '多行文本', '≤200 字（原型已限）', '<span class="mtdev-tag req">是</span>', '显示在需求中心列表卡片上'],
+              ['希望解决的问题', '多行文本', '建议 ≤1000 字', '<span class="mtdev-tag req">是</span>', '说明现状、具体问题与期望效果'],
+              ['已有资料', '多行文本', '建议 ≤500 字', '<span class="mtdev-tag opt">否</span>', '可提供哪些数据、资料或现场条件'],
+              ['需要完成的工作', '多行文本', '一行一条', '<span class="mtdev-tag req">是</span>', '按行拆分，列表渲染为条目'],
+              ['预期交付成果', '单行文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>', '如：核查报告、统计表'],
+              ['期望交付时间', '单行文本', '自由文本 / 日期', '<span class="mtdev-tag opt">否</span>', '如：2026年12月前'],
+              ['发布单位', '单行文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>', '企业 / 农场 / 部门'],
+              ['联系人', '单行文本', '姓名', '<span class="mtdev-tag req">是</span>', '与电话 / 邮箱同组'],
+              ['电话', '文本 · 校验', '座机带区号；手机 11 位', '条件必填', '电话与邮箱至少填一项'],
+              ['邮箱', 'email · 校验', '如 <code>name@example.com</code>', '条件必填', '格式错误时提示'],
+              ['同意条款', '复选框', '—', '<span class="mtdev-tag req">是</span>', '文案：提交后由平台运营审核，通过后内容与联系方式对外展示；仅限本次需求沟通，不得用于营销推广，平台不参与双方合作']
+            ]
+          },
+          {
+            title: '二、字典与状态', head: ['项', '取值', '说明'], rows: [
+              ['需求方向 / 需求类型', '<code>数据标注</code> / <code>算法与模型开发</code> / <code>遥感解译</code> / <code>数据采集与处理</code> / <code>技术咨询</code> / <code>其他</code>', '受控字典，由运营维护；「科研课题」不属需求类型'],
+              ['需求状态', '待审核 / 发布中 / 已发布 / 已下架', '用户提交 → <b>待审核</b> → 运营通过 → 对外展示'],
+              ['获取次数', '数字', '按人去重计数'],
+              ['发布时间', '时间戳', '系统自动'],
+              ['更新人 / 更新时间', '系统', '审计留痕']
+            ], note: '⚠️ 用户提交的需求必须先在运营侧审核通过才能对外；⚠️ 后台「需求管理」当前需补「待审核」 Tab 与通过 / 驳回动作。'
+          },
+          {
+            title: '三、获取记录字段（联系方式留痕）', head: ['字段', '类型', '说明'], rows: [
+              ['记录 ID / 需求 ID', '文本', '关联需求对象'],
+              ['获取人', '文本', '用户 + 姓名'],
+              ['所属机构 / 团队', '文本', '用于运营判断哪类机构在关注'],
+              ['获取时间', '时间戳', '同一人对同一需求仅一条'],
+              ['状态', '枚举', '已获取联系方式 / 已对接 / 未匹配'],
+              ['未匹配原因', '枚举 · 选填', '算力不足 / 数据涉密 / 档期冲突 / 能力不匹配 / 需求方撤回'],
+              ['标记人 / 标记时间', '文本 / 时间', '需求方或获取方任一方可标']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 列表与发布交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['关键词搜索', '输入需求名称 / 业务问题 / 服务内容', '列表实时过滤'],
+              ['多维筛选', '展开「需求方向」「所需服务」多选', '结果与计数更新'],
+              ['排序 / 每页条数', '底部与顶部下拉', '列表重排；切每页条数回第 1 页'],
+              ['查看需求详情', '点需求卡片', '展开概述、希望解决的问题、需要完成的工作、预期交付成果、期望时间'],
+              ['获取联系方式', '点「联系方式」', '登录门控；登录后展示联系人 / 电话 / 邮箱，并写入一条获取记录（留痕）'],
+              ['发布需求', '点「＋ 发布需求」', '<b>未登录</b>：弹「登录后查看 / 发布」提示，提供「模拟登录并继续」；<b>已登录</b>：打开发布表单'],
+              ['提交审核', '填完点「提交审核」', '校验通过 → 状态=待审核，提示已提交，等待平台运营审核'],
+              ['取消发布', '点「取消」/ ✕ / 遮罩', '关闭表单，不产生记录']
+            ]
+          },
+          {
+            title: '二、合规与边界', head: ['项', '说明'], rows: [
+              ['平台角色', '只做展示与留痕，<b>不做撮合、不参与双方合作</b>'],
+              ['联系方式用途', '仅限本次需求沟通，不得用于营销推广（页面已明示）'],
+              ['对外展示条件', '运营审核通过后，需求内容与联系方式才对外展示'],
+              ['获取留痕', '同一人对同一需求只记一条，供运营观察关注度']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* -------------------------------------------------- 13 领导数据看板 */
+  DOCS['门户-领导数据看板.html'] = {
+    name: '数据看板',
+    intro: '面向领导的一级导航页（已替代门户首页原有的「成果转化效果」入口）。只展示<b>有数据来源</b>的指标，不编造调用量与经济价值。',
+    field: [
+      {
+        label: '📊 指标与口径', sections: [
+          {
+            title: '一、指标口径', head: ['指标区块', '统计对象', '计算口径', '数据来源'], rows: [
+              ['协同参与', '参与单位 / 团队 / 活跃用户', '按机构与团队去重计数', '团队与账号数据'],
+              ['成果产出与使用', '已提交成果 / 验收通过 / 已在用', '成果台账按状态分档统计', '成果台账（提交与审批记录）'],
+              ['成果转化成效', '服务发布 / 开放在线使用', '服务发布记录 + 在线使用开关', '能力共享 · 服务发布记录'],
+              ['课题进展', '课题总数 / 在研 / 已结题', '按课题状态分组', '课题台账'],
+              ['成果落地', '落地场景 / 使用方 / 应用状态', '落地明细表逐条登记', '落地明细'],
+              ['资源活性', '资源最近使用记录', '按资源被使用时间倒序', '资源使用记录']
+            ]
+          },
+          {
+            title: '二、明细表字段', head: ['表', '字段', '说明'], rows: [
+              ['课题台账', '课题 / 承担单位', '课题名称 + 承担单位（盖章单位）'],
+              ['课题台账', '负责人', '团队负责人（人）'],
+              ['课题台账', '状态', '拟立项 / 在研 / 已结题 / 未立项 / 已终止'],
+              ['落地明细', '成果 / 产品业务线', '成果名称与所属业务线'],
+              ['落地明细', '使用方 / 参与人', '应用方与参与人'],
+              ['落地明细', '应用状态', '试用 / 在用 / 已停用'],
+              ['机构明细', '机构维度聚合', '点「机构明细›」展开'],
+              ['资源台账', '资源名称 / 类型 / 最近使用', '点「资源台账›」展开']
+            ]
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 看板交互', sections: [
+          {
+            title: '一、交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['管理员演示', '左下角预览账号选择平台管理员，再点顶部数据看板', '显示完整看板；科研负责人和成员不显示该入口'],
+              ['切换年度', '下拉选择年度', '所有 KPI 与明细表按年度重算'],
+              ['钻取明细', '点「机构明细›」「落地明细›」「资源台账›」', '展开对应明细表或抽屉'],
+              ['查看统计口径', '点「查看统计口径›」', '展开口径说明（每项指标怎么算、数据取自哪里）'],
+              ['导出', '点「导出汇总」/「导出明细」', '导出当前视角汇总 / 明细细表'],
+              ['成果产出 / 使用情况', '点 Tab', '在本页内切换成果的两类视图'],
+              ['关闭明细', '点「关闭」/ ✕', '收起明细弹层']
+            ]
+          },
+          {
+            title: '二、边界（重要）', head: ['项', '说明'], rows: [
+              ['只读', '领导侧视图为只读，不提供任何编辑动作'],
+              ['单一数据源', '<b>同一数据源两个视图</b>（全重 / 集团），绝不建两套后台'],
+              ['不展示无来源指标', '调用量、经济价值等尚无数据来源的指标一律不展示，并在页内注明'],
+              ['归属', '成果转化看板归「数据看板」一级导航承载，门户首页不再挂该类入口']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* -------------------------------------------------------- 14 个人中心 */
+  DOCS['个人中心-高保真原型.html'] = {
+    name: '个人中心',
+    intro: '科研用户的个人工作台：个人概览、消息中心、我的模型 / 数据 / 需求 / 团队 / 收藏、账号设置。成果提交与需求发布都在本页完成。',
+    field: [
+      {
+        label: '📤 成果提交 · 成果模型', sections: [
+          {
+            title: '一、成果模型元数据（16 项，全部必填）', head: ['字段', '键名', '类型', '长度 / 取值', '校验'], rows: [
+              ['模型名称', '<code>name</code>', '文本', '建议 ≤60 字符', '非空'],
+              ['模型简称', '<code>abbr</code>', '文本', '建议 ≤40 字符', '非空'],
+              ['提供方', '<code>provider</code>', '文本', '机构 / 团队', '非空'],
+              ['业务分类', '<code>business</code>', '文本 / 字典', '受控字典', '非空'],
+              ['技术任务', '<code>task</code>', '文本 / 字典', '图像分类 / 目标检测 / 语义分割 / 回归估测 / 时序预测', '非空'],
+              ['适用作物', '<code>crop</code>', '文本', '水稻 / 玉米 / 大豆 …', '非空'],
+              ['版本号', '<code>version</code>', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '非空 + 格式校验'],
+              ['权属归属', '<code>owner</code>', '文本 / 字典', '个人 / 团队 / 单位 / 联合', '非空'],
+              ['授权范围', '<code>license</code>', '文本 / 字典', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供', '非空'],
+              ['运行环境', '<code>runtime</code>', '文本', '如 <code>PyTorch 2.0 / CUDA 11.7</code>', '非空'],
+              ['推荐算力卡型', '<code>gpuType</code>', '文本', '如 <code>A100 / V100</code>', '非空'],
+              ['GPU 卡数', '<code>gpuCount</code>', '数值', '≥0 整数（<code>min=0 step=1</code>）', '非空'],
+              ['单卡显存（GB）', '<code>gpuMemory</code>', '数值', '≥0 整数', '非空'],
+              ['CPU 要求（核）', '<code>cpu</code>', '数值', '≥0 整数', '非空'],
+              ['内存要求（GB）', '<code>memory</code>', '数值', '≥0 整数', '非空'],
+              ['存储要求（GB）', '<code>storage</code>', '数值', '≥0 整数', '非空'],
+              ['推理精度', '<code>precision</code>', '文本', '如 <code>FP16 / FP32</code>', '非空']
+            ]
+          },
+          {
+            title: '二、成果材料与提交结果', head: ['项', '类型', '长度 / 取值', '必填', '说明'], rows: [
+              ['介绍内容', '富文本', '模板：模型概述 / 输入输出规范 / 业务能力 / 输出示例', '<span class="mtdev-tag req">是</span>', '空内容不允许提交'],
+              ['成果材料形式', '单选', '镜像包 / 模型文件与说明', '<span class="mtdev-tag req">是</span>', '决定下方文件类型限制'],
+              ['镜像包文件', '文件', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '条件必填', '后缀不符提示「请选择 Docker / OCI 镜像包」'],
+              ['模型文件与说明', '文件（可多选）', '<code>.pkl .joblib .onnx .pt .pth .py .json .yaml .yml .txt .md .pdf .zip</code>', '条件必填', '—'],
+              ['空文件校验', '—', '不允许 0 字节', '—', '提示「不能提交空文件」'],
+              ['成果记录 ID', '系统', '<code>CG-</code> + 时间戳 base36', '系统', '提交时生成，用于审批跟踪'],
+              ['提交状态', '枚举', '待审批 / 已通过 / 已驳回 / 已拒绝', '系统', '驳回后可「修改并重新提交」'],
+              ['审批记录', '时间线', '动作 / 人 / 时间 / 意见', '系统', '与后台审批中心同源']
+            ]
+          },
+          {
+            title: '三、成果数据元数据（14 项，全部必填）', head: ['字段', '键名', '类型', '长度 / 取值'], rows: [
+              ['数据名称', '<code>name</code>', '文本', '建议 ≤60 字符'],
+              ['提供方', '<code>provider</code>', '文本', '机构 / 团队'],
+              ['数据简介', '<code>summary</code>', '多行文本', '建议 ≤300 字符'],
+              ['标签', '<code>tags</code>', '文本', '建议 ≤5 个'],
+              ['版本号', '<code>version</code>', '文本', '正则 <code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>'],
+              ['数据形态', '<code>modality</code>', '单选', '遥感影像 / 矢量 / 表格 / 时序 / 图像 / 文本'],
+              ['数据格式', '<code>format</code>', '文本', '如 <code>GeoTIFF</code> / <code>CSV</code> / <code>SHP</code>'],
+              ['标注情况', '<code>annotation</code>', '单选', '有标注 / 无标注'],
+              ['数据规模', '<code>scale</code>', '文本', '如「12.6 万条」'],
+              ['适用作物', '<code>crop</code>', '文本', '水稻 / 玉米 / 大豆'],
+              ['区域', '<code>region</code>', '文本', '黑龙江省下属农区'],
+              ['数据年份', '<code>year</code>', '文本', '如 <code>2021—2025</code>'],
+              ['权属归属', '<code>owner</code>', '文本 / 字典', '个人 / 团队 / 单位 / 联合'],
+              ['授权范围', '<code>license</code>', '文本 / 字典', '仅平台内使用 / 可授权一线系统调用 / 可对 B 端提供']
+            ]
+          }
+        ]
+      },
+      {
+        label: '🧾 发布需求表单', sections: [
+          {
+            title: '发布需求（与需求中心同一份表单）', head: ['字段', '类型', '长度 / 取值', '必填'], rows: [
+              ['需求标题', '文本', '≤40 字（原型已限）', '<span class="mtdev-tag req">是</span>'],
+              ['需求方向', '下拉字典', '6 类受控字典', '<span class="mtdev-tag req">是</span>'],
+              ['涉及作物', '文本', '建议 ≤40 字', '<span class="mtdev-tag opt">否</span>'],
+              ['所需服务', '单选 / 多选', '受控字典', '<span class="mtdev-tag req">是</span>'],
+              ['需求概述', '多行文本', '≤200 字（原型已限）', '<span class="mtdev-tag req">是</span>'],
+              ['希望解决的问题', '多行文本', '建议 ≤1000 字', '<span class="mtdev-tag req">是</span>'],
+              ['已有资料', '多行文本', '建议 ≤500 字', '<span class="mtdev-tag opt">否</span>'],
+              ['需要完成的工作', '多行文本', '一行一条', '<span class="mtdev-tag req">是</span>'],
+              ['预期交付成果', '文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>'],
+              ['期望交付时间', '文本', '自由文本 / 日期', '<span class="mtdev-tag opt">否</span>'],
+              ['发布单位', '文本', '建议 ≤60 字', '<span class="mtdev-tag req">是</span>'],
+              ['联系人', '文本', '姓名', '<span class="mtdev-tag req">是</span>'],
+              ['电话 / 邮箱', '文本 / email', '座机带区号；手机 11 位', '<span class="mtdev-tag req">是</span>（至少一项）'],
+              ['同意条款', '复选框', '—', '<span class="mtdev-tag req">是</span>']
+            ]
+          },
+          {
+            title: '我的需求状态', head: ['状态', '含义', '用户可见动作'], rows: [
+              ['待审核', '已提交，运营未处理', '可查看，等待审核'],
+              ['发布中', '运营已通过，对外展示', '可查看'],
+              ['已发布', '正式对外', '可查看'],
+              ['已下架', '运营下架', '仅本人可见，标注原因']
+            ], note: '需求发布申请进入资源申请审批，审核通过后对外展示。'
+          }
+        ]
+      }
+    ],
+    guide: [
+      {
+        label: '🖱 个人中心交互', sections: [
+          {
+            title: '一、侧栏与提交', head: ['交互场景', '触发方式', '预期效果'], rows: [
+              ['侧栏切换', '点「个人概览 / 消息中心 / 我的模型 / 我的数据 / 我的需求 / 我的团队 / 我的收藏 / 账号设置」', '右侧内容区切换（hash 定位）'],
+              ['发布需求', '「我的需求」→「＋ 发布需求」', '打开发布表单；未登录先走登录'],
+              ['提交需求', '填完点「提交审核」', '校验通过 → 状态=待审核，提示已提交'],
+              ['提交成果', '「我的模型 / 我的数据」→「提交成果」', '先选成果类型（数据 / 模型），再填元数据 + 介绍 + 材料'],
+              ['表单校验', '必填未填 / 版本号含中文 / 空文件', '字段下方或弹窗内提示，不提交'],
+              ['提交成功', '点「提交审批验收」', '写入成果记录并提示；「我的模型 / 我的数据」列表新增一条「待审批」'],
+              ['查看成果', '点记录「查看」', '展示元数据、介绍内容、成果材料（可下载）、审批记录时间线'],
+              ['调试 / 重新提交', '点「调试」或「修改后重新提交」', '调试为演示态；被驳回的成果可修改后重新提交'],
+              ['收藏模型', '模型卡片「收藏」', '本地记录收藏；「我的收藏」可查看']
+            ]
+          },
+          {
+            title: '二、校验规则一览', head: ['校验项', '规则', '提示文案'], rows: [
+              ['必填', '元数据 16/14 项均非空', '「请填写 + 字段名」'],
+              ['介绍内容', '富文本去除标签后非空', '「请填写介绍内容」'],
+              ['版本号', '<code>^[A-Za-z0-9][A-Za-z0-9_.-]*$</code>', '「版本号请使用字母、数字、点或连字符」'],
+              ['材料非空', '不允许 0 字节文件', '「不能提交空文件」'],
+              ['镜像包后缀', '<code>.tar</code> / <code>.tar.gz</code> / <code>.tgz</code>', '「请选择 Docker / OCI 镜像包（.tar、.tar.gz、.tgz）」'],
+              ['材料必选', '首次提交必须选材料', '「请选择成果材料」'],
+              ['空间只读', '研究已结束的空间', '「研究已结束，成果仅可查看」'],
+              ['空间权限', '无管理权限的成员', '「当前空间不可提交成果」']
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  /* ==================== 15–20 关于平台（6 页 · 说明类） ==================== */
+  Object.assign(DOCS, {
+    '关于平台-平台介绍.html': {
+      name: '关于平台 · 平台介绍',
+      intro: '平台定位与参与方式说明页（静态内容 + 页头二级栏目）。供新用户了解平台提供什么、如何参与、使用须知。',
+      field: [
+        {
+          label: '📄 内容结构', sections: [
+            {
+              title: '一、页面区块', head: ['区块', '内容要素', '类型', '说明'], rows: [
+                ['页头二级栏目', '平台介绍 / 使用帮助 / 开发者接入 / 部署说明 / 联系支持', '导航 5 项', '当前项高亮；与门户一级导航并存'],
+                ['平台提供什么', '数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心', '5 张模块卡', '每卡：模块名 + 一句职责 + 跳转链接'],
+                ['如何参与', '科研老师与团队 / 企业用户', '2 组角色说明', '分别说明入驻、可用资源与入口'],
+                ['使用须知', '合规与使用边界', '条文列表', '含数据不导出、联系方式仅限本次沟通等口径'],
+                ['页脚', '平台资源 / 关于平台', '静态区块', '全站统一页脚']
+              ]
+            },
+            {
+              title: '二、文案口径（对外材料，须遵守）', head: ['项', '口径'], rows: [
+                ['定位表述', '写「平台定位为…」的现在时定型口径；不使用「现阶段 / 暂时 / 占比 / 各占一半」等过度期措辞'],
+                ['业务板块', '模型中心 + 数据中心 + 科研开发空间 + 需求中心（课题中心为展示）'],
+                ['禁止词', '「上架」不出现在用户侧；课题相关不出现「投标 / 中标」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 页面交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['二级栏目切换', '点「使用帮助 / 开发者接入 / 部署说明 / 联系支持」', '跳到对应说明页'],
+                ['模块卡跳转', '点任一模块卡', '跳转到该模块首页（数据中心 / 模型中心 / 科研开发空间 / 课题中心 / 需求中心）'],
+                ['角色入口', '点「科研老师与团队 / 企业用户」区内的按钮', '跳到科研开发空间申请 / 需求中心（未登录先走登录）'],
+                ['搜索', '在「清空搜索」旁输入', '本页内检索（说明类页面为占位交互）']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-使用帮助.html': {
+      name: '关于平台 · 使用帮助',
+      intro: '帮助中心首页：按主题分组的常见问题，逐条可展开。共 6 组（加入平台 / 数据使用 / 模型使用 / 科研开发空间 / 课题指南 / 需求联系）。',
+      field: [
+        {
+          label: '📚 FAQ 结构', sections: [
+            {
+              title: '一、问题分组与条目', head: ['分组', '问题', '答案要点'], rows: [
+                ['1. 加入平台', '如何申请加入？', '科研团队经平台邀请或自主联系，需实名与单位信息'],
+                ['1. 加入平台', '受邀用户如何入驻？', '受邀入驻只影响入驻流程，<b>不影响资源权限</b>'],
+                ['1. 加入平台', '无法登录怎么办？', '走「联系支持」提交问题'],
+                ['2. 数据使用', '在哪里查看样例？', '数据中心 → 数据集详情 → 数据预览'],
+                ['2. 数据使用', '怎样使用数据？', '提交使用申请，获批后在科研开发空间内使用'],
+                ['2. 数据使用', '能否下载数据？', '平台不提供原始数据下载'],
+                ['3. 模型使用', '在哪里运行？', '模型运行台（列表 / 详情页的「在线试用」「开始使用」）'],
+                ['3. 模型使用', '怎样申请调用？', '未授权时点申请，走授权流程后可用'],
+                ['3. 模型使用', '接口文档在哪里？', '「开发者接入」页的接口文档指引'],
+                ['4. 科研开发空间', '如何开始研究？', '申请空间 → 审批通过 → 挂载数据 / 模型 → 进入 IDE'],
+                ['4. 科研开发空间', '成果如何提交？', '空间详情页「提交成果」选类型后填元数据与材料'],
+                ['5. 课题指南', '如何申报课题？', '申报线下进行，平台不做在线申报'],
+                ['5. 课题指南', '在哪里公示？', '课题中心展示开放指南与立项课题公示期'],
+                ['6. 需求联系', '如何找需求？', '需求中心按方向 / 服务筛选'],
+                ['6. 需求联系', '怎样获取联系方式？', '登录后点「联系方式」，系统留痕'],
+                ['6. 需求联系', '如何跟进合作？', '平台不参与撮合，双方自行对接']
+              ]
+            },
+            {
+              title: '二、字段说明', head: ['控件', '类型', '长度 / 取值', '说明'], rows: [
+                ['搜索使用问题', '搜索框', '建议 ≤50 字', '占位「搜索使用问题」；带「清空搜索」与「搜索」'],
+                ['问题条目', '折叠项', '标题 + 答案', '点击展开 / 收起'],
+                ['前往合作咨询', '按钮', '—', '跳「联系支持」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 帮助页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['搜索问题', '输入关键词后点「搜索」', '只保留命中的问题条目'],
+                ['清空搜索', '点「清空搜索」', '恢复全部问题'],
+                ['展开问题', '点问题标题', '就地展开答案（可再次点击收起）'],
+                ['跳转合作咨询', '点「前往合作咨询」', '跳到「联系支持」页'],
+                ['切到其它说明页', '点页头二级栏目', '跳转对应的说明页']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-开发者接入.html': {
+      name: '关于平台 · 开发者接入',
+      intro: '面向开发者的接入指引：4 步接入流程、接入前需要确认的事项（授权范围 / 鉴权 / 配额）、接口文档指引与常见问题。',
+      field: [
+        {
+          label: '🔌 接入说明', sections: [
+            {
+              title: '一、接入步骤', head: ['步骤', '名称', '要做的事', '前置条件'], rows: [
+                ['①', '选择模型', '在模型中心选择合适的模型与版本', '模型已被收录且对外提供'],
+                ['②', '申请使用', '提交调用申请，说明用途与调用量', '已登录；未获授权不可调用'],
+                ['③', '查阅接口文档', '获取输入 / 输出字段、鉴权与配额说明', '申请通过后可见'],
+                ['④', '联调与使用', '按文档联调，处理错误码与重试', '拿到凭证']
+              ]
+            },
+            {
+              title: '二、接口文档须确认的项（页面表格同源）', head: ['项目', '查看内容'], rows: [
+                ['服务版本', '所用模型及接口版本'],
+                ['授权范围', '可调用的服务及用途范围'],
+                ['鉴权方式', '凭证获取与请求携带方式'],
+                ['输入输出', '字段、数据格式及返回结果'],
+                ['调用限制', '配额、频率及任务限制'],
+                ['错误处理', '错误码、失败原因与重试说明']
+              ]
+            },
+            {
+              title: '三、接入前需要确认 / 常见问题', head: ['项', '内容'], rows: [
+                ['输入介质', 'GeoTIFF / JPEG / PNG / SHP / GeoJSON / CSV / XLSX；单文件 ≤500 MB'],
+                ['空间参考', '<code>CGCS2000</code>（EPSG:4490），分辨率 ≤2 m（近景类模型无空间参考要求）'],
+                ['异步阈值', '预计耗时 &gt; 30 秒 或 单次输入 &gt; 500 MB → 自动转异步任务'],
+                ['未获授权可以调用吗？', '<span class="mtdev-tag no">不可以</span> 必须先获得授权'],
+                ['调用失败怎么办？', '按错误码定位（连通 / 鉴权 / 入参 / 结构 / 超时），必要时联系支持'],
+                ['搜索控件', '搜索使用指南、常见问题（占位「搜索使用指南、常见问题」）']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 接入页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['查看步骤', '滚动「接入步骤」4 张卡', '每步含名称、动作与前置条件'],
+                ['查阅文档指引', '看「接口文档指引」表', '列出必须确认的 6 项内容'],
+                ['展开常见问题', '点问题标题', '就地展开答案'],
+                ['申请使用', '点步骤②内的申请入口', '未登录先登录；已登录进入调用申请'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-数据使用指南.html': {
+      name: '关于平台 · 如何申请并使用数据',
+      intro: '数据使用的分步指南：查找与预览 → 提交使用申请 → 在科研开发空间使用 → 查看授权状态。右侧带「本文目录」锚点。',
+      field: [
+        {
+          label: '📄 指南结构', sections: [
+            {
+              title: '一、四步流程', head: ['步骤', '名称', '用户动作', '系统行为'], rows: [
+                ['①', '查找与预览', '在数据中心按形态 / 格式 / 标注筛选，进详情看样例', '只展示已公开数据集'],
+                ['②', '提交使用申请', '填授权用途 + 使用说明，勾选承诺后提交', '进入授权审批流程'],
+                ['③', '在科研开发空间使用', '在空间内挂载该数据，用于研究与模型训练', '数据不导出，仅空间内使用'],
+                ['④', '查看授权状态', '在个人中心查看已获授权资源', '按当前授权范围使用']
+              ]
+            },
+            {
+              title: '二、字段与口径', head: ['项', '取值 / 说明'], rows: [
+                ['授权用途（申请时填）', '科研研究 / 模型训练与验证 / 教学 / 其他'],
+                ['使用说明（申请时填）', '建议 ≤500 字；示例：在科研开发空间内基于本数据卡进行长势模型训练与验证，不导出'],
+                ['承诺勾选', '不勾选不允许提交'],
+                ['授权状态', '按当前账号、团队和资源用途校验'],
+                ['免审批与已授权', '免审批按具体团队或账号配置具体模型、数据；已有授权按资源和用途核验，两者均不扩大成员申请权限'],
+                ['本文目录', '右侧锚点，点击滚动到对应小节']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 指南页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['目录跳转', '点右侧「本文目录」任一项', '滚动到对应小节'],
+                ['展开常见问题', '点问题标题', '就地展开答案'],
+                ['进入数据中心', '按正文指引点数据中心入口', '跳转数据集列表页'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-联系支持.html': {
+      name: '关于平台 · 联系支持',
+      intro: '支持入口页：按问题类型分流（使用问题 / 合作咨询 / 需求沟通），并说明反馈问题前需要准备的信息。',
+      field: [
+        {
+          label: '📮 联系与反馈', sections: [
+            {
+              title: '一、问题类型与去向', head: ['类型', '适用场景', '入口', '说明'], rows: [
+                ['使用问题', '登录、权限、数据与模型使用异常', '提交问题反馈', '需提供账号与操作时间'],
+                ['合作咨询', '机构合作、共建、专项部署', '填写合作咨询', '需说明单位与诉求'],
+                ['需求沟通', '对需求中心某条需求感兴趣', '需求中心「获取联系方式」', '平台不参与撮合，双方自行对接']
+              ]
+            },
+            {
+              title: '二、反馈问题时请准备（字段）', head: ['字段', '类型', '必填', '说明'], rows: [
+                ['问题描述', '多行文本', '<span class="mtdev-tag req">是</span>', '写清操作路径与现象'],
+                ['发生时间', '时间', '<span class="mtdev-tag req">是</span>', '便于查日志'],
+                ['账号 / 单位', '文本', '<span class="mtdev-tag opt">否</span>', '定位权限问题'],
+                ['截图 / 附件', '文件', '<span class="mtdev-tag opt">否</span>', '建议附截图'],
+                ['联系方式', '文本', '<span class="mtdev-tag req">是</span>', '便于回访'],
+                ['搜索控件', '搜索框', '—', '占位「搜索使用指南、常见问题」']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 联系页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['提交问题反馈', '点「提交问题反馈」', '打开反馈表单，填必填项后提交'],
+                ['填写合作咨询', '点「填写合作咨询」', '打开合作咨询表单'],
+                ['查看咨询记录', '点「查看咨询记录」', '展示本人历史咨询与状态'],
+                ['展开常见咨询', '点问题标题', '就地展开答案'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    '关于平台-部署说明.html': {
+      name: '关于平台 · 部署说明',
+      intro: '部署方式说明页：平台内使用（科研开发环境 / 模型服务调用）与专项部署咨询的区别，以及沟通前需要准备的材料。',
+      field: [
+        {
+          label: '🚀 部署说明', sections: [
+            {
+              title: '一、两种使用方式', head: ['方式', '形态', '是否需要定制', '说明'], rows: [
+                ['平台内使用 · 科研开发环境', '空间 + 镜像 + 算力', '不需要', '申请科研空间后按配置使用，数据不导出'],
+                ['平台内使用 · 模型服务调用', 'API / 沙箱试用', '不需要', '按接口文档接入，受配额与限流约束'],
+                ['专项部署咨询', '私有化 / 定制部署', '需要', '走「填写合作咨询」，按项目评估']
+              ]
+            },
+            {
+              title: '二、沟通前请准备', head: ['项', '内容'], rows: [
+                ['使用场景', '业务目标与使用对象'],
+                ['部署环境', '现场 / 云、网络与数据安全要求'],
+                ['资源规模', '算力、存储、并发量的量级'],
+                ['数据情况', '数据形态、体量、涉密级别'],
+                ['时间计划', '期望上线时间与验收方式'],
+                ['搜索控件', '搜索使用指南、常见问题（占位）']
+              ]
+            }
+          ]
+        }
+      ],
+      guide: [
+        {
+          label: '🧭 部署页交互', sections: [
+            {
+              title: '交互一览', head: ['交互场景', '触发方式', '预期效果'], rows: [
+                ['查看方式差异', '对比「平台内使用」与「专项部署咨询」两组', '明确是否需要定制评估'],
+                ['发起部署咨询', '点「合作咨询」类入口', '跳到「联系支持」页填写咨询'],
+                ['展开说明', '点「部署相关说明」下的条目', '就地展开说明'],
+                ['搜索', '输入关键词点「搜索」', '过滤本页内容']
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  });
+
+
+  /* 2026-10-14：账号归属与团队成员关系分开，替换旧的高低角色免审批说明。 */
+  var permissionRows = [
+    ['创建成员账号', '个人中心创建本人关联账号；无团队也可', '不可创建'],
+    ['团队课题 / 需求关联', '当前团队负责人可维护其范围内的关联', '只查看，不可维护；受邀负责人同样按成员处理'],
+    ['我的课题', '按已加入团队汇总并查看内容', '按已加入团队汇总并查看内容'],
+    ['课题内容 / 状态维护', '按独立的后台课题管理权限判断', '团队成员身份不授予该权限'],
+    ['创建和管理团队', '管理自己创建的团队', '不可；仅参与关联负责人名下团队'],
+    ['添加普通成员', '只能选择本人已有成员账号，可加入多个本人团队', '不可邀请或添加'],
+    ['邀请已有负责人', '只邀请本机构独立负责人，等待接受 / 拒绝，可取消', '受邀负责人在该团队按普通成员参与'],
+    ['试用 / 申请模型在线使用', '登录后可试用；无使用资格时申请', '可以，无团队也可'],
+    ['申请数据 / 模型开发', '为本人负责团队及空间办理', '不可申请；可在获准空间参与使用和开发'],
+    ['科研空间 / 算力', '本人负责团队申请，均需审批', '不可申请；可进入获准团队空间'],
+    ['发布需求', '可提交，进入资源申请审批', '可提交，进入资源申请审批'],
+    ['正式提交成果', '可提交本人成果或本人负责团队成果', '不可正式提交']
+  ];
+  Object.keys(DOCS).forEach(function(file){
+    if(!/个人中心|模型中心|数据中心|科研开发空间/.test(file))return;
+    var d=DOCS[file];d.field=(d.field||[]).filter(function(t){return !t.label.includes('权限与角色');});
+    d.field.push({label:'🔐 权限与角色',sections:[{title:'账号身份、团队关系与操作权限',head:['操作','科研负责人','科研成员 / 受邀团队成员'],rows:permissionRows,note:'账号绑定负责人；移出团队不删除账号。免审批按指定团队或账号配置具体资源，不因负责人身份自动获得。'}]});
+  });
+  var personal=DOCS['个人中心-高保真原型.html'];
+  personal.intro='个人工作台：负责人在成员账号中建号，在我的团队中建队、添加成员和发送邀请。成员账号绑定负责人，可加入其名下多个团队。模型在线使用申请和需求发布保留个人入口。团队可关联课题和需求，我的课题按已加入团队汇总并提供内容详情。';
+  personal.field.unshift({label:'👥 成员账号与团队',sections:[
+    {title:'成员账号',head:['字段','输入 / 展示','约束'],rows:[['姓名','必填，最多 30 字','负责人维护关联成员资料'],['登录账号','必填，最多 80 字','全局唯一，不允许空格；已有账号不重复创建'],['初始密码','必填，密码输入框','原型不保存密码；生产接入账号服务'],['所属机构 / 关联负责人','只读','从当前负责人带出'],['已加入团队','多个标签或未加入团队','账号可以不关联任何团队']]},
+    {title:'团队与添加成员',head:['字段 / 对象','输入 / 展示','约束'],rows:[['团队名称','必填，最多 60 字','负责人创建'],['团队简介','选填，最多 300 字','可先创建团队后关联课题'],['关联课题 / 关联需求','分别选填，可关联多项','课题沿用单开发团队关系；需求保留原发布状态'],['机构 / 负责人','只读','创建时确定'],['已有成员','勾选本人关联账号','排除已加入当前团队的账号'],['已有负责人','同机构独立负责人列表','待回应 / 已接受 / 已拒绝 / 已取消；无管理员审批']]}
+  ]});
+  personal.guide.unshift({label:'👥 团队账号交互',sections:[{title:'本轮验证场景',head:['场景','操作','结果'],rows:[
+    ['无团队建号','切换刘老师 → 成员账号 → 创建','账号绑定刘老师，可暂不入队'],
+    ['同负责人多团队','张研究员 → 成员账号 → 查看李晓','一个账号关联两个团队'],
+    ['新建团队','我的团队 → 创建团队','填写团队资料，可独立选填关联课题和需求'],['关联课题 / 需求','团队详情 → 关联课题 / 关联需求','负责人选择已有记录，保存后与源记录关联'],['我的课题','个人中心 → 我的课题','按已加入团队汇总，支持筛选、分页和详情'],['成员查看课题','切换李晓或受邀负责人 → 我的课题','可查看课题内容和开发团队，无课题编辑或状态维护操作'],
+    ['添加成员','团队详情 → 添加成员 → 选择我的成员账号','直接加入，不另建账号'],
+    ['负责人邀请','添加成员 → 邀请已有负责人','受邀账号在我的团队接受 / 拒绝，发送方可取消'],
+    ['受邀团队权限','张研究员 → 粮食产量研究团队','显示普通成员，无团队管理入口'],
+    ['无团队成员','切换赵晨 → 我的模型 / 我的需求','保留试用、在线使用申请与需求发布；无数据 / 开发 / 空间申请'],
+    ['移除成员','团队详情 → 移除','只解除当前团队关系，保留账号及其他团队']
+  ]}]});
+
+  personal.intro='统一个人中心：个人概览包含最近访问、最新消息、我的收藏。账号权限决定可操作范围；资源申请、成果提交、团队协作分别管理。';
+  personal.field=[{label:'个人中心栏目',sections:[{title:'栏目职责',head:['栏目','内容','边界'],rows:[
+    ['个人概览','最近访问、最新消息、我的收藏','所有身份结构一致，记录按当前账号展示'],
+    ['编辑基础信息','姓名；机构、关联负责人只读','从概览资料卡打开'],
+    ['账号设置','登录账号、修改密码、绑定或更换手机号','原型仅模拟操作，不修改真实账号或发送短信'],
+    ['成员账号','创建、查看、编辑、重置密码','负责人仅管理自己关联的成员账号，无团队也可操作'],
+    ['我的模型 / 我的数据','可使用资源、申请记录','不包含本人上传或提交的成果记录'],
+    ['我的成果','模型成果、数据成果','复用原成果记录；普通成员无正式提交权限'],
+    ['我的需求','本人发布的需求及处理状态','预期交付成果是需求描述'],
+    ['我的团队','团队成员、关联课题、关联需求及科研空间入口','团队不单独展示资源台账'],
+    ['我的课题','已加入团队关联的课题','内容只读，不授予后台课题管理权限']
+  ]}]},{label:'权限与角色',sections:[{title:'账号与团队权限',head:['操作','科研负责人','科研成员 / 受邀团队成员'],rows:permissionRows}]}];
+  personal.guide=[{label:'个人中心交互',sections:[{title:'验证场景',head:['场景','操作','结果'],rows:[
+    ['统一概览','切换负责人、成员和管理员','始终展示最近访问、最新消息、我的收藏'],
+    ['基础信息','概览 → 编辑基础信息','只编辑姓名'],
+    ['账号管理','账号设置 → 修改密码 / 绑定手机号','填写、校验、取消、保存及本地演示反馈'],
+    ['成员密码','成员账号 → 重置密码','不显示原密码，仅可管理本人关联成员'],
+    ['团队内容','团队详情 → 关联课题 / 关联需求','直接在主内容页签查看、关联或解除关联'],
+    ['模型成果','我的成果 → 模型成果 → 上传模型','沿用上传、部署、调试、提交及审批记录'],
+    ['数据成果','我的成果 → 数据成果 → 提交数据成果','沿用数据成果提交及审批记录'],
+    ['成果关联','成果填写 → 关联课题 / 关联需求','两个字段独立选填，可均不关联'],
+    ['权限隔离','切换成员或受邀负责人','成员不能正式提交成果；受邀负责人无该团队管理操作']
+  ]}]}];
+
+  /* ============================== 注入 ============================== */
+  function inject() {
+    var file = decodeURIComponent(location.pathname.split('/').pop() || '');
+    var doc = DOCS[file] || (file.startsWith('个人中心-') ? DOCS['个人中心-高保真原型.html'] : null);
+    if (!doc && file === '') doc = DOCS['index.html'];
+    if (!doc) doc = DOCS['__default__'];
+    if (!doc.field && !doc.guide) return;
+
+    var st = document.createElement('style');
+    st.textContent = CSS;
+    document.head.appendChild(st);
+
+    var fieldTabs = doc.field || DOCS['__default__'].field;
+    var guideTabs = doc.guide || DOCS['__default__'].guide;
+    var tagline = doc.name + (file ? '　·　' + file : '');
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML =
+      drawerHTML('mtdevFieldMask', 'mtdevFieldBody', '📋 字段说明 — ' + doc.name, tagline, fieldTabs, 'mtdevF') +
+      drawerHTML('mtdevGuideMask', 'mtdevGuideBody', '🧪 交互演示指引 — ' + doc.name, tagline, guideTabs, 'mtdevG') +
+      '<div class="mtdev-group">' +
+      '<button class="mtdev-btn field" type="button" title="字段说明（类型 / 长度 / 必填 / 校验）">📋 字段说明</button>' +
+      '<button class="mtdev-btn guide" type="button" title="交互演示指引（点什么、会发生什么）">🧪 交互演示指引</button>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    var group = wrap.querySelector('.mtdev-group');
+    var maskF = wrap.querySelector('#mtdevFieldMask');
+    var maskG = wrap.querySelector('#mtdevGuideMask');
+
+    var introHost = '<div class="mtdev-intro">' + (doc.intro || '') + '</div>';
+    wrap.querySelector('#mtdevFieldBody').insertAdjacentHTML('afterbegin', introHost);
+    wrap.querySelector('#mtdevGuideBody').insertAdjacentHTML('afterbegin', introHost);
+
+    var foot = '<p class="mtdev-note" style="margin-top:18px;border-top:1px dashed #dce5e9;padding-top:10px">' +
+      '说明：标「建议」的长度为本原型未设硬约束、按尺度与行业惯例给的参考值，最终以后端确认或接口文档为准；' +
+      '其余长度 / 取值均取自原型 <code>maxlength</code> 或项目字段清单（模型上架元数据字段清单 v1、需求中心定版）。' +
+      '<br>权限按负责人 / 成员身份、团队归属和资源用途分别校验。前端是本地交互演示，生产接口必须执行相同校验。' +
+      '</p>';
+    wrap.querySelector('#mtdevFieldBody').insertAdjacentHTML('beforeend', foot);
+
+    bindTabs(wrap.querySelector('#mtdevFieldBody'));
+    bindTabs(wrap.querySelector('#mtdevGuideBody'));
+
+    function open(mask) { mask.classList.add('on'); }
+    function close(mask) { mask.classList.remove('on'); resetTabs(mask.querySelector('.mtdev-bd')); }
+
+    group.querySelector('.mtdev-btn.field').onclick = function () { open(maskF); };
+    group.querySelector('.mtdev-btn.guide').onclick = function () { open(maskG); };
+    maskF.querySelector('.mtdev-x').onclick = function () { close(maskF); };
+    maskG.querySelector('.mtdev-x').onclick = function () { close(maskG); };
+    maskF.onclick = function (e) { if (e.target === maskF) close(maskF); };
+    maskG.onclick = function (e) { if (e.target === maskG) close(maskG); };
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (maskF.classList.contains('on')) close(maskF);
+      else if (maskG.classList.contains('on')) close(maskG);
+    });
+
+    draggable(group);
+    draggable(maskF.querySelector('.mtdev-drawer'), maskF.querySelector('.mtdev-hd'));
+    draggable(maskG.querySelector('.mtdev-drawer'), maskG.querySelector('.mtdev-hd'));
+
+    /* 页面自己的弹窗（原生 <dialog> 已在 CSS 里处理）若是 div 遮罩实现，
+       层级可能低于本按钮组；这里按「是否出现覆盖整屏的遮罩」自动避让，
+       不依赖各页类名（.modal-mask / .drawer-mask / 其它命名均适用）。 */
+    setInterval(function () {
+      var els = document.querySelectorAll('[class*=mask],[class*=overlay],[class*=backdrop],[class*=modal]');
+      var dim = false;
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (/mtdev/.test(el.className || '')) continue;
+        var cs = window.getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) continue;
+        var r = el.getBoundingClientRect();
+        if (r.width > window.innerWidth * 0.9 && r.height > window.innerHeight * 0.9) { dim = true; break; }
+      }
+      group.classList.toggle('mtdev-dim', dim);
+    }, 250);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject);
+  else inject();
+})();
+
+</script><!-- devdoc-1012:end -->
+<style>
+.ot-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 18px}.ot-toolbar input{min-width:200px;padding:9px 12px;border:1px solid #cddbd5;border-radius:5px;background:#fff;color:#254b3b;font:inherit}.ot-toolbar .ot-spacer{flex:1}.ot-muted{color:#718478;font-size:13px;line-height:1.7}.ot-team-list{display:grid;gap:14px}.ot-team-list .pc-team-card{padding:22px}.ot-team-list .pc-team-card h3{font-size:17px}.ot-pills{display:flex;gap:6px;flex-wrap:wrap;max-width:410px}.ot-pill{display:inline-block;background:#eff6f2;border-radius:4px;padding:3px 9px;color:#416652;font-size:12px}.ot-person{display:flex;gap:10px;align-items:center}.ot-person .pc-avatar{height:36px;width:36px;font-size:16px}.ot-person strong{display:block;color:#244e3c}.ot-person small{display:block;margin-top:3px}.ot-pager{display:flex;gap:12px;justify-content:flex-end;align-items:center;padding-top:20px;color:#6f8176;font-size:12px;flex-wrap:wrap}.ot-pager>span:first-child{margin-right:auto}.ot-pager select{padding:6px 8px;border:1px solid #d5e1da;border-radius:4px;background:white;font:inherit}.ot-pager button{padding:6px 10px;font-size:12px}.ot-invitation{border:1px solid #dceae3;background:#f6fbf8;border-radius:6px;padding:15px 18px;display:flex;align-items:center;gap:12px;margin-bottom:12px}.ot-invitation>div{flex:1}.ot-invitation p{margin-top:5px;font-size:12px;color:#73877b}.ot-modal{width:min(620px,calc(100vw - 32px));max-height:90vh;border:1px solid #d7e4dc;border-radius:9px;margin:auto;padding:0;color:#244c39;background:#fff;box-shadow:0 18px 60px #173a2b35;font:14px/1.6 'Microsoft YaHei',sans-serif}.ot-modal::backdrop{background:#152e2459}.ot-modal[open]{display:flex;flex-direction:column}.ot-modal header{height:auto;position:static;display:flex;align-items:center;justify-content:space-between;padding:19px 24px;border-bottom:1px solid #e1eae5;flex-shrink:0;background:#fff}.ot-modal header h2{font-size:19px;margin:0}.ot-modal header button{border:0;background:none;font-size:24px;padding:0 5px;color:#829388}.ot-modal .ot-body{padding:22px 24px;overflow:auto;min-height:0}.ot-modal form{display:contents}.ot-modal footer{display:flex;justify-content:flex-end;gap:10px;margin:0;padding:16px 24px;border-top:1px solid #e1eae5;background:#f8fbf9;flex-shrink:0;color:inherit}.ot-modal button{font:inherit;cursor:pointer;border:1px solid #c7d9cd;border-radius:4px;padding:8px 16px;background:#fff;color:#2a6046}.ot-modal button.primary{background:#206347;border-color:#206347;color:#fff}.ot-field{display:block;margin-bottom:18px;color:#3d5e4c}.ot-field input,.ot-field textarea,.ot-field select{display:block;width:100%;border:1px solid #cbdcd1;border-radius:5px;padding:9px 11px;margin-top:7px;font:inherit;color:#234d38;background:#fff;box-sizing:border-box}.ot-field input[readonly]{background:#f4f7f5;color:#788a7e}.ot-field textarea{min-height:86px;resize:vertical}.ot-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.ot-error{color:#b24736;margin:8px 0 0;min-height:21px;font-size:13px}.ot-required{color:#b74839;margin-left:4px}.ot-select-list{display:grid;gap:8px;margin:14px 0}.ot-select-row{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #e1eae4;border-radius:5px;cursor:pointer}.ot-select-row:has(input:checked){border-color:#4e8d6a;background:#f0f8f3}.ot-select-row>div{flex:1}.ot-select-row input{accent-color:#246648;width:16px;height:16px}.ot-select-row small{display:block;margin-top:3px;color:#7c8d82}.ot-select-row button{font-size:13px;padding:6px 12px}.ot-tabs{display:flex;gap:24px;border-bottom:1px solid #e1eae5;margin-bottom:18px}.ot-tabs button{border:0;border-radius:0;background:none;padding:8px 0 12px;color:#778a7d}.ot-tabs button.active{color:#246649;border-bottom:2px solid #246649;font-weight:600}.ot-demo{display:flex;justify-content:flex-end;align-items:center;gap:10px;font-size:11px;color:#7c8c82;flex-wrap:wrap;margin-top:10px}.ot-demo select{max-width:260px;padding:6px;border:1px solid #d9e3dc;border-radius:4px;color:#60796a;background:#fff;font:inherit}.ot-detail-grid{display:grid;grid-template-columns:100px 1fr;gap:14px;color:#6d8273}.ot-detail-grid strong{font-weight:500;color:#284b37}.ot-empty{padding:48px 20px;text-align:center;color:#819187;line-height:1.9}.ot-empty strong{display:block;color:#4b6c58;font-size:16px}.ot-empty .primary{margin-top:16px}.ot-status{font-size:12px;display:inline-block;border-radius:12px;padding:3px 9px;color:#65806d;background:#eff4f0}.ot-status.pending{background:#fff4df;color:#9d742e}.ot-danger{color:#ae5342!important}.ot-invite-title{font-size:14px;font-weight:600;margin:24px 0 10px}button:disabled{cursor:not-allowed;opacity:.5}.ot-modal [hidden]{display:none!important}
+@media(max-width:760px){.ot-grid{grid-template-columns:1fr}.ot-invitation{flex-wrap:wrap}.ot-invitation>div{min-width:100%}.ot-team-list .pc-team-card{gap:12px;padding:16px}.ot-modal .ot-body{padding:18px}.ot-pager{gap:8px}}
+.ot-toolbar select{padding:9px 12px;border:1px solid #cddbd5;border-radius:5px;background:#fff;color:#254b3b;font:inherit;max-width:240px}.ot-work-options{max-height:280px;overflow:auto;display:grid;gap:8px;margin-top:12px}.ot-work-options [hidden]{display:none!important}.ot-work-create{margin-top:4px}.ot-work-create details{border-top:1px solid #e0e9e4;padding:14px 0}.ot-work-create summary{cursor:pointer;color:#325c47}.ot-work-create .ot-work-options{max-height:185px}.ot-work-search{width:100%;box-sizing:border-box;border:1px solid #cbdcd1;border-radius:5px;padding:9px 11px;font:inherit}.ot-project-table td:first-child strong{display:block;margin-top:5px;font-size:14px;max-width:370px}.ot-project-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}.ot-project-title>.ot-muted{width:100%}.ot-project-title h2{font-size:23px;line-height:1.5;margin:0}.ot-project-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding-top:20px;border-top:1px solid #e2ebe5}.ot-project-facts small{color:#778b80}.ot-project-facts p{margin:8px 0 0;line-height:1.6}.ot-project-content{line-height:1.9}.ot-project-content h3{font-size:15px;margin:20px 0 8px}.ot-project-content ol{padding-left:22px}.ot-relation-tabs{margin:0!important;border:0!important}.ot-relation-tabs button{padding:8px 0!important;margin-right:28px}.ot-relation-tabs .active{color:#005653;border-bottom:2px solid #005653!important}@media(max-width:760px){.ot-project-facts{grid-template-columns:1fr 1fr}.ot-project-title h2{font-size:19px}.ot-toolbar select{max-width:100%}}
+
+</style>
+<script data-inline-source="assets/portal-teams.js">
+(function () {
+  'use strict';
+  const O=window.PortalOrg, e=O.escape, q=s=>document.querySelector(s);
+  if(window.Meeting){const M=window.Meeting,read=M.read,write=M.write,keys=[M.key,'agri-personal-model-uploads-v1'];
+    const belongs=r=>(r.applicantId||'u-zhang')===O.current().id;
+    M.read=(key,fallback)=>{const value=read(key,fallback);return keys.includes(key)&&Array.isArray(value)?value.filter(belongs):value;};
+    M.write=(key,value)=>keys.includes(key)&&Array.isArray(value)?write(key,[...read(key,[]).filter(r=>!belongs(r)),...value.map(r=>({...r,applicantId:r.applicantId||O.current().id,applicant:r.applicantId?r.applicant:O.current().name}))]):write(key,value);
+  }
+  let accountQuery='', accountPage=1, accountSize=10, teamFilter='全部', selectedTeam='t-rice';
+  const originalResources=window.resources, originalOverview=window.overview, originalMessages=window.messages;
+  const originalRender=window.render, ownerMessages=JSON.parse(JSON.stringify(state.messages));
+  const action=(label,op,value='',primary=false)=>`<button type="button" class="${primary?'primary':'pc-link'}" data-ot="${op}" data-value="${e(value)}">${label}</button>`;
+  const head=(title,right='')=>`<div class="pc-heading"><h2>${title}</h2>${right}</div>`;
+  const blank=(title,copy='')=>`<div class="ot-empty"><strong>${title}</strong>${copy}</div>`;
+  const badge=(text)=>`<span class="pc-badge">${e(text)}</span>`;
+  const accountTeams=id=>O.read().teams.filter(t=>t.memberIds.includes(id));
+  const teamId=()=>new URLSearchParams(location.hash.split('?')[1]||'').get('id')||selectedTeam;
+  const teamRole=t=>t.ownerId===O.current().id?'团队负责人':'普通成员';
+  const feedback=text=>window.toast?.(text);
+  const error=err=>{const n=q('#otError');if(n)n.textContent=err.message||String(err);else feedback(err.message||String(err));};
+  function close(){q('#otDialog')?.close();}
+  function dialog(title,body,footer='',form=false){
+    let d=q('#otDialog');if(!d){d=document.createElement('dialog');d.id='otDialog';d.className='ot-modal';document.body.append(d);d.addEventListener('click',ev=>{if(ev.target===d){const r=d.getBoundingClientRect();if(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom)d.close();}});}
+    if(d.open)d.close();d.innerHTML=`<header><h2>${e(title)}</h2><button type="button" data-ot="close" aria-label="关闭弹窗">×</button></header>${form?'<form id="otForm">':''}<div class="ot-body">${body}<p id="otError" class="ot-error" role="alert"></p></div><footer>${action('取消','close')}${footer}</footer>${form?'</form>':''}`;d.showModal();
+  }
+  function field(label,name,value='',opts={}) {return `<label class="ot-field">${label}${opts.required?'<span class="ot-required">*</span>':''}<input name="${name}" value="${e(value)}" type="${opts.type||'text'}" ${opts.required?'required':''} ${opts.readonly?'readonly':''} ${opts.maxlength?'maxlength="'+opts.maxlength+'"':''} autocomplete="${opts.type==='password'?'new-password':'off'}"></label>`;}
+  function openMember(id){
+    if(!O.isLeader())throw Error('仅负责人可以管理成员账号。');const a=id?O.account(id):null,me=O.current();
+    if(a&&a.ownerId!==me.id)throw Error('只能管理本人关联的成员账号。');
+    dialog(a?'编辑成员账号':'创建成员账号',field('姓名','name',a?.name||'',{required:true,maxlength:30})+field('登录账号','login',a?.login||'',{required:true,readonly:!!a,maxlength:80})+(!a?field('初始密码','password','',{required:true,type:'password'}):'')+`<div class="ot-grid">${field('所属机构','org',me.org,{readonly:true})}${field('关联负责人','owner',me.name,{readonly:true})}</div>`,`<button class="primary" type="submit">${a?'保存':'创建账号'}</button>`,true);
+    q('#otForm').onsubmit=ev=>{ev.preventDefault();try{const f=Object.fromEntries(new FormData(ev.target));if(a)O.editMember(a.id,f.name);else O.createMember(f);close();window.render();feedback(a?'成员资料已保存':'成员账号已创建');}catch(err){error(err);}};
+  }
+  function memberDetails(id){const a=O.account(id);if(!a||!O.isLeader()||a.ownerId!==O.current().id)throw Error('无权查看该成员账号。');const ts=accountTeams(id);dialog('成员账号详情',`<div class="ot-detail-grid"><span>姓名</span><strong>${e(a.name)}</strong><span>登录账号</span><strong>${e(a.login)}</strong><span>所属机构</span><strong>${e(a.org)}</strong><span>关联负责人</span><strong>${e(O.account(a.ownerId)?.name)}</strong><span>已加入团队</span><div class="ot-pills">${ts.map(t=>`<span class="ot-pill">${e(t.name)}</span>`).join('')||'<span class="ot-muted">未加入团队</span>'}</div></div>`,action('编辑资料','edit-member',id,true));}
+  function accountsView(){
+    if(!O.isLeader())return `<section class="pc-panel">${blank('当前账号没有成员管理权限')}</section>`;
+    const all=O.managedAccounts().filter(a=>(a.name+' '+a.login).toLowerCase().includes(accountQuery.toLowerCase()));const pages=Math.max(1,Math.ceil(all.length/accountSize));accountPage=Math.min(accountPage,pages);
+    return `<section class="pc-panel">${head('成员账号',action('创建成员账号','new-member','',true))}<form id="otAccountSearch" class="ot-toolbar"><input name="keyword" aria-label="搜索成员账号" placeholder="搜索姓名或登录账号" value="${e(accountQuery)}"><button class="primary">搜索</button></form>${all.length?`<div class="pc-table"><table><thead><tr><th>成员</th><th>登录账号</th><th>已加入团队</th><th>操作</th></tr></thead><tbody>${all.slice((accountPage-1)*accountSize,accountPage*accountSize).map(a=>`<tr><td><div class="ot-person"><span class="pc-avatar">${e(a.name[0])}</span><strong>${e(a.name)}</strong></div></td><td>${e(a.login)}</td><td><div class="ot-pills">${accountTeams(a.id).map(t=>`<span class="ot-pill">${e(t.name)}</span>`).join('')||'<span class="ot-muted">未加入团队</span>'}</div></td><td>${action('查看','member-info',a.id)} ${action('编辑','edit-member',a.id)}</td></tr>`).join('')}</tbody></table></div>`:blank(accountQuery?'没有匹配的成员账号':'尚未创建成员账号')}<div class="ot-pager"><span>共 ${all.length} 个成员账号</span><label>每页 <select id="otPageSize" aria-label="成员账号每页条数">${[10,20,50].map(n=>`<option ${n===accountSize?'selected':''}>${n}</option>`).join('')}</select> 条</label><button data-ot="account-page" data-value="${accountPage-1}" ${accountPage===1?'disabled':''}>上一页</button><span>${accountPage} / ${pages}</span><button data-ot="account-page" data-value="${accountPage+1}" ${accountPage===pages?'disabled':''}>下一页</button></div></section>`;
+  }
+  function createTeam(){const me=O.current();if(!O.isLeader())throw Error('仅负责人可以创建团队。');dialog('创建团队',field('团队名称','name','',{required:true,maxlength:60})+`<label class="ot-field">团队简介<textarea name="description" maxlength="300" placeholder="填写团队研究方向或简介（选填）"></textarea></label><div class="ot-grid">${field('所属机构','org',me.org,{readonly:true})}${field('负责人','owner',me.name,{readonly:true})}</div>${window.PortalWorkUI?.createFields()||''}`,`<button class="primary" type="submit">创建团队</button>`,true);q('#otForm').onsubmit=ev=>{ev.preventDefault();try{const fd=new FormData(ev.target),t=window.PortalWorkUI?PortalWorkUI.createTeam(Object.fromEntries(fd),fd):O.createTeam(Object.fromEntries(fd));close();selectedTeam=t.id;location.hash='team?id='+encodeURIComponent(t.id);feedback('团队已创建');}catch(err){error(err);}};}
+  function invitationInbox(){const s=O.read(),rows=s.invitations.filter(i=>i.to===O.current().id&&i.status==='pending');return rows.length?`<section class="pc-panel">${head('收到的团队邀请')} ${rows.map(i=>`<div class="ot-invitation"><div><strong>${e(O.team(i.teamId)?.name)}</strong><p>${e(O.account(i.from)?.name)} 邀请你加入 · ${e(i.time)}</p></div>${action('拒绝','decline',i.id)}${action('接受邀请','accept',i.id,true)}</div>`).join('')}</section>`:'';}
+  function teamsView(){const all=O.myTeams(),rows=all.filter(t=>teamFilter==='全部'||(teamFilter==='我负责的'?t.ownerId===O.current().id:t.ownerId!==O.current().id));return invitationInbox()+`<section class="pc-panel">${head('我的团队',O.isLeader()?action('创建团队','new-team','',true):'')}<div class="pc-tabs">${['全部',...(O.isLeader()?['我负责的']:[]),'我参与的'].map(f=>`<button data-ot="team-filter" data-value="${f}" class="${f===teamFilter?'active':''}">${f}</button>`).join('')}</div><div class="ot-team-list">${rows.map(t=>`<article class="pc-team-card"><div class="pc-avatar">${e(t.name[0])}</div><div><h3>${e(t.name)} ${badge(teamRole(t))}</h3><p>所属机构：${e(t.org)}　·　负责人：${e(O.account(t.ownerId)?.name)}</p><p>${e(t.description||'暂无团队简介')} · ${t.memberIds.length} 位成员</p></div>${action('进入团队 →','open-team',t.id,true)}</article>`).join('')||blank('暂无团队',O.isLeader()?'可以创建自己的研究团队。':'由关联负责人将你加入团队。')}</div></section>`;}
+  function teamView(){const t=O.team(teamId());if(!t||!O.canViewTeam(t.id))return `<section class="pc-panel">${head('团队详情')}${blank('当前账号未加入该团队')}${action('返回我的团队','back-teams')}</section>`;selectedTeam=t.id;const manage=O.canManageTeam(t.id),s=O.read(),inv=s.invitations.filter(i=>i.teamId===t.id);return action('‹ 返回我的团队','back-teams')+`<section class="pc-profile"><div class="pc-avatar">${e(t.name[0])}</div><div><h2>${e(t.name)} ${badge(teamRole(t))}</h2><p>${e(t.org)}　·　负责人：${e(O.account(t.ownerId)?.name)}</p></div></section><section class="pc-panel"><div class="pc-tabs">${['团队成员','关联课题','关联需求'].map(x=>`<button data-team-tab="${x}" class="${x===teamTab?'active':''}">${x}</button>`).join('')}</div>${teamTab==='团队成员'?`${head('团队成员',manage?action('添加成员','add-members',t.id,true):'')}<div class="pc-table"><table><thead><tr><th>成员</th><th>登录账号</th><th>团队角色</th><th>账号身份</th>${manage?'<th>操作</th>':''}</tr></thead><tbody>${t.memberIds.map(id=>O.account(id)).filter(Boolean).map(a=>`<tr><td><div class="ot-person"><span class="pc-avatar">${e(a.name[0])}</span><strong>${e(a.name)}${a.id===O.current().id?'（我）':''}</strong></div></td><td>${e(a.login)}</td><td>${badge(a.id===t.ownerId?'团队负责人':'普通成员')}</td><td>${a.kind==='leader'?'独立负责人':'成员账号'}</td>${manage?`<td>${a.id===t.ownerId?'—':action('移除','remove-member',a.id)}</td>`:''}</tr>`).join('')}</tbody></table></div>${manage&&inv.length?`<h3 class="ot-invite-title">邀请记录</h3><div class="pc-table"><table><thead><tr><th>受邀负责人</th><th>发送时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${inv.map(i=>`<tr><td>${e(O.account(i.to)?.name)}</td><td>${e(i.time)}</td><td><span class="ot-status ${i.status}">${({pending:'待回应',accepted:'已接受',declined:'已拒绝',cancelled:'已取消'})[i.status]}</span></td><td>${i.status==='pending'?action('取消邀请','cancel-invite',i.id):'—'}</td></tr>`).join('')}</tbody></table></div>`:''}`:(window.PortalWorkUI?.relationContent(t.id,teamTab==='关联需求'?'demand':'project')||'')}</section><section class="pc-panel">${head('团队协作')}${(t.spaceIds||[]).length?`<p class="ot-muted">已关联 ${(t.spaceIds||[]).length} 个科研空间</p>${action('查看关联科研空间 →','team-spaces',t.id)}`:blank('暂无关联科研空间')}</section>`;}
+  function addDialog(id,mode='members'){
+    if(!O.canManageTeam(id))throw Error('仅团队负责人可以添加成员。');const t=O.team(id),s=O.read();
+    let body=`<div class="ot-tabs"><button type="button" data-ot="add-mode" data-value="members" class="${mode==='members'?'active':''}">选择我的成员账号</button><button type="button" data-ot="add-mode" data-value="leaders" class="${mode==='leaders'?'active':''}">邀请已有负责人</button></div>`;
+    if(mode==='members'){
+      const list=O.managedAccounts().filter(a=>!t.memberIds.includes(a.id));body+=list.length?`<div class="ot-select-list">${list.map(a=>`<label class="ot-select-row"><input type="checkbox" name="members" value="${a.id}"><div><strong>${e(a.name)}</strong><small>${e(a.login)} · ${accountTeams(a.id).length?'已加入 '+accountTeams(a.id).length+' 个团队':'未加入团队'}</small></div></label>`).join('')}</div>`:blank('暂无可添加的成员账号','可在个人中心“成员账号”中创建。');dialog('添加成员',body,list.length?`<button class="primary" type="submit">加入团队</button>`:'',true);
+      q('#otForm').onsubmit=ev=>{ev.preventDefault();try{O.addMembers(id,new FormData(ev.target).getAll('members'));close();window.render();feedback('成员已加入团队');}catch(err){error(err);}};
+    }else{
+      const rows=s.accounts.filter(a=>a.kind==='leader'&&a.orgId===t.orgId&&a.id!==O.current().id);body+=`<div class="ot-select-list">${rows.map(a=>{const joined=t.memberIds.includes(a.id),pending=s.invitations.some(i=>i.teamId===id&&i.to===a.id&&i.status==='pending');return `<div class="ot-select-row"><div><strong>${e(a.name)}</strong><small>${e(a.login)} · ${e(a.org)}</small></div>${joined||pending?`<span class="ot-status">${joined?'已加入':'已邀请'}</span>`:action('邀请','invite',a.id,true)}</div>`;}).join('')||blank('暂无可邀请的负责人')}</div>`;dialog('添加成员',body);
+    }
+    q('#otDialog').dataset.team=id;
+  }
+  function modelApps(){let a=[];try{a=JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]');}catch{}return a.filter(r=>(r.applicantId||'u-zhang')===O.current().id);}
+  function memberResources(kind){
+    const models=kind==='models',ap=modelApps(),joined=O.myTeams().filter(t=>t.spaceIds?.length);
+    if(!models)return `<section class="pc-panel">${head('我的数据',action('浏览数据中心','data-center'))}${joined.length?joined.map(t=>`<article class="pc-resource"><div class="pc-resource-title"><h3>${e(t.name)}</h3><p>在已加入的科研空间查看和使用获准数据</p></div>${action('查看科研空间','team-spaces',t.id,true)}</article>`).join(''):blank('暂无可使用的科研数据','加入团队并获得科研空间访问权限后，可在空间内使用已挂载数据。')}</section>`;
+    const authorized=ap.filter(r=>['已通过','approved'].includes(r.status));return `<section class="pc-panel">${head('我的模型',action('浏览模型中心','model-center'))}<div class="pc-tabs">${['可使用','申请记录'].map(x=>`<button data-tab="${x}" class="${x===tab?'active':''}">${x}</button>`).join('')}</div>${(tab==='申请记录'?ap:authorized).map(r=>`<article class="pc-resource"><div class="pc-resource-title"><h3>${e(r.name)} ${badge(r.status)}</h3><p>${e(r.date)} · 模型在线使用</p></div>${action('查看申请','model-app',r.id)}</article>`).join('')||blank(tab==='申请记录'?'暂无模型使用申请':'暂无已授权模型','可浏览模型中心进行试用或申请在线使用。')}</section>`;
+  }
+  function memberOverview(){const a=O.current();return window.profile()+`<section class="pc-panel">${head('我的团队',action('查看全部 →','back-teams'))}${O.myTeams().length?`<p class="ot-muted">已加入 ${O.myTeams().length} 个团队 · 关联负责人：${e(O.account(a.ownerId)?.name||'—')}</p>`:blank('尚未加入团队','可以先试用模型、申请模型在线使用或发布需求。')}</section><section class="pc-panel">${head('平台资源')}<div class="ot-toolbar">${action('浏览模型','model-center','',true)}${action('发布需求','new-demand')}${action('我的申请','model-apps')}</div></section>`;}
+  const orgSidebar=document.createElement('button');orgSidebar.dataset.nav='accounts';orgSidebar.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M18 9v8M14 13h8"/></svg>成员账号';q('[data-nav="teams"]').before(orgSidebar);
+  window.OwnerTeams={accountsView};
+  window.teams=teamsView;window.team=teamView;
+  window.resources=kind=>(O.isLeader()||kind==='data')?originalResources(kind).replace(/<div class="pc-meta"><small>有效期至<\/small>[^<]*<\/div>/g,'<div class="pc-meta"><small>使用范围</small>平台内</div>'):memberResources(kind);
+  window.overview=()=>O.current().kind==='admin'?window.profile()+`<section class="pc-panel">${head('数据看板')}<a class="primary" href="门户-领导数据看板.html">查看数据看板</a></section>`:O.current().kind==='member'?memberOverview():O.current().id==='u-zhang'?originalOverview():window.profile()+`<section class="pc-panel">${head('团队与成员')}<div class="ot-toolbar">${action('我的团队','back-teams','',true)}${action('创建成员账号','new-member')}</div><p class="ot-muted">负责 ${O.myTeams().filter(t=>t.ownerId===O.current().id).length} 个团队 · 关联 ${O.managedAccounts().length} 个成员账号</p></section><section class="pc-panel">${head('平台资源')}<div class="ot-toolbar">${action('浏览模型','model-center')}${action('发布需求','new-demand')}</div></section>`;
+  window.messages=()=>originalMessages();
+  window.settings=()=>{const a=O.current();return `<section class="pc-panel">${head('账号设置')}<form id="otProfileForm" class="pc-form"><label>姓名<input name="name" required maxlength="30" value="${e(a.name)}"></label><label>登录账号<input value="${e(a.login)}" readonly></label><label>所属机构<input value="${e(a.org)}" readonly></label>${a.ownerId?`<label>关联负责人<input value="${e(O.account(a.ownerId)?.name)}" readonly></label>`:''}<button class="primary" type="submit">保存资料</button></form></section>`;};
+  const oldStore=window.demandStore,oldSave=window.demandSave;
+  window.demandStore=()=>oldStore().filter(x=>x.mine!==false&&(x.applicantId||'u-zhang')===O.current().id);
+  window.demandSave=arr=>oldSave([...oldStore().filter(x=>x.mine===false||(x.applicantId||'u-zhang')!==O.current().id),...arr.map(x=>({...x,applicantId:x.applicantId||O.current().id}))]);
+  window.render=function(){const a=O.current();state.profile={name:a.name,org:a.org};if(route==='accounts'&&!O.isLeader())route='overview';originalRender();orgSidebar.hidden=!O.isLeader();q('#otProfileForm')?.addEventListener('submit',ev=>{ev.preventDefault();try{O.updateProfile(new FormData(ev.target).get('name'));window.render();feedback('资料已保存');}catch(err){error(err);}});q('#otAccountSearch')?.addEventListener('submit',ev=>{ev.preventDefault();accountQuery=new FormData(ev.target).get('keyword').trim();accountPage=1;window.render();});q('#otPageSize')?.addEventListener('change',ev=>{accountSize=+ev.target.value;accountPage=1;window.render();});const demo=q('.pc-demo');if(demo)demo.hidden=true;window.PortalPreview?.refresh();};
+  document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ot]');if(!b)return;ev.preventDefault();const {ot:op,value:v}=b.dataset;try{
+    if(op==='close')close();else if(op==='new-member')openMember();else if(op==='edit-member')openMember(v);else if(op==='member-info')memberDetails(v);
+    else if(op==='new-team')createTeam();else if(op==='account-page'){accountPage=+v;window.render();}
+    else if(op==='team-filter'){teamFilter=v;window.render();}else if(op==='back-teams')go('teams');
+    else if(op==='open-team'){selectedTeam=v;location.hash='team?id='+encodeURIComponent(v);}
+    else if(op==='add-members')addDialog(v);else if(op==='add-mode')addDialog(q('#otDialog').dataset.team,v);
+    else if(op==='invite'){const id=q('#otDialog').dataset.team;O.invite(id,v);addDialog(id,'leaders');window.render();feedback('邀请已发出');}
+    else if(op==='accept'||op==='decline'){O.answer(v,op==='accept'?'accepted':'declined');window.render();feedback(op==='accept'?'已加入团队':'已拒绝邀请');}
+    else if(op==='cancel-invite'){O.cancelInvite(v);window.render();feedback('邀请已取消');}
+    else if(op==='remove-member'){const id=teamId();dialog('移除团队成员',`<p>将 ${e(O.account(v)?.name)} 移出“${e(O.team(id)?.name)}”？</p><p class="ot-muted">账号与其他团队关系保留。</p>`,action('确认移除','confirm-remove',v,true));}
+    else if(op==='confirm-remove'){O.removeMember(teamId(),v);close();window.render();feedback('已移出当前团队');}
+    else if(op==='team-spaces')location.href='科研开发空间-交互原型(10).html?team='+encodeURIComponent(v);
+    else if(op==='model-center')location.href='模型中心-模型列表页（调整）.html';else if(op==='data-center')location.href='数据中心-数据集列表页.html';
+    else if(op==='new-demand'){go('demands');openDemandForm();}else if(op==='model-apps'){location.hash='models?tab=applications';}
+    else if(op==='model-app'){const r=modelApps().find(x=>x.id===v);if(r)dialog('模型使用申请',`<h3>${e(r.name)}</h3><p>当前状态：${e(r.status)}</p><p>申请用途：模型在线使用</p><p>${e(r.reason||'')}</p>`);}
+    else if(op==='team-resource'){const r=(teamTab==='团队模型'?teamModels:teamData)[+v];if(r)dialog(r.name,`<p>归属团队：${e(O.team(teamId())?.name)}</p><p>版本：${e(r.version)}</p><p>维护人：${e(r.person)}</p><p>状态：${e(r.status)}</p>`);}
+  }catch(err){error(err);}});
+  if(window.Meeting){for(const k of ['submit','uploadPersonalModel','commitOutcome','submitPersonalModel','submitUploadedModel','deployUploadedModel','deployPersonalModel','debugUploadedModel']){const fn=Meeting[k];if(typeof fn==='function')Meeting[k]=function(...args){if(!O.isLeader()){feedback('成员不能提交成果或管理模型部署。');return;}return fn.apply(this,args);};}}
+  window.addEventListener('storage',ev=>{if(ev.key===O.KEY||ev.key===O.SESSION)window.render();});
+  window.render();
+})();
+
+</script>
+<script data-inline-source="assets/portal-work-ui.js">
+(function(){
+ 'use strict';
+ const O=PortalOrg,W=PortalWork,e=O.escape,q=s=>document.querySelector(s);
+ const op=(label,action,value='',primary=false)=>`<button type="button" class="${primary?'primary':'pc-link'}" data-work="${action}" data-value="${e(value)}">${label}</button>`;
+ const head=(title,actions='')=>`<div class="pc-heading"><h2>${title}</h2>${actions}</div>`;
+ const empty=(title,description='')=>`<div class="ot-empty"><strong>${title}</strong>${description}</div>`;
+ const params=()=>new URLSearchParams(location.hash.split('?')[1]||'');
+ let query='',teamFilter='',statusFilter='',page=1,pageSize=10,relationTab='project';
+ function selection(kind,teamId='',selected=[]){const rows=kind==='project'?W.projectCandidates(teamId):W.publicDemands(),name=kind==='project'?'workProjectIds':'workDemandIds';return `<div class="ot-work-options">${rows.map(r=>`<label class="ot-select-row" data-work-option="${e((r.name||r.title)+' '+(r.code||''))}"><input type="checkbox" name="${name}" value="${e(r.id)}" ${selected.includes(r.id)?'checked':''}><div><strong>${e(r.name||r.title)}</strong><small>${kind==='project'?e(r.code)+' · '+e(r.st):e(r.publisher)+' · '+e(r.status)}</small></div></label>`).join('')||empty(kind==='project'?'暂无可关联课题':'暂无可关联需求')}</div>`;}
+ function createFields(){return `<div class="ot-work-create"><details><summary>关联课题（选填）</summary>${selection('project')}</details><details><summary>关联需求（选填）</summary>${selection('demand')}</details></div>`;}
+ function projectsView(){const all=W.myProjects(),teams=O.myTeams().filter(t=>all.some(p=>p.teamId===t.id)),states=[...new Set(all.map(p=>p.st).filter(Boolean))],rows=all.filter(p=>(!teamFilter||p.teamId===teamFilter)&&(!statusFilter||p.st===statusFilter)&&[p.code,p.name,p.who].join(' ').toLowerCase().includes(query.toLowerCase())),pages=Math.max(1,Math.ceil(rows.length/pageSize));page=Math.min(page,pages);return `<section class="pc-panel">${head('我的课题',op('浏览课题中心','public-projects'))}<form id="otProjectFilter" class="ot-toolbar"><input name="keyword" placeholder="搜索课题名称、编号或负责人" aria-label="搜索我的课题" value="${e(query)}"><select name="team" aria-label="按开发团队筛选"><option value="">全部团队</option>${teams.map(t=>`<option value="${e(t.id)}" ${t.id===teamFilter?'selected':''}>${e(t.name)}</option>`).join('')}</select><select name="status" aria-label="按课题状态筛选"><option value="">全部状态</option>${states.map(x=>`<option ${x===statusFilter?'selected':''}>${e(x)}</option>`).join('')}</select><button class="primary" type="submit">查询</button>${op('重置','reset')}</form>${rows.length?`<div class="pc-table ot-project-table"><table><thead><tr><th>课题编号 / 名称</th><th>开发团队</th><th>课题负责人</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.slice((page-1)*pageSize,page*pageSize).map(p=>`<tr><td><small class="ot-muted">${e(p.code)}</small><strong>${e(p.name)}</strong></td><td>${e(O.team(p.teamId)?.name)}</td><td>${e(p.who||'—')}</td><td><span class="pc-badge">${e(p.st||'—')}</span></td><td>${op('查看课题','view-project',p.id)}</td></tr>`).join('')}</tbody></table></div>`:empty(all.length?'暂无符合条件的课题':'暂无关联课题','已加入团队关联课题后，可在这里查看。')}<div class="ot-pager"><span>共 ${rows.length} 项课题</span><label>每页 <select id="otProjectSize" aria-label="我的课题每页条数">${[10,20,50].map(n=>`<option ${n===pageSize?'selected':''}>${n}</option>`).join('')}</select> 条</label><button data-work="page" data-value="${page-1}" ${page===1?'disabled':''}>上一页</button><span>${page} / ${pages}</span><button data-work="page" data-value="${page+1}" ${page===pages?'disabled':''}>下一页</button></div></section>`;}
+ function projectView(){const id=params().get('id'),p=W.project(id);if(!p||!W.canViewProject(id))return `<section class="pc-panel">${head('课题详情')}${empty('当前账号未参与该课题的开发团队')}${op('返回我的课题','my-projects')}</section>`;const t=O.team(p.teamId);return op('‹ 返回我的课题','my-projects')+`<section class="pc-panel ot-project-detail"><div class="ot-project-title"><span class="ot-muted">${e(p.code)}</span><h2>${e(p.name)}</h2><span class="pc-badge">${e(p.st)}</span></div><div class="ot-project-facts">${[['课题负责人',p.who],['承担单位',p.org],['课题类型',p.type],['课题年度',p.year||p.code.slice(2,6)],['关联指南',p.guide],['开发团队',t?.name]].map(([k,v])=>`<div><small>${k}</small><p>${e(v||'—')}</p></div>`).join('')}</div></section><section class="pc-panel ot-project-content">${head('课题内容')}<h3>研究简介</h3><p>${e(p.summary||'暂无研究简介')}</p>${p.objectives?.length?'<h3>研究目标</h3><ol>'+p.objectives.map(x=>'<li>'+e(x)+'</li>').join('')+'</ol>':''}${p.research?.length?'<h3>主要研究内容</h3><ol>'+p.research.map(x=>'<li>'+e(x)+'</li>').join('')+'</ol>':''}</section><section class="pc-panel">${head('开发团队',op('查看团队','view-team',p.teamId))}<p>${e(t?.name)} · 团队负责人：${e(O.account(t?.ownerId)?.name)}</p></section>`;}
+ function relationContent(id,kind){
+  const t=O.team(id);if(!t||!O.canViewTeam(id))return '';relationTab=kind;
+  const isProject=kind==='project',rows=isProject?W.teamProjects(id):W.teamDemands(id),manage=O.canManageTeam(id);
+  return `<div id="otWorkRelations">${head(isProject?'关联课题':'关联需求',manage?op(isProject?'关联课题':'关联需求','edit-links',id,true):'')}${rows.length?`<div class="pc-table"><table><thead><tr><th>${isProject?'课题编号 / 名称':'需求名称'}</th><th>${isProject?'课题负责人':'发布单位'}</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${isProject?'<small class="ot-muted">'+e(x.code)+'</small><br>':''}${e(x.name||x.title)}</td><td>${e(isProject?x.who:x.publisher)}</td><td><span class="pc-badge">${e(isProject?x.st:x.status)}</span></td><td>${op('查看详情',isProject?'view-project':'view-demand',x.id)} ${manage?op('解除关联','unlink',x.id):''}</td></tr>`).join('')}</tbody></table></div>`:empty(isProject?'尚未关联课题':'尚未关联需求')}</div>`;
+ }
+
+ function close(){q('#workDialog')?.close();}
+ function dialog(title,body,footer='',form=false){let d=q('#workDialog');if(!d){d=document.createElement('dialog');d.id='workDialog';d.className='ot-modal';document.body.append(d);}if(d.open)d.close();d.innerHTML=`<header><h2>${e(title)}</h2>${op('×','close')}</header>${form?'<form id="workForm">':''}<div class="ot-body">${body}<p id="workError" class="ot-error" role="alert"></p></div><footer>${op('取消','close')}${footer}</footer>${form?'</form>':''}`;d.showModal();}
+ function editLinks(id){if(!O.canManageTeam(id))throw Error('仅当前团队负责人可维护关联。');const kind=relationTab,selected=kind==='project'?W.teamProjects(id).map(p=>p.id):O.team(id).demandIds||[];dialog(kind==='project'?'关联课题':'关联需求',`<input class="ot-work-search" aria-label="搜索可关联内容" placeholder="搜索${kind==='project'?'课题名称或编号':'需求名称'}">`+selection(kind,id,selected),'<button class="primary" type="submit">保存关联</button>',true);q('.ot-work-search').oninput=ev=>{const v=ev.target.value.trim().toLowerCase();q('#workDialog').querySelectorAll('[data-work-option]').forEach(n=>n.hidden=!n.dataset.workOption.toLowerCase().includes(v));};q('#workForm').onsubmit=ev=>{ev.preventDefault();try{const fd=new FormData(ev.target),pids=kind==='project'?fd.getAll('workProjectIds'):W.teamProjects(id).map(p=>p.id),dids=kind==='demand'?fd.getAll('workDemandIds'):O.team(id).demandIds||[];W.setLinks(id,pids,dids);close();window.render();window.toast('关联已保存');}catch(err){q('#workError').textContent=err.message;}};}
+ function demandDetails(id){const d=W.demand(id),t=params().get('id');if(!d||!O.canViewTeam(t)||!(O.team(t).demandIds||[]).includes(id))throw Error('当前账号无权查看该团队关联需求。');if(!W.published(d)){dialog('关联需求',empty('该需求当前未公开'));return;}dialog(d.title,`<p class="ot-muted">${e(d.publisher)} · ${e(d.status)}</p><div class="ot-project-content"><h3>需求概述</h3><p>${e(d.summary)}</p><h3>希望解决的问题</h3><p>${e(d.problem||'—')}</p><h3>需要完成的工作</h3><ol>${(d.work||[]).map(x=>'<li>'+e(x)+'</li>').join('')}</ol><h3>预期交付成果</h3><p>${e(d.output||'—')}</p></div>`);}
+ const nav=document.createElement('button');nav.dataset.nav='projects';nav.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/></svg>我的课题';q('[data-nav="demands"]').after(nav);
+ window.OwnerTeams.projectsView=projectsView;window.OwnerTeams.projectView=projectView;
+ window.PortalWorkUI={relationContent,createFields,createTeam:(fields,fd)=>W.createTeam(fields,fd.getAll('workProjectIds'),fd.getAll('workDemandIds'))};
+
+ const baseRender=window.render;window.render=function(){baseRender();q('#otProjectFilter')?.addEventListener('submit',ev=>{ev.preventDefault();const fd=new FormData(ev.target);query=fd.get('keyword').trim();teamFilter=fd.get('team');statusFilter=fd.get('status');page=1;window.render();});q('#otProjectSize')?.addEventListener('change',ev=>{pageSize=+ev.target.value;page=1;window.render();});q('#otWorkRelations')?.querySelector(`[data-work="relation-tab"][data-value="${relationTab}"]`)?.classList.add('active');};
+ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-work]');if(!b)return;ev.preventDefault();const a=b.dataset.work,v=b.dataset.value;try{if(a==='close')close();else if(a==='public-projects')location.href='课题中心-高保真原型.html';else if(a==='my-projects')location.hash='projects';else if(a==='view-project')location.hash='project?id='+encodeURIComponent(v);else if(a==='view-team')location.hash='team?id='+encodeURIComponent(v);else if(a==='relation-tab'){relationTab=v;window.render();q('#otWorkRelations')?.scrollIntoView({block:'nearest'});}else if(a==='edit-links')editLinks(v);else if(a==='view-demand')demandDetails(v);else if(a==='reset'){query='';teamFilter='';statusFilter='';page=1;window.render();}else if(a==='page'){page=+v;window.render();}else if(a==='unlink'){const id=params().get('id');if(!O.canManageTeam(id))throw Error('仅当前团队负责人可解除关联。');dialog('解除关联',`<p>确认解除当前团队与“${e(relationTab==='project'?W.project(v)?.name:W.demand(v)?.title)}”的关联？</p>`,op('确认解除','unlink-confirm',v,true));q('#workDialog').dataset.kind=relationTab;q('#workDialog').dataset.team=id;}else if(a==='unlink-confirm'){W.unlink(q('#workDialog').dataset.team,q('#workDialog').dataset.kind,v);close();window.render();window.toast('关联已解除');}}catch(err){if(q('#workDialog')?.open)q('#workError').textContent=err.message;else window.toast(err.message);}});
+ window.addEventListener('storage',ev=>{if([W.PK,W.DK,O.KEY].includes(ev.key))window.render();});window.render();
+})();
+
+</script>
+<script data-inline-source="assets/portal-access.js">
+(function () {
+  'use strict';
+  function init(){
+    const O=window.PortalOrg, file=decodeURIComponent(location.pathname.split('/').pop()), q=s=>document.querySelector(s);
+    const notice=t=>window.toast?window.toast(t):window.Meeting?.toast(t);
+    const wrap=(name,fn)=>{const old=window[name];if(typeof old==='function')window[name]=function(...args){return fn(old,args,this);};};
+    const prune=()=>{document.querySelectorAll('[onclick*="switchRole"],[onclick*="toggleDemoAuth"]').forEach(n=>n.remove());if(!O.isLeader())document.querySelectorAll('[onclick*="Meeting.submit"],[onclick*="Meeting.pickOutcome"]').forEach(n=>n.remove());};
+    if(window.Meeting){['submit','pickOutcome','commitOutcome'].forEach(k=>{const old=Meeting[k];if(typeof old==='function')Meeting[k]=function(...args){if(!O.isLeader()||(file.startsWith('科研开发空间')&&!O.canManageSpace(new URLSearchParams(location.search).get('id')||'1'))){notice('当前账号不能正式提交成果。');return;}return old.apply(this,args);};});}
+    if(typeof LOGGED!=='undefined')LOGGED=O.isLogged();
+    if(typeof ROLE!=='undefined')ROLE='low';
+    if(typeof window.roleName==='function')window.roleName=()=>O.current().name;
+    if(typeof window.roleAvatar==='function')window.roleAvatar=()=>O.current().name[0];
+    if(typeof window.isHighRole==='function')window.isHighRole=()=>false;
+    wrap('renderAuthArea',(old,args,ctx)=>{const r=old.apply(ctx,args);prune();return r;});
+    wrap('doLogin',(old,args,ctx)=>{O.select(O.current().id);const r=old.apply(ctx,args);if(typeof LOGGED!=='undefined')LOGGED=true;window.renderAuthArea?.();return r;});
+    wrap('doLogout',(old,args,ctx)=>{O.signOut();return old.apply(ctx,args);});
+    document.addEventListener('click',ev=>{if(ev.target.closest('[data-bdh-login]')){O.select(O.current().id);if(typeof LOGGED!=='undefined')LOGGED=true;}else if(ev.target.closest('[data-bdh-logout]')){O.signOut();if(typeof LOGGED!=='undefined')LOGGED=false;}},true);
+    window.renderAuthArea?.();prune();
+
+    const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
+    const previewStyle=document.createElement('style');previewStyle.textContent=`
+      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
+      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
+      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
+      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
+      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
+    `;document.head.append(previewStyle);
+    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
+    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    window.PortalPreview={refresh:refreshPreview};
+    function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
+      if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      refreshPreview();
+    }
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
+
+
+    if(window.portalSaveApplication){const old=window.portalSaveApplication;window.portalSaveApplication=rec=>{
+      if(!O.isLogged()){notice('请先登录。');return null;}
+      if(!O.isLeader()&&(/科研|开发/.test(rec.purpose||'')||rec.space)){notice('成员仅可申请模型在线使用，不能申请开发或科研空间。');return null;}
+      const team=q('#otResearchTeam');if(/科研|开发/.test(rec.purpose||'')){if(!team||!O.canManageTeam(team.value)){notice('请选择本人负责的团队。');return null;}rec={...rec,teamId:team.value};}
+      return old({...rec,applicantId:O.current().id,applicant:O.current().name,usageType:/科研|开发/.test(rec.purpose||'')?'research':'online'});
+    };}
+    function restrictModelForm(){if(O.isLeader()){configureResearch();return;}const form=q('#modelApplyForm')||q('.application-form');if(!form)return;
+      form.querySelector('input[name="purpose"][value="research"]')?.closest('label').remove();
+      const biz=form.querySelector('input[name="purpose"][value="biz"]');if(biz)biz.checked=true;
+      form.querySelector('#researchFields')?.remove();
+      form.querySelector('.purpose-hint')?.remove();
+      const note=form.querySelector('#applyScopeNote');if(note)note.textContent='获批后在线使用当前模型。';
+      form.querySelectorAll('p').forEach(p=>{if(p.textContent.includes('勾选科研研究'))p.textContent='提交后可在个人中心查看模型使用申请。';});
+      const title=q('#dialogTitle');if(title)title.textContent='申请使用模型';
+    }
+    function configureResearch(){const host=q('#researchFields');if(!host||q('#otResearchTeam'))return;const own=O.myTeams().filter(t=>t.ownerId===O.current().id);host.insertAdjacentHTML('afterbegin',`<label>所属团队<select id="otResearchTeam" name="teamId"><option value="">请选择本人负责的团队</option>${own.map(t=>`<option value="${O.escape(t.id)}">${O.escape(t.name)}</option>`).join('')}</select></label>`);if(!own.length){const cb=q('input[name="purpose"][value="research"]');if(cb){cb.disabled=true;cb.closest('label').title='请先创建本人负责的团队';}}}
+    if(file.includes('模型中心-模型')&&!file.includes('运行台')){
+      ['openApply','openModelAction'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.isLogged()){notice('请先登录后申请使用。');return;}const r=old.apply(ctx,args);restrictModelForm();return r;}));
+      wrap('submitDemo',(old,args,ctx)=>{if(!O.isLeader()&&q('input[name="purpose"][value="research"]:checked')){notice('成员不能申请模型开发。');return;}return old.apply(ctx,args);});
+      const baseTrial=window.startTrial;if(baseTrial)window.startTrial=function(m){
+        if(!O.isLogged()){notice('请先登录后试用。');return;}
+        const model=typeof m==='object'?m:(typeof CUR!=='undefined'?CUR:null);if(!model)return;
+        if(typeof svcUnpublished==='function'&&svcUnpublished(model)){notice(typeof SVC_MSG!=='undefined'?SVC_MSG:'当前模型暂不可用');return;}
+        location.href='模型中心-模型运行台.html?mode=trial#n='+encodeURIComponent(model.name);
+      };
+    }
+    if(!O.isLeader()&&file==='模型中心-模型详情（调整）.html'){const n=document.querySelector('.auth-note');if(n)n.textContent='试用免审批 · 可申请模型在线使用';}
+    if(file==='模型中心-模型运行台.html'){
+      const trial=new URLSearchParams(location.search).get('mode')==='trial';
+      wrap('lockReason',(old,args,ctx)=>{
+        if(!O.isLogged())return '请先登录';
+        if(typeof isCurVer==='function'&&!isCurVer(CUR))return '历史版本不支持运行';
+        if(trial)return '';
+        let rows=[];try{rows=JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]');}catch{}
+        const authorized=rows.some(r=>(r.applicantId||'u-zhang')===O.current().id&&r.name===CUR.name&&['已通过','approved'].includes(r.status));
+        return authorized?'':'当前模型尚未取得在线使用授权';
+      });
+      if(typeof DEMO_AUTH!=='undefined')DEMO_AUTH=trial;
+      window.renderAll?.();window.syncLock?.();prune();
+    }
+    if(file.startsWith('数据中心')){
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      if(!O.isLeader()){
+        document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
+        wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
+      }
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+    }
+    if(file==='科研开发空间-交互原型(10).html'){
+      const all=spaces.slice(),scope=new URLSearchParams(location.search).get('team');
+      spaces=all.filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope)).map(s=>({...s,team:O.spaceTeam(s.id).name,role:O.canManageSpace(s.id)?'负责人':'成员'}));
+      permission=O.isLeader()?'owner':'member';if(!O.isLeader()||!O.myTeams().some(t=>t.ownerId===O.current().id))todos=[];
+      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader();
+      const oldApply=window.apply;window.apply=function(){
+        if(!O.isLeader()){notice('科研空间和算力由负责人申请。');return;}
+        const own=O.myTeams().filter(t=>t.ownerId===O.current().id);if(!own.length){notice('请先在个人中心创建团队。');return;}
+        oldApply();const select=q('#application-team');if(select)select.innerHTML=own.map(t=>`<option value="${O.escape(t.name)}" data-id="${t.id}">${O.escape(t.name)}</option>`).join('');
+        const form=q('#apply-form'),submit=form?.onsubmit;
+        if(form&&submit)form.onsubmit=function(ev){if(!O.isLeader()||!O.canManageTeam(select.selectedOptions[0]?.dataset.id)){ev.preventDefault();notice('当前账号不能为该团队申请空间。');return;}const before=new Set(spaces.map(s=>String(s.id)));const r=submit.call(this,ev);const added=spaces.filter(s=>!before.has(String(s.id)));if(added.length){const db=O.read(),t=db.teams.find(t=>t.id===select.selectedOptions[0].dataset.id);t.spaceIds=[...new Set([...(t.spaceIds||[]),...added.map(s=>String(s.id))])];localStorage.setItem(O.KEY,JSON.stringify(db));}return r;};
+      };if(btn)btn.onclick=window.apply;
+      window.render();
+    }
+    if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
+      const id=new URLSearchParams(location.search).get('id')||'1';
+      if(!O.canViewSpace(id)){
+        const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
+        ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});
+      }else if(file==='科研开发空间-详情页(9).html'){
+        space.role=O.canManageSpace(id)?'负责人':'成员';space.team=O.spaceTeam(id).name;
+        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:a.kind==='leader'&&a.id!==t.ownerId?'受邀负责人':'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
+        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${t.memberIds.map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${a.id}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
+        window.renderAll();const old=window.renderHeading;window.renderHeading=function(){old();document.querySelectorAll('.heading-meta b').forEach(b=>{if(b.textContent==='张三')b.textContent=O.account(O.spaceTeam(id).ownerId).name;});};window.renderHeading();
+      }
+    }
+
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+</script>
+<script data-inline-source="portal-personal.js">
+(function () {
+  'use strict';
+  const O = PortalOrg, M = Meeting, e = O.escape, q = s => document.querySelector(s);
+  let outcomeKind = 'model';
+  const head = (name, action = '') => `<div class="pc-heading"><h2>${name}</h2>${action}</div>`;
+  const act = (name, action, id = '', primary = false) => `<button type="button" class="${primary ? 'primary' : 'pc-link'}" data-personal="${action}" data-value="${e(id)}">${name}</button>`;
+  const blank = text => `<div class="pc-empty">${text}</div>`;
+  const field = (label, name, value = '', type = 'text', readonly = false) => `<label class="ot-field">${label}<input name="${name}" type="${type}" value="${e(value)}" ${readonly ? 'readonly' : 'required'} ${name === 'name' ? 'maxlength="30"' : ''} autocomplete="${type === 'password' ? (name === 'currentPassword' ? 'current-password' : 'new-password') : 'off'}"></label>`;
+  function saveAccount(id, update) {
+    const data = O.read(), a = data.accounts.find(x => x.id === id);
+    if (!a) throw Error('账号不存在');
+    update(a); localStorage.setItem(O.KEY, JSON.stringify(data));
+    window.dispatchEvent(new CustomEvent('portal-org-change'));
+  }
+  function validatePasswords(password, confirmation) {
+    if (!password || !String(password).trim()) throw Error('请填写新密码');
+    if (password !== confirmation) throw Error('两次输入的密码不一致');
+  }
+  // The prototype retains operation metadata only. No password is persisted.
+  O.resetMemberPassword = (id, password, confirmation) => {
+    const a = O.account(id);
+    if (!O.isLeader() || a?.kind !== 'member' || a.ownerId !== O.current().id) throw Error('只能重置本人关联的成员账号密码');
+    validatePasswords(password, confirmation);
+    saveAccount(id, item => { item.passwordResetAt = M.date(); });
+  };
+  O.changePassword = (current, password, confirmation) => {
+    if (!current) throw Error('请填写当前密码');
+    validatePasswords(password, confirmation);
+    if (current === password) throw Error('新密码不能与当前密码相同');
+    saveAccount(O.current().id, item => { item.passwordChangedAt = M.date(); });
+  };
+  const close = () => q('#personalAccountDialog')?.close();
+  const baseFormHTML = M.formHTML;
+  M.formHTML = (kind, values = {}) => {
+    const original = baseFormHTML(kind, values);
+    if (kind !== 'dataset') return original;
+    const select = (label, name, rows, value) => `<label class="mt-field"><span>${label}（选填）</span><select name="${name}"><option value="">不关联</option>${rows.map(r => `<option value="${e(r.id)}" ${r.id === value ? 'selected' : ''}>${e(r.name || r.title)}</option>`).join('')}</select></label>`;
+    return original + '<div class="mt-grid personal-outcome-relations">' + select('关联课题', 'sourceProjectId', PortalWork.myProjects(), values.sourceProjectId) + select('关联需求', 'sourceDemandId', PortalWork.publicDemands(), values.sourceDemandId) + '</div>';
+  };
+  function formDialog(title, body, submit, onSave) {
+    let node = q('#personalAccountDialog');
+    if (!node) { node = document.createElement('dialog'); node.id = 'personalAccountDialog'; node.className = 'ot-modal'; document.body.append(node); }
+    if (node.open) node.close();
+    node.innerHTML = `<header><h2>${e(title)}</h2>${act('×', 'close')}</header><form id="personalAccountForm"><div class="ot-body">${body}<p id="personalAccountError" class="ot-error" role="alert"></p></div><footer>${act('取消', 'close')}<button type="submit" class="primary">${submit}</button></footer></form>`;
+    const accountId = O.current().id;
+    q('#personalAccountForm').onsubmit = ev => {
+      ev.preventDefault();
+      try {
+        if (O.current().id !== accountId) throw Error('账号已切换，请重新打开此操作');
+        onSave(Object.fromEntries(new FormData(ev.target)));
+      } catch (error) { q('#personalAccountError').textContent = error.message; }
+    };
+    node.showModal();
+  }
+  function editProfile() {
+    const a = O.current();
+    formDialog('编辑基础信息', field('姓名', 'name', a.name) + field('所属机构', 'org', a.org, 'text', true) + (a.ownerId ? field('关联负责人', 'owner', O.account(a.ownerId)?.name, 'text', true) : ''), '保存', values => {
+      O.updateProfile(values.name); close(); window.render(); window.toast('基础信息已保存');
+    });
+  }
+  function passwordDialog(memberId) {
+    const member = memberId ? O.account(memberId) : null;
+    if (memberId && (!O.isLeader() || member?.kind !== 'member' || member.ownerId !== O.current().id)) throw Error('只能重置本人关联的成员账号密码');
+    const name = member ? '重置密码' : '修改密码';
+    formDialog(name, (member ? `<p class="personal-account-target"><strong>${e(member.name)}</strong><span>${e(member.login)}</span></p>` : field('当前密码', 'currentPassword', '', 'password')) + field('新密码', 'newPassword', '', 'password') + field('确认新密码', 'confirmPassword', '', 'password') + '<p class="ot-muted">原型演示：仅演示操作，不修改真实账号密码。</p>', member ? '确认重置' : '保存新密码', values => {
+      if (member) O.resetMemberPassword(memberId, values.newPassword, values.confirmPassword);
+      else O.changePassword(values.currentPassword, values.newPassword, values.confirmPassword);
+      close(); window.render(); window.toast(member ? '密码重置演示已完成' : '密码修改演示已完成');
+    });
+  }
+  function phoneDialog() {
+    let demoCode = '', verifiedPhone = '';
+    formDialog(O.current().phone ? '更换绑定手机号' : '绑定手机号', field('手机号', 'phone', '', 'tel') + '<div class="personal-code-row">' + field('验证码', 'code') + '<button type="button" id="personalGetCode">获取验证码</button></div><p id="personalCodeHint" class="ot-muted">原型演示，不发送真实短信。</p>', '确认绑定', values => {
+      if (!/^1\d{10}$/.test(values.phone)) throw Error('请输入 11 位手机号');
+      if (!demoCode || verifiedPhone !== values.phone) throw Error('请先获取当前手机号的验证码');
+      if (values.code !== demoCode) throw Error('验证码不正确');
+      saveAccount(O.current().id, a => { a.phone = values.phone; });
+      close(); window.render(); window.toast('手机号绑定演示已完成');
+    });
+    q('#personalGetCode').onclick = () => {
+      const phone = q('#personalAccountForm [name="phone"]').value.trim();
+      if (!/^1\d{10}$/.test(phone)) { q('#personalAccountError').textContent = '请输入 11 位手机号'; return; }
+      verifiedPhone = phone; demoCode = '123456';
+      q('#personalAccountError').textContent = '';
+      q('#personalCodeHint').textContent = '演示验证码：123456（不发送真实短信）';
+    };
+  }
+  window.profile = () => {
+    const a = O.current();
+    return `<section class="pc-profile"><div class="pc-avatar">${e(a.name[0] || '我')}</div><div><h2>${e(a.name)}</h2><p>${e(a.org)}</p></div>${act('编辑基础信息', 'edit-profile')}</section>`;
+  };
+  window.settings = () => {
+    const a = O.current(), phone = a.phone ? a.phone.slice(0, 3) + '****' + a.phone.slice(-4) : '未绑定';
+    return `<section class="pc-panel">${head('账号设置')}<div class="personal-security-row"><div><h3>登录账号</h3><p>${e(a.login)}</p></div></div><div class="personal-security-row"><div><h3>登录密码</h3><p>${a.passwordChangedAt ? '最近演示修改：' + e(a.passwordChangedAt) : a.passwordResetAt ? '最近演示重置：' + e(a.passwordResetAt) : '用于登录当前账号'}</p></div>${act('修改密码', 'change-password')}</div><div class="personal-security-row"><div><h3>绑定手机号</h3><p>${phone}</p></div>${act(a.phone ? '更换手机号' : '绑定手机号', 'bind-phone')}</div></section>`;
+  };
+  if (!Array.isArray(state.recent)) state.recent = O.current().id === 'u-zhang' ? [
+    { kind: 'space', id: '1', name: '寒地水稻遥感研究空间', time: '今天 09:30' },
+    { kind: 'model', name: '水稻长势监测模型', time: '昨天 16:20' },
+    { kind: 'dataset', name: '寒地水稻多时相遥感影像集', time: '昨天 14:10' }
+  ] : [];
+  const recentAllowed = r => r.kind === 'space' ? O.canViewSpace(r.id) : r.kind === 'team' ? O.canViewTeam(r.id) : r.kind === 'project' ? PortalWork.canViewProject(r.id) : ['model', 'dataset'].includes(r.kind);
+  function remember(item) {
+    if (!item?.name) return;
+    state.recent = [{ ...item, time: M.date() }, ...state.recent.filter(r => !(r.kind === item.kind && r.name === item.name))].slice(0, 12); persist();
+  }
+  window.overview = () => {
+    const recent = state.recent.filter(recentAllowed).slice(0, 3), names = { space: '科研空间', model: '模型', dataset: '数据', team: '团队', project: '课题' };
+    return window.profile() + `<div class="pc-two"><section class="pc-panel">${head('最近访问')}${recent.map(r => `<div class="pc-recent"><span class="pc-icon">${r.kind === 'model' ? '◇' : '▤'}</span><div><span class="pc-badge">${names[r.kind]}</span><h3>${e(r.name)}</h3><p>最近访问：${e(r.time)}</p></div>${act('查看 →', 'recent', String(state.recent.indexOf(r)))}</div>`).join('') || blank('暂无访问记录')}</section><section class="pc-panel">${head('最新消息', '<button class="pc-link" data-go="messages">查看全部 →</button>')}${messageRows(state.messages.slice(0, 3))}</section></div><section class="pc-panel">${head('我的收藏', '<button class="pc-link" data-go="favorites">查看全部 →</button>')}<div class="pc-favs">${favoritesCards(state.favorites.slice(0, 3))}</div></section>`;
+  };
+  // Keep the existing submission records, storage identities, and model workflow.
+  const nav = document.createElement('button'); nav.dataset.nav = 'outcomes';
+  nav.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h4"/></svg>我的成果';
+  q('[data-nav="data"]').after(nav);
+  OwnerTeams.outcomesView = () => {
+    if (!O.isLeader()) return `<section class="pc-panel">${head('我的成果')}${blank('当前账号没有成果提交权限')}</section>`;
+    const button = act(outcomeKind === 'model' ? '上传模型' : '提交数据成果', 'submit-outcome', outcomeKind, true);
+    return `<section class="pc-panel pc-outcomes">${head('我的成果', button)}<div class="pc-tabs">${[['model', '模型成果'], ['dataset', '数据成果']].map(([id, label]) => `<button type="button" class="${outcomeKind === id ? 'active' : ''}" data-personal="outcome-kind" data-value="${id}" aria-pressed="${outcomeKind === id}">${label}</button>`).join('')}</div>${M.recordsPanel(outcomeKind)}</section>`;
+  };
+  const baseRender = window.render;
+  window.render = function () { baseRender(); nav.hidden = !O.isLeader(); };
+  const baseAccounts = OwnerTeams.accountsView;
+  OwnerTeams.accountsView = () => {
+    const template = document.createElement('template'); template.innerHTML = baseAccounts();
+    template.content.querySelectorAll('[data-ot="edit-member"]').forEach(button => button.insertAdjacentHTML('afterend', ' ' + act('重置密码', 'reset-password', button.dataset.value)));
+    return template.innerHTML;
+  };
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-personal]'); if (!b) return;
+    ev.preventDefault(); const action = b.dataset.personal, value = b.dataset.value;
+    try {
+      if (action === 'close') close();
+      else if (action === 'edit-profile') editProfile();
+      else if (action === 'change-password') passwordDialog();
+      else if (action === 'reset-password') passwordDialog(value);
+      else if (action === 'bind-phone') phoneDialog();
+      else if (action === 'outcome-kind') { outcomeKind = value === 'dataset' ? 'dataset' : 'model'; window.render(); }
+      else if (action === 'submit-outcome') { if (O.isLeader()) M.submit(outcomeKind); }
+      else if (action === 'recent') {
+        const item = state.recent[Number(value)]; if (!item || !recentAllowed(item)) return;
+        remember(item);
+        if (item.kind === 'space') location.href = '科研开发空间-详情页(9).html?id=' + encodeURIComponent(item.id);
+        else if (['team', 'project'].includes(item.kind)) go(item.kind + '?id=' + encodeURIComponent(item.id));
+        else portalResource(item.name, item.kind === 'model' ? '模型' : '数据', false);
+      }
+    } catch (error) { window.toast(error.message); }
+  });
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return; const d = b.dataset;
+    if (d.favorite) { const f = state.favorites.find(x => String(x.id) === d.favorite); if (f) remember({ kind: f.type === '模型' ? 'model' : 'dataset', name: f.name }); }
+    else if (d.resource !== undefined) { const r = (d.kind === 'models' ? models : datasets)[Number(d.resource)]; if (r) remember({ kind: d.kind === 'models' ? 'model' : 'dataset', name: r.name }); }
+    else if (d.work === 'view-project') { const p = PortalWork.project(d.value); if (p && PortalWork.canViewProject(p.id)) remember({ kind: 'project', id: p.id, name: p.name }); }
+    else if (d.ot === 'open-team') { const t = O.team(d.value); if (t && O.canViewTeam(t.id)) remember({ kind: 'team', id: t.id, name: t.name }); }
+  }, true);
+  window.render();
+})();
+
+</script></body></html>
