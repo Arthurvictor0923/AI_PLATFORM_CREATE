@@ -1379,15 +1379,14 @@ M.formatIntro=cmd=>{document.getElementById('mt-intro')?.focus();document.execCo
 M.safeHTML=s=>{const t=document.createElement('template');t.innerHTML=s||'';t.content.querySelectorAll('script,iframe,object,embed,link,style').forEach(n=>n.remove());t.content.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||(/^(href|src)$/i.test(a.name)&&/^javascript:/i.test(a.value)))n.removeAttribute(a.name)}));return t.innerHTML};
 M.records=()=>M.read(M.key,[]);M.assets=()=>M.read(M.metaKey,{});M.registerAsset=(id,kind,values)=>{const all=M.assets();all[id]={...all[id],id,kind,...values};M.write(M.metaKey,all)};
 M.formHTML=(kind,v={})=>`<div class="mt-grid">${M.schemas[kind].map(([k,l,t,choices])=>M.field(k,l,v[k]??'',t||'text',choices)).join('')}</div><h3 class="mt-section">${kind==='model'?'模型介绍':'数据介绍'} <span class="req">*</span></h3><div class="mt-template-actions">${M.btn('查看填写模板',`Meeting.showTemplate('${kind}','mt-intro')`)}</div><div class="mt-editor-toolbar" aria-label="介绍编辑工具"><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('bold')">加粗</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('italic')">斜体</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('insertUnorderedList')">项目符号</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('insertOrderedList')">编号列表</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('undo')">撤销</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('redo')">重做</button></div><div class="mt-rich" id="mt-intro" contenteditable="true" role="textbox" aria-label="介绍内容" aria-required="true">${M.safeHTML(v.intro||'')}</div>`;
-M.submit=(kind='model',assetId='',recordId='')=>{if(M.spaceContext&&typeof canManage==='function'&&!canManage()){M.toast('当前空间不可提交成果');return}const prev=M.records().find(x=>x.id===recordId),asset=M.assets()[assetId],v=prev?.metadata||asset||{};M.submitting={kind,assetId,recordId,context:M.spaceContext||null};M.dialog(prev?'修改并重新提交成果':kind==='model'?'提交成果模型':'声明成果数据',`<form id="mt-outcome-form"><label class="mt-field" style="margin-bottom:20px">沿用已维护的资源资料（选填）<select id="mt-default-asset" onchange="Meeting.fillDefaults(this.value)"><option value="">手动填写</option>${Object.values(M.assets()).filter(a=>a.kind===kind).map(a=>`<option value="${M.e(a.id)}" ${a.id===assetId?'selected':''}>${M.e(a.name)} · ${M.e(a.version||'')}</option>`).join('')}</select></label>${M.formHTML(kind,v)}<h3 class="mt-section">成果材料 <span class="req">*</span></h3><label class="mt-field">${kind==='model'?'选择成果材料':'选择数据及说明文件'}${kind==='model'?'<select id="mt-delivery-type" onchange="Meeting.deliveryType(this.value)"><option value="image">镜像包</option><option value="files">模型文件与说明</option></select>':''}<input id="mt-files" type="file" ${kind==='model'?'accept=".tar,.tar.gz,.tgz"':'multiple'} ${prev||assetId?'':'required'}></label>${assetId?'<p class="mt-note">已关联当前资源；可补充或替换本次成果材料。</p>':''}${prev?'<p class="mt-note">已有材料：'+M.e(prev.files.map(x=>x.name).join('、'))+'；未重新选择则保留。</p>':''}<p class="mt-error" id="mt-error" role="alert"></p></form>`,M.btn('取消','Meeting.close()')+'<button form="mt-outcome-form" class="mt-btn primary" type="submit">提交审批验收</button>');document.getElementById('mt-outcome-form').onsubmit=M.commitOutcome;if(kind==='model'&&prev?.materialType==='files'){document.getElementById('mt-delivery-type').value='files';M.deliveryType('files')}};
-M.commitOutcome=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f)),intro=document.getElementById('mt-intro'),err=document.getElementById('mt-error'),s=M.submitting;for(const [k,l] of M.schemas[s.kind])if(!String(values[k]??'').trim()){err.textContent='请填写'+l;return}if(!intro.textContent.trim()){err.textContent='请填写介绍内容';return}if(!/^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(values.version)){err.textContent='版本号请使用字母、数字、点或连字符';return}values.intro=M.safeHTML(intro.innerHTML);const selected=[...document.getElementById('mt-files').files];if(selected.some(x=>!x.size)){err.textContent='不能提交空文件';return}if(s.kind==='model'&&document.getElementById('mt-delivery-type')?.value!=='files'&&selected.some(x=>!/(\.tar|\.tar\.gz|\.tgz)$/i.test(x.name))){err.textContent='请选择 Docker / OCI 镜像包（.tar、.tar.gz、.tgz）';return}const list=M.records(),prev=list.find(x=>x.id===s.recordId);if(!selected.length&&!prev&&!s.assetId){err.textContent='请选择成果材料';return}const rec={...prev,id:prev?.id||'CG-'+Date.now().toString(36).toUpperCase(),kind:s.kind,materialType:document.getElementById('mt-delivery-type')?.value||prev?.materialType||'files',assetId:s.assetId,metadata:values,name:values.name,files:selected.length?selected.map(x=>({name:x.name,size:x.size})):prev?.files||[{name:'关联资源：'+values.name,size:null}],spaceId:s.context?.id||prev?.spaceId||'',spaceName:s.context?.name||prev?.spaceName||'',applicant:'张研究员',status:'待审批',time:M.date(),history:[...(prev?.history||[]),{action:prev?'重新提交':'提交成果',by:'张研究员',time:M.date(),note:''}]};if(M.saving)return;M.saving=true;const submit=document.querySelector('[form=mt-outcome-form][type=submit]');if(submit){submit.disabled=true;submit.textContent='正在保存成果…'}if(selected.length){try{await M.fileDB('readwrite',st=>selected.forEach((file,i)=>st.put({id:rec.id+':'+i,file})));rec.files.forEach((x,i)=>x.blobId=rec.id+':'+i)}catch{err.textContent='成果文件未能保存，请检查浏览器存储空间后重试';M.saving=false;if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}}if(prev)list[list.indexOf(prev)]=rec;else list.unshift(rec);M.saving=false;if(!M.write(M.key,list)){if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}M.close();M.refreshOutcomes?.();M.toast('成果已提交，进入审批验收');if(M.returnToEnd&&typeof renderSimpleEnd==='function'){M.returnToEnd=false;renderSimpleEnd();}};
+M.submit=(kind='model',assetId='',recordId='')=>{if(M.spaceContext&&typeof canManage==='function'&&!canManage()){M.toast('当前空间不可提交成果');return}const prev=M.records().find(x=>x.id===recordId),v=prev?.metadata||{};assetId=prev?.assetId||'';M.submitting={kind,assetId,recordId,context:M.spaceContext||null};M.dialog(prev?'修改并重新提交成果':kind==='model'?'提交成果模型':'声明成果数据',`<form id="mt-outcome-form">${M.formHTML(kind,v)}<h3 class="mt-section">成果材料 <span class="req">*</span></h3><label class="mt-field">${kind==='model'?'选择成果材料':'选择数据及说明文件'}${kind==='model'?'<select id="mt-delivery-type" onchange="Meeting.deliveryType(this.value)"><option value="image">镜像包</option><option value="files">模型文件与说明</option></select>':''}<input id="mt-files" type="file" ${kind==='model'?'accept=".tar,.tar.gz,.tgz"':'multiple'} ${prev||assetId?'':'required'}></label>${assetId?'<p class="mt-note">已关联当前资源；可补充或替换本次成果材料。</p>':''}${prev?'<p class="mt-note">已有材料：'+M.e(prev.files.map(x=>x.name).join('、'))+'；未重新选择则保留。</p>':''}<p class="mt-error" id="mt-error" role="alert"></p></form>`,M.btn('取消','Meeting.close()')+'<button form="mt-outcome-form" class="mt-btn primary" type="submit">提交审批验收</button>');document.getElementById('mt-outcome-form').onsubmit=M.commitOutcome;if(kind==='model'&&prev?.materialType==='files'){document.getElementById('mt-delivery-type').value='files';M.deliveryType('files')}};
+M.commitOutcome=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f)),intro=document.getElementById('mt-intro'),err=document.getElementById('mt-error'),s=M.submitting;if(s.kind==='model'){err.textContent='请先上传模型，并在成果记录中完成部署、通过运行调试后提交。';return;}for(const [k,l] of M.schemas[s.kind])if(!String(values[k]??'').trim()){err.textContent='请填写'+l;return}if(!intro.textContent.trim()){err.textContent='请填写介绍内容';return}if(!/^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(values.version)){err.textContent='版本号请使用字母、数字、点或连字符';return}values.intro=M.safeHTML(intro.innerHTML);const selected=[...document.getElementById('mt-files').files];if(selected.some(x=>!x.size)){err.textContent='不能提交空文件';return}if(s.kind==='model'&&document.getElementById('mt-delivery-type')?.value!=='files'&&selected.some(x=>!/(\.tar|\.tar\.gz|\.tgz)$/i.test(x.name))){err.textContent='请选择 Docker / OCI 镜像包（.tar、.tar.gz、.tgz）';return}const list=M.records(),prev=list.find(x=>x.id===s.recordId);if(!selected.length&&!prev&&!s.assetId){err.textContent='请选择成果材料';return}const rec={...prev,id:prev?.id||'CG-'+Date.now().toString(36).toUpperCase(),kind:s.kind,materialType:document.getElementById('mt-delivery-type')?.value||prev?.materialType||'files',assetId:s.assetId,metadata:values,name:values.name,files:selected.length?selected.map(x=>({name:x.name,size:x.size})):prev?.files||[{name:'关联资源：'+values.name,size:null}],spaceId:s.context?.id||prev?.spaceId||'',spaceName:s.context?.name||prev?.spaceName||'',applicant:'张研究员',status:'待审批',time:M.date(),history:[...(prev?.history||[]),{action:prev?'重新提交':'提交成果',by:'张研究员',time:M.date(),note:''}]};if(M.saving)return;M.saving=true;const submit=document.querySelector('[form=mt-outcome-form][type=submit]');if(submit){submit.disabled=true;submit.textContent='正在保存成果…'}if(selected.length){try{await M.fileDB('readwrite',st=>selected.forEach((file,i)=>st.put({id:rec.id+':'+i,file})));rec.files.forEach((x,i)=>x.blobId=rec.id+':'+i)}catch{err.textContent='成果文件未能保存，请检查浏览器存储空间后重试';M.saving=false;if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}}if(prev)list[list.indexOf(prev)]=rec;else list.unshift(rec);M.saving=false;if(!M.write(M.key,list)){if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}M.close();M.refreshOutcomes?.();M.toast('成果已提交，进入审批验收');if(M.returnToEnd&&typeof renderSimpleEnd==='function'){M.returnToEnd=false;renderSimpleEnd();}};
 M.viewOutcome=id=>{const r=M.records().find(x=>x.id===id);if(!r)return;M.dialog(r.name,`<p>${M.badge(r.status)}　${M.e(r.id)}　${M.e(r.time)}</p><div class="mt-grid">${M.schemas[r.kind].map(([k,l])=>`<div><small class="mt-note">${l}</small><p>${M.e(r.metadata[k])}</p></div>`).join('')}</div><h3 class="mt-section">介绍内容</h3><article>${M.safeHTML(r.metadata.intro)}</article><h3 class="mt-section">成果材料</h3><div>${r.files.map((x,i)=>`<p>${M.e(x.name)} ${x.blobId?M.link('下载材料',`Meeting.downloadMaterial('${r.id}',${i})`):''}</p>`).join('')}</div><h3 class="mt-section">审批记录</h3>${r.history.map(x=>`<div class="mt-timeline"><strong>${M.e(x.action)}</strong> · ${M.e(x.by)} · ${M.e(x.time)}<p>${M.e(x.note)}</p></div>`).join('')}`,(M.admin&&r.status==='待审批'?M.btn('返回审批',`Meeting.review('${r.id}')`):M.btn('关闭','Meeting.close()'))+(!M.admin&&r.kind==='model'?M.btn('调试',`Meeting.debug('${r.id}')`):'')+(!M.admin&&r.status==='已驳回'?M.btn('修改后重新提交',`Meeting.submit('${r.kind}','${r.assetId||''}','${r.id}')`,true):''))};
 M.debug=id=>{if(M.spaceContext&&typeof editable==='function'&&!editable()){M.toast('研究已结束，成果仅可查看');return}const r=M.records().find(x=>x.id===id);M.dialog('成果调试',`<p>${M.e(r?.name||M.spaceContext?.name||'科研成果')}</p><p class="mt-note">原型调试演示，不执行真实镜像或远程接口。</p><form id="mt-debug-form">${M.field('debuginput','调试输入','{}','textarea')}<label class="mt-field" style="margin-top:16px">样例文件（选填）<input id="mt-debug-file" type="file" multiple></label><h3 class="mt-section">运行输出</h3><pre id="mt-debug-result" class="mt-debug">尚未执行</pre></form>`,M.btn('关闭','Meeting.close()')+'<button form="mt-debug-form" class="mt-btn primary" type="submit">运行调试（演示）</button>');document.getElementById('mt-debug-form').onsubmit=e=>{e.preventDefault();const text=document.getElementById('mt-debuginput').value.trim();document.getElementById('mt-debug-result').textContent='[演示] 已读取调试输入'+(document.getElementById('mt-debug-file').files.length?'及样例文件':'')+'\n[演示] 输入长度：'+text.length+' 字符\n[演示] 本轮流程完成；真实运行结果由开发环境执行后返回。';if(r){const list=M.records();list.find(x=>x.id===id).debugTime=M.date();M.write(M.key,list)}}};
 M.outcomeTable=(rows,review=false)=>`<div class="mt-table-wrap"><table class="mt-table"><thead><tr><th>成果名称</th><th>类型 / 版本</th><th>提交人 / 时间</th><th>审批状态</th><th>操作</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${M.e(r.name)}</strong><small>${M.e(r.spaceName||'')}</small></td><td>${r.kind==='model'?'成果模型':'成果数据'}<small>${M.e(r.metadata.version)}</small></td><td>${M.e(r.applicant)}<small>${M.e(r.time)}</small></td><td>${M.badge(r.status)}</td><td><div class="mt-actions">${M.link('查看',`Meeting.viewOutcome('${r.id}')`)}${review&&r.status==='待审批'?M.link('审批验收',`Meeting.review('${r.id}')`):''}${!review&&r.kind==='model'?M.link('调试',`Meeting.debug('${r.id}')`):''}${!review&&r.status==='已驳回'?M.link('修改提交',`Meeting.submit('${r.kind}','${r.assetId||''}','${r.id}')`):''}</div></td></tr>`).join('')||'<tr><td colspan="5" class="mt-empty">暂无成果提交记录</td></tr>'}</tbody></table></div>`;
 M.review=id=>{const r=M.records().find(x=>x.id===id);if(!r||r.status!=='待审批')return;M.dialog('成果审批验收',`<p><strong>${M.e(r.name)}</strong> · ${M.e(r.metadata.version)} · ${M.e(r.applicant)}</p>${M.link('查看完整成果材料',`Meeting.viewOutcome('${id}')`)}<form id="mt-review-form" style="margin-top:18px">${M.field('decision','审批结果','','select',['通过','驳回','拒绝'])}${M.field('opinion','审批意见','','textarea')}<p class="mt-error" id="mt-review-error"></p></form>`,M.btn('取消','Meeting.close()')+'<button class="mt-btn primary" type="submit" form="mt-review-form">确认审批</button>');document.getElementById('mt-review-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),list=M.records(),r=list.find(x=>x.id===id);if(r.status!=='待审批'){M.toast('该成果已处理');return}const decision=f.get('decision'),opinion=f.get('opinion').trim();if(!opinion)return;r.status={通过:'已通过',驳回:'已驳回',拒绝:'已拒绝'}[decision];r.history.push({action:decision,by:'张明',time:M.date(),note:opinion});if(decision==='通过'){const id=r.acceptedAssetId||r.assetId||'new-outcome-'+r.id;r.acceptedAssetId=id;if(!r.assetId)M.registerAsset(id,r.kind,{...r.metadata,up:'none'});if(!r.assetId&&r.kind==='model'){const s=M.read('bdh-model-service-v3',{});s.newRows??=[];if(!s.newRows.some(x=>x.key===id))s.newRows.push({key:id,no:M.nextModelNo(),name:r.name,ver:r.metadata.version,files:r.files.map(x=>x.name),materialType:r.materialType||'image',access:'platform',src:'res',who:r.applicant,d:M.date().slice(0,10),t:M.date().slice(11),done:true,up:'none',detailPage:'后台-模型详情编辑-后台新建.html',outcomeId:r.id});M.write('bdh-model-service-v3',s)}else if(!r.assetId){const ds=M.read('agri-datasets',MeetingSeeds.datasets);if(!ds.some(x=>x.id===id))ds.unshift({id,name:r.name,desc:r.metadata.summary,pub:'off',todo:false,src:'res',thumb:'',type:r.metadata.modality,form:r.metadata.modality,count:r.metadata.scale,org:r.metadata.provider,version:r.metadata.version,link:'后台-数据集详情编辑-已完善.html',outcomeId:r.id});M.write('agri-datasets',ds)}}if(M.write(M.key,list)){M.close();M.refreshReview?.();M.toast('审批结果已保存')}}};
 M.nextModelNo=()=>{const n=M.read('bdh-model-counter-1010',0)+1;M.write('bdh-model-counter-1010',n);return 'MDL-'+new Date().getFullYear()+'-N'+String(n).padStart(5,'0')};
 M.deliveryType=type=>{const n=document.getElementById('mt-files');n.multiple=type==='files';n.accept=type==='image'?'.tar,.tar.gz,.tgz':'.pkl,.joblib,.onnx,.pt,.pth,.py,.json,.yaml,.yml,.txt,.md,.pdf,.zip';n.value=''};
-M.fillDefaults=id=>{const a=M.assets()[id];if(!a)return;M.schemas[M.submitting.kind].forEach(([k])=>{const n=document.getElementById('mt-'+k);if(n)n.value=a[k]??''});document.getElementById('mt-intro').innerHTML=M.safeHTML(a.intro||'')};
 M.fileDB=(mode,fn)=>new Promise((resolve,reject)=>{const op=indexedDB.open('bdh-outcome-materials-1010',1);op.onupgradeneeded=()=>op.result.createObjectStore('files',{keyPath:'id'});op.onerror=()=>reject(op.error);op.onsuccess=()=>{const db=op.result,tx=db.transaction('files',mode),ret=fn(tx.objectStore('files'));tx.oncomplete=()=>{resolve(ret?.result);db.close()};tx.onerror=()=>{reject(tx.error);db.close()}}});
 M.downloadMaterial=async(id,i)=>{try{const f=M.records().find(x=>x.id===id)?.files[i];const r=await M.fileDB('readonly',s=>s.get(f.blobId));if(!r){M.toast('该材料在当前浏览器中不可用');return}const url=URL.createObjectURL(r.file),a=document.createElement('a');a.href=url;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch{M.toast('材料读取失败，请重试')}};
 if(admin){document.body.classList.add('mt-admin');const nav=document.querySelector('.main-nav');if(nav){const isCapability=/后台-(时空数据管理|地图引擎|能力共享)/.test(file);const items=[['工作台总览','后台-工作台总览.html'],['课题管理','后台-课题管理.html'],['审批中心','后台-审批中心.html'],['运营管理','后台-模型管理.html'],['平台能力','后台-能力共享.html'],['管理设置','后台-管理设置.html']];const active=/后台-课题/.test(file)?'课题管理':nav.querySelector('.active')?.textContent.trim();nav.innerHTML=items.map(([t,url])=>`<a href="${url}" class="${isCapability?t==='平台能力'?'active':'':active===t?'active':''}">${t}</a>`).join('');if(isCapability){const main=document.querySelector('main');(document.querySelector('.admin-side')||main)?.insertAdjacentHTML('afterbegin','<nav class="mt-subsystems" aria-label="平台能力子系统">'+[['时空数据管理','后台-时空数据管理.html'],['地图引擎','后台-地图引擎.html'],['能力共享','后台-能力共享.html']].map(([t,u])=>`<a href="${u}" class="${file===u?'active':''}">${t}</a>`).join('')+'</nav>')}}if(/课题|科研人员推荐/.test(file)){document.querySelector('.admin-side')?.insertAdjacentHTML('beforeend','<a class="snav" href="后台-课题工作台.html">科研项目经理工作台</a>')}}
@@ -1537,8 +1536,6 @@ dialog.space-debug{width:760px}.space-debug .modal-body{max-height:calc(92vh - 1
 #personalModelDialog .personal-image-value strong{font-size:13px;overflow-wrap:anywhere;font-weight:500}
 #personalModelDialog .personal-image-value small{display:block;margin-top:4px}
 #personalModelDialog .personal-image-value button{flex:none;border:0;background:none;color:#5e7e67;padding:4px;font-size:12px}
-#personalModelDialog .personal-default-asset{display:flex;align-items:center;gap:14px;margin:0 0 16px;color:#647e6c;font-size:12px}
-#personalModelDialog .personal-default-asset select{min-width:220px;max-width:100%;padding:6px 9px}
 #personalModelDialog .personal-record-meta{font-size:12px;color:#7c9183;margin:8px 0 20px}
 #personalModelDialog .submission-rich-view{font-size:13px;line-height:1.85;color:#496151;overflow-wrap:anywhere}
 #personalModelDialog .submission-rich-view h2{font-size:17px;margin:14px 0 8px}
@@ -1566,6 +1563,13 @@ dialog.space-debug{width:760px}.space-debug .modal-body{max-height:calc(92vh - 1
 #personalModelDialog #personal-debug-settings-button{margin-left:auto;font-size:11px;padding:5px 9px}
 #personalModelDialog .debug-result-output{min-height:110px}
 #personalModelDialog .modal-footer button:disabled{opacity:.45;cursor:not-allowed}
+
+.personal-demo-bar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:0 0 12px;font-size:12px;color:#7b8d84}
+.personal-demo-bar .mt-link{font-size:12px;padding:3px 0}
+.personal-demo-label{display:inline-block;margin-left:7px;border:1px solid #d8e6dd;border-radius:3px;padding:0 4px;color:#7a8f82;background:#f7faf8;font-size:10px;vertical-align:middle}
+.personal-model-records .mt-pager select{padding:5px 7px;border:1px solid #d5e2da;border-radius:4px;background:#fff;color:#486957;font:inherit}
+.personal-model-records .mt-pager{flex-wrap:wrap}
+
 .personal-model-table{min-width:890px}
 .personal-model-table th:nth-child(1){width:21%}.personal-model-table th:nth-child(2){width:19%}.personal-model-table th:nth-child(3){width:14%}.personal-model-table th:nth-child(4){width:13%}.personal-model-table th:nth-child(5){width:10%}.personal-model-table th:nth-child(6){width:23%}
 .personal-model-table td{vertical-align:middle}.personal-model-table td:first-child strong{font-weight:500;line-height:1.6}
@@ -1573,12 +1577,140 @@ dialog.space-debug{width:760px}.space-debug .modal-body{max-height:calc(92vh - 1
 .personal-execution-state{font-size:12px;color:#7a8c80}.personal-execution-state.ready,.personal-run-passed{color:#317a52!important}
 .personal-model-table small{margin-top:6px!important}
 .personal-model-workflow{display:flex;flex-basis:100%;gap:13px;align-items:center}
-@media(max-width:600px){#personalModelDialog .personal-model-upload .outcome-card-body{gap:10px}#personalModelDialog .personal-image-value{flex-basis:100%}#personalModelDialog .personal-default-asset{flex-wrap:wrap;gap:6px}#personalModelDialog .outcome-runtime .outcome-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){#personalModelDialog .personal-model-upload .outcome-card-body{gap:10px}#personalModelDialog .personal-image-value{flex-basis:100%}#personalModelDialog .outcome-runtime .outcome-grid{grid-template-columns:1fr 1fr}}
 
 
 /* 1012-导航8项：收起阈值 1099 -> 1199 */
 @media (min-width:1100px) and (max-width:1199px){header.site-header .main-nav{display:none;}header.site-header .menu-toggle{display:inline-flex;}}
 </style>
+<style id="personal-reference-alignment">
+#modelUsageDialog{width:min(1000px,calc(100vw - 40px));max-width:none;max-height:calc(100dvh - 48px);margin:auto;padding:0;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);box-shadow:0 20px 64px rgba(16,33,58,.22);font-family:var(--font-ui);overflow:hidden;}
+#modelUsageDialog::backdrop{background:rgba(16,33,58,.42);}
+#modelUsageDialog[open]{display:flex;flex-direction:column;}
+#modelUsageDialog .mu-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#modelUsageDialog .mu-head h2{font-size:18px;font-weight:600;}
+#modelUsageDialog .mu-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;color:var(--text-secondary);}
+#modelUsageDialog .mu-close:hover{background:var(--brand-soft);color:var(--brand);}
+#modelUsageDialog .mu-form{display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+#modelUsageDialog .mu-body{padding:20px 24px 24px;overflow:auto;min-height:0;overscroll-behavior:contain;}
+#modelUsageDialog .mu-field{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+#modelUsageDialog .mu-field:last-child{margin-bottom:0;}
+#modelUsageDialog label{font-size:13.5px;font-weight:500;}
+#modelUsageDialog .mu-required{color:var(--error);margin-left:4px;}
+#modelUsageDialog .mu-control{width:100%;min-width:0;height:36px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;background:#fff;font:13px var(--font-ui);color:var(--text);}
+#modelUsageDialog .mu-control:focus{outline:2px solid #d3e6df;outline-offset:1px;border-color:var(--brand);}
+#modelUsageDialog .mu-control[aria-invalid=true]{border-color:var(--error);}
+#modelUsageDialog textarea.mu-control{height:76px;min-height:68px;resize:vertical;line-height:1.65;}
+#modelUsageDialog #modelUsageContent{max-width:280px;}
+#modelUsageDialog #modelUsageExample{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;}
+#modelUsageDialog .mu-section{margin-bottom:22px;}
+#modelUsageDialog .mu-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+#modelUsageDialog .mu-section-head h3{font-size:14px;font-weight:600;}
+#modelUsageDialog .mu-add{display:inline-flex;align-items:center;gap:4px;color:var(--brand);font-size:13px;padding:3px 0;}
+#modelUsageDialog .mu-table-wrap{border:1px solid var(--border);border-radius:5px;overflow:auto;}
+#modelUsageDialog .mu-table{width:100%;min-width:660px;table-layout:fixed;border-collapse:collapse;font-size:13px;}
+#modelUsageDialog .mu-table th{height:38px;padding:8px 10px;background:#f5f8f7;color:var(--text-secondary);text-align:left;font-weight:500;white-space:nowrap;}
+#modelUsageDialog .mu-table td{padding:9px 10px;border-top:1px solid var(--border);vertical-align:middle;}
+#modelUsageDialog .mu-table .mu-check-cell{text-align:center;}
+#modelUsageDialog .mu-table input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);vertical-align:middle;}
+#modelUsageDialog .mu-table .mu-delete{font-size:13px;color:var(--error);white-space:nowrap;}
+#modelUsageDialog .mu-table .mu-empty{padding:18px;text-align:center;color:var(--text-muted);}
+#modelUsageDialog .mu-foot{display:flex;align-items:center;gap:12px;padding:14px 24px;border-top:1px solid var(--border);background:#fff;flex-shrink:0;}
+#modelUsageDialog .mu-error{margin-right:auto;color:var(--error);font-size:13px;line-height:1.5;}
+#modelUsageDialog .mu-actions{display:flex;gap:10px;margin-left:auto;}
+@media(max-width:680px){#modelUsageDialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px);}#modelUsageDialog .mu-head{padding:14px 16px;}#modelUsageDialog .mu-body{padding:16px;}#modelUsageDialog .mu-foot{padding:12px 16px;flex-wrap:wrap;}#modelUsageDialog .mu-error:not(:empty){width:100%;}.model-usage-open{padding:0 10px;}}
+
+
+/* Match the supplied detail editor and model deployment components. */
+#personalModelDialog .outcome-editor-card{padding:20px 24px;border-color:#dce5e9;border-radius:8px;background:#fff}
+#personalModelDialog .outcome-editor-card .outcome-readme{padding:0;margin:0 0 20px;border:0;color:#526078;gap:10px}
+#personalModelDialog .outcome-editor-card .outcome-readme>span{font-size:13.5px;font-weight:600;color:#10213a}
+#personalModelDialog .outcome-editor-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:0;margin:0 0 9px;border:0}
+#personalModelDialog .outcome-editor-heading h3{font-size:13.5px;font-weight:600;color:#10213a;flex:none}
+#personalModelDialog .personal-intro-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+#personalModelDialog .outcome-editor-heading button,#personalModelDialog .personal-usage-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;font-size:13px;font-weight:400;line-height:1.5;border:1px solid #b6cfca;border-radius:4px;color:#005653;background:#fff;white-space:nowrap}
+#personalModelDialog .outcome-editor-heading button:hover,#personalModelDialog .personal-usage-open:hover{background:#edf6f2;border-color:#005653}
+#personalModelDialog #outcome-template-toggle{color:#526078;border-color:#dce5e9}
+#personalModelDialog .outcome-editor-card .outcome-template{margin:14px 0 16px}
+#personalModelDialog .outcome-editor-card .outcome-rich-panel{padding:0}
+#personalModelDialog .outcome-editor-card .submission-toolbar{padding:5px 7px;gap:2px;background:#fbfcfc;border:1px solid #dce5e9;border-radius:4px 4px 0 0}
+#personalModelDialog .outcome-editor-card .submission-toolbar button{display:inline-flex;align-items:center;justify-content:center;height:28px;min-width:28px;padding:0 5px;font-size:13px;border:0;border-radius:4px;color:#526078}
+#personalModelDialog .outcome-editor-card .submission-toolbar select{height:28px;color:#526078;font-size:13px;background:transparent;padding:0 5px}
+#personalModelDialog .outcome-editor-card .outcome-rich-image{font-size:13px;padding:4px 5px;color:#526078}
+#personalModelDialog .outcome-editor-card .submission-toolbar button:hover{color:#005653;background:#edf6f2}
+#personalModelDialog .outcome-editor-card .submission-rich{min-height:400px;max-height:none;overflow:visible;padding:16px;border:1px solid #dce5e9;border-top:0;border-radius:0 0 4px 4px;font-size:13.5px;line-height:1.8;color:#10213a;outline:none}
+#personalModelDialog .outcome-editor-card .submission-rich h3{font-size:14px;font-weight:600;margin:22px 0 8px;color:#10213a}
+#personalModelDialog .outcome-editor-card .submission-rich h3:first-child{margin-top:0}
+#personalModelDialog .outcome-editor-card .submission-rich p+p{margin-top:8px}
+#personalModelDialog .outcome-editor-card .submission-rich table{width:100%;border-collapse:collapse;table-layout:fixed}
+#personalModelDialog .outcome-editor-card .submission-rich table th,#personalModelDialog .outcome-editor-card .submission-rich table td{border:1px solid #dce5e9;padding:7px 10px;font-size:13px;line-height:1.7;text-align:left;color:#10213a;vertical-align:top;white-space:normal}
+#personalModelDialog .outcome-editor-card .submission-rich table th{background:#f8fbfa;color:#005653;font-weight:600}
+#personalModelDialog.personal-deploy-settings{width:min(880px,calc(100vw - 48px));max-height:calc(100dvh - 48px);border-radius:8px;color:#10213a}
+#personalModelDialog.personal-deploy-settings .modal-header{padding:16px 24px;border-color:#dce5e9}
+#personalModelDialog.personal-deploy-settings .modal-header h2{font-size:17px;font-weight:600;color:#10213a}
+#personalModelDialog.personal-deploy-settings .modal-body{padding:18px 24px 24px;max-height:calc(100dvh - 188px);background:#fff}
+#personalModelDialog.personal-deploy-settings .modal-footer{padding:14px 24px;gap:12px;border-color:#dce5e9}
+#personalModelDialog.personal-deploy-settings .modal-footer>button{height:36px;padding:0 18px;font-size:14px}
+#personalModelDialog .personal-service-context{display:flex;flex-wrap:wrap;gap:8px 22px;padding:12px 16px;margin-bottom:20px;background:#edf6f2;border:1px solid #d5e7e0;border-radius:4px;font-size:13px;color:#10213a}
+#personalModelDialog .personal-service-context strong{font-weight:600}
+#personalModelDialog .personal-service-context .personal-service-image{flex-basis:100%;color:#6b778c;font-size:12px;overflow-wrap:anywhere}
+#personalModelDialog .personal-service-heading{display:flex;align-items:center;gap:10px;margin:24px 0 14px}
+#personalModelDialog .personal-service-heading:first-of-type{margin-top:0}
+#personalModelDialog .personal-service-heading h3{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:600;color:#10213a}
+#personalModelDialog .personal-service-heading h3::before{content:'';width:3px;height:15px;border-radius:2px;background:#005653;flex-shrink:0}
+#personalModelDialog .personal-service-heading .personal-usage-open{margin-left:auto}
+#personalModelDialog.personal-deploy-settings .personal-debug-fields{gap:14px 16px}
+#personalModelDialog.personal-deploy-settings .personal-resource-fields{grid-template-columns:repeat(3,minmax(0,1fr))}
+#personalModelDialog.personal-deploy-settings .personal-debug-fields label,#personalModelDialog.personal-deploy-settings .debug-input-label{display:flex;flex-direction:column;gap:6px;color:#10213a;font-size:13px;font-weight:500;margin:0}
+#personalModelDialog.personal-deploy-settings .personal-debug-fields input,#personalModelDialog.personal-deploy-settings .personal-debug-fields select,#personalModelDialog.personal-deploy-settings .debug-input-label input{height:36px;min-height:36px;padding:0 12px;border:1px solid #dce5e9;border-radius:4px;color:#10213a;background:#fff;font-size:13.5px}
+#personalModelDialog.personal-deploy-settings .personal-debug-fields input:focus,#personalModelDialog.personal-deploy-settings .personal-debug-fields select:focus,#personalModelDialog.personal-deploy-settings .debug-input-label input:focus{outline:none;border-color:#005653;box-shadow:0 0 0 2px rgba(0,86,83,.08)}
+#personalModelDialog .personal-service-unit{display:flex}
+#personalModelDialog.personal-deploy-settings .personal-service-unit input{flex:1;min-width:0;width:auto;border-radius:4px 0 0 4px}
+#personalModelDialog .personal-service-unit>span{display:inline-flex;align-items:center;height:36px;padding:0 12px;border:1px solid #dce5e9;border-left:0;border-radius:0 4px 4px 0;background:#f4f8f5;color:#526078;font-size:13px;font-weight:400;white-space:nowrap}
+#personalModelDialog.personal-deploy-settings .debug-note{font-size:12px;color:#6b778c}
+#personalModelDialog .personal-view-intro-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-right:18px;border-bottom:1px solid #e8eee9}
+#personalModelDialog .personal-view-intro-heading h3{border:0}
+#modelUsageDialog{--brand:#005653;--brand-soft:#edf6f2;--border:#dce5e9;--text:#10213a;--text-secondary:#526078;--text-muted:#6b778c;--error:#b42318;--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;line-height:1.65}
+#modelUsageDialog .mu-head h2,#modelUsageDialog .mu-section-head h3,#modelUsageDialog .mu-error{margin:0}
+#modelUsageDialog .mu-form{flex:1;margin:0}
+#modelUsageDialog .mu-body{flex:1}
+#modelUsageDialog .mu-control{box-sizing:border-box;margin:0;line-height:1.5}
+#modelUsageDialog .mu-close,#modelUsageDialog .mu-add,#modelUsageDialog .mu-delete{border:0;background:none;padding:3px 0;font-family:inherit}
+#modelUsageDialog .mu-close{padding:0}
+#modelUsageDialog .mu-table th,#modelUsageDialog .mu-table td{border-bottom:0;white-space:normal}
+#modelUsageDialog .mu-table input[type=checkbox]{display:inline-block;appearance:auto;margin:0}
+#modelUsageDialog .mu-table input[type=checkbox]:after{content:none}
+#modelUsageDialog .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 18px;border:1px solid #dce5e9;border-radius:4px;color:#10213a;background:#fff;font-size:14px;font-family:inherit}
+#modelUsageDialog .btn:hover{color:#005653;border-color:#005653}
+#modelUsageDialog .btn.primary{background:#005653;border-color:#005653;color:#fff}
+#modelUsageDialog .btn.primary:hover{background:#004542}
+#modelUsageDialog .mu-control:disabled{opacity:1;color:#526078;background:#f8faf9;cursor:default}
+#modelUsageDialog [hidden]{display:none!important}
+@media(max-width:680px){#personalModelDialog .outcome-editor-card{padding:16px}#personalModelDialog .personal-intro-actions{gap:6px}#personalModelDialog.personal-deploy-settings{width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}#personalModelDialog.personal-deploy-settings .personal-debug-fields,#personalModelDialog.personal-deploy-settings .personal-resource-fields{grid-template-columns:1fr}#personalModelDialog.personal-deploy-settings .modal-body{max-height:calc(100dvh - 170px);padding:16px}#personalModelDialog.personal-deploy-settings .modal-header,#personalModelDialog.personal-deploy-settings .modal-footer{padding:14px 16px}}
+
+</style>
+<dialog id="modelUsageDialog" aria-labelledby="modelUsageTitle">
+  <div class="mu-head">
+    <h2 id="modelUsageTitle">使用说明</h2>
+    <button type="button" class="mu-close" data-mu-close data-px-own="true" aria-label="关闭使用说明"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+  </div>
+  <form class="mu-form" novalidate>
+    <div class="mu-body">
+      <div class="mu-field"><label for="modelUsageText">使用说明<span class="mu-required">*</span></label><textarea class="mu-control" id="modelUsageText" required></textarea></div>
+      <div class="mu-field"><label for="modelUsageContent">内容类型</label><select class="mu-control" id="modelUsageContent"><option value="JSON">JSON</option><option value="form-data">form-data</option></select></div>
+      <section class="mu-section" aria-labelledby="modelUsageInputsTitle">
+        <div class="mu-section-head"><h3 id="modelUsageInputsTitle">入参</h3><button type="button" class="mu-add" data-mu-add="inputs" data-px-own="true">＋ 添加入参</button></div>
+        <div class="mu-table-wrap"><table class="mu-table"><colgroup><col style="width:23%"><col style="width:18%"><col style="width:64px"><col><col style="width:64px"></colgroup><thead><tr><th scope="col">参数名称</th><th scope="col">类型</th><th scope="col" class="mu-check-cell">必填</th><th scope="col">参数说明</th><th scope="col">操作</th></tr></thead><tbody id="modelUsageInputs"></tbody></table></div>
+      </section>
+      <section class="mu-section" aria-labelledby="modelUsageOutputsTitle">
+        <div class="mu-section-head"><h3 id="modelUsageOutputsTitle">出参</h3><button type="button" class="mu-add" data-mu-add="outputs" data-px-own="true">＋ 添加出参</button></div>
+        <div class="mu-table-wrap"><table class="mu-table"><colgroup><col style="width:23%"><col style="width:18%"><col><col style="width:64px"></colgroup><thead><tr><th scope="col">参数名称</th><th scope="col">类型</th><th scope="col">参数说明</th><th scope="col">操作</th></tr></thead><tbody id="modelUsageOutputs"></tbody></table></div>
+      </section>
+      <div class="mu-field"><label for="modelUsageExample">返回示例</label><textarea class="mu-control" id="modelUsageExample" spellcheck="false"></textarea></div>
+    </div>
+    <div class="mu-foot"><p class="mu-error" id="modelUsageError" role="alert" aria-live="polite"></p><div class="mu-actions"><button type="button" class="btn" data-mu-close data-px-own="true">取消</button><button type="submit" class="btn primary" data-px-own="true">保存</button></div></div>
+  </form>
+</dialog>
 <script id="personal-model-script">
 (()=>{
 'use strict';
@@ -1587,6 +1719,55 @@ const modal=document.createElement('dialog');modal.id='personalModelDialog';moda
 const $=selector=>modal.querySelector(selector);
 let valuesByKind={},activeKind='model',richRange=null,activeRichKey='intro',resultSaving=false,newImage=null,retainedImage=null,submission=null;
 const imageExtension=/\.(tar|tar\.gz|tgz)$/i;
+
+// Both entry points edit one interface document, separately from the rich text.
+const personalUsageDialog=document.getElementById('modelUsageDialog');
+let personalUsageContext=null,personalDeploymentUsage=null;
+const copyUsage=value=>JSON.parse(JSON.stringify(value||{usage:'',content:'JSON',inputs:[],outputs:[],example:''}));
+function personalDemoUsage(v){return {usage:'输入作物名称和测试参数，运行模型并查看输出结果。',content:'JSON',inputs:[{name:'crop',type:'string',required:true,description:'适用作物，例如'+(v.crop?.[0]||'水稻'),position:'Body'},{name:'threshold',type:'number',required:false,description:'分析阈值，示例值 0.5',position:'Body'}],outputs:[{name:'result',type:'object',description:'模型分析结果'}],example:'{\n  "result": {"status": "success"}\n}'};}
+function personalUsageDoc(record){return copyUsage(record?.metadata?.interfaceDoc||record?.interfaceDoc||record?.deployment?.interfaceDoc||(record?.prototypeDemo?personalDemoUsage(record.metadata||{}):null));}
+function personalUsageButton(context,id=''){return '<button type="button" class="personal-usage-open" aria-haspopup="dialog" aria-controls="modelUsageDialog" onclick="openPersonalUsage('+esc(JSON.stringify(context))+','+esc(JSON.stringify(id))+')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3z"/></svg>使用说明</button>';}
+const uq=selector=>personalUsageDialog.querySelector(selector);
+function personalUsageEmpty(body,input){body.querySelector('[data-mu-empty]')?.remove();if(!body.querySelector('[data-mu-row]'))body.innerHTML='<tr data-mu-empty><td class="mu-empty" colspan="'+(input?5:4)+'">暂无'+(input?'入参':'出参')+'</td></tr>';}
+function personalUsageRow(body,input,p={},focus=false){
+ body.querySelector('[data-mu-empty]')?.remove();const row=document.createElement('tr');row.dataset.muRow='true';row._originalParameter=p;
+ const types=['string','number','integer','boolean','object','array',...(input?['file']:[])];if(p.type&&!types.includes(p.type))types.push(p.type);
+ row.innerHTML='<td><input class="mu-control" data-mu="name" aria-label="参数名称" value="'+esc(p.name||'')+'" required></td><td><select class="mu-control" data-mu="type" aria-label="参数类型">'+types.map(t=>'<option value="'+esc(t)+'" '+(t===(p.type||'string')?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></td>'+(input?'<td class="mu-check-cell"><input type="checkbox" data-mu="required" aria-label="必填" '+(p.required?'checked':'')+'></td>':'')+'<td><input class="mu-control" data-mu="description" aria-label="参数说明" value="'+esc(p.description||'')+'"></td><td><button type="button" class="mu-delete" aria-label="删除'+(input?'入参':'出参')+'">删除</button></td>';
+ row.querySelector('.mu-delete').onclick=()=>{row.remove();personalUsageEmpty(body,input);uq('#modelUsageError').textContent='';};body.append(row);if(focus)row.querySelector('input').focus();
+}
+window.openPersonalUsage=(context,id='')=>{
+ if(personalUsageDialog.open)return;let doc;
+ if(context==='editor'){captureDraft();doc=valuesByKind.model?.interfaceDoc;}
+ else if(context==='deploy'){if(personalDebugView!=='settings')return;doc=personalDeploymentUsage;}
+ else if(context==='view'){const r=personalModelRecord(id);if(!r)return;doc=personalUsageDoc(r);}
+ else return;
+ const loaded=copyUsage(doc),readonly=context==='view';personalUsageContext={context,id,loaded,opener:document.activeElement,overflow:document.body.style.overflow};
+ uq('#modelUsageText').value=loaded.usage||'';uq('#modelUsageContent').value=loaded.content==='form-data'?'form-data':'JSON';uq('#modelUsageExample').value=loaded.example||'';
+ for(const [key,input]of [['Inputs',true],['Outputs',false]]){const body=uq('#modelUsage'+key);body.innerHTML='';(loaded[input?'inputs':'outputs']||[]).forEach(p=>personalUsageRow(body,input,p));personalUsageEmpty(body,input);}
+ uq('#modelUsageError').textContent='';personalUsageDialog.querySelectorAll('[aria-invalid]').forEach(n=>n.removeAttribute('aria-invalid'));
+ personalUsageDialog.querySelectorAll('input,select,textarea').forEach(n=>n.disabled=readonly);
+ personalUsageDialog.querySelectorAll('[data-mu-add],.mu-delete,[type="submit"]').forEach(n=>n.hidden=readonly);
+ uq('.mu-actions [data-mu-close]').textContent=readonly?'关闭':'取消';document.body.style.overflow='hidden';personalUsageDialog.showModal();uq('.mu-body').scrollTop=0;uq('.mu-close').focus({preventScroll:true});
+};
+personalUsageDialog.querySelectorAll('[data-mu-close]').forEach(b=>b.onclick=()=>personalUsageDialog.close());
+personalUsageDialog.addEventListener('cancel',event=>{event.preventDefault();event.stopPropagation();personalUsageDialog.close();});
+personalUsageDialog.addEventListener('close',()=>{const context=personalUsageContext;personalUsageContext=null;if(context){document.body.style.overflow=context.overflow;if(context.opener?.isConnected)context.opener.focus({preventScroll:true});}});
+personalUsageDialog.addEventListener('click',event=>{if(event.target!==personalUsageDialog)return;const b=personalUsageDialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)personalUsageDialog.close();});
+personalUsageDialog.querySelectorAll('[data-mu-add]').forEach(b=>b.onclick=()=>{if(personalUsageContext?.context==='view')return;const input=b.dataset.muAdd==='inputs';personalUsageRow(uq(input?'#modelUsageInputs':'#modelUsageOutputs'),input,{},true);uq('#modelUsageError').textContent='';});
+personalUsageDialog.addEventListener('input',event=>{event.target.removeAttribute('aria-invalid');uq('#modelUsageError').textContent='';});
+uq('form').onsubmit=event=>{
+ event.preventDefault();const context=personalUsageContext;if(!context||context.context==='view')return;
+ const collect=(body,input)=>[...body.querySelectorAll('[data-mu-row]')].map(row=>({...row._originalParameter,...Object.fromEntries([...row.querySelectorAll('[data-mu]')].map(n=>[n.dataset.mu,n.type==='checkbox'?n.checked:n.value.trim()])),...(input?{position:'Body'}:{})}));
+ const doc={...context.loaded,usage:uq('#modelUsageText').value.trim(),content:uq('#modelUsageContent').value,inputs:collect(uq('#modelUsageInputs'),true),outputs:collect(uq('#modelUsageOutputs'),false),example:uq('#modelUsageExample').value.trim()};
+ const error=(message,field)=>{uq('#modelUsageError').textContent=message;if(field){field.setAttribute('aria-invalid','true');field.focus();}};
+ if(!doc.usage)return error('请填写使用说明',uq('#modelUsageText'));
+ for(const [key,rows]of [['Inputs',doc.inputs],['Outputs',doc.outputs]]){const names=new Set();for(let i=0;i<rows.length;i++){const field=uq('#modelUsage'+key).querySelectorAll('[data-mu="name"]')[i];if(!rows[i].name)return error('请填写参数名称',field);if(names.has(rows[i].name))return error('参数名称不可重复',field);names.add(rows[i].name);}}
+ if(doc.content!=='form-data'&&doc.inputs.some(p=>p.type==='file'))return error('文件入参需要选择 form-data',uq('#modelUsageContent'));
+ if(context.context==='editor'){if(!$('#personal-model-form'))return;valuesByKind.model.interfaceDoc=copyUsage(doc);}
+ else if(context.context==='deploy'){if(personalDebugView!=='settings'||!$('#personal-debug-settings'))return;personalDeploymentUsage=copyUsage(doc);}
+ personalUsageDialog.close();
+};
+
 const currentTeam=()=>state.profile.team||'寒地水稻研究团队';
 
 const cropOptions=['水稻','玉米','大豆','小麦'];
@@ -1630,7 +1811,7 @@ window.removeOutcomeCover=function(){captureDraft();valuesByKind[activeKind].cov
 function readmeHTML(v){return '<div class="outcome-readme"><span>README</span><label class="outcome-file-button">'+(v.readme?'更换文件':'上传 README')+'<input type="file" id="outcome-readme-file" accept=".md,.txt" onchange="readOutcomeReadme(this)"></label>'+(v.readme?'<details><summary>'+esc(v.readme.name)+'</summary><pre>'+esc(v.readme.text)+'</pre></details><button type="button" class="text-btn" onclick="removeOutcomeReadme()">移除</button>':'<small>.md、.txt</small>')+'</div>';}
 window.readOutcomeReadme=async function(input){const file=input.files[0];if(!file)return;if(!/\.(md|txt)$/i.test(file.name)){simpleFieldError(['README 支持 .md、.txt 文件。']);return;}try{const text=await file.text();captureDraft();valuesByKind[activeKind].readme={name:file.name,text};$('.outcome-readme').outerHTML=readmeHTML(valuesByKind[activeKind]);}catch{simpleFieldError(['README 读取失败，请重试。']);}};
 window.removeOutcomeReadme=function(){captureDraft();valuesByKind[activeKind].readme=null;$('.outcome-readme').outerHTML=readmeHTML(valuesByKind[activeKind]);};
-function editorHTML(v){return '<section class="outcome-card outcome-editor-card">'+(activeKind==='model'?readmeHTML(v):'')+'<div class="outcome-editor-heading"><h3 id="outcome-editor-label">'+richFields[activeKind][0][1]+' <span class="submission-required">*</span></h3><button type="button" id="outcome-template-toggle" aria-expanded="false" aria-controls="outcome-template" onclick="toggleOutcomeTemplate()">查看模板</button></div><section id="outcome-template" class="outcome-template" aria-label="'+(activeKind==='model'?'模型':'数据')+'介绍填写模板" hidden><div class="outcome-template-caption">填写参考</div><article class="submission-rich-view">'+outcomeTemplates[activeKind]+'</article></section>'+richFields[activeKind].map(([key,label,required,placeholder],i)=>'<div class="outcome-rich-panel" id="rich-panel-'+key+'" aria-labelledby="outcome-editor-label" '+(i?'hidden':'')+'><div class="submission-toolbar" role="toolbar" aria-label="'+label+'编辑工具"><select aria-label="'+label+'段落样式" onmousedown="rememberRichSelection()" onchange="formatOutcomeIntro(\'formatBlock\',this.value)"><option value="p">正文</option><option value="h2">标题</option><option value="h3">小标题</option></select>'+[['bold','加粗','<b>B</b>'],['italic','斜体','<i>I</i>'],['underline','下划线','<u>U</u>'],['insertUnorderedList','无序列表','• 列表'],['insertOrderedList','有序列表','1. 列表'],['undo','撤销','↶'],['redo','重做','↷']].map(([cmd,title,icon])=>'<button type="button" title="'+title+'" aria-label="'+title+'" onmousedown="event.preventDefault();rememberRichSelection()" onclick="formatOutcomeIntro(\''+cmd+'\')">'+icon+'</button>').join('')+'<button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'link\')">链接</button><label class="outcome-rich-image" onmousedown="rememberRichSelection()">图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="insertOutcomeImage(this)"></label><button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'table\')">表格</button></div><div class="outcome-rich-tool" data-rich-tool="link" hidden><input type="text" placeholder="https://" aria-label="链接地址"><button type="button" onclick="insertOutcomeLink()">插入</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="outcome-rich-tool" data-rich-tool="table" hidden><label>行<input type="number" value="3" min="1" max="20" data-table-rows></label><label>列<input type="number" value="3" min="1" max="10" data-table-cols></label><button type="button" onclick="insertOutcomeTable()">插入表格</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="submission-rich" id="'+(key==='intro'?'outcome-intro':'outcome-rich-'+key)+'" data-rich-key="'+key+'" contenteditable="true" role="textbox" aria-multiline="true" aria-label="'+label+'" '+(required?'aria-required="true"':'')+' data-placeholder="'+placeholder+'">'+safeHTML(v[key])+'</div></div>').join('')+'</section>';}
+function editorHTML(v){return '<section class="outcome-card outcome-editor-card">'+(activeKind==='model'?readmeHTML(v):'')+'<div class="outcome-editor-heading"><h3 id="outcome-editor-label">'+richFields[activeKind][0][1]+' <span class="submission-required">*</span></h3><div class="personal-intro-actions"><button type="button" id="outcome-template-toggle" aria-expanded="false" aria-controls="outcome-template" onclick="toggleOutcomeTemplate()">查看模板</button>'+personalUsageButton('editor')+'</div></div><section id="outcome-template" class="outcome-template" aria-label="'+(activeKind==='model'?'模型':'数据')+'介绍填写模板" hidden><div class="outcome-template-caption">填写参考</div><article class="submission-rich-view">'+outcomeTemplates[activeKind]+'</article></section>'+richFields[activeKind].map(([key,label,required,placeholder],i)=>'<div class="outcome-rich-panel" id="rich-panel-'+key+'" aria-labelledby="outcome-editor-label" '+(i?'hidden':'')+'><div class="submission-toolbar" role="toolbar" aria-label="'+label+'编辑工具"><select aria-label="'+label+'段落样式" onmousedown="rememberRichSelection()" onchange="formatOutcomeIntro(\'formatBlock\',this.value)"><option value="p">正文</option><option value="h2">标题</option><option value="h3">小标题</option></select>'+[['bold','加粗','<b>B</b>'],['italic','斜体','<i>I</i>'],['underline','下划线','<u>U</u>'],['insertUnorderedList','无序列表','• 列表'],['insertOrderedList','有序列表','1. 列表'],['undo','撤销','↶'],['redo','重做','↷']].map(([cmd,title,icon])=>'<button type="button" title="'+title+'" aria-label="'+title+'" onmousedown="event.preventDefault();rememberRichSelection()" onclick="formatOutcomeIntro(\''+cmd+'\')">'+icon+'</button>').join('')+'<button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'link\')">链接</button><label class="outcome-rich-image" onmousedown="rememberRichSelection()">图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="insertOutcomeImage(this)"></label><button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'table\')">表格</button></div><div class="outcome-rich-tool" data-rich-tool="link" hidden><input type="text" placeholder="https://" aria-label="链接地址"><button type="button" onclick="insertOutcomeLink()">插入</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="outcome-rich-tool" data-rich-tool="table" hidden><label>行<input type="number" value="3" min="1" max="20" data-table-rows></label><label>列<input type="number" value="3" min="1" max="10" data-table-cols></label><button type="button" onclick="insertOutcomeTable()">插入表格</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="submission-rich" id="'+(key==='intro'?'outcome-intro':'outcome-rich-'+key)+'" data-rich-key="'+key+'" contenteditable="true" role="textbox" aria-multiline="true" aria-label="'+label+'" '+(required?'aria-required="true"':'')+' data-placeholder="'+placeholder+'">'+safeHTML(v[key])+'</div></div>').join('')+'</section>';}
 window.toggleOutcomeTemplate=function(){const panel=$('#outcome-template'),button=$('#outcome-template-toggle');panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));button.textContent=panel.hidden?'查看模板':'收起模板';};
 window.rememberRichSelection=function(){const sel=getSelection();if(!sel.rangeCount)return;const node=sel.anchorNode?.nodeType===1?sel.anchorNode:sel.anchorNode?.parentElement,editor=node?.closest('[data-rich-key]');if(editor&&!editor.closest('.outcome-rich-panel')?.hidden){activeRichKey=editor.dataset.richKey;richRange=sel.getRangeAt(0).cloneRange();}};
 window.formatOutcomeIntro=function(cmd,value=null){const editor=$('[data-rich-key="'+activeRichKey+'"]');if(!editor)return;editor.focus();if(richRange&&editor.contains(richRange.commonAncestorContainer)){const sel=getSelection();sel.removeAllRanges();sel.addRange(richRange);}document.execCommand(cmd,false,value);rememberRichSelection();editor.dispatchEvent(new Event('input',{bubbles:true}));};
@@ -1663,7 +1844,7 @@ function captureDraft(){
  for(const [key,,type]of schemas.model)if(type==='multi')v[key]=data.getAll(key);
  v.intro=safeHTML($('#outcome-intro').innerHTML);v.source=outcomeProjects.find(([id])=>id===v.sourceProjectId)?.[1]||'';v.sourceDemandName=window.PortalWork?.demand(v.sourceDemandId)?.title||'';
  v.environmentConfig={};for(const [key]of outcomeEnvironmentFields){v.environmentConfig[key]=data.get('runtime-'+key);delete v['runtime-'+key];}v.runtime=outcomeRuntimeText(v.environmentConfig);
- delete v.defaultAsset;valuesByKind.model={...valuesByKind.model,...v};
+ valuesByKind.model={...valuesByKind.model,...v};
 }
 function imageSize(size){if(typeof size!=='number')return size||'';if(size<1024)return size+' B';if(size<1024*1024)return (size/1024).toFixed(1)+' KB';return (size/1024/1024).toFixed(1)+' MB';}
 function imageSelectionHTML(){const image=newImage||retainedImage;return image?'<div class="personal-image-value"><div><strong>'+esc(image.name)+'</strong><small>'+esc(imageSize(image.size))+(retainedImage&&!newImage?' · 已上传的镜像包':'')+'</small></div><button type="button" onclick="removePersonalModelImage()">移除</button></div>':'<small>支持 .tar、.tar.gz、.tgz，每次上传一个镜像包</small>';}
@@ -1680,11 +1861,10 @@ window.closePersonalModel=()=>{if(!resultSaving)modal.close();};
 modal.addEventListener('cancel',event=>{if(resultSaving)event.preventDefault();});
 function showPersonalModal(title,body){modal.innerHTML='<div class="modal-header"><h2 id="personalModelTitle">'+esc(title)+'</h2><button type="button" aria-label="关闭" onclick="closePersonalModel()">×</button></div>'+body;if(!modal.open)modal.showModal();}
 function renderModelForm(){
- modal.classList.remove('personal-debug');const v=valuesByKind.model;richRange=null;activeRichKey='intro';const assets=Object.values(M.assets()).filter(a=>a.kind==='model');
- const defaults=assets.length?'<label class="personal-default-asset">沿用已维护的资源资料（选填）<select name="defaultAsset" id="personal-model-defaults" onchange="fillPersonalModelDefaults(this.value)"><option value="">手动填写</option>'+assets.map(a=>'<option value="'+esc(a.id)+'" '+(a.id===submission.assetId?'selected':'')+'>'+esc(a.name)+' · '+esc(a.version||'')+'</option>').join('')+'</select></label>':'';
+ modal.classList.remove('personal-debug','personal-deploy-settings');const v=valuesByKind.model;richRange=null;activeRichKey='intro';
  const basic='<section class="outcome-card"><h3 class="outcome-card-title">模型基本信息</h3><div class="outcome-basic">'+coverHTML(v)+'<div class="outcome-grid">'+fieldsHTML(['name','abbr','provider','version','business','task','crop'],v)+'</div></div></section>';
  const side='<section class="outcome-card"><h3 class="outcome-card-title">推荐配置（性能要求）</h3><div class="outcome-card-body outcome-grid">'+fieldsHTML(['gpuType','gpuCount','gpuMemory','cpu','memory','storage','runtime','precision'],v)+'</div></section><section class="outcome-card"><h3 class="outcome-card-title">来源与权属</h3><div class="outcome-card-body outcome-grid outcome-grid-single">'+fieldsHTML(['source','sourceDemandId','owner'],v)+'</div></section>';
- showPersonalModal(submission.recordId?'编辑模型':'上传模型','<form id="personal-model-form" novalidate><div class="modal-body outcome-edit-body">'+defaults+imageSectionHTML()+basic+'<div class="outcome-editor-columns"><div class="outcome-editor-main">'+editorHTML(v)+'</div><aside class="outcome-editor-side">'+side+'</aside></div></div><div class="modal-footer"><div id="simple-errors" role="alert"></div><button type="button" onclick="closePersonalModel()">取消</button><button type="button" class="primary" id="personal-model-confirm" onclick="commitPersonalModel()">'+(submission.recordId?'保存修改':'上传模型')+'</button></div></form>');
+ showPersonalModal(submission.recordId?'编辑模型':'上传模型','<form id="personal-model-form" novalidate><div class="modal-body outcome-edit-body">'+imageSectionHTML()+basic+'<div class="outcome-editor-columns"><div class="outcome-editor-main">'+editorHTML(v)+'</div><aside class="outcome-editor-side">'+side+'</aside></div></div><div class="modal-footer"><div id="simple-errors" role="alert"></div><button type="button" onclick="closePersonalModel()">取消</button><button type="button" class="primary" id="personal-model-confirm" onclick="commitPersonalModel()">'+(submission.recordId?'保存修改':'上传模型')+'</button></div></form>');
  const form=$('#personal-model-form');for(const [key,,type]of schemas.model)if(type==='multi')updateOutcomeChoices(key);
  form.addEventListener('input',event=>{if(event.target.type!=='file')simpleFieldError([]);});form.addEventListener('change',event=>{if(event.target.type!=='file')simpleFieldError([]);});
  form.onsubmit=event=>{event.preventDefault();commitPersonalModel();};form.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.defaultPrevented&&event.target.tagName==='INPUT'&&!event.target.closest('.outcome-rich-tool')&&!event.target.matches('[type=checkbox],[type=radio],[type=file]')){event.preventDefault();commitPersonalModel();}if(event.key==='Escape'){const choice=form.querySelector('.outcome-choice[open]');if(choice){event.preventDefault();event.stopPropagation();choice.open=false;choice.querySelector('summary').focus();}}});
@@ -1692,13 +1872,12 @@ function renderModelForm(){
  const editor=$('#outcome-intro');editor.addEventListener('paste',event=>{event.preventDefault();const html=event.clipboardData.getData('text/html');document.execCommand('insertHTML',false,html?safeHTML(html):esc(event.clipboardData.getData('text/plain')).replace(/\n/g,'<br>'));});editor.addEventListener('keyup',rememberRichSelection);editor.addEventListener('mouseup',rememberRichSelection);
  const count=$('#outcome-gpuCount'),card=$('#outcome-gpuType');count.oninput=updateOutcomeGpu;card.onchange=()=>{if(card.value==='CPU 推理（无 GPU）')count.value='0';else if(Number(count.value)===0)count.value='1';updateOutcomeGpu();};updateOutcomeGpu();
 }
-window.fillPersonalModelDefaults=id=>{captureDraft();submission.assetId=id;const saved=id?M.assets()[id]:{};refreshProjects(saved);valuesByKind.model=normalizedModel(saved);renderModelForm();};
 const originalSubmit=M.submit;
 M.submit=(kind='model',assetId='',recordId='')=>{
  if(kind!=='model')return originalSubmit(kind,assetId,recordId);if(resultSaving)return;
  const prev=recordId?preparePersonalRecord(recordId):null;if(recordId&&!prev)return;
- M.close();personalDebugView='';activePersonalModel='';const source=prev?.metadata||M.assets()[assetId]||{};
- submission={assetId:assetId||prev?.assetId||'',recordId:prev?.id||''};refreshProjects(source);valuesByKind={model:normalizedModel(source)};newImage=null;retainedImage=prev?.materialType==='image'&&prev.files?.length===1&&imageExtension.test(prev.files[0].name)&&prev.files[0].blobId?{...prev.files[0]}:null;renderModelForm();
+ M.close();personalDebugView='';activePersonalModel='';const source=prev?.metadata||{};
+ submission={assetId:prev?.assetId||'',recordId:prev?.id||''};refreshProjects(source);valuesByKind={model:normalizedModel({...source,interfaceDoc:personalUsageDoc(prev)})};newImage=null;retainedImage=prev?.materialType==='image'&&prev.files?.length===1&&imageExtension.test(prev.files[0].name)&&prev.files[0].blobId?{...prev.files[0]}:null;renderModelForm();
 };
 window.commitPersonalModel=()=>savePersonalModelUpload();
 // Uploaded models remain outside the approval queue until the row's Submit action.
@@ -1710,7 +1889,7 @@ const personalWritable=id=>!personalReview(id)||personalReturned(personalReview(
 function personalModelRows(){
  const uploads=personalUploads(),reviews=M.records().filter(r=>r.kind==='model');
  const rows=uploads.filter(r=>!reviews.some(x=>x.id===r.id)).map(r=>({...r,status:'未提交'}));
- for(const review of reviews){const upload=uploads.find(r=>r.id===review.id);rows.push(upload?.stage==='draft'&&personalReturned(review)?{...upload,status:'未提交',history:review.history}:({...upload,...review}));}
+ for(const review of reviews){const upload=uploads.find(r=>r.id===review.id);rows.push(upload?.stage==='draft'&&personalReturned(review)?{...upload,status:review.status,history:review.history}:({...upload,...review}));}
  return rows.sort((a,b)=>String(b.uploadedAt||b.time).localeCompare(String(a.uploadedAt||a.time)));
 }
 function personalModelRecord(id){return personalModelRows().find(r=>r.id===id);}
@@ -1718,26 +1897,108 @@ function savePersonalUpload(record){const rows=personalUploads(),index=rows.find
 function personalConfig(record){const v=record.metadata;return {environmentConfig:{system:v.environmentConfig?.system||'',python:v.environmentConfig?.python||'',framework:v.environmentConfig?.framework||'',cuda:v.environmentConfig?.cuda||''},cpu:Number(v.cpu||2),memory:Number(v.memory||4),storage:Number(v.storage||20),gpuCount:Number(v.gpuCount||0),gpuType:v.gpuType||'',gpuMemory:Number(v.gpuMemory||0),command:record.deployment?.config?.command||record.debugValidation?.config?.command||''};}
 function personalTarget(record,config=personalConfig(record)){return JSON.stringify({image:record.files?.[0]?.blobId||'',config});}
 function personalDeployed(record){return !!record?.files?.[0]?.blobId&&record.deployment?.status==='ready'&&record.deployment.signature===personalTarget(record);}
-function personalPassed(record){return personalDeployed(record)&&record.debugValidation?.status==='success'&&record.debugValidation.signature===personalTarget(record);}
+function personalPassed(record){const proof=record?.debugValidation;return personalDeployed(record)&&proof?.status==='success'&&proof.materialKey===record.files[0].blobId&&proof.signature===personalTarget(record)&&!!record.deployment.token&&proof.deploymentToken===record.deployment.token;}
 function personalBusy(record){return record?.deployment?.status==='preparing'||record?.run?.status==='running';}
 function refreshPersonalModelRecords(){const node=document.getElementById('mt-outcomes');if(node?.dataset.personalModels==='true')node.outerHTML=M.recordsPanel('model');}
 function personalRowAction(label,action,id,disabled=false,reason=''){return '<button type="button" class="mt-link" data-model-action="'+action+'" '+(disabled?'disabled ':'')+(reason?'title="'+esc(reason)+'" ':'')+'onclick="Meeting.'+action+'('+esc(JSON.stringify(id))+')">'+label+'</button>';}
+
+// Sample scenarios use explicit prototype records and never replace user uploads.
+const personalDemoTag='model-demo-20261019';
+let personalDemoReady=false,personalPage=1,personalPageSize=10,personalPagingAccount='';
+function personalDemoArchive(file){
+ const encoder=new TextEncoder(),payload=encoder.encode('原型演示材料\n\n'+file.name+'\n此归档仅包含演示说明，不含真实模型或可运行镜像。部署和调试结果均由本页面模拟。\n');
+ const header=new Uint8Array(512),put=(offset,length,text)=>header.set(encoder.encode(text).slice(0,length),offset);
+ put(0,100,'README.txt');put(100,8,'0000644\0');put(108,8,'0000000\0');put(116,8,'0000000\0');put(124,12,payload.length.toString(8).padStart(11,'0')+'\0');put(136,12,'00000000000\0');put(148,8,'        ');put(156,1,'0');put(257,6,'ustar\0');put(263,2,'00');
+ put(148,8,header.reduce((a,b)=>a+b,0).toString(8).padStart(6,'0')+'\0 ');
+ return new File([header,payload,new Uint8Array((512-payload.length%512)%512),new Uint8Array(1024)],file.name,{type:'application/x-tar'});
+}
+async function personalMaterial(file){
+ if(file?.prototypeMaterial===personalDemoTag)return {id:file.blobId,file:personalDemoArchive(file)};
+ if(!file?.blobId)return null;
+ return M.fileDB('readonly',store=>store.get(file.blobId));
+}
+function personalDemoRecords(){
+ const account=window.PortalOrg?.current(),owner=account?.id||'u-zhang',person=account?.name||'张研究员',team=window.PortalOrg?.myTeams().find(t=>t.ownerId===owner)?.name||currentTeam();
+ const projects=window.PortalWork?.myProjects()||[],day=M.date().slice(0,10);
+ const scenarios=[
+  ['upload','水稻长势监测模型','RICE-GROWTH','长势监测','回归估测','水稻','09:50'],
+  ['deployed','玉米产量估测模型','CORN-YIELD','产量预测','回归估测','玉米','09:40'],
+  ['passed','大豆病害识别模型','SOY-DISEASE','病虫害识别','图像分类','大豆','09:30'],
+  ['failed','农田作物分类模型','CROP-CLASS','作物与地块识别','图像分类','玉米','09:20'],
+  ['returned','水稻生育期识别模型','RICE-STAGE','长势监测','时序预测','水稻','09:10'],
+  ['pending','土壤墒情评估模型','SOIL-MOISTURE','土壤养分','回归估测','小麦','09:00'],
+  ['approved','作物倒伏识别模型','CROP-LODGE','长势监测','目标检测','玉米','08:50']
+ ];
+ return scenarios.map(([scenario,name,abbr,business,task,crop,clock])=>{
+  const id='DEMO-MODEL-'+owner+'-'+scenario,time=day+' '+clock,project=projects.find(p=>(p.name||p.title||'').includes(crop));
+  const metadata={name,abbr,provider:team,version:'V1.0',business:[business],task:[task],crop:[crop],gpuType:'CPU 推理（无 GPU）',gpuCount:0,gpuMemory:0,cpu:4,memory:8,storage:20,precision:'FP32',environmentConfig:{system:'Ubuntu 22.04',python:'3.10',framework:'scikit-learn 1.4',cuda:'不使用'},sourceProjectId:project?.code||project?.id||'',source:project?.name||project?.title||'',sourceDemandId:'',owner:team,cover:'',readme:{name:'README.md',text:'# '+name+'\n\n原型演示材料。可在当前记录演示部署、运行调试及成果提交。'},intro:'<h3>模型概述</h3><p>'+name+'用于'+crop+'相关的'+business+'研究。本条为原型演示数据。</p><h3>输入输出规范</h3><p>输入为研究样本及 JSON 参数，输出为对应的模型分析结果。</p><h3>业务能力</h3><p>支持'+task+'任务，可在部署后使用测试参数运行调试。</p><h3>输出示例</h3><p>调试窗口展示本次运行结果与日志。</p>'};
+  metadata.runtime=outcomeRuntimeText(metadata.environmentConfig);metadata.interfaceDoc=personalDemoUsage(metadata);
+  const file={name:abbr.toLowerCase()+'-demo.tar',blobId:id+':sample',prototypeMaterial:personalDemoTag};file.size=personalDemoArchive(file).size;
+  const r={id,kind:'model',stage:'draft',materialType:'image',prototypeDemo:personalDemoTag,demoScenario:scenario,assetId:'',name,metadata,files:[file],projectId:metadata.sourceProjectId,projectName:metadata.source,spaceId:'',spaceName:'',applicantId:owner,applicant:person,status:'未提交',uploadedAt:time,time,history:[],testInput:JSON.stringify({crop,threshold:0.5},null,2)};
+  if(scenario!=='upload'){
+   const config=personalConfig(r),signature=personalTarget(r,config),token=id+':deployment';
+   r.deployment={status:'ready',token,config,signature,step:3,progress:100,completedAt:time,logs:['[准备环境] 已读取演示配置。','[载入镜像] '+file.name+'（模拟）','[部署完成] 运行环境就绪（模拟）。']};
+   if(!['deployed','failed'].includes(scenario)){
+    r.run={status:'passed',token:id+':run',signature,input:JSON.parse(r.testInput),sampleNames:[],output:JSON.stringify({演示:true,结果:'测试样例已运行完成。'},null,2),logs:['[运行测试] 使用当前已部署模型。','[调试成功] 模拟测试完成。']};
+    r.debugValidation={id:'RUN-'+id,status:'success',prototype:true,completedAt:time,materialKey:file.blobId,config,signature,deploymentToken:token};
+   }
+   if(scenario==='failed'){
+    r.testInput='{"crop": "玉米",}';
+    r.run={status:'failed',token:id+':run',signature,error:'测试参数不是有效 JSON，请移除末尾多余的逗号后重试。',output:'测试参数校验失败，尚未通过调试。',logs:['[运行测试] 使用当前已部署模型。','[调试失败] 测试参数不是有效 JSON。']};
+   }
+  }
+  if(['returned','pending','approved'].includes(scenario)){
+   r.stage='submitted';r.status={returned:'已驳回',pending:'待审批',approved:'已通过'}[scenario];
+   r.history=[{action:'提交成果',by:person,time,note:'原型演示记录'}];
+   if(scenario==='returned')r.history.push({action:'驳回',by:'平台管理员',time:day+' 10:00',note:'请在模型介绍中补充适用范围和输出示例。'});
+   if(scenario==='approved')r.history.push({action:'通过',by:'平台管理员',time:day+' 10:05',note:'成果材料与调试记录齐全。'});
+  }
+  return r;
+ });
+}
+function ensurePersonalModelDemos(reset=false){
+ if(!personalDemoReady||!window.PortalOrg?.isLeader())return;
+ const marker=personalDemoTag+':'+PortalOrg.current().id;
+ if(!reset&&M.read(marker,false))return;
+ const seeds=personalDemoRecords(),uploads=personalUploads(),reviews=M.records(),sampleIds=new Set(seeds.map(r=>r.id));
+ const keep=r=>!(r.prototypeDemo===personalDemoTag&&sampleIds.has(r.id));
+ const nextUploads=reset?uploads.filter(keep):uploads,nextReviews=reset?reviews.filter(keep):reviews;
+ for(const seed of seeds){
+  if(!nextUploads.some(r=>r.id===seed.id)&&!nextReviews.some(r=>r.id===seed.id)){
+   nextUploads.push(seed);if(seed.stage==='submitted')nextReviews.push(structuredClone(seed));
+  }
+ }
+ if(!M.write(personalUploadsKey,nextUploads)||!M.write(M.key,nextReviews))return;
+ M.write(marker,true);
+}
+M.resetPersonalModelDemos=()=>{
+ if(!window.PortalOrg?.isLeader())return;
+ if(personalUploads().some(r=>r.prototypeDemo===personalDemoTag&&(personalBusy(r)||personalSubmitLocks.has(r.id)))){M.toast('请等待演示中的部署、调试或提交完成');return;}
+ M.dialog('重置演示记录','<p>恢复示例记录的初始部署、调试和审批状态。自己上传的其他记录会保留。</p>',M.btn('取消','Meeting.close()')+M.btn('确认重置','Meeting.confirmPersonalModelDemos()',true));
+};
+M.confirmPersonalModelDemos=()=>{
+ if(!window.PortalOrg?.isLeader())return;
+ if(personalUploads().some(r=>r.prototypeDemo===personalDemoTag&&(personalBusy(r)||personalSubmitLocks.has(r.id)))){M.toast('请等待当前操作完成');return;}
+ ensurePersonalModelDemos(true);personalPage=1;M.close();refreshPersonalModelRecords();M.toast('演示记录已重置');
+};
+M.changePersonalModelPage=delta=>{personalPage+=delta;refreshPersonalModelRecords();};
+M.setPersonalModelPageSize=size=>{personalPageSize=[10,20,50].includes(Number(size))?Number(size):10;personalPage=1;refreshPersonalModelRecords();};
+document.addEventListener('DOMContentLoaded',()=>{personalDemoReady=true;ensurePersonalModelDemos();M.refreshOutcomes?.();});
+
 const oldPersonalRecordsPanel=M.recordsPanel;
 M.recordsPanel=(kind='',space='')=>{
  if(kind!=='model')return oldPersonalRecordsPanel(kind,space);
- const rows=personalModelRows();return '<section class="mt-panel personal-model-records" id="mt-outcomes" data-personal-models="true"><div class="mt-toolbar"><h2 style="margin:0;flex:1">成果记录</h2>'+M.btn('上传模型','Meeting.submit("model")',true)+'</div><div class="mt-table-wrap"><table class="mt-table personal-model-table"><thead><tr><th>模型名称 / 版本</th><th>关联课题</th><th>上传时间</th><th>部署与调试</th><th>审批状态</th><th>操作</th></tr></thead><tbody>'+rows.map(r=>{
+ ensurePersonalModelDemos();const account=window.PortalOrg?.current().id||'';if(personalPagingAccount!==account){personalPage=1;personalPagingAccount=account;}const all=personalModelRows(),pages=Math.max(1,Math.ceil(all.length/personalPageSize));personalPage=Math.min(pages,Math.max(1,personalPage));const rows=all.slice((personalPage-1)*personalPageSize,personalPage*personalPageSize);return '<section class="mt-panel personal-model-records" id="mt-outcomes" data-personal-models="true"><div class="mt-toolbar"><h2 style="margin:0;flex:1">成果记录</h2>'+M.btn('上传模型','Meeting.submit("model")',true)+'</div><div class="personal-demo-bar"><span>原型演示</span>'+M.link('重置演示记录','Meeting.resetPersonalModelDemos()')+'</div><div class="mt-table-wrap"><table class="mt-table personal-model-table"><thead><tr><th>模型名称 / 版本</th><th>关联课题</th><th>上传时间</th><th>部署与调试</th><th>审批状态</th><th>操作</th></tr></thead><tbody>'+rows.map(r=>{
   const editable=personalWritable(r.id),busy=personalBusy(r),ready=personalDeployed(r),passed=personalPassed(r),d=r.deployment,run=r.run;
   const deployment=d?.status==='preparing'?'部署中 '+d.progress+'%':ready?'已部署':d?.status==='failed'?'部署失败':'未部署';
   const debug=passed?'调试成功':run?.status==='running'?'调试中':run?.status==='failed'?'调试失败':run?.status==='stopped'?'调试已停止':'未调试';
-  return '<tr data-model-id="'+esc(r.id)+'"><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.metadata?.version||'—')+'</small></td><td>'+esc(r.projectName||r.metadata?.source||'—')+'</td><td>'+esc(r.uploadedAt||r.time)+'</td><td><span class="personal-execution-state '+(ready?'ready':'')+'">'+deployment+'</span><small class="'+(passed?'personal-run-passed':'')+'">'+debug+'</small></td><td>'+M.badge(r.status||'未提交')+'</td><td><div class="mt-actions personal-model-actions">'+personalRowAction('查看','viewOutcome',r.id)+personalRowAction(personalReturned(r)?'修改':'编辑','editUploadedModel',r.id,!editable||busy,!editable?'已提交审批':busy?'请等待当前操作完成':'')+'<span class="personal-model-workflow">'+personalRowAction('部署','deployUploadedModel',r.id,!editable||run?.status==='running',!editable?'已提交审批':run?.status==='running'?'请等待调试完成':'')+personalRowAction('调试','debugUploadedModel',r.id,!editable||!ready,!editable?'已提交审批':!ready?'请先完成部署':'')+personalRowAction(personalReturned(r)?'再次提交':'提交','submitUploadedModel',r.id,!editable||!passed||busy,!editable?'已提交审批':!passed?'请先调试成功':'')+'</span></div></td></tr>';
- }).join('')+(rows.length?'':'<tr><td colspan="6" class="mt-empty">暂无成果记录，请先上传模型</td></tr>')+'</tbody></table></div></section>';
+  return '<tr data-model-id="'+esc(r.id)+'"><td><strong>'+esc(r.name)+'</strong>'+(r.prototypeDemo===personalDemoTag?'<span class="personal-demo-label">演示</span>':'')+'<small>'+esc(r.metadata?.version||'—')+'</small></td><td>'+esc(r.projectName||r.metadata?.source||'—')+'</td><td>'+esc(r.uploadedAt||r.time)+'</td><td><span class="personal-execution-state '+(ready?'ready':'')+'">'+deployment+'</span><small class="'+(passed?'personal-run-passed':'')+'">'+debug+'</small></td><td>'+M.badge(r.status||'未提交')+'</td><td><div class="mt-actions personal-model-actions">'+personalRowAction('查看','viewOutcome',r.id)+personalRowAction(personalReturned(r)?'修改':'编辑','editUploadedModel',r.id,!editable||busy,!editable?'已提交审批':busy?'请等待当前操作完成':'')+'<span class="personal-model-workflow">'+personalRowAction(d?.status==='preparing'?'部署进度':ready?'重新部署':'部署','deployUploadedModel',r.id,!editable||run?.status==='running',!editable?'已提交审批':run?.status==='running'?'请等待调试完成':'')+personalRowAction('调试','debugUploadedModel',r.id,!editable||!ready,!editable?'已提交审批':!ready?'请先完成部署':'')+personalRowAction(personalReturned(r)?'再次提交':'提交','submitUploadedModel',r.id,!editable||!passed||busy,!editable?'已提交审批':!passed?'请先调试成功':'')+'</span></div></td></tr>';
+ }).join('')+(rows.length?'':'<tr><td colspan="6" class="mt-empty">暂无成果记录，请先上传模型</td></tr>')+'</tbody></table></div><div class="mt-pager"><span>共 '+all.length+' 条</span><label>每页 <select aria-label="成果每页条数" onchange="Meeting.setPersonalModelPageSize(this.value)">'+[10,20,50].map(n=>'<option value="'+n+'" '+(personalPageSize===n?'selected':'')+'>'+n+' 条</option>').join('')+'</select></label><button type="button" class="mt-link" '+(personalPage===1?'disabled ':'')+'onclick="Meeting.changePersonalModelPage(-1)">上一页</button><span>'+personalPage+' / '+pages+'</span><button type="button" class="mt-link" '+(personalPage===pages?'disabled ':'')+'onclick="Meeting.changePersonalModelPage(1)">下一页</button></div></section>';
 };
 function preparePersonalRecord(id){
  const r=personalModelRecord(id);if(!r||!personalWritable(id)){M.toast('当前模型不可修改或提交');return null;}if(personalBusy(r)){M.toast('请等待当前部署或调试完成');return null;}
  if(r.stage==='draft')return r;
  const record={...r,stage:'draft',status:'未提交',uploadedAt:r.uploadedAt||r.time};
- // Retain a matching success from the previous prototype when editing a returned upload.
- if(!record.deployment&&r.debugValidation?.status==='success'&&r.files?.[0]?.blobId===r.debugValidation.materialKey){const config=personalConfig(record),signature=personalTarget(record,config);if(JSON.stringify(config)===JSON.stringify(r.debugValidation.config)){record.deployment={status:'ready',config,signature,progress:100,step:3,logs:[],completedAt:r.debugValidation.completedAt};record.debugValidation={...r.debugValidation,signature};}}
  return record;
 }
 M.editUploadedModel=id=>M.submit('model','',id);
@@ -1753,20 +2014,20 @@ window.savePersonalModelUpload=async()=>{
  try{
   let file=retainedImage;if(selectedImage){blobId=id+':image:'+Date.now();await M.fileDB('readwrite',store=>store.put({id:blobId,file:selectedImage}));file={name:selectedImage.name,size:selectedImage.size,blobId};}
   if(!personalWritable(id))throw new Error('当前记录已提交审批，请返回列表查看。');
-  const record={...previous,id,stage:'draft',kind:'model',materialType:'image',assetId:submission.assetId,metadata:v,name:v.name.trim(),files:[file],projectId:v.sourceProjectId,projectName:v.source,spaceId:previous?.spaceId||'',spaceName:previous?.spaceName||'',applicant:state.profile.name||'张研究员',status:'未提交',uploadedAt:previous?.uploadedAt||time,time:previous?.time||time,updatedAt:time,history:previous?.history||[]};
+  const record={...previous,id,stage:'draft',kind:'model',materialType:'image',assetId:submission.assetId,metadata:v,interfaceDoc:copyUsage(v.interfaceDoc),name:v.name.trim(),files:[file],projectId:v.sourceProjectId,projectName:v.source,spaceId:previous?.spaceId||'',spaceName:previous?.spaceName||'',applicant:state.profile.name||'张研究员',status:'未提交',uploadedAt:previous?.uploadedAt||time,time:previous?.time||time,updatedAt:time,history:previous?.history||[]};
   if(!previous||personalTarget(previous)!==personalTarget(record)){delete record.deployment;delete record.run;delete record.debugValidation;}
-  savePersonalUpload(record);resultSaving=false;modal.close();refreshPersonalModelRecords();M.toast(previous?'模型资料已保存':'模型已上传，可在成果记录中部署、调试并提交');
+  savePersonalUpload(record);resultSaving=false;modal.close();personalPage=1;refreshPersonalModelRecords();M.toast(previous?'模型资料已保存':'模型已上传，可在成果记录中部署、调试并提交');
  }catch(error){if(blobId)await M.fileDB('readwrite',store=>store.delete(blobId)).catch(()=>{});resultSaving=false;button.disabled=false;button.textContent=submission.recordId?'保存修改':'上传模型';simpleFieldError([error.message||'模型上传失败，请重试']);}
 };
 const personalSubmitLocks=new Set();
 M.submitUploadedModel=async id=>{
  if(personalSubmitLocks.has(id))return;const r=personalModelRecord(id);if(!r||!personalWritable(id)){M.toast('该模型已提交审批');return;}if(!personalPassed(r)||personalBusy(r)){M.toast('请先完成部署并通过运行调试');return;}
- refreshProjects(r.metadata);const errors=validateOutcomeValues('model',r.metadata);if(errors.length){M.toast('请先编辑并补全模型资料：'+errors[0]);return;}
+ refreshProjects(r.metadata);const errors=validateOutcomeValues('model',r.metadata);for(const [key,label]of outcomeEnvironmentFields)if(!r.metadata.environmentConfig?.[key])errors.push('请选择'+label);if(errors.length){M.toast('请先编辑并补全模型资料：'+errors[0]);return;}
  personalSubmitLocks.add(id);
  try{
-  const stored=await M.fileDB('readonly',s=>s.get(r.files[0].blobId));if(!stored?.file?.size)throw new Error('镜像包不可用，请重新上传并调试。');
-  const current=personalModelRecord(id);if(!personalWritable(id))return;if(!personalPassed(current)||personalTarget(r)!==personalTarget(current))throw new Error('模型内容已变更，请重新部署和调试。');
-  const previous=personalReview(id),time=M.date(),record={...current,stage:'submitted',status:'待审批',time,history:[...(previous?.history||[]),{action:previous?'重新提交':'提交成果',by:current.applicant,time,note:''}]};
+  const stored=await personalMaterial(r.files[0]);if(!stored?.file?.size)throw new Error('镜像包不可用，请重新上传并调试。');
+  const current=personalModelRecord(id);if(!personalWritable(id))return;if(!personalPassed(current)||personalBusy(current)||personalTarget(r)!==personalTarget(current))throw new Error('模型内容已变更，请重新部署和调试。');
+  const previous=personalReview(id),time=M.date(),record={...current,interfaceDoc:personalUsageDoc(current),metadata:{...current.metadata,interfaceDoc:personalUsageDoc(current)},stage:'submitted',status:'待审批',time,history:[...(previous?.history||[]),{action:previous?'重新提交':'提交成果',by:current.applicant,time,note:''}]};
   const rows=M.records(),index=rows.findIndex(x=>x.id===id);if(index<0)rows.unshift(record);else rows[index]=record;
   if(!M.write(M.key,rows))throw new Error('未能提交审批，请重试。');
   // The approval record is authoritative, including if this local marker cannot be written.
@@ -1780,19 +2041,20 @@ let personalDebugView='',activePersonalModel='',personalRunConfig=null;
 const personalDeploymentJobs=new Map(),personalRunJobs=new Map(),personalSampleFiles=new Map();
 function personalJobId(){return crypto.randomUUID?.()||Date.now()+'-'+Math.random();}
 function personalActiveRecord(){return personalModelRecord(activePersonalModel);}
-function personalDebugModal(title,body){modal.classList.add('personal-debug');showPersonalModal(title,body);}
-window.returnFromPersonalDebug=function(){personalDebugView='';activePersonalModel='';modal.classList.remove('personal-debug');modal.close();refreshPersonalModelRecords();};
+function personalDebugModal(title,body){modal.classList.add('personal-debug');modal.classList.toggle('personal-deploy-settings',personalDebugView==='settings');showPersonalModal(title,body);}
+window.returnFromPersonalDebug=function(){personalDebugView='';activePersonalModel='';modal.classList.remove('personal-debug','personal-deploy-settings');modal.close();refreshPersonalModelRecords();};
 const closePersonalForm=closePersonalModel;window.closePersonalModel=function(){if(personalDebugView){returnFromPersonalDebug();return;}closePersonalForm();};
 modal.addEventListener('cancel',event=>{if(personalDebugView){event.preventDefault();returnFromPersonalDebug();}});
 function personalDebugEnvironmentFields(config){return outcomeEnvironmentFields.map(([key,label,options])=>'<label><span>'+label+' <b class="submission-required">*</b></span><select id="personal-debug-'+key+'" name="'+key+'" required>'+[...new Set([...options,...(config.environmentConfig[key]?[config.environmentConfig[key]]:[])])].map(v=>'<option value="'+esc(v)+'" '+(config.environmentConfig[key]===v?'selected':'')+'>'+esc(v)+'</option>').join('')+'</select></label>').join('');}
 M.deployUploadedModel=id=>{
  const record=personalModelRecord(id);if(!record||!personalWritable(id)){M.toast('该模型已提交审批');return;}if(record.run?.status==='running'){M.toast('请等待当前调试完成');return;}M.close();activePersonalModel=id;
  if(record.deployment?.status==='preparing'){personalDebugView='prepare';renderPersonalDebugProgress();return;}
- const ready=preparePersonalRecord(id);if(!ready)return;personalRunConfig=personalConfig(ready);renderPersonalDebugSettings();
+ const ready=preparePersonalRecord(id);if(!ready)return;personalRunConfig=personalConfig(ready);personalDeploymentUsage=personalUsageDoc(ready);renderPersonalDebugSettings();
 };
 function renderPersonalDebugSettings(){
  personalDebugView='settings';const r=personalActiveRecord(),d=personalRunConfig;
- personalDebugModal('部署模型','<form id="personal-debug-settings" novalidate><div class="modal-body"><div class="debug-settings-summary"><strong>'+esc(r.name)+'</strong><p>'+esc(r.files?.[0]?.name||'尚未上传镜像包')+'</p></div><h3 class="debug-section-heading">运行环境</h3><div class="personal-debug-fields">'+personalDebugEnvironmentFields(d)+'</div><h3 class="debug-section-heading">算力与存储</h3><div class="personal-debug-fields">'+[['cpu','CPU（核）',1],['gpuCount','GPU（张）',0],['memory','内存（GB）',1],['storage','存储（GB）',1]].map(([key,label,min])=>'<label><span>'+label+' <b class="submission-required">*</b></span><input name="'+key+'" type="number" min="'+min+'" step="1" required value="'+esc(d[key])+'"></label>').join('')+'</div><h3 class="debug-section-heading">启动配置</h3><label class="debug-input-label">启动命令（选填）<input id="personal-debug-command" name="command" value="'+esc(d.command)+'" placeholder="留空使用镜像默认启动命令"></label><p class="debug-note">原型演示，未执行真实部署或资源分配。</p></div><div class="modal-footer"><div id="personal-debug-config-error" class="debug-error" role="alert"></div><button type="button" onclick="returnFromPersonalDebug()">取消</button><button type="button" class="primary" id="personal-debug-confirm" onclick="confirmPersonalDebugDeployment()">确认部署</button></div></form>');
+ const resources=[['cpu','CPU','核',1],['memory','内存','GB',1],['storage','存储','GB',1],['gpuCount','GPU 数量','卡',0]].map(([key,label,unit,min])=>'<label><span>'+label+' <b class="submission-required">*</b></span><div class="personal-service-unit"><input name="'+key+'" aria-label="'+label+'" type="number" min="'+min+'" step="1" required value="'+esc(d[key])+'"><span>'+unit+'</span></div></label>').join('');
+ personalDebugModal('部署模型','<form id="personal-debug-settings" novalidate><div class="modal-body"><div class="personal-service-context"><strong>'+esc(r.name)+'</strong><span>模型版本：'+esc(r.metadata.version)+'</span><span class="personal-service-image">镜像包：'+esc(r.files?.[0]?.name||'尚未上传镜像包')+'</span></div><div class="personal-service-heading"><h3>运行环境</h3>'+personalUsageButton('deploy')+'</div><div class="personal-debug-fields">'+personalDebugEnvironmentFields(d)+'</div><div class="personal-service-heading"><h3>实例资源</h3></div><div class="personal-debug-fields personal-resource-fields">'+resources+'</div><div class="personal-service-heading"><h3>启动配置</h3></div><label class="debug-input-label">启动命令（选填）<input id="personal-debug-command" name="command" value="'+esc(d.command)+'" placeholder="留空使用镜像默认启动命令"></label><p class="debug-note">原型演示，未执行真实部署或资源分配。</p></div><div class="modal-footer"><div id="personal-debug-config-error" class="debug-error" role="alert"></div><button type="button" onclick="returnFromPersonalDebug()">取消</button><button type="button" class="primary" id="personal-debug-confirm" onclick="confirmPersonalDebugDeployment()">确认部署</button></div></form>');
  $('#personal-debug-settings').onsubmit=event=>{event.preventDefault();confirmPersonalDebugDeployment();};$('#personal-debug-settings').addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target.tagName==='INPUT'){event.preventDefault();confirmPersonalDebugDeployment();}});
 }
 window.confirmPersonalDebugDeployment=function(){
@@ -1800,7 +2062,7 @@ window.confirmPersonalDebugDeployment=function(){
  const r=preparePersonalRecord(activePersonalModel);if(!r)return;
  const data=Object.fromEntries(new FormData(form)),config={...personalRunConfig,environmentConfig:{},command:data.command.trim()};for(const [key]of outcomeEnvironmentFields)config.environmentConfig[key]=data[key];for(const key of ['cpu','memory','gpuCount','storage'])config[key]=Number(data[key]);
  const v=r.metadata;v.environmentConfig={...config.environmentConfig};v.runtime=outcomeRuntimeText(v.environmentConfig);for(const key of ['cpu','memory','gpuCount','storage'])v[key]=config[key];if(!Number(v.gpuCount)){v.gpuType='CPU 推理（无 GPU）';v.gpuMemory=0;}else if(v.gpuType==='CPU 推理（无 GPU）')v.gpuType='';
- r.deployment={config};const finalConfig=personalConfig(r);r.deployment={status:'preparing',token:personalJobId(),config:finalConfig,signature:personalTarget(r,finalConfig),step:0,progress:10,logs:['[准备环境] 已读取模型镜像与部署配置。']};delete r.debugValidation;delete r.run;
+ v.interfaceDoc=copyUsage(personalDeploymentUsage);r.interfaceDoc=copyUsage(personalDeploymentUsage);r.deployment={config};const finalConfig=personalConfig(r);r.deployment={interfaceDoc:copyUsage(personalDeploymentUsage),status:'preparing',token:personalJobId(),config:finalConfig,signature:personalTarget(r,finalConfig),step:0,progress:10,logs:['[准备环境] 已读取模型镜像与部署配置。']};delete r.debugValidation;delete r.run;
  try{savePersonalUpload(r);personalDebugView='prepare';renderPersonalDebugProgress();refreshPersonalModelRecords();startPersonalDeploymentJob(r.id);}catch(error){$('#personal-debug-config-error').textContent=error.message;}
 };
 function modelJobRecord(id,field,token){const r=personalModelRecord(id);return r&&personalWritable(id)&&r[field]?.token===token?r:null;}
@@ -1809,7 +2071,7 @@ function startPersonalDeploymentJob(id){
  if(personalDeploymentJobs.has(id))return;const initial=personalModelRecord(id),token=initial?.deployment?.token;if(!token)return;personalDeploymentJobs.set(id,true);
  async function step(){let r=modelJobRecord(id,'deployment',token);if(!r||r.deployment.status!=='preparing'){personalDeploymentJobs.delete(id);return;}
   try{
-   if(!r.files?.[0]?.blobId)throw new Error('请先编辑记录并上传镜像包。');const blob=await M.fileDB('readonly',s=>s.get(r.files[0].blobId));if(!blob?.file?.size)throw new Error('镜像包不可用，请编辑记录并重新上传。');
+   if(!r.files?.[0]?.blobId)throw new Error('请先编辑记录并上传镜像包。');const blob=await personalMaterial(r.files[0]);if(!blob?.file?.size)throw new Error('镜像包不可用，请编辑记录并重新上传。');
    r=modelJobRecord(id,'deployment',token);if(!r){personalDeploymentJobs.delete(id);return;}if(r.deployment.signature!==personalTarget(r))throw new Error('模型内容或配置已变化，请重新部署。');
    const d=r.deployment;d.step++;d.progress=[10,40,75,100][d.step];d.logs.push(['','[载入镜像] '+r.files[0].name+'（模拟）','[启动检查] '+(d.config.command||'镜像默认启动命令'),'[部署完成] 环境就绪，可从成果记录开始调试（模拟）。'][d.step]);
    if(d.step>=3){d.status='ready';d.completedAt=M.date();personalDeploymentJobs.delete(id);}savePersonalUpload(r);refreshPersonalJobView(id);
@@ -1820,7 +2082,7 @@ function startPersonalDeploymentJob(id){
 }
 function renderPersonalDebugProgress(){
  const r=personalActiveRecord();if(!r?.deployment)return;const d=r.deployment,failed=d.status==='failed',ready=personalDeployed(r),steps=['准备运行环境','载入镜像包','启动并检查'],logsOpen=$('.debug-log-details')?.open;
- personalDebugModal('部署进度','<div class="modal-body"><div class="prepare-heading"><span class="prepare-symbol '+(failed?'failed':ready?'ready':'spinning')+'">'+(failed?'!':ready?'✓':'')+'</span><div><h3 id="personal-debug-progress-status" role="status">'+(failed?'部署失败':ready?'部署完成':'正在部署模型')+'</h3><p>'+(failed?'请根据部署日志处理后重试。':ready?'可返回成果记录，点击“调试”。':'可以返回成果记录查看部署进度。')+'</p></div><span class="debug-demo-tag">原型演示</span></div><div class="prepare-source"><strong>'+esc(r.name)+'</strong><p>'+esc(r.files?.[0]?.name||'')+'</p><span>'+esc(outcomeRuntimeText(d.config.environmentConfig))+'</span></div><div class="prepare-progress-label"><span>'+(failed?'部署未完成':ready?'部署完成':steps[Math.min(d.step,2)])+'</span><b>'+d.progress+'%</b></div><div class="prepare-progress-track" role="progressbar" aria-label="部署进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+d.progress+'"><i style="width:'+d.progress+'%"></i></div><ol class="prepare-stage-list">'+steps.map((name,i)=>'<li class="'+(ready||i<d.step?'done':i===d.step?'active':'')+'"><i>'+(ready||i<d.step?'✓':i+1)+'</i><span>'+name+'</span><small>'+(ready||i<d.step?'已完成':i===d.step?(failed?'失败':'进行中'):'等待中')+'</small></li>').join('')+'</ol>'+(failed?'<div class="debug-preparation-error" role="alert">'+esc(d.error)+'</div>':'')+'<details class="debug-log-details" '+(failed||logsOpen?'open':'')+'><summary>部署日志</summary><pre class="debug-output">'+esc(d.logs.join('\n'))+'</pre></details><p class="debug-note">原型演示，未执行真实部署或模型运行。</p></div><div class="modal-footer"><button type="button" class="primary" onclick="returnFromPersonalDebug()">返回记录</button></div>');
+ personalDebugModal('部署进度','<div class="modal-body"><div class="prepare-heading"><span class="prepare-symbol '+(failed?'failed':ready?'ready':'spinning')+'">'+(failed?'!':ready?'✓':'')+'</span><div><h3 id="personal-debug-progress-status" role="status">'+(failed?'部署失败':ready?'部署完成':'正在部署模型')+'</h3><p>'+(failed?'请根据部署日志处理后重试。':ready?'部署完成后，请先运行调试；通过后才可提交模型。':'可以返回成果记录查看部署进度。')+'</p></div><span class="debug-demo-tag">原型演示</span></div><div class="prepare-source"><strong>'+esc(r.name)+'</strong><p>'+esc(r.files?.[0]?.name||'')+'</p><span>'+esc(outcomeRuntimeText(d.config.environmentConfig))+'</span></div><div class="prepare-progress-label"><span>'+(failed?'部署未完成':ready?'部署完成':steps[Math.min(d.step,2)])+'</span><b>'+d.progress+'%</b></div><div class="prepare-progress-track" role="progressbar" aria-label="部署进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+d.progress+'"><i style="width:'+d.progress+'%"></i></div><ol class="prepare-stage-list">'+steps.map((name,i)=>'<li class="'+(ready||i<d.step?'done':i===d.step?'active':'')+'"><i>'+(ready||i<d.step?'✓':i+1)+'</i><span>'+name+'</span><small>'+(ready||i<d.step?'已完成':i===d.step?(failed?'失败':'进行中'):'等待中')+'</small></li>').join('')+'</ol>'+(failed?'<div class="debug-preparation-error" role="alert">'+esc(d.error)+'</div>':'')+'<details class="debug-log-details" '+(failed||logsOpen?'open':'')+'><summary>部署日志</summary><pre class="debug-output">'+esc(d.logs.join('\n'))+'</pre></details><p class="debug-note">原型演示，未执行真实部署或模型运行。</p></div><div class="modal-footer"><button type="button" onclick="returnFromPersonalDebug()">返回记录</button>'+(ready?'<button type="button" class="primary" onclick="Meeting.debugUploadedModel('+esc(JSON.stringify(r.id))+')">开始调试</button>':'')+'</div>');
 }
 M.debugUploadedModel=id=>{
  const r=personalModelRecord(id);if(!r||!personalWritable(id)){M.toast('该模型已提交审批');return;}if(!personalDeployed(r)){M.toast('请先完成部署');return;}if(r.stage!=='draft'){const draft=preparePersonalRecord(id);if(!draft)return;try{savePersonalUpload(draft);}catch(error){M.toast(error.message);return;}}M.close();activePersonalModel=id;personalDebugView='workbench';renderPersonalDebugWorkbench();
@@ -1854,7 +2116,7 @@ function startPersonalRunJob(id){
  if(personalRunJobs.has(id))return;const token=personalModelRecord(id)?.run?.token;if(!token)return;
  personalRunJobs.set(id,setTimeout(()=>{personalRunJobs.delete(id);const r=modelJobRecord(id,'run',token);if(!r||r.run.status!=='running')return;
   let error=r.run.checkedError||'';if(!personalDeployed(r)||r.run.signature!==personalTarget(r))error='模型或部署配置已变化，请重新部署和调试。';
-  if(error){r.run.status='failed';r.run.error=error;r.run.output=error;r.run.logs.push('[调试失败] '+error);delete r.debugValidation;}else{r.run.status='passed';r.run.output=JSON.stringify({演示:true,输入参数:r.run.input,样例文件:r.run.sampleNames,结果:'原型模拟反馈；真实模型输出需接入运行服务后返回。'},null,2);r.run.logs.push('[调试成功] 模拟测试完成。');r.debugValidation={id:'RUN-'+token,status:'success',prototype:true,completedAt:M.date(),materialKey:r.files[0].blobId,config:r.deployment.config,signature:personalTarget(r)};}
+  if(error){r.run.status='failed';r.run.error=error;r.run.output=error;r.run.logs.push('[调试失败] '+error);delete r.debugValidation;}else{r.run.status='passed';r.run.output=JSON.stringify({演示:true,输入参数:r.run.input,样例文件:r.run.sampleNames,结果:'原型模拟反馈；真实模型输出需接入运行服务后返回。'},null,2);r.run.logs.push('[调试成功] 模拟测试完成。');r.debugValidation={id:'RUN-'+token,status:'success',prototype:true,completedAt:M.date(),materialKey:r.files[0].blobId,config:r.deployment.config,signature:personalTarget(r),deploymentToken:r.deployment.token};}
   try{savePersonalUpload(r);refreshPersonalJobView(id);}catch(error){M.toast(error.message);}
  },850));
 }
@@ -1865,15 +2127,15 @@ function resumePersonalModelJobs(){for(const r of personalUploads()){if(!persona
 
 const originalView=M.viewOutcome;
 M.viewOutcome=id=>{
- const record=personalModelRecord(id);if(record?.kind!=='model')return originalView(id);M.close();personalDebugView='';activePersonalModel='';modal.classList.remove('personal-debug');refreshProjects(record.metadata);const v=normalizedModel(record.metadata);
+ const record=personalModelRecord(id);if(record?.kind!=='model')return originalView(id);M.close();personalDebugView='';activePersonalModel='';modal.classList.remove('personal-debug','personal-deploy-settings');refreshProjects(record.metadata);const v=normalizedModel(record.metadata);
  const fields=schemas.model.map(([key,label])=>'<div><span>'+esc(label)+'</span><p>'+esc(Array.isArray(v[key])?v[key].join('、')||'—':v[key]||'—')+'</p></div>').join('');
- const proof=record.debugValidation?.status==='success'?'<div class="outcome-debug-gate passed"><span class="gate-icon">✓</span><div class="gate-copy"><strong>运行调试已通过（演示）</strong><p>'+esc(record.debugValidation.completedAt)+'</p></div></div>':'';
- const body=proof+'<section class="outcome-card"><div class="outcome-card-body"><h3>'+esc(record.name)+'</h3><p class="personal-record-meta">'+esc(record.uploadedAt||record.time)+' · '+esc(record.applicant)+' · '+esc(record.status)+'</p>'+(v.cover?'<img class="outcome-record-cover" src="'+esc(v.cover)+'" alt="模型封面">':'')+'<div class="outcome-record-fields">'+fields+'</div></div></section><section class="outcome-card"><h3 class="outcome-card-title">模型介绍</h3><article class="submission-rich-view outcome-card-body">'+v.intro+'</article></section>'+(v.readme?'<section class="outcome-card"><h3 class="outcome-card-title">README · '+esc(v.readme.name)+'</h3><pre class="outcome-card-body outcome-readme-text">'+esc(v.readme.text)+'</pre></section>':'')+'<section class="outcome-card"><h3 class="outcome-card-title">'+(record.materialType==='image'?'镜像压缩包':'成果材料')+'</h3><div class="outcome-card-body">'+(record.files||[]).map((f,i)=>'<p>'+esc(f.name)+' <small>'+esc(imageSize(f.size))+'</small> '+(f.blobId?M.link('下载材料','Meeting.downloadMaterial('+JSON.stringify(id)+','+i+')'):'')+'</p>').join('')+'</div></section>'+(record.history?.length?'<section class="outcome-card"><h3 class="outcome-card-title">审批记录</h3><div class="outcome-card-body">'+(record.history||[]).map(h=>'<div class="personal-history">'+esc(h.action)+' · '+esc(h.by)+' · '+esc(h.time)+(h.note?'<p>'+esc(h.note)+'</p>':'')+'</div>').join('')+'</div></section>':'');
+ const proof=personalPassed(record)?'<div class="outcome-debug-gate passed"><span class="gate-icon">✓</span><div class="gate-copy"><strong>运行调试已通过（演示）</strong><p>'+esc(record.debugValidation.completedAt)+'</p></div></div>':'';
+ const body=proof+'<section class="outcome-card"><div class="outcome-card-body"><h3>'+esc(record.name)+'</h3><p class="personal-record-meta">'+esc(record.uploadedAt||record.time)+' · '+esc(record.applicant)+' · '+esc(record.status)+'</p>'+(v.cover?'<img class="outcome-record-cover" src="'+esc(v.cover)+'" alt="模型封面">':'')+'<div class="outcome-record-fields">'+fields+'</div></div></section><section class="outcome-card"><div class="personal-view-intro-heading"><h3 class="outcome-card-title">模型介绍</h3>'+personalUsageButton('view',id)+'</div><article class="submission-rich-view outcome-card-body">'+v.intro+'</article></section>'+(v.readme?'<section class="outcome-card"><h3 class="outcome-card-title">README · '+esc(v.readme.name)+'</h3><pre class="outcome-card-body outcome-readme-text">'+esc(v.readme.text)+'</pre></section>':'')+'<section class="outcome-card"><h3 class="outcome-card-title">'+(record.materialType==='image'?'镜像压缩包':'成果材料')+'</h3><div class="outcome-card-body">'+(record.files||[]).map((f,i)=>'<p>'+esc(f.name)+' <small>'+esc(imageSize(f.size))+'</small> '+(f.blobId?M.link('下载材料','Meeting.downloadMaterial('+JSON.stringify(id)+','+i+')'):'')+'</p>').join('')+'</div></section>'+(record.history?.length?'<section class="outcome-card"><h3 class="outcome-card-title">审批记录</h3><div class="outcome-card-body">'+(record.history||[]).map(h=>'<div class="personal-history">'+esc(h.action)+' · '+esc(h.by)+' · '+esc(h.time)+(h.note?'<p>'+esc(h.note)+'</p>':'')+'</div>').join('')+'</div></section>':'');
  let foot='<button type="button" onclick="closePersonalModel()">关闭</button>';
  showPersonalModal('模型成果记录','<div class="modal-body outcome-edit-body">'+body+'</div><div class="modal-footer">'+foot+'</div>');
 };
 const originalDownload=M.downloadMaterial;
-M.downloadMaterial=async(id,i)=>{const record=personalModelRecord(id);if(!record)return originalDownload(id,i);try{const f=record.files[i],stored=await M.fileDB('readonly',s=>s.get(f.blobId));if(!stored?.file)throw new Error();const url=URL.createObjectURL(stored.file),a=document.createElement('a');a.href=url;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{M.toast('该材料在当前浏览器中不可用');}};
+M.downloadMaterial=async(id,i)=>{const record=personalModelRecord(id);if(!record)return originalDownload(id,i);try{const f=record.files[i],stored=await personalMaterial(f);if(!stored?.file)throw new Error();const url=URL.createObjectURL(stored.file),a=document.createElement('a');a.href=url;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch{M.toast('该材料在当前浏览器中不可用');}};
 const originalDebug=M.debug;M.debug=id=>personalModelRecord(id)?M.debugUploadedModel(id):originalDebug(id);
 resumePersonalModelJobs();M.refreshOutcomes?.();
 })();
@@ -3413,7 +3675,12 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
     ['账号管理','账号设置 → 修改密码 / 绑定手机号','填写、校验、取消、保存及本地演示反馈'],
     ['成员密码','成员账号 → 重置密码','不显示原密码，仅可管理本人关联成员'],
     ['团队内容','团队详情 → 关联课题 / 关联需求','直接在主内容页签查看、关联或解除关联'],
-    ['模型成果','我的成果 → 模型成果 → 上传模型','沿用上传、部署、调试、提交及审批记录'],
+    ['模型成果','我的成果 → 模型成果','内置未部署、已部署未调试、调试通过、调试失败、已驳回、待审批及已通过的演示记录，可直接使用对应行操作'],
+    ['基础元数据','上传模型 / 编辑模型','自行填写名称等信息，手动选择分类、作物和运行配置；不套用其他模型资料，保留原有单个富文本介绍'],
+    ['部署与调试','部署 → 确认部署 → 开始调试 → 运行','仅部署完成不能提交；调试通过后开放提交操作。失败、停止或运行中均不能提交'],
+    ['重新验证','替换镜像 / 修改运行配置 / 重新部署','原调试结果失效，须完成当前部署的运行调试后再提交'],
+    ['退回成果','已驳回记录 → 修改 → 保存 → 再次提交','保留原审批记录；若变更镜像或运行配置，先重新部署、调试'],
+    ['重复演示','模型成果 → 重置演示记录','恢复示例记录初始状态，保留自行上传的其他成果'],
     ['数据成果','我的成果 → 数据成果 → 提交数据成果','沿用数据成果提交及审批记录'],
     ['成果关联','成果填写 → 关联课题 / 关联需求','两个字段独立选填，可均不关联'],
     ['权限隔离','切换成员或受邀负责人','成员不能正式提交成果；受邀负责人无该团队管理操作']

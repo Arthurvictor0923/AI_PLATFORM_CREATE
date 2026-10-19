@@ -646,7 +646,9 @@ if(snapshot){space.state=snapshot.state||space.state;space.instance=snapshot.ins
 else{if(['准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(q.get('instance')))space.instance=q.get('instance');}
 if(!['准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(space.instance))space.instance='已停止';
 if(space.state==='已归档'&&['运行中','启动中','准备中'].includes(space.instance))space.instance='已停止';
-let instanceOp=0,autoEnter=false;
+let instanceOp=0,autoEnter=false,ideLaunchWindow=null;
+function reserveIdeTab(){if(q.get('action')==='enter')return;ideLaunchWindow=window.open('about:blank','_blank');if(ideLaunchWindow)ideLaunchWindow.opener=null;}
+function closeReservedIdeTab(){if(ideLaunchWindow&&!ideLaunchWindow.closed)ideLaunchWindow.close();ideLaunchWindow=null;}
 function saveInstance(){const all=readInstances();all[spaceId]={state:space.state,instance:space.instance,ide:space.ide,compute:{...compute},outcomes,closure,closureHistory,uploadRecordSchema:UPLOAD_SCHEMA,updated:Date.now()};try{localStorage.setItem(instanceKey,JSON.stringify(all))}catch{}}
 function refreshInstance(){busy=['准备中','启动中','停止中'].includes(space.instance);renderInstance();saveInstance()}
 function renderInstance(){const st=space.instance,arch=space.state==='已归档',active=st==='运行中'&&compute.ready,own=owner();let message='',tone='',action='';
@@ -659,8 +661,8 @@ else if(st==='运行中'&&!compute.ready){message='实例已启动，开发服�
 else if(active){action='<button class="primary" onclick="enterEnvironment()">进入开发环境</button>'+(own?'<button onclick="stopInstance()">停止实例</button>':'');}
 else{message=compute.allocation==='released'?'计算资源已回收，启动时将自动重新准备，研究文件保留。':'实例已停止，研究文件和成果保留。';action=own?'<button class="primary" onclick="startInstance()">启动并进入</button>':'<span class="muted">请联系空间负责人启动实例。</span>';}
 const label=st==='运行中'&&!compute.ready?'环境准备中':st;$('#instance').innerHTML=`<div class="instance-state"><span class="badge ${active?'status-pass':['异常'].includes(st)?'status-back':['启动中','准备中','停止中','等待算力'].includes(st)?'status-wait':'status-archive'}">${active?'<i class="service-dot"></i>':''}${esc(label)}</span></div><p class="instance-config-label">实例配置（成员共享）</p><p class="instance-config">${space.cpu} 核 CPU <span>/</span> ${space.ram} GB 内存</p><div class="instance-meta"><div>GPU：<b>${esc(compute.gpu)}</b></div><div>研究存储：<b>${space.storage} GB</b></div><div>开发工具：<b>${esc(space.ide||'JupyterLab 4')}</b></div><div>运行环境：<b>${esc(compute.runtime)}</b></div></div><details class="instance-detail"><summary>环境详情</summary><p>${esc(compute.detail)}${compute.image?'<br>镜像：'+esc(compute.image):''}${compute.systemDisk?'<br>平台预留环境空间：'+compute.systemDisk+' GB':''}</p><p>研究目录：/research　·　成果目录：/results<br>挂载目录持久保留，临时文件与内存计算进度不属于保存内容。</p></details>${message?`<div class="instance-message ${tone}">${esc(message)}</div>`:''}<div class="instance-actions">${action}</div><p class="instance-warning">${active?'关闭浏览器不会停止实例。':'研究文件与成果上传记录继续保留。'}</p>`;renderResources();}
-function startInstance(){if(!canManage()||busy||space.instance==='等待算力')return;const op=++instanceOp;autoEnter=true;compute.ready=false;space.instance=compute.allocation==='released'?'准备中':'启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp)return;space.instance='启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp||!editable())return;compute.allocation='retained';compute.ready=true;space.instance='运行中';refreshInstance();if(autoEnter)enterEnvironment();},1000)},900)}
-function cancelWaiting(){if(!owner())return;instanceOp++;autoEnter=false;space.instance='已停止';compute.ready=false;refreshInstance();toast('已取消等待，研究文件保留')}
+function startInstance(){if(!canManage()||busy||space.instance==='等待算力')return;const op=++instanceOp;autoEnter=true;reserveIdeTab();compute.ready=false;space.instance=compute.allocation==='released'?'准备中':'启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp)return;space.instance='启动中';refreshInstance();setTimeout(()=>{if(op!==instanceOp||!editable())return;compute.allocation='retained';compute.ready=true;space.instance='运行中';refreshInstance();if(autoEnter)enterEnvironment();},1000)},900)}
+function cancelWaiting(){if(!owner())return;instanceOp++;autoEnter=false;closeReservedIdeTab();space.instance='已停止';compute.ready=false;refreshInstance();toast('已取消等待，研究文件保留')}
 function stopInstance(){if(!canManage()||space.instance!=='运行中')return;lightDialog('停止实例',`<p class="simple-hint">停止将中断团队在此实例中的运行任务，已保存的研究文件和成果继续保留。</p>${runningTasks.length?'<div class="task-warning">'+runningTasks.map(esc).join('<br>')+'</div>':''}`,'<button onclick="closeModal()">取消</button><button class="primary" onclick="confirmInstanceStop()">停止实例</button>')}
 function confirmInstanceStop(){if(!canManage()||space.instance!=='运行中')return;const op=++instanceOp;closeModal();space.instance='停止中';compute.ready=false;refreshInstance();setTimeout(()=>{if(op!==instanceOp)return;space.instance='已停止';runningTasks=[];refreshInstance();toast('实例已停止')},1300)}
 function enterEnvironment(file=''){
@@ -672,11 +674,15 @@ function enterEnvironment(file=''){
  const target=new URLSearchParams({id:spaceId,name:space.name,role:space.role,ide:space.ide,cpu:String(space.cpu),ram:String(space.ram),storage:String(space.storage)});
  target.set('context',JSON.stringify(payload));
  if(payload.file)target.set('file',payload.file);
- location.href='科研开发空间-IDE编辑页.html#'+target.toString();
+ const ideUrl='科研开发空间-IDE编辑页.html#'+target.toString();
+ // 列表已在新标签页打开中转页，此处复用该标签页；详情页入口单独打开 IDE。
+ if(q.get('action')==='enter')location.replace(ideUrl);
+ else if(ideLaunchWindow){if(!ideLaunchWindow.closed)ideLaunchWindow.location.replace(ideUrl);ideLaunchWindow=null;}
+ else window.open(ideUrl,'_blank','noopener');
 }
 function contactAdmin(){lightDialog('联系管理员',`<p class="simple-hint">请通过平台现有联系渠道向管理员提供以下信息：</p><div class="final-note">空间：${esc(space.name)}<br>实例状态：${esc(space.instance)}<br>情况：${esc(compute.error)}</div>`,'<button onclick="closeModal()">关闭</button>')}
 function resumeResearch(){if(!owner()||space.state!=='已归档')return;space.state='可用';space.instance='已停止';renderAll();saveInstance();if(compute.allocation==='released')startInstance();else toast('已恢复研究，可启动并进入')}
-const endResearchBase=commitSimpleEnd;commitSimpleEnd=function(){instanceOp++;autoEnter=false;endResearchBase();compute.ready=false;saveInstance();renderInstance()};
+const endResearchBase=commitSimpleEnd;commitSimpleEnd=function(){instanceOp++;autoEnter=false;closeReservedIdeTab();endResearchBase();compute.ready=false;saveInstance();renderInstance()};
 const oldResources=renderResources;renderResources=function(){oldResources();if(space.instance==='运行中'&&!compute.ready)$('#resources').querySelectorAll('td:nth-child(4)').forEach(e=>e.textContent='环境就绪后可访问')};
 $('.detail-main').insertAdjacentHTML('afterbegin','<a class="space-return" href="科研开发空间-交互原型(10).html">← 科研开发空间</a>');
 
@@ -738,6 +744,28 @@ if(q.get('action')==='enter'){if(space.instance==='运行中'&&compute.ready)ent
 })();
 </script>
 
+<dialog id="modelUsageDialog" aria-labelledby="modelUsageTitle">
+  <div class="mu-head">
+    <h2 id="modelUsageTitle">使用说明</h2>
+    <button type="button" class="mu-close" data-mu-close data-px-own="true" aria-label="关闭使用说明"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+  </div>
+  <form class="mu-form" novalidate>
+    <div class="mu-body">
+      <div class="mu-field"><label for="modelUsageText">使用说明<span class="mu-required">*</span></label><textarea class="mu-control" id="modelUsageText" required></textarea></div>
+      <div class="mu-field"><label for="modelUsageContent">内容类型</label><select class="mu-control" id="modelUsageContent"><option value="JSON">JSON</option><option value="form-data">form-data</option></select></div>
+      <section class="mu-section" aria-labelledby="modelUsageInputsTitle">
+        <div class="mu-section-head"><h3 id="modelUsageInputsTitle">入参</h3><button type="button" class="mu-add" data-mu-add="inputs" data-px-own="true">＋ 添加入参</button></div>
+        <div class="mu-table-wrap"><table class="mu-table"><colgroup><col style="width:23%"><col style="width:18%"><col style="width:64px"><col><col style="width:64px"></colgroup><thead><tr><th scope="col">参数名称</th><th scope="col">类型</th><th scope="col" class="mu-check-cell">必填</th><th scope="col">参数说明</th><th scope="col">操作</th></tr></thead><tbody id="modelUsageInputs"></tbody></table></div>
+      </section>
+      <section class="mu-section" aria-labelledby="modelUsageOutputsTitle">
+        <div class="mu-section-head"><h3 id="modelUsageOutputsTitle">出参</h3><button type="button" class="mu-add" data-mu-add="outputs" data-px-own="true">＋ 添加出参</button></div>
+        <div class="mu-table-wrap"><table class="mu-table"><colgroup><col style="width:23%"><col style="width:18%"><col><col style="width:64px"></colgroup><thead><tr><th scope="col">参数名称</th><th scope="col">类型</th><th scope="col">参数说明</th><th scope="col">操作</th></tr></thead><tbody id="modelUsageOutputs"></tbody></table></div>
+      </section>
+      <div class="mu-field"><label for="modelUsageExample">返回示例</label><textarea class="mu-control" id="modelUsageExample" spellcheck="false"></textarea></div>
+    </div>
+    <div class="mu-foot"><p class="mu-error" id="modelUsageError" role="alert" aria-live="polite"></p><div class="mu-actions"><button type="button" class="btn" data-mu-close data-px-own="true">取消</button><button type="submit" class="btn primary" data-px-own="true">保存</button></div></div>
+  </form>
+</dialog>
 <!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><script>(()=>{
 'use strict';
 const cropOptions=['水稻','玉米','大豆','小麦'];
@@ -761,10 +789,66 @@ function safeHTML(source){
  [...t.content.querySelectorAll('*')].forEach(n=>{if(!allowed.includes(n.tagName)){n.replaceWith(...n.childNodes);return;}[...n.attributes].forEach(a=>{const keep=(n.tagName==='A'&&a.name==='href'&&/^https?:\/\//i.test(a.value))||(n.tagName==='IMG'&&a.name==='src'&&/^(https?:\/\/|data:image\/(png|jpeg|webp|gif);base64,)/i.test(a.value))||(n.tagName==='IMG'&&a.name==='alt')||(['TD','TH'].includes(n.tagName)&&['colspan','rowspan'].includes(a.name)&&/^\d{1,2}$/.test(a.value));if(!keep)n.removeAttribute(a.name)});if(n.tagName==='A'){n.setAttribute('target','_blank');n.setAttribute('rel','noopener noreferrer')}if(n.tagName==='IMG'&&!n.getAttribute('src'))n.remove();});return t.innerHTML;
 }
 const actualFiles=new Map();let valuesByKind={},activeKind='model',richRange=null,activeRichKey='intro',resultSaving=false;
-const originalOpen=openDialog;window.openDialog=function(title,body){modal.classList.remove('space-submit','space-debug');originalOpen(title,body)};
+// Both entry points edit one interface document, separately from the rich text.
+const spaceUsageDialog=document.getElementById('modelUsageDialog');
+let spaceUsageContext=null,spaceDeploymentUsage=null;
+const copyUsage=value=>JSON.parse(JSON.stringify(value||{usage:'',content:'JSON',inputs:[],outputs:[],example:''}));
+function spaceUsageDoc(record){return copyUsage(record?.metadata?.interfaceDoc||record?.interfaceDoc);}
+function spaceUsageButton(context,id=''){return '<button type="button" class="space-usage-open" aria-haspopup="dialog" aria-controls="modelUsageDialog" onclick="openSpaceUsage('+esc(JSON.stringify(context))+','+esc(JSON.stringify(id))+')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3z"/></svg>使用说明</button>';}
+const uq=selector=>spaceUsageDialog.querySelector(selector);
+function spaceUsageEmpty(body,input){body.querySelector('[data-mu-empty]')?.remove();if(!body.querySelector('[data-mu-row]'))body.innerHTML='<tr data-mu-empty><td class="mu-empty" colspan="'+(input?5:4)+'">暂无'+(input?'入参':'出参')+'</td></tr>';}
+function spaceUsageRow(body,input,p={},focus=false){
+ body.querySelector('[data-mu-empty]')?.remove();const row=document.createElement('tr');row.dataset.muRow='true';row._originalParameter=p;
+ const types=['string','number','integer','boolean','object','array',...(input?['file']:[])];if(p.type&&!types.includes(p.type))types.push(p.type);
+ row.innerHTML='<td><input class="mu-control" data-mu="name" aria-label="参数名称" value="'+esc(p.name||'')+'" required></td><td><select class="mu-control" data-mu="type" aria-label="参数类型">'+types.map(t=>'<option value="'+esc(t)+'" '+(t===(p.type||'string')?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></td>'+(input?'<td class="mu-check-cell"><input type="checkbox" data-mu="required" aria-label="必填" '+(p.required?'checked':'')+'></td>':'')+'<td><input class="mu-control" data-mu="description" aria-label="参数说明" value="'+esc(p.description||'')+'"></td><td><button type="button" class="mu-delete" aria-label="删除'+(input?'入参':'出参')+'">删除</button></td>';
+ row.querySelector('.mu-delete').onclick=()=>{row.remove();spaceUsageEmpty(body,input);uq('#modelUsageError').textContent='';};body.append(row);if(focus)row.querySelector('input').focus();
+}
+window.openSpaceUsage=(context,id='')=>{
+ if(spaceUsageDialog.open)return;let doc;
+ if(context==='editor'){if(!$('#research-outcome-form')||activeKind!=='model')return;captureDraft();doc=valuesByKind.model?.interfaceDoc;}
+ else if(context==='deploy'){if(debugView!=='settings'||!$('#debug-settings-form'))return;doc=spaceDeploymentUsage;}
+ else if(context==='view'){const r=outcomes[Number(id)];if(!r)return;doc=spaceUsageDoc(r);}
+ else return;
+ const loaded=copyUsage(doc),readonly=context==='view';spaceUsageContext={context,id,loaded,opener:document.activeElement,overflow:document.body.style.overflow};
+ uq('#modelUsageText').value=loaded.usage||'';uq('#modelUsageContent').value=loaded.content==='form-data'?'form-data':'JSON';uq('#modelUsageExample').value=loaded.example||'';
+ for(const [key,input]of [['Inputs',true],['Outputs',false]]){const body=uq('#modelUsage'+key);body.innerHTML='';(loaded[input?'inputs':'outputs']||[]).forEach(p=>spaceUsageRow(body,input,p));spaceUsageEmpty(body,input);}
+ uq('#modelUsageError').textContent='';spaceUsageDialog.querySelectorAll('[aria-invalid]').forEach(n=>n.removeAttribute('aria-invalid'));
+ spaceUsageDialog.querySelectorAll('input,select,textarea').forEach(n=>n.disabled=readonly);
+ spaceUsageDialog.querySelectorAll('[data-mu-add],.mu-delete,[type="submit"]').forEach(n=>n.hidden=readonly);
+ uq('.mu-actions [data-mu-close]').textContent=readonly?'关闭':'取消';document.body.style.overflow='hidden';spaceUsageDialog.showModal();uq('.mu-body').scrollTop=0;uq('.mu-close').focus({preventScroll:true});
+};
+spaceUsageDialog.querySelectorAll('[data-mu-close]').forEach(b=>b.onclick=()=>spaceUsageDialog.close());
+spaceUsageDialog.addEventListener('cancel',event=>{event.preventDefault();event.stopPropagation();spaceUsageDialog.close();});
+spaceUsageDialog.addEventListener('close',()=>{const context=spaceUsageContext;spaceUsageContext=null;if(context){document.body.style.overflow=context.overflow;if(context.opener?.isConnected)context.opener.focus({preventScroll:true});}});
+spaceUsageDialog.addEventListener('click',event=>{if(event.target!==spaceUsageDialog)return;const b=spaceUsageDialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)spaceUsageDialog.close();});
+spaceUsageDialog.querySelectorAll('[data-mu-add]').forEach(b=>b.onclick=()=>{if(spaceUsageContext?.context==='view')return;const input=b.dataset.muAdd==='inputs';spaceUsageRow(uq(input?'#modelUsageInputs':'#modelUsageOutputs'),input,{},true);uq('#modelUsageError').textContent='';});
+spaceUsageDialog.addEventListener('input',event=>{event.target.removeAttribute('aria-invalid');uq('#modelUsageError').textContent='';});
+uq('form').onsubmit=event=>{
+ event.preventDefault();const context=spaceUsageContext;if(!context||context.context==='view')return;
+ const collect=(body,input)=>[...body.querySelectorAll('[data-mu-row]')].map(row=>({...row._originalParameter,...Object.fromEntries([...row.querySelectorAll('[data-mu]')].map(n=>[n.dataset.mu,n.type==='checkbox'?n.checked:n.value.trim()])),...(input?{position:'Body'}:{})}));
+ const doc={...context.loaded,usage:uq('#modelUsageText').value.trim(),content:uq('#modelUsageContent').value,inputs:collect(uq('#modelUsageInputs'),true),outputs:collect(uq('#modelUsageOutputs'),false),example:uq('#modelUsageExample').value.trim()};
+ const error=(message,field)=>{uq('#modelUsageError').textContent=message;if(field){field.setAttribute('aria-invalid','true');field.focus();}};
+ if(!doc.usage)return error('请填写使用说明',uq('#modelUsageText'));
+ for(const [key,rows]of [['Inputs',doc.inputs],['Outputs',doc.outputs]]){const names=new Set();for(let i=0;i<rows.length;i++){const field=uq('#modelUsage'+key).querySelectorAll('[data-mu="name"]')[i];if(!rows[i].name)return error('请填写参数名称',field);if(names.has(rows[i].name))return error('参数名称不可重复',field);names.add(rows[i].name);}}
+ if(doc.content!=='form-data'&&doc.inputs.some(p=>p.type==='file'))return error('文件入参需要选择 form-data',uq('#modelUsageContent'));
+ if(context.context==='editor'){if(!$('#research-outcome-form')||activeKind!=='model')return;valuesByKind.model.interfaceDoc=copyUsage(doc);}
+ else if(context.context==='deploy'){if(debugView!=='settings'||!$('#debug-settings-form'))return;spaceDeploymentUsage=copyUsage(doc);}
+ spaceUsageDialog.close();
+};
+
+function savedSpaceUsage(){
+ try{return copyUsage(JSON.parse(localStorage.getItem('agri-space-debug-v2')||'{}')[spaceId]?.interfaceDoc);}catch{return copyUsage();}
+}
+function persistSpaceUsage(doc){
+ const value=copyUsage(doc);
+ if(debugDraft)debugDraft.interfaceDoc=copyUsage(value);
+ try{const all=JSON.parse(localStorage.getItem(debugConfigKey)||'{}');all[spaceId]={...all[spaceId],interfaceDoc:value};localStorage.setItem(debugConfigKey,JSON.stringify(all));}catch{}
+}
+
+const originalOpen=openDialog;window.openDialog=function(title,body){modal.classList.remove('space-submit','space-debug','space-model-submit','space-deploy-settings');originalOpen(title,body)};
 function splitChoices(value){return Array.isArray(value)?[...new Set(value.map(String).filter(Boolean))]:String(value||'').split(/[,，、;；/]+/).map(v=>v.trim()).filter(Boolean);}
 function outcomeRuntimeText(config){return [config.system,'Python '+config.python,config.framework,config.cuda==='不使用'?'不使用 CUDA':'CUDA '+config.cuda].join(' · ');}
-function freshValues(kind){const gpu=Number((compute.gpu||'').match(/^(\d+)/)?.[1]||0),environmentConfig=currentSpaceEnvironment();return {name:space.name+(kind==='model'?'成果模型':'成果数据'),version:'V1.0',provider:space.team,owner:space.team,source:'',sourceProjectId:'',environmentConfig,runtime:outcomeRuntimeText(environmentConfig),cpu:space.cpu,memory:space.ram,storage:space.storage,gpuType:gpu?'':'CPU 推理（无 GPU）',gpuCount:gpu,gpuMemory:gpu?Number((compute.gpu||'').match(/≥\s*(\d+)/)?.[1]||16):0,business:[],task:[],crop:[],tags:[],intro:'',cover:'',readme:null};}
+function freshValues(kind){const gpu=Number((compute.gpu||'').match(/^(\d+)/)?.[1]||0),environmentConfig=currentSpaceEnvironment();return {name:space.name+(kind==='model'?'成果模型':'成果数据'),version:'V1.0',provider:space.team,owner:space.team,source:'',sourceProjectId:'',environmentConfig,runtime:outcomeRuntimeText(environmentConfig),cpu:space.cpu,memory:space.ram,storage:space.storage,gpuType:gpu?'':'CPU 推理（无 GPU）',gpuCount:gpu,gpuMemory:gpu?Number((compute.gpu||'').match(/≥\s*(\d+)/)?.[1]||16):0,business:[],task:[],crop:[],tags:[],intro:'',cover:'',readme:null,...(kind==='model'?{interfaceDoc:savedSpaceUsage()}:{})};}
 function normalizedValues(kind,source={}){
  const v={...freshValues(kind),...source};for(const [key,,type]of schemas[kind])if(type==='multi'||type==='tags')v[key]=splitChoices(v[key]);
  const legacy=kind==='model'?[['inputOutput','输入输出规范'],['capability','业务能力'],['outputExample','输出示例']]:[['preview','数据样例']];
@@ -773,6 +857,7 @@ function normalizedValues(kind,source={}){
  v.owner=String(v.owner||'').trim()||space.team;
  const project=outcomeProjects.find(([id,title])=>id===v.sourceProjectId||title===v.source);if(project){v.sourceProjectId=project[0];v.source=project[1];}
  if(kind==='model'){
+  v.interfaceDoc=copyUsage(source.interfaceDoc);
   const config=currentSpaceEnvironment(),old=String(source.runtime||'');
   if(!source.environmentConfig&&old){const system=old.match(/Ubuntu\s+[\d.]+/)?.[0],python=old.match(/Python\s+([\d.]+)/)?.[1],framework=old.match(/(?:PyTorch|scikit-learn|TensorFlow)\s+[\d.]+|不预装框架/)?.[0],cuda=old.match(/CUDA\s+([\d.]+)/)?.[1];Object.assign(config,system?{system}:{},python?{python}:{},framework?{framework}:{},cuda?{cuda}:{});if(/不使用\s*CUDA/.test(old))config.cuda='不使用';}
   v.environmentConfig={...config,...source.environmentConfig};v.runtime=outcomeRuntimeText(v.environmentConfig);if(!v.gpuType&&!Number(v.gpuCount))v.gpuType='CPU 推理（无 GPU）';
@@ -812,7 +897,7 @@ window.removeOutcomeCover=function(){captureDraft();valuesByKind[activeKind].cov
 function readmeHTML(v){return '<div class="outcome-readme"><span>README</span><label class="outcome-file-button">'+(v.readme?'更换文件':'上传 README')+'<input type="file" id="outcome-readme-file" accept=".md,.txt" onchange="readOutcomeReadme(this)"></label>'+(v.readme?'<details><summary>'+esc(v.readme.name)+'</summary><pre>'+esc(v.readme.text)+'</pre></details><button type="button" class="text-btn" onclick="removeOutcomeReadme()">移除</button>':'<small>.md、.txt</small>')+'</div>';}
 window.readOutcomeReadme=async function(input){const file=input.files[0];if(!file)return;if(!/\.(md|txt)$/i.test(file.name)){simpleFieldError(['README 支持 .md、.txt 文件。']);return;}try{const text=await file.text();captureDraft();valuesByKind[activeKind].readme={name:file.name,text};$('.outcome-readme').outerHTML=readmeHTML(valuesByKind[activeKind]);}catch{simpleFieldError(['README 读取失败，请重试。']);}};
 window.removeOutcomeReadme=function(){captureDraft();valuesByKind[activeKind].readme=null;$('.outcome-readme').outerHTML=readmeHTML(valuesByKind[activeKind]);};
-function editorHTML(v){return '<section class="outcome-card outcome-editor-card">'+(activeKind==='model'?readmeHTML(v):'')+'<div class="outcome-editor-heading"><h3 id="outcome-editor-label">'+richFields[activeKind][0][1]+' <span class="submission-required">*</span></h3><button type="button" id="outcome-template-toggle" aria-expanded="false" aria-controls="outcome-template" onclick="toggleOutcomeTemplate()">查看模板</button></div><section id="outcome-template" class="outcome-template" aria-label="'+(activeKind==='model'?'模型':'数据')+'介绍填写模板" hidden><div class="outcome-template-caption">填写参考</div><article class="submission-rich-view">'+outcomeTemplates[activeKind]+'</article></section>'+richFields[activeKind].map(([key,label,required,placeholder],i)=>'<div class="outcome-rich-panel" id="rich-panel-'+key+'" aria-labelledby="outcome-editor-label" '+(i?'hidden':'')+'><div class="submission-toolbar" role="toolbar" aria-label="'+label+'编辑工具"><select aria-label="'+label+'段落样式" onmousedown="rememberRichSelection()" onchange="formatOutcomeIntro(\'formatBlock\',this.value)"><option value="p">正文</option><option value="h2">标题</option><option value="h3">小标题</option></select>'+[['bold','加粗','<b>B</b>'],['italic','斜体','<i>I</i>'],['underline','下划线','<u>U</u>'],['insertUnorderedList','无序列表','• 列表'],['insertOrderedList','有序列表','1. 列表'],['undo','撤销','↶'],['redo','重做','↷']].map(([cmd,title,icon])=>'<button type="button" title="'+title+'" aria-label="'+title+'" onmousedown="event.preventDefault();rememberRichSelection()" onclick="formatOutcomeIntro(\''+cmd+'\')">'+icon+'</button>').join('')+'<button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'link\')">链接</button><label class="outcome-rich-image" onmousedown="rememberRichSelection()">图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="insertOutcomeImage(this)"></label><button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'table\')">表格</button></div><div class="outcome-rich-tool" data-rich-tool="link" hidden><input type="text" placeholder="https://" aria-label="链接地址"><button type="button" onclick="insertOutcomeLink()">插入</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="outcome-rich-tool" data-rich-tool="table" hidden><label>行<input type="number" value="3" min="1" max="20" data-table-rows></label><label>列<input type="number" value="3" min="1" max="10" data-table-cols></label><button type="button" onclick="insertOutcomeTable()">插入表格</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="submission-rich" id="'+(key==='intro'?'outcome-intro':'outcome-rich-'+key)+'" data-rich-key="'+key+'" contenteditable="true" role="textbox" aria-multiline="true" aria-label="'+label+'" '+(required?'aria-required="true"':'')+' data-placeholder="'+placeholder+'">'+safeHTML(v[key])+'</div></div>').join('')+'</section>';}
+function editorHTML(v){return '<section class="outcome-card outcome-editor-card">'+(activeKind==='model'?readmeHTML(v):'')+'<div class="outcome-editor-heading"><h3 id="outcome-editor-label">'+richFields[activeKind][0][1]+' <span class="submission-required">*</span></h3><div class="space-intro-actions"><button type="button" id="outcome-template-toggle" aria-expanded="false" aria-controls="outcome-template" onclick="toggleOutcomeTemplate()">查看模板</button>'+(activeKind==='model'?spaceUsageButton('editor'):'')+'</div></div><section id="outcome-template" class="outcome-template" aria-label="'+(activeKind==='model'?'模型':'数据')+'介绍填写模板" hidden><div class="outcome-template-caption">填写参考</div><article class="submission-rich-view">'+outcomeTemplates[activeKind]+'</article></section>'+richFields[activeKind].map(([key,label,required,placeholder],i)=>'<div class="outcome-rich-panel" id="rich-panel-'+key+'" aria-labelledby="outcome-editor-label" '+(i?'hidden':'')+'><div class="submission-toolbar" role="toolbar" aria-label="'+label+'编辑工具"><select aria-label="'+label+'段落样式" onmousedown="rememberRichSelection()" onchange="formatOutcomeIntro(\'formatBlock\',this.value)"><option value="p">正文</option><option value="h2">标题</option><option value="h3">小标题</option></select>'+[['bold','加粗','<b>B</b>'],['italic','斜体','<i>I</i>'],['underline','下划线','<u>U</u>'],['insertUnorderedList','无序列表','• 列表'],['insertOrderedList','有序列表','1. 列表'],['undo','撤销','↶'],['redo','重做','↷']].map(([cmd,title,icon])=>'<button type="button" title="'+title+'" aria-label="'+title+'" onmousedown="event.preventDefault();rememberRichSelection()" onclick="formatOutcomeIntro(\''+cmd+'\')">'+icon+'</button>').join('')+'<button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'link\')">链接</button><label class="outcome-rich-image" onmousedown="rememberRichSelection()">图片<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="insertOutcomeImage(this)"></label><button type="button" onmousedown="event.preventDefault();rememberRichSelection()" onclick="showOutcomeRichTool(\'table\')">表格</button></div><div class="outcome-rich-tool" data-rich-tool="link" hidden><input type="text" placeholder="https://" aria-label="链接地址"><button type="button" onclick="insertOutcomeLink()">插入</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="outcome-rich-tool" data-rich-tool="table" hidden><label>行<input type="number" value="3" min="1" max="20" data-table-rows></label><label>列<input type="number" value="3" min="1" max="10" data-table-cols></label><button type="button" onclick="insertOutcomeTable()">插入表格</button><button type="button" onclick="hideOutcomeRichTool()">取消</button></div><div class="submission-rich" id="'+(key==='intro'?'outcome-intro':'outcome-rich-'+key)+'" data-rich-key="'+key+'" contenteditable="true" role="textbox" aria-multiline="true" aria-label="'+label+'" '+(required?'aria-required="true"':'')+' data-placeholder="'+placeholder+'">'+safeHTML(v[key])+'</div></div>').join('')+'</section>';}
 window.toggleOutcomeTemplate=function(){const panel=$('#outcome-template'),button=$('#outcome-template-toggle');panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));button.textContent=panel.hidden?'查看模板':'收起模板';};
 window.rememberRichSelection=function(){const sel=getSelection();if(!sel.rangeCount)return;const node=sel.anchorNode?.nodeType===1?sel.anchorNode:sel.anchorNode?.parentElement,editor=node?.closest('[data-rich-key]');if(editor&&!editor.closest('.outcome-rich-panel')?.hidden){activeRichKey=editor.dataset.richKey;richRange=sel.getRangeAt(0).cloneRange();}};
 window.formatOutcomeIntro=function(cmd,value=null){const editor=$('[data-rich-key="'+activeRichKey+'"]');if(!editor)return;editor.focus();if(richRange&&editor.contains(richRange.commonAncestorContainer)){const sel=getSelection();sel.removeAllRanges();sel.addRange(richRange);}document.execCommand(cmd,false,value);rememberRichSelection();editor.dispatchEvent(new Event('input',{bubbles:true}));};
@@ -826,7 +911,7 @@ window.renderSimpleSubmit=function(){const d=simpleDraft;activeKind=d.method==='
  const methods='<div class="outcome-submit-options"><div class="upload-methods">'+[['image','镜像提交'],['files','文件提交']].map(([m,t])=>'<button type="button" class="'+(d.method===m?'selected':'')+'" onclick="setUploadMethod(\''+m+'\')" aria-pressed="'+(d.method===m)+'">'+t+'</button>').join('')+'</div>'+(d.method==='image'?'<span class="outcome-kind-label">成果模型</span>':'<fieldset class="upload-content-types"><legend>成果类型</legend><div>'+[['model','成果模型'],['dataset','成果数据']].map(([k,t])=>'<label><input type="radio" name="outcomeKind" value="'+k+'" '+(activeKind===k?'checked':'')+' onchange="changeOutcomeKind(this.value)"><span>'+t+'</span></label>').join('')+'</div></fieldset>')+'</div>';
  const basic='<section class="outcome-card"><h3 class="outcome-card-title">'+(model?'模型基本信息':'数据基本信息')+'</h3><div class="outcome-basic">'+coverHTML(v)+'<div class="outcome-grid">'+fieldsHTML(model?['name','abbr','provider','version','business','task','crop']:['name','provider','version','tags','summary'],v)+'</div></div></section>';
  const right=(model?'<section class="outcome-card"><h3 class="outcome-card-title">推荐配置（性能要求）</h3><div class="outcome-card-body outcome-grid">'+fieldsHTML(['gpuType','gpuCount','gpuMemory','cpu','memory','storage','runtime','precision'],v)+'</div></section>':'<section class="outcome-card"><h3 class="outcome-card-title">数据属性</h3><div class="outcome-card-body outcome-grid">'+fieldsHTML(['dataType','modality','crop','year','region','topic'],v)+'</div></section>')+'<section class="outcome-card"><h3 class="outcome-card-title">来源与权属</h3><div class="outcome-card-body outcome-grid outcome-grid-single">'+fieldsHTML(['source','owner'],v)+'</div></section>';
- openDialog('提交研究成果','<form id="research-outcome-form" novalidate><div class="modal-body outcome-edit-body">'+methods+basic+'<div class="outcome-editor-columns"><div class="outcome-editor-main">'+editorHTML(v)+fileSectionHTML(d)+'</div><aside class="outcome-editor-side">'+right+'</aside></div></div><div class="modal-footer"><div id="simple-errors" class="light-error" role="alert"></div><button type="button" onclick="cancelSimpleSubmit()">取消</button><button type="button" class="primary" id="confirm-outcome-upload" '+(d.method==='image'&&!canPackageImage()?'disabled':'')+'>提交成果</button></div></form>');modal.classList.add('space-submit');
+ openDialog('提交研究成果','<form id="research-outcome-form" novalidate><div class="modal-body outcome-edit-body">'+methods+basic+'<div class="outcome-editor-columns"><div class="outcome-editor-main">'+editorHTML(v)+fileSectionHTML(d)+'</div><aside class="outcome-editor-side">'+right+'</aside></div></div><div class="modal-footer"><div id="simple-errors" class="light-error" role="alert"></div><button type="button" onclick="cancelSimpleSubmit()">取消</button><button type="button" class="primary" id="confirm-outcome-upload" '+(d.method==='image'&&!canPackageImage()?'disabled':'')+'>提交成果</button></div></form>');modal.classList.add('space-submit');modal.classList.toggle('space-model-submit',model);
  const form=$('#research-outcome-form');if(d.method==='files'){renderUploadFiles();renderSelectedUploads();}for(const [key,,type]of schemas[activeKind])if(type==='multi')updateOutcomeChoices(key);
  form.addEventListener('input',()=>simpleFieldError([]));form.addEventListener('change',()=>simpleFieldError([]));
  form.onsubmit=event=>{event.preventDefault();commitSimpleResult();};$('#confirm-outcome-upload').onclick=commitSimpleResult;
@@ -838,9 +923,9 @@ window.renderSimpleSubmit=function(){const d=simpleDraft;activeKind=d.method==='
 window.updateOutcomeGpu=function(){const count=$('#outcome-gpuCount'),memory=$('#outcome-gpuMemory'),cpu=$('#outcome-gpuType').value==='CPU 推理（无 GPU）',active=Number(count.value)>0;count.readOnly=cpu;if(cpu)count.value='0';memory.required=!cpu&&active;memory.readOnly=cpu||!active;memory.min=memory.required?1:0;if(memory.readOnly)memory.value='0';memory.closest('.outcome-field').querySelector('label').innerHTML='单卡显存要求'+(memory.required?' <b class="submission-required">*</b>':'');};
 function validateOutcomeValues(kind,v){const errors=[];for(const [key,label,type,,required]of schemas[kind]){const value=v[key],need=required||(key==='gpuMemory'&&Number(v.gpuCount)>0);if(type==='project'&&need&&!outcomeProjects.some(([id])=>id===v.sourceProjectId))errors.push('请选择成果来源课题');else if(need&&(!String(value??'').trim()||Array.isArray(value)&&!value.length))errors.push('请填写或选择'+label);if(type==='number'&&value!==''&&value!=null&&(!Number.isInteger(Number(value))||Number(value)<(['cpu','memory','storage'].includes(key)||key==='gpuMemory'&&Number(v.gpuCount)>0?1:0)))errors.push(label+'请填写有效整数');if(type==='year'&&value&&!/^\d{4}$/.test(String(value)))errors.push('数据年份请填写四位年份');}if(!/^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(v.version||''))errors.push('版本号请使用字母、数字、点或连字符');const rich=document.createElement('div');rich.innerHTML=v.intro||'';if(!rich.textContent.trim())errors.push('请填写'+(kind==='model'?'模型介绍':'数据介绍'));return errors;}
 const previousAdd=addResultFiles;window.addResultFiles=function(files){previousAdd(files);for(const f of files){const meta=simpleDraft.localFiles.find(x=>x.name===f.name&&x.bytes===f.size&&x.lastModified===f.lastModified);if(meta)actualFiles.set(meta.id,f)}};
-const originalShow=showOutcome;window.showOutcome=function(i){const r=outcomes[i];if(!r?.metadata){originalShow(i);return;}const kind=r.method==='image'?'model':r.contentType,v=normalizedValues(kind,r.metadata);openDialog('成果提交记录','<div class="modal-body outcome-edit-body"><section class="outcome-card"><div class="outcome-card-body"><h3>'+esc(r.name)+'</h3><p class="hint">'+esc(r.time)+' · '+esc(r.author)+' · '+uploadMethod(r)+'</p>'+(v.cover?'<img class="outcome-record-cover" src="'+esc(v.cover)+'" alt="成果封面">':'')+'<div class="outcome-record-fields">'+schemas[kind].map(([key,label])=>'<div><span>'+esc(label)+'</span><p>'+esc(Array.isArray(v[key])?v[key].join('、')||'—':v[key]??'—')+'</p></div>').join('')+'</div></div></section>'+richFields[kind].filter(([key])=>v[key]).map(([key,label])=>'<section class="outcome-card"><h3 class="outcome-card-title">'+label+'</h3><article class="submission-rich-view outcome-card-body">'+safeHTML(v[key])+'</article></section>').join('')+(v.readme?'<section class="outcome-card"><h3 class="outcome-card-title">README · '+esc(v.readme.name)+'</h3><pre class="outcome-card-body outcome-readme-text">'+esc(v.readme.text)+'</pre></section>':'')+'<section class="outcome-card"><h3 class="outcome-card-title">成果文件</h3><div class="outcome-card-body">'+r.files.map(f=>'<p>'+esc(f.name)+'</p>').join('')+'</div></section></div><div class="modal-footer"><button type="button" onclick="closeModal()">关闭</button></div>');modal.classList.add('space-submit');};
+const originalShow=showOutcome;window.showOutcome=function(i){const r=outcomes[i];if(!r?.metadata){originalShow(i);return;}const kind=r.method==='image'?'model':r.contentType,v=normalizedValues(kind,r.metadata);openDialog('成果提交记录','<div class="modal-body outcome-edit-body"><section class="outcome-card"><div class="outcome-card-body"><h3>'+esc(r.name)+'</h3><p class="hint">'+esc(r.time)+' · '+esc(r.author)+' · '+uploadMethod(r)+'</p>'+(v.cover?'<img class="outcome-record-cover" src="'+esc(v.cover)+'" alt="成果封面">':'')+'<div class="outcome-record-fields">'+schemas[kind].map(([key,label])=>'<div><span>'+esc(label)+'</span><p>'+esc(Array.isArray(v[key])?v[key].join('、')||'—':v[key]??'—')+'</p></div>').join('')+'</div></div></section>'+richFields[kind].filter(([key])=>v[key]).map(([key,label])=>'<section class="outcome-card"><div class="space-view-intro-heading"><h3 class="outcome-card-title">'+label+'</h3>'+(kind==='model'?spaceUsageButton('view',String(i)):'')+'</div><article class="submission-rich-view outcome-card-body">'+safeHTML(v[key])+'</article></section>').join('')+(v.readme?'<section class="outcome-card"><h3 class="outcome-card-title">README · '+esc(v.readme.name)+'</h3><pre class="outcome-card-body outcome-readme-text">'+esc(v.readme.text)+'</pre></section>':'')+'<section class="outcome-card"><h3 class="outcome-card-title">成果文件</h3><div class="outcome-card-body">'+r.files.map(f=>'<p>'+esc(f.name)+'</p>').join('')+'</div></section></div><div class="modal-footer"><button type="button" onclick="closeModal()">关闭</button></div>');modal.classList.add('space-submit');};
 // Keep existing submissions visible across revisions of the standalone prototype.
-try{const all=JSON.parse(localStorage.getItem('bdh-outcome-review-1010')||'[]');all.filter(r=>r.spaceId===spaceId).forEach(r=>{if(!outcomes.some(o=>o.id===r.id||o.reviewId===r.id))outcomes.unshift({id:r.id,reviewId:r.id,name:r.name,method:r.materialType==='image'?'image':'files',contentType:r.kind,time:r.time,author:r.applicant,metadata:r.metadata,description:'',files:r.files||[]});});}catch{}
+try{const all=JSON.parse(localStorage.getItem('bdh-outcome-review-1010')||'[]');all.filter(r=>r.spaceId===spaceId).forEach(r=>{if(!outcomes.some(o=>o.id===r.id||o.reviewId===r.id))outcomes.unshift({id:r.id,reviewId:r.id,name:r.name,method:r.materialType==='image'?'image':'files',contentType:r.kind,time:r.time,author:r.applicant,metadata:r.metadata,...(r.interfaceDoc?{interfaceDoc:copyUsage(r.interfaceDoc)}:{}),description:'',files:r.files||[]});});}catch{}
 
 // Result revisions retain the original upload and refer to the same outcome.
 const reviewKey='bdh-outcome-review-1010';
@@ -870,7 +955,7 @@ window.resubmitOutcome=function(i){
  const r=outcomes[i];if(!mayResubmit(r)||resultSaving){toast('当前记录不可再次提交');renderRecords();return;}
  syncResearchFiles();returnToEnd=false;resubmitting=r;actualFiles.clear();activeKind=r.method==='image'?'model':(r.contentType==='dataset'?'dataset':'model');
  valuesByKind={model:freshValues('model'),dataset:freshValues('dataset')};
- valuesByKind[activeKind]={name:r.name,version:r.metadata?.version||r.version||'V1.0',intro:r.metadata?.intro||'<p>'+esc(r.description||'')+'</p>',...r.metadata};
+ valuesByKind[activeKind]={name:r.name,version:r.metadata?.version||r.version||'V1.0',intro:r.metadata?.intro||'<p>'+esc(r.description||'')+'</p>',...r.metadata,...(activeKind==='model'?{interfaceDoc:spaceUsageDoc(r)}:{})};
  simpleDraft={method:r.method,contentType:activeKind,name:r.name,description:r.description||'',ids:[],localFiles:[],retainedFiles:r.method==='files'?r.files.map((f,j)=>({...f,id:'retained-'+r.id+'-'+j,retained:true})):[],filter:'',includeResearch:r.image?.includeResearch!==false};renderSimpleSubmit();
 };
 const freshSubmit=submitResult;window.submitResult=function(){if(!canManage()||resultSaving)return;resubmitting=null;freshSubmit();};
@@ -898,12 +983,12 @@ window.commitSimpleResult=async function(){
   if(kind==='model'&&!modelDebugPassed())throw new Error('当前成果或配置已变化，请重新运行调试后提交。');
   const runProof=kind==='model'?{debugValidation:JSON.parse(JSON.stringify(debugSuccess))}:{};
   const relation=parent?{previousSubmissionId:parent.id,previousSubmissionTime:parent.time,previousReturnReason:returnFeedback(parent).reason,outcomeId:parent.outcomeId||parent.id}:{outcomeId:id};
-  const record={id,reviewId:id,...relation,...runProof,name:v.name.trim(),method:d.method,contentType:kind,time,author:owner()?'张三':'李四',description:rich.textContent.trim(),metadata:v,files:fileRecords,...(d.method==='image'?{image:{name:compute.image||'当前开发实例镜像',runtime:compute.runtime,includeResearch:d.includeResearch}}:{})};
-  const review={id,...relation,...runProof,kind,materialType:d.method,assetId:'',metadata:v,name:record.name,files:fileRecords,spaceId,spaceName:space.name,applicant:record.author,status:'待审批',time,history:[{action:parent?'再次提交成果':'提交成果',by:record.author,time,note:parent?'关联原提交：'+parent.id:''}]};
+  const record={id,reviewId:id,...relation,...runProof,name:v.name.trim(),method:d.method,contentType:kind,time,author:owner()?'张三':'李四',description:rich.textContent.trim(),metadata:v,...(kind==='model'?{interfaceDoc:copyUsage(v.interfaceDoc)}:{}),files:fileRecords,...(d.method==='image'?{image:{name:compute.image||'当前开发实例镜像',runtime:compute.runtime,includeResearch:d.includeResearch}}:{})};
+  const review={id,...relation,...runProof,kind,materialType:d.method,assetId:'',metadata:v,...(kind==='model'?{interfaceDoc:copyUsage(v.interfaceDoc)}:{}),name:record.name,files:fileRecords,spaceId,spaceName:space.name,applicant:record.author,status:'待审批',time,history:[{action:parent?'再次提交成果':'提交成果',by:record.author,time,note:parent?'关联原提交：'+parent.id:''}]};
   const previous=localStorage.getItem(reviewKey),all=reviewItems();all.unshift(review);localStorage.setItem(reviewKey,JSON.stringify(all));
   const snapshots=readInstances(),existing=snapshots[spaceId]?.outcomes||[];const merged=[...outcomes,...existing.filter(o=>!outcomes.some(x=>x.id===o.id))],next=[record,...merged];snapshots[spaceId]={state:space.state,instance:space.instance,ide:space.ide,compute:{...compute},outcomes:next,closure,closureHistory,uploadRecordSchema:UPLOAD_SCHEMA,updated:Date.now()};
   try{localStorage.setItem(instanceKey,JSON.stringify(snapshots));}catch(error){if(previous===null)localStorage.removeItem(reviewKey);else localStorage.setItem(reviewKey,previous);throw error;}
-  outcomes=next;uploadPage=1;resultSaving=false;resubmitting=null;renderAll();if(returnToEnd)renderSimpleEnd();else closeModal();toast(parent?'成果已再次提交，原提交记录已保留（演示）':'成果提交记录已保存（原型演示）');
+  outcomes=next;if(kind==='model')persistSpaceUsage(v.interfaceDoc);uploadPage=1;resultSaving=false;resubmitting=null;renderAll();if(returnToEnd)renderSimpleEnd();else closeModal();toast(parent?'成果已再次提交，原提交记录已保留（演示）':'成果提交记录已保存（原型演示）');
  }catch(error){resultSaving=false;if(button.isConnected){refreshOutcomeDebugGate();button.textContent=parent?'再次提交':'提交成果';simpleFieldError([/已变更|重新运行调试/.test(error?.message||'')?error.message:'保存失败，请检查浏览器存储后重试。']);}}
 };
 const closeSubmissionDialog=closeModal;window.closeModal=function(){if(!resultSaving)closeSubmissionDialog();};modal.addEventListener('cancel',event=>{if(resultSaving)event.preventDefault();});
@@ -1001,15 +1086,17 @@ window.confirmDebugDeployment=function(){
  const config=Object.fromEntries(new FormData(form));config.environmentConfig={};
  for(const key of ['system','python','framework','cuda']){config.environmentConfig[key]=config[key];delete config[key];}
  config.runtime=debugRuntime(config.environmentConfig);config.mode='program';
+ config.interfaceDoc=copyUsage(spaceDeploymentUsage);
  const previous=debugDraft;debugDraft={...debugDraft,...config};const error=preparationConfigError();if(error){debugDraft=previous;showDebugSettingsError(error);return;}
- if(debugOutcomeReturn){const v=valuesByKind.model;v.environmentConfig={...debugDraft.environmentConfig};v.runtime=outcomeRuntimeText(v.environmentConfig);for(const key of ['cpu','memory','gpuCount','storage'])v[key]=debugDraft[key];if(Number(v.gpuCount)>0&&v.gpuType==='CPU 推理（无 GPU）')v.gpuType='';else if(!Number(v.gpuCount)){v.gpuType='CPU 推理（无 GPU）';v.gpuMemory=0;}}
+ if(debugOutcomeReturn){const v=valuesByKind.model;v.interfaceDoc=copyUsage(debugDraft.interfaceDoc);v.environmentConfig={...debugDraft.environmentConfig};v.runtime=outcomeRuntimeText(v.environmentConfig);for(const key of ['cpu','memory','gpuCount','storage'])v[key]=debugDraft[key];if(Number(v.gpuCount)>0&&v.gpuType==='CPU 推理（无 GPU）')v.gpuType='';else if(!Number(v.gpuCount)){v.gpuType='CPU 推理（无 GPU）';v.gpuMemory=0;}}
  const button=$('#debug-confirm-prepare');button.disabled=true;button.textContent='正在准备…';
  try{saveDebugDraft();beginDebugPreparation();}catch(error){debugSession=null;debugView='settings';openDebugSettings(true);showDebugSettingsError('未能开始部署，请检查配置后重试。');}
 };
 window.openDebugSettings=function(fromEntry=false){
  if(debugBusy||debugSession?.state==='preparing')return;
- debugSettingsReturn=fromEntry?'close':debugSession?.state==='ready'?'workbench':'prepare';debugView='settings';
- debugDialog('部署配置','<form id="debug-settings-form" novalidate><div class="modal-body"><div class="debug-settings-summary"><strong>'+esc(space.name)+'</strong><p>当前已保存的代码、模型文件及实例依赖</p><small>环境和资源默认使用开发空间配置，可按本次调试需要调整。</small></div><h3 class="debug-section-heading">运行环境</h3>'+debugEnvironmentFields()+'<h3 class="debug-section-heading">算力与存储</h3><div class="submission-fields debug-resource-fields">'+[['cpu','CPU（核）',1],['gpuCount','GPU（张）',0],['memory','内存（GB）',1],['storage','存储（GB）',1]].map(([key,label,min])=>'<label><span>'+label+' <span class="submission-required">*</span></span><input name="'+key+'" type="number" min="'+min+'" step="1" required value="'+esc(debugDraft[key])+'"></label>').join('')+'</div><h3 class="debug-section-heading">启动配置</h3><div class="submission-fields debug-config-fields"><label class="full"><span>启动命令 <span class="submission-required">*</span></span><input name="command" id="space-debug-command" required value="'+esc(debugDraft.command)+'" placeholder="例如：python /results/inference.py"></label></div><p class="debug-note">原型演示，未执行真实部署或资源分配。</p></div><div class="modal-footer"><p class="debug-error debug-footer-error" id="debug-settings-error" role="alert">'+(!debugAvailable()?'请先启动开发实例，再确认部署。':'')+'</p><button type="button" onclick="returnFromDebugSettings()">取消</button><button type="button" class="primary" id="debug-confirm-prepare" '+(!debugAvailable()?'disabled':'')+'>确认部署</button></div></form>');
+ debugSettingsReturn=fromEntry?'close':debugSession?.state==='ready'?'workbench':'prepare';debugView='settings';spaceDeploymentUsage=copyUsage(debugDraft.interfaceDoc);
+ debugDialog('部署配置','<form id="debug-settings-form" novalidate><div class="modal-body"><div class="debug-settings-summary"><strong>'+esc(space.name)+'</strong><p>当前已保存的代码、模型文件及实例依赖</p><small>环境和资源默认使用开发空间配置，可按本次调试需要调整。</small></div><div class="space-service-heading"><h3 class="debug-section-heading">运行环境</h3>'+spaceUsageButton('deploy')+'</div>'+debugEnvironmentFields()+'<h3 class="debug-section-heading">算力与存储</h3><div class="submission-fields debug-resource-fields">'+[['cpu','CPU（核）',1],['gpuCount','GPU（张）',0],['memory','内存（GB）',1],['storage','存储（GB）',1]].map(([key,label,min])=>'<label><span>'+label+' <span class="submission-required">*</span></span><input name="'+key+'" type="number" min="'+min+'" step="1" required value="'+esc(debugDraft[key])+'"></label>').join('')+'</div><h3 class="debug-section-heading">启动配置</h3><div class="submission-fields debug-config-fields"><label class="full"><span>启动命令 <span class="submission-required">*</span></span><input name="command" id="space-debug-command" required value="'+esc(debugDraft.command)+'" placeholder="例如：python /results/inference.py"></label></div><p class="debug-note">原型演示，未执行真实部署或资源分配。</p></div><div class="modal-footer"><p class="debug-error debug-footer-error" id="debug-settings-error" role="alert">'+(!debugAvailable()?'请先启动开发实例，再确认部署。':'')+'</p><button type="button" onclick="returnFromDebugSettings()">取消</button><button type="button" class="primary" id="debug-confirm-prepare" '+(!debugAvailable()?'disabled':'')+'>确认部署</button></div></form>');
+ modal.classList.add('space-deploy-settings');
  const form=$('#debug-settings-form');$('#debug-confirm-prepare').onclick=confirmDebugDeployment;
  form.onsubmit=event=>{event.preventDefault();confirmDebugDeployment();};
  form.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target.tagName==='INPUT'){event.preventDefault();confirmDebugDeployment();}});
@@ -1046,7 +1133,7 @@ function refreshOutcomeDebugGate(){
 }
 window.openOutcomeDebug=function(){
  if(resultSaving)return;captureDraft();if(simpleDraft.method==='files'&&!selectedUploadFiles().length){simpleFieldError(['请先选择要提交的模型成果文件']);return;}
- debugOutcomeReturn=true;loadDebugDraft();const v=valuesByKind.model;debugDraft.environmentConfig={...v.environmentConfig};debugDraft.runtime=debugRuntime(v.environmentConfig);
+ debugOutcomeReturn=true;loadDebugDraft();const v=valuesByKind.model;debugDraft.interfaceDoc=copyUsage(v.interfaceDoc);debugDraft.environmentConfig={...v.environmentConfig};debugDraft.runtime=debugRuntime(v.environmentConfig);
  for(const key of ['cpu','memory','gpuCount','storage'])if(v[key]!==''&&v[key]!=null)debugDraft[key]=String(v[key]);openDebugSettings(true);
 };
 window.returnToModelSubmission=function(){
@@ -1121,3 +1208,116 @@ dialog.space-submit{width:1180px;max-width:calc(100vw - 32px);max-height:94vh;bo
 <!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
 </body></html>
+
+<style id="space-usage-alignment">
+
+#modelUsageDialog{width:min(1000px,calc(100vw - 40px));max-width:none;max-height:calc(100dvh - 48px);margin:auto;padding:0;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);box-shadow:0 20px 64px rgba(16,33,58,.22);font-family:var(--font-ui);overflow:hidden;}
+#modelUsageDialog::backdrop{background:rgba(16,33,58,.42);}
+#modelUsageDialog[open]{display:flex;flex-direction:column;}
+#modelUsageDialog .mu-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#modelUsageDialog .mu-head h2{font-size:18px;font-weight:600;}
+#modelUsageDialog .mu-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;color:var(--text-secondary);}
+#modelUsageDialog .mu-close:hover{background:var(--brand-soft);color:var(--brand);}
+#modelUsageDialog .mu-form{display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+#modelUsageDialog .mu-body{padding:20px 24px 24px;overflow:auto;min-height:0;overscroll-behavior:contain;}
+#modelUsageDialog .mu-field{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+#modelUsageDialog .mu-field:last-child{margin-bottom:0;}
+#modelUsageDialog label{font-size:13.5px;font-weight:500;}
+#modelUsageDialog .mu-required{color:var(--error);margin-left:4px;}
+#modelUsageDialog .mu-control{width:100%;min-width:0;height:36px;padding:7px 10px;border:1px solid var(--border);border-radius:4px;background:#fff;font:13px var(--font-ui);color:var(--text);}
+#modelUsageDialog .mu-control:focus{outline:2px solid #d3e6df;outline-offset:1px;border-color:var(--brand);}
+#modelUsageDialog .mu-control[aria-invalid=true]{border-color:var(--error);}
+#modelUsageDialog textarea.mu-control{height:76px;min-height:68px;resize:vertical;line-height:1.65;}
+#modelUsageDialog #modelUsageContent{max-width:280px;}
+#modelUsageDialog #modelUsageExample{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;}
+#modelUsageDialog .mu-section{margin-bottom:22px;}
+#modelUsageDialog .mu-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+#modelUsageDialog .mu-section-head h3{font-size:14px;font-weight:600;}
+#modelUsageDialog .mu-add{display:inline-flex;align-items:center;gap:4px;color:var(--brand);font-size:13px;padding:3px 0;}
+#modelUsageDialog .mu-table-wrap{border:1px solid var(--border);border-radius:5px;overflow:auto;}
+#modelUsageDialog .mu-table{width:100%;min-width:660px;table-layout:fixed;border-collapse:collapse;font-size:13px;}
+#modelUsageDialog .mu-table th{height:38px;padding:8px 10px;background:#f5f8f7;color:var(--text-secondary);text-align:left;font-weight:500;white-space:nowrap;}
+#modelUsageDialog .mu-table td{padding:9px 10px;border-top:1px solid var(--border);vertical-align:middle;}
+#modelUsageDialog .mu-table .mu-check-cell{text-align:center;}
+#modelUsageDialog .mu-table input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand);vertical-align:middle;}
+#modelUsageDialog .mu-table .mu-delete{font-size:13px;color:var(--error);white-space:nowrap;}
+#modelUsageDialog .mu-table .mu-empty{padding:18px;text-align:center;color:var(--text-muted);}
+#modelUsageDialog .mu-foot{display:flex;align-items:center;gap:12px;padding:14px 24px;border-top:1px solid var(--border);background:#fff;flex-shrink:0;}
+#modelUsageDialog .mu-error{margin-right:auto;color:var(--error);font-size:13px;line-height:1.5;}
+#modelUsageDialog .mu-actions{display:flex;gap:10px;margin-left:auto;}
+@media(max-width:680px){#modelUsageDialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px);}#modelUsageDialog .mu-head{padding:14px 16px;}#modelUsageDialog .mu-body{padding:16px;}#modelUsageDialog .mu-foot{padding:12px 16px;flex-wrap:wrap;}#modelUsageDialog .mu-error:not(:empty){width:100%;}.model-usage-open{padding:0 10px;}}
+
+
+#modelUsageDialog{--brand:#005653;--brand-soft:#edf6f2;--border:#dce5e9;--text:#10213a;--text-secondary:#526078;--text-muted:#6b778c;--error:#b42318;--font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;line-height:1.65}
+#modelUsageDialog .mu-head h2,#modelUsageDialog .mu-section-head h3,#modelUsageDialog .mu-error{margin:0}
+#modelUsageDialog .mu-form{flex:1;margin:0}
+#modelUsageDialog .mu-body{flex:1}
+#modelUsageDialog .mu-control{box-sizing:border-box;margin:0;line-height:1.5}
+#modelUsageDialog .mu-close,#modelUsageDialog .mu-add,#modelUsageDialog .mu-delete{border:0;background:none;padding:3px 0;font-family:inherit}
+#modelUsageDialog .mu-close{padding:0}
+#modelUsageDialog .mu-table th,#modelUsageDialog .mu-table td{border-bottom:0;white-space:normal}
+#modelUsageDialog .mu-table input[type=checkbox]{display:inline-block;appearance:auto;margin:0}
+#modelUsageDialog .mu-table input[type=checkbox]:after{content:none}
+#modelUsageDialog .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 18px;border:1px solid #dce5e9;border-radius:4px;color:#10213a;background:#fff;font-size:14px;font-family:inherit}
+#modelUsageDialog .btn:hover{color:#005653;border-color:#005653}
+#modelUsageDialog .btn.primary{background:#005653;border-color:#005653;color:#fff}
+#modelUsageDialog .btn.primary:hover{background:#004542}
+#modelUsageDialog .mu-control:disabled{opacity:1;color:#526078;background:#f8faf9;cursor:default}
+#modelUsageDialog [hidden]{display:none!important}
+#modal.space-model-submit .outcome-editor-card{padding:20px 24px;border-color:#dce5e9;border-radius:8px;background:#fff}
+#modal.space-model-submit .outcome-editor-card .outcome-readme{padding:0;margin:0 0 20px;border:0;color:#526078;gap:10px}
+#modal.space-model-submit .outcome-editor-card .outcome-readme>span{font-size:13.5px;font-weight:600;color:#10213a}
+#modal.space-model-submit .outcome-editor-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:0;margin:0 0 9px;border:0}
+#modal.space-model-submit .outcome-editor-heading h3{font-size:13.5px;font-weight:600;color:#10213a;flex:none}
+#modal.space-model-submit .space-intro-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+#modal.space-model-submit .outcome-editor-heading button,#modal.space-model-submit .space-usage-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;font-size:13px;font-weight:400;line-height:1.5;border:1px solid #b6cfca;border-radius:4px;color:#005653;background:#fff;white-space:nowrap}
+#modal.space-model-submit .outcome-editor-heading button:hover,#modal.space-model-submit .space-usage-open:hover{background:#edf6f2;border-color:#005653}
+#modal.space-model-submit #outcome-template-toggle{color:#526078;border-color:#dce5e9}
+#modal.space-model-submit .outcome-editor-card .outcome-template{margin:14px 0 16px}
+#modal.space-model-submit .outcome-editor-card .outcome-rich-panel{padding:0}
+#modal.space-model-submit .outcome-editor-card .submission-toolbar{padding:5px 7px;gap:2px;background:#fbfcfc;border:1px solid #dce5e9;border-radius:4px 4px 0 0}
+#modal.space-model-submit .outcome-editor-card .submission-toolbar button{display:inline-flex;align-items:center;justify-content:center;height:28px;min-width:28px;padding:0 5px;font-size:13px;border:0;border-radius:4px;color:#526078}
+#modal.space-model-submit .outcome-editor-card .submission-toolbar select{height:28px;color:#526078;font-size:13px;background:transparent;padding:0 5px}
+#modal.space-model-submit .outcome-editor-card .outcome-rich-image{font-size:13px;padding:4px 5px;color:#526078}
+#modal.space-model-submit .outcome-editor-card .submission-toolbar button:hover{color:#005653;background:#edf6f2}
+#modal.space-model-submit .outcome-editor-card .submission-rich{min-height:400px;max-height:none;overflow:visible;padding:16px;border:1px solid #dce5e9;border-top:0;border-radius:0 0 4px 4px;font-size:13.5px;line-height:1.8;color:#10213a;outline:none}
+#modal.space-model-submit .outcome-editor-card .submission-rich h3{font-size:14px;font-weight:600;margin:22px 0 8px;color:#10213a}
+#modal.space-model-submit .outcome-editor-card .submission-rich h3:first-child{margin-top:0}
+#modal.space-model-submit .outcome-editor-card .submission-rich p+p{margin-top:8px}
+#modal.space-model-submit .outcome-editor-card .submission-rich table{width:100%;border-collapse:collapse;table-layout:fixed}
+#modal.space-model-submit .outcome-editor-card .submission-rich table th,#modal.space-model-submit .outcome-editor-card .submission-rich table td{border:1px solid #dce5e9;padding:7px 10px;font-size:13px;line-height:1.7;text-align:left;color:#10213a;vertical-align:top;white-space:normal}
+#modal.space-model-submit .outcome-editor-card .submission-rich table th{background:#f8fbfa;color:#005653;font-weight:600}
+
+#modal .space-intro-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+#modal .space-usage-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;font-size:13px;font-weight:400;line-height:1.5;border:1px solid #b6cfca;border-radius:4px;color:#005653;background:#fff;white-space:nowrap}
+#modal .space-usage-open:hover{background:#edf6f2;border-color:#005653}
+#modal .space-view-intro-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-right:18px;border-bottom:1px solid #e8eee9}
+#modal .space-view-intro-heading h3{border:0}
+#modal.space-deploy-settings{width:min(880px,calc(100vw - 48px));max-height:calc(100dvh - 48px);border-radius:8px;color:#10213a}
+#modal.space-deploy-settings .modal-head{padding:16px 24px;border-color:#dce5e9}
+#modal.space-deploy-settings .modal-head h2{font-size:17px;font-weight:600;color:#10213a}
+#modal.space-deploy-settings .modal-body{padding:18px 24px 24px;max-height:calc(100dvh - 188px);background:#fff}
+#modal.space-deploy-settings .modal-footer{padding:14px 24px;gap:12px;border-color:#dce5e9}
+#modal.space-deploy-settings .modal-footer>button{height:36px;padding:0 18px;font-size:14px}
+#modal.space-deploy-settings .debug-settings-summary{padding:12px 16px;margin-bottom:20px;background:#edf6f2;border:1px solid #d5e7e0;border-radius:4px;font-size:13px;color:#10213a}
+#modal.space-deploy-settings .debug-settings-summary strong{font-size:13px;font-weight:600;color:#10213a}
+#modal.space-deploy-settings .debug-settings-summary small{color:#6b778c;font-size:12px}
+#modal.space-deploy-settings .space-service-heading{display:flex;align-items:center;gap:10px;margin:24px 0 14px}
+#modal.space-deploy-settings .debug-section-heading{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:600;color:#10213a;margin:24px 0 14px}
+#modal.space-deploy-settings .space-service-heading h3{margin:0}
+#modal.space-deploy-settings .debug-section-heading::before{content:'';width:3px;height:15px;border-radius:2px;background:#005653;flex-shrink:0}
+#modal.space-deploy-settings .space-service-heading .space-usage-open{margin-left:auto}
+#modal.space-deploy-settings .submission-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+#modal.space-deploy-settings .submission-fields label{display:flex;flex-direction:column;gap:6px;color:#10213a;font-size:13px;font-weight:500;margin:0}
+#modal.space-deploy-settings .submission-fields label>span{font-size:13px;color:#10213a}
+#modal.space-deploy-settings .submission-fields input,#modal.space-deploy-settings .submission-fields select{height:36px;min-height:36px;padding:0 12px;border:1px solid #dce5e9;border-radius:4px;color:#10213a;background:#fff;font-size:13.5px;margin:0}
+#modal.space-deploy-settings .submission-fields input:focus,#modal.space-deploy-settings .submission-fields select:focus{outline:none;border-color:#005653;box-shadow:0 0 0 2px rgba(0,86,83,.08)}
+#modal.space-deploy-settings .debug-note{font-size:12px;color:#6b778c}
+#modelUsageDialog .mu-field label{margin:0}
+#modelUsageDialog .mu-table{margin:0}
+#modelUsageDialog .mu-table .mu-control{min-height:36px}
+#modelUsageDialog .mu-table td{height:auto}
+#modelUsageDialog .mu-close svg{flex:none}
+@media(max-width:680px){#modal.space-model-submit .outcome-editor-card{padding:16px}#modal.space-model-submit .space-intro-actions{gap:6px}#modal.space-deploy-settings{width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}#modal.space-deploy-settings .submission-fields{grid-template-columns:1fr}#modal.space-deploy-settings .modal-body{max-height:calc(100dvh - 170px);padding:16px}#modal.space-deploy-settings .modal-head,#modal.space-deploy-settings .modal-footer{padding:14px 16px}}
+
+</style>
