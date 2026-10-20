@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="zh-CN" data-default-view="consult">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>合作咨询 · 北大荒智慧农业协同创新平台</title>
+<style>
+:root{--brand:#064c43;--hover:#043d36;--heading:#123b35;--text:#263b38;--muted:#667770;--line:#dfe7e1;--soft:#f1f6f2;--canvas:#fafbf8;--gold:#927021;--danger:#b34040;--shadow:0 10px 35px #123b350a;--font:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--canvas);font-family:var(--font);color:var(--text);font-size:14px;line-height:1.65}button,input,select,textarea{font:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:var(--brand);text-decoration:none}button{color:inherit}button:disabled{cursor:not-allowed;opacity:.4}button:focus-visible,a:focus-visible{outline:2px solid var(--brand);outline-offset:3px}h1,h2,h3,p{margin:0}h1,h2,h3{color:var(--heading)}[hidden]{display:none!important}.wrap{max-width:1280px;width:calc(100% - 80px);margin:auto}.muted{color:var(--muted)}.small{font-size:12px}.mono{font-variant-numeric:tabular-nums}.btn{height:42px;border:1px solid var(--line);border-radius:5px;padding:0 20px;background:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:500;white-space:nowrap}.btn:hover{border-color:#95afa2;background:#f6f9f6}.btn.primary{color:#fff;background:var(--brand);border-color:var(--brand)}.btn.primary:hover{background:var(--hover)}.btn.quiet{background:transparent}.link{border:0;background:none;padding:0;color:var(--brand);font-weight:500}.link:hover{text-decoration:underline}.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}.demo{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:12px;background:#eaf0ec;color:#53675d;font-size:11px;border-bottom:1px solid #dbe5de}.demo .tools{display:flex;align-items:center;gap:4px}.demo button{border:0;padding:3px 10px;border-radius:3px;background:transparent;font-size:11px;color:#4e655a}.demo button.current{background:white;color:var(--brand);box-shadow:0 1px 3px #173a3012}.demo button:hover{background:#fff}.demo .sep{height:12px;width:1px;background:#cbd8d0;margin:0 5px}.demo-label{display:flex;align-items:center;gap:8px}.demo-label i{width:5px;height:5px;background:#6b9180;border-radius:50%}.header{background:#fff;border-bottom:1px solid var(--line)}.header-inner{height:78px;max-width:1440px;width:calc(100% - 56px);margin:auto;display:flex;gap:25px;align-items:center}.brand{display:flex;gap:10px;align-items:center;flex:none;color:var(--heading);font-size:20px;font-weight:600;white-space:nowrap}.brand svg{width:30px;height:34px}.nav{display:flex;gap:20px;align-items:center;margin-left:auto;white-space:nowrap;font-size:13px}.nav span{color:#4c5f58}.nav .active{font-weight:600;color:var(--brand)}.header .consult-active{height:36px;padding:0 16px;font-size:13px}.hero{padding:39px 0 31px;background:linear-gradient(120deg,#eef5ee,#f8faf5 70%);border-bottom:1px solid #e6ede4}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:12px;letter-spacing:2px;margin-bottom:10px}.eyebrow:before{content:"";height:12px;width:2px;background:var(--gold)}.hero h1{font-family:"Noto Serif SC","Songti SC","SimSun",serif;font-size:36px;line-height:1.3;font-weight:700}.hero p{margin-top:13px;color:#6b7d70;font-size:15px}.form-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:29px 32px 30px;box-shadow:var(--shadow)}.card-title{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}.card-title h2{font-size:19px;font-weight:600}.card-title span{color:#8a938d;font-size:12px}.required{color:var(--danger);font-style:normal;margin-left:4px}.field{display:block;min-width:0}.field-label{display:flex;align-items:baseline;gap:4px;margin-bottom:8px;font-weight:500;font-size:13px}.optional{color:#8b958d;font-size:12px;font-weight:400;margin-left:4px}.control{display:block;border:1px solid #d5dfd7;border-radius:5px;background:#fff;color:var(--text);width:100%;height:43px;padding:9px 12px;outline:0;transition:border-color .15s,box-shadow .15s}.control::placeholder{color:#a0aaa2;font-size:13px}.control:focus{border-color:#527f66;box-shadow:0 0 0 3px #527f6612}.control[aria-invalid=true]{border-color:var(--danger)}textarea.control{height:116px;resize:vertical;min-height:100px;line-height:1.8}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:21px 22px}.full{grid-column:1/-1}.type-group{border:0;padding:0;margin:0 0 16px;min-width:0}.type-group legend{padding:0;margin-bottom:12px;font-size:15px;font-weight:600;color:var(--heading)}.type-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.type-option{position:relative;cursor:pointer;min-width:0}.type-option input{position:absolute;opacity:0;pointer-events:none}.direction-tab{min-height:76px;display:flex;align-items:center;gap:12px;border:1px solid #dbe4dc;border-radius:7px;padding:13px 18px;color:#6d8174;background:#fff;transition:background .15s,border-color .15s}.direction-tab>.icon{width:23px;height:23px}.direction-tab-copy{display:block;min-width:0}.direction-tab-copy strong{display:block;font-size:14px;font-weight:600;color:#3d5748;white-space:nowrap}.direction-tab-copy small{display:block;margin-top:3px;font-size:11px;color:#8c9a8f;white-space:nowrap}.direction-tab .choice-mark{width:16px;height:16px;margin-left:auto;opacity:0;flex:none}.type-option input:checked+.direction-tab{background:#edf5ee;border-color:#56856b;box-shadow:inset 0 0 0 .5px #56856b;color:var(--brand)}.type-option input:checked+.direction-tab strong{color:var(--brand)}.type-option input:checked+.direction-tab small{color:#69846f}.type-option input:checked+.direction-tab .choice-mark{opacity:1}.type-option input:focus-visible+.direction-tab{outline:2px solid var(--brand);outline-offset:3px}.type-option:hover .direction-tab{border-color:#7b9b85}.contact-note{margin-top:7px;color:#8a958c;font-size:12px}.counter{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#929b93;margin-top:5px}.error{color:var(--danger);font-size:12px;margin-top:6px}.form-error{padding:10px 12px;background:#fff5f3;border:1px solid #f0d0ca;border-radius:5px;color:var(--danger);margin-top:14px;font-size:12px}.consent{display:flex;align-items:flex-start;gap:9px;margin-top:21px;color:#6b796e;font-size:12px;cursor:pointer}.consent input{accent-color:var(--brand);width:15px;height:15px;margin:3px 0 0;flex:none}.submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:24px;gap:18px}.submit-row>.btn{min-width:168px}.submit-hint{font-size:12px;color:#89968c}.footer{border-top:1px solid var(--line);padding:22px 0;color:#89958c;background:#f7f9f5;font-size:12px}.footer .wrap{display:flex;justify-content:space-between;gap:16px}.success{max-width:860px;margin:40px auto 60px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:36px 48px 40px}.success-head{text-align:center}.success-mark{width:58px;height:58px;margin:0 auto 15px;border-radius:50%;background:#edf6ee;display:grid;place-items:center;color:#36815a}.success-mark svg{width:29px;height:29px}.success h1{font-size:25px}.success-head p{color:var(--muted);margin-top:9px}.receipt{margin-top:27px;padding:22px 24px;background:#f8faf7;border:1px solid #e5ece4;border-radius:6px}.receipt-top{font-size:12px;color:#7e8a7f;border-bottom:1px solid #e3ebe2;padding-bottom:13px;margin-bottom:16px;display:flex;justify-content:space-between;gap:10px}.kv{display:grid;grid-template-columns:80px 1fr;gap:12px 20px;margin:0;font-size:13px}.kv dt{color:#819084}.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.success-actions{display:flex;justify-content:center;gap:12px;margin-top:26px}.tag{display:inline-flex;align-items:center;gap:6px;border-radius:4px;font-size:12px;padding:3px 9px;background:#f1f3f2;color:#687770;white-space:nowrap;line-height:1.6}.tag:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.tag.pending{background:#fbf3df;color:#98742a}.tag.contact{background:#edf3fc;color:#4a77a5}.tag.done{background:#edf5ee;color:#508067}.prototype-chip{font-size:10px;border:1px solid #dce6de;color:#819184;padding:1px 5px;border-radius:3px;font-weight:400}.admin .header-inner{height:66px;gap:14px;width:calc(100% - 44px);max-width:1800px}.admin .brand{font-size:18px;gap:7px}.admin .brand svg{width:26px;height:31px}.admin .nav{gap:19px;margin-left:auto;font-size:13px;align-self:stretch}.admin .nav>*{display:flex;align-items:center;position:relative}.admin .nav .active:after{content:"";height:3px;background:var(--brand);position:absolute;bottom:0;left:0;right:0}.admin-label{font-size:11px;background:#edf6f2;border:1px solid #d4e7db;color:var(--brand);padding:2px 7px;white-space:nowrap;border-radius:4px}.admin-account{display:flex;align-items:center;gap:7px;flex:none;font-size:12px;margin-left:16px}.avatar{height:27px;width:27px;border-radius:50%;display:grid;place-items:center;color:white;background:var(--brand);font-size:12px}.admin-area{background:#f4f7f4;min-height:calc(100vh - 100px);padding:25px 26px 36px;display:grid;grid-template-columns:180px minmax(0,1fr);gap:24px;max-width:1850px;margin:auto}.sidebar{background:#fff;border:1px solid var(--line);border-radius:7px;align-self:start;padding:16px 8px}.side-title{padding:0 12px 14px;color:#8a978e;font-size:12px}.side-item{display:flex;gap:10px;align-items:center;min-height:42px;padding:0 13px;margin-bottom:3px;border:0;background:transparent;border-radius:4px;width:100%;text-align:left;font-size:13px;color:#6c7b72;cursor:default}.side-item .icon{width:17px;height:17px}.side-item.active{color:var(--brand);background:#edf5ee;font-weight:600;cursor:pointer}.side-rule{height:1px;background:#edf1ed;margin:11px 10px}.pagehead{display:flex;justify-content:space-between;align-items:center;margin:0 0 20px;gap:14px}.pagehead h1{font-size:23px;font-weight:600}.pagehead p{font-size:12px;color:#8a978e;margin-top:3px}.admin-content{min-width:0}.admin-card{border:1px solid var(--line);border-radius:7px;background:#fff;overflow:hidden;box-shadow:0 2px 10px #173a3003}.tabs{display:flex;border-bottom:1px solid var(--line);gap:28px;padding:0 24px}.tab{border:0;background:none;height:58px;position:relative;color:#7c8980;font-size:13px;padding:0 3px}.tab .count{font-size:11px;padding:2px 7px;background:#f2f5f2;border-radius:20px;margin-left:6px;font-variant-numeric:tabular-nums}.tab.on{color:var(--brand);font-weight:600}.tab.on:after{position:absolute;content:"";height:2px;left:0;right:0;bottom:0;background:var(--brand)}.tab.on .count{background:#edf5ee;color:var(--brand)}.filters{padding:22px 24px 18px;display:grid;grid-template-columns:minmax(190px,1.6fr) minmax(130px,.8fr) minmax(135px,.9fr) minmax(135px,.9fr) auto;gap:14px;align-items:end}.filters label{font-size:12px;color:#6d7e72}.filters label>span{display:block;margin-bottom:6px}.filters .control{height:37px;font-size:12px;padding:7px 9px}.filter-actions{display:flex;gap:8px}.filter-actions .btn{height:37px;font-size:12px;padding:0 14px}.filter-error{margin:0 24px 14px;font-size:12px;color:var(--danger)}.list-caption{display:flex;justify-content:space-between;padding:0 24px 13px;color:#829086;font-size:12px;align-items:center}.table-wrap{overflow-x:auto;margin:0 24px}.table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:865px;font-size:12px}.table th{text-align:left;background:#f5f8f5;color:#6e7e73;font-weight:500;padding:12px 10px;border-bottom:1px solid var(--line)}.table td{padding:17px 10px;border-bottom:1px solid #ebf0eb;vertical-align:middle;overflow-wrap:anywhere}.table tr:hover td{background:#fcfdfb}.table .summary{font-weight:500;color:#364e40;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;display:block}.table .desc-sub{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#99a49b;font-size:11px;margin-top:4px}.table .org{font-size:12px;line-height:1.6}.table .time{font-size:11px;color:#819184;line-height:1.75;white-space:nowrap}.table .contact-name{margin-bottom:3px}.table .contact-info{font-size:11px;color:#839187}.table .actions{display:flex;gap:13px;white-space:nowrap}.table .actions button{font-size:12px}.table .empty{text-align:center;padding:68px 10px 78px;color:#91a095}.empty strong{display:block;color:#6d8273;font-size:14px;font-weight:500;margin-bottom:7px}.pagination{padding:21px 24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#86938b;gap:15px}.pager{display:flex;align-items:center;gap:9px}.pager select{height:31px;border:1px solid var(--line);border-radius:4px;background:#fff;color:#6b7e70;font-size:12px;padding:0 9px;margin-right:7px}.pagebutton{height:31px;min-width:32px;padding:0 10px;border:1px solid var(--line);border-radius:4px;background:white;font-size:12px;color:#738579}.pagebutton.active{color:var(--brand);border-color:#7c9c87;background:#eff5ee}.drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(660px,100vw);height:100dvh;max-height:100dvh;max-width:100vw;border:0;padding:0;background:#fff;box-shadow:-10px 0 40px #173a301c;color:var(--text)}dialog::backdrop{background:#193d3045}.drawer-shell{height:100%;display:flex;flex-direction:column}.drawer-head{padding:24px 28px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.drawer-head h2{font-size:20px;font-weight:600}.drawer-head p{font-size:11px;color:#8b968e;margin-top:5px}.icon-btn{border:0;background:transparent;border-radius:4px;width:30px;height:30px;display:grid;place-items:center;color:#8b978f;font-size:23px;line-height:1}.icon-btn:hover{background:#eff5ef;color:var(--brand)}.drawer-content{overflow-y:auto;padding:24px 28px 36px;flex:1}.drawer-section+.drawer-section{margin-top:27px;padding-top:25px;border-top:1px solid #e6ece6}.drawer-section h3{font-size:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}.drawer .kv{grid-template-columns:76px 1fr;gap:13px 16px;font-size:13px}.description-box{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;color:#485f50;background:#f7faf6;padding:15px 18px;border-radius:5px;margin-top:14px;font-size:13px;border:1px solid #e5ede4}.section-label{font-size:12px;color:#849286;margin-top:21px}.timeline{padding-left:18px;position:relative}.timeline:before{position:absolute;content:"";left:3px;top:8px;bottom:11px;width:1px;background:#dce6db}.event{position:relative;padding:0 0 23px 10px}.event:last-child{padding-bottom:0}.event:before{position:absolute;content:"";width:7px;height:7px;background:#b4c8b7;border:2px solid white;box-sizing:content-box;border-radius:50%;left:-20px;top:6px}.event:first-child:before{background:#5e8b6b}.event-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.event-meta{font-size:11px;color:#8e9b90;margin-top:5px}.event p{font-size:12px;color:#5e7464;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:8px;line-height:1.9}.event-name{font-size:13px;font-weight:500}.drawer-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:16px 28px;border-top:1px solid var(--line);background:#fff}.modal{border:1px solid #dce7de;border-radius:9px;width:min(510px,calc(100vw - 32px));padding:0;color:var(--text);box-shadow:0 20px 80px #163e312b}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:18px}.modal-body{padding:23px 24px}.modal-body .field+.field{margin-top:20px}.modal-note{font-size:12px;color:#8a968d;margin-top:8px}.modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:15px 24px;border-top:1px solid var(--line)}.modal-footer .btn{height:37px;font-size:13px}.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);padding:10px 22px;background:#fff;border:1px solid #cbded0;color:var(--brand);border-radius:6px;box-shadow:0 5px 24px #173a3020;font-size:13px;z-index:5000;max-width:calc(100% - 32px)}.storage-warning{background:#fff3df;color:#88692f;padding:8px 25px;font-size:12px}.admin-view-link{font-size:12px}.admin-footnote{color:#a2ada4;font-size:11px;text-align:right;padding:17px 2px}.filter-active-label{font-size:11px;color:#8a968d}.mobile-toggle{display:none}
+@media(min-width:1600px){.nav{gap:24px}.admin-area{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:1270px){.header-inner{flex-wrap:wrap;height:auto;padding:15px 0 0;gap:14px}.header .nav{order:3;width:100%;margin:0;padding-bottom:13px;justify-content:space-between}.header .consult-active{margin-left:auto}.admin .header-inner{height:auto;padding:14px 0 0;gap:12px}.admin .nav{width:100%;padding:0;height:43px;order:4;justify-content:space-between}.admin .admin-account{margin-left:auto}.admin .nav>*{height:43px}.admin-area{grid-template-columns:156px minmax(0,1fr);gap:18px;padding:22px 20px}.filters{grid-template-columns:minmax(170px,1.5fr) minmax(130px,1fr) minmax(130px,1fr) minmax(130px,1fr)}.filter-actions{grid-column:1/-1;justify-content:flex-end}.form-card{padding:26px}}
+@media(max-width:900px){.wrap{width:calc(100% - 40px)}.hero{padding:28px 0}.hero h1{font-size:30px}.admin-area{grid-template-columns:1fr}.sidebar{display:none}.nav{overflow:auto}.admin .nav{gap:23px;justify-content:flex-start}.filters{grid-template-columns:1fr 1fr}.filter-actions{justify-content:flex-start}.success{margin:24px 20px;padding:30px}.demo{height:auto;min-height:34px;flex-wrap:wrap;padding:6px 18px;gap:5px}.demo .tools{margin-left:auto}.header-inner{width:calc(100% - 36px)}.footer .wrap{flex-direction:column;gap:6px}.admin-area{min-height:100vh}}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:20px}.home-return{background:#ffffffb3;height:39px;padding:0 16px;font-size:13px}.home-return .icon{width:17px;height:17px}
+@media(max-width:540px){.hero-top{gap:12px}.home-return{height:36px;padding:0 12px;font-size:12px}.brand{font-size:16px;gap:7px}.brand svg{width:25px}.header .consult-active{display:none}.header .nav{font-size:12px;gap:18px;justify-content:flex-start}.hero p{font-size:13px}.form-card{padding:23px 19px}.grid2{grid-template-columns:1fr;gap:18px}.submit-row{align-items:flex-start;flex-direction:column;gap:12px}.submit-row .btn{width:100%}.form-card .card-title{margin-bottom:22px}.card-title h2{font-size:17px}.success{padding:26px 20px}.receipt{padding:16px}.receipt-top{flex-direction:column;gap:5px}.success h1{font-size:22px}.success-head p{font-size:12px}.kv{grid-template-columns:67px 1fr;gap:11px}.demo-label{font-size:10px}.demo button{padding:3px 7px}.admin .brand{font-size:14px}.admin .brand svg{width:21px}.admin-label{font-size:10px}.admin-account{display:none}.admin-area{padding:18px 12px}.pagehead h1{font-size:20px}.tabs{gap:15px;padding:0 15px}.tab{font-size:12px}.tab .count{margin-left:3px;padding:1px 5px}.filters{padding:18px 15px;gap:12px}.table-wrap{margin:0 15px}.list-caption{padding:0 15px 12px}.pagination{padding:18px 15px;flex-direction:column;align-items:flex-start}.drawer-content,.drawer-head{padding-left:22px;padding-right:22px}.drawer-foot{padding:15px 22px}.drawer .kv{grid-template-columns:68px 1fr;gap:12px}.pagehead .btn{height:36px;font-size:12px;padding:0 11px}}
+
+/* Cooperation direction and contextual introduction */
+#consultView .hero{padding:24px 0 22px}#consultView .hero .wrap,.consult-page{max-width:1120px}#consultView .hero h1{font-size:32px}#consultView .hero .eyebrow{margin-bottom:7px}#consultView .hero p{margin-top:9px;font-size:14px}
+.consult-page{padding-top:25px;padding-bottom:44px}.cooperation-details{margin-bottom:24px}.support-panel{padding:23px 26px 24px;background:#f2f6f0;border:1px solid #e0e8dc;border-radius:8px}.support-heading h2{font-size:18px;font-weight:600;line-height:1.5}.support-heading>p{font-size:13px;color:#6d8071;line-height:1.85;margin-top:7px}.support-items{display:grid;margin-top:24px;gap:0}.research-items{grid-template-columns:repeat(4,minmax(0,1fr))}.business-items{grid-template-columns:repeat(2,minmax(0,1fr))}.base-items{grid-template-columns:repeat(3,minmax(0,1fr))}.support-item{padding:0 21px;border-left:1px solid #dce5d8;min-width:0}.support-item:first-child{padding-left:0;border-left:0}.support-item:last-child{padding-right:0}.support-item h3{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:1.6}.support-item h3 .icon{width:18px;height:18px;color:#5d8066}.support-item p{margin-top:9px;font-size:12px;color:#748478;line-height:1.9}.other-support{display:flex;align-items:flex-start;gap:18px;padding:24px 26px}.other-icon{width:42px;height:42px;border-radius:8px;background:#e5eee1;color:#5d8066;display:grid;place-items:center;flex:none}.other-support .support-heading p{max-width:860px}.consult-page .form-card{padding:25px 30px 27px}.consult-page .card-title{align-items:flex-start;margin-bottom:22px}.consult-page .card-title p{font-size:12px;color:#89968b;margin-top:5px;line-height:1.8}.consult-page .card-title>span{white-space:nowrap;padding-top:3px}.consult-page .grid2{gap:18px 26px}.consult-page .submit-row{margin-top:21px}.consult-page .consent{margin-top:19px}
+@media(max-width:1000px){.direction-tab{padding:12px;gap:9px}.direction-tab>.icon{width:20px;height:20px}.direction-tab-copy strong{font-size:13px}.direction-tab-copy small{font-size:10px}.direction-tab .choice-mark{display:none}.support-item{padding:0 15px}.support-item h3{font-size:13px;gap:6px}}
+@media(max-width:760px){.type-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.direction-tab{padding:12px 16px;min-height:70px}.direction-tab-copy strong{font-size:14px}.direction-tab-copy small{font-size:11px}.direction-tab .choice-mark{display:block}.research-items,.base-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:23px 0}.support-item:nth-child(odd){padding-left:0;border-left:0}.support-item:nth-child(even){padding-right:0}.support-panel{padding:21px}.support-item h3{font-size:14px}.consult-page .form-card{padding:24px}.consult-page{padding-top:22px}}
+@media(max-width:540px){#consultView .hero{padding:21px 0}#consultView .hero h1{font-size:28px}#consultView .hero p{font-size:12px;max-width:310px}.consult-page{padding-bottom:30px}.type-group legend{font-size:14px}.direction-tab{gap:9px;padding:11px 12px;min-height:68px}.direction-tab-copy strong{font-size:13px}.direction-tab-copy small{font-size:10px}.direction-tab .choice-mark{display:none}.support-panel{padding:21px 19px}.support-heading h2{font-size:17px}.support-heading>p{font-size:12px}.support-items{grid-template-columns:1fr;gap:17px;margin-top:20px}.support-item,.support-item:nth-child(n){padding:0;border-left:0}.support-item p{margin-top:5px}.support-item h3{font-size:13px}.other-support{gap:13px}.other-icon{width:34px;height:34px}.cooperation-details{margin-bottom:20px}.consult-page .form-card{padding:22px 19px}.consult-page .card-title p{max-width:230px}.consult-page .grid2{gap:17px}}
+</style>
+<style id="consult-portal-header">
+.site-header {
+  --brand-primary: #064c43;
+  --brand-hover: #043d36;
+  --brand-active: #03332d;
+  --text-heading: #123b35;
+  --text-primary: #263b38;
+  --text-secondary: #5f6f6b;
+  --text-muted: #74807c;
+  --surface: #ffffff;
+  --canvas: #fafbf8;
+  --surface-soft: #f2f7f3;
+  --surface-warm: #f8f7f1;
+  --border: #dfe7e1;
+  --border-control: #8a9f98;
+  --accent-gold: #927021;
+  --accent-gold-soft: #fbf3dc;
+  --tag-green-bg: #eaf3ec;
+  --footer-bg: #063e36;
+  --footer-text: #e4eee8;
+  --success: #27704c;
+  --warning: #896017;
+  --error: #b83f3f;
+  --font-ui: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --content-max: 1280px;
+  --header-max: 1360px;
+  --header-height: 80px;
+  --gutter: 24px;
+  --radius-control: 6px;
+  --radius-card: 8px;
+  --radius-image: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;   /* v8 遗漏定义：页脚两列间距 gap 曾因此失效（退化 0），此处补齐 */
+  --case-media-h: 208px;
+  --model-img-h: 260px;
+  --shadow-hover: 0 4px 16px rgba(6,76,67,.08);
+  --shadow-overlay: 0 12px 32px rgba(18,59,53,.14);
+  --transition-fast: 160ms ease;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+.button-primary { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.button-primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+.button-primary:active { background: var(--brand-active); border-color: var(--brand-active); }
+.button-secondary { background: transparent; border-color: var(--border-control); color: var(--brand-primary); }
+.button-secondary:hover { background: var(--surface-soft); }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .header-inner {
+  width: min(var(--header-max), calc(100% - 80px));
+  margin-inline: auto;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+.site-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-heading);
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.site-header .brand svg { flex: none; }
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-inline: auto;
+}
+.main-nav a,
+.main-nav button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--header-height);
+  padding: 0 2px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+.main-nav a:hover,
+.main-nav button:hover { color: var(--brand-primary); }
+.main-nav a.active,
+.main-nav button.active { color: var(--brand-primary); font-weight: 600; }
+.main-nav a.active::after,
+.main-nav button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--brand-primary);
+}
+.header-actions { display: flex; align-items: center; gap: var(--space-4); flex: none; }
+.header-actions .login-link {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--space-3);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+.header-actions .login-link:hover { color: var(--brand-primary); }
+.header-actions .button { height: 40px; padding: 0 var(--space-5); }
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  cursor: pointer;
+}
+.mobile-menu {
+  display: none;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}
+.mobile-menu a, .mobile-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: none;
+  color: var(--text-primary);
+  font-size: 15px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+.mobile-menu .button { width: 100%; margin-top: var(--space-4); border-bottom: none; justify-content: center; }
+
+
+
+.site-header{font-family:var(--font-ui);font-size:16px;line-height:1.625}.site-header .header-inner{max-width:none;padding:0;flex-wrap:nowrap}.site-header .brand{flex:0 1 auto}.site-header .brand svg{width:30px;height:30px}.button{box-sizing:border-box}
+
+@media(max-width:1279px){.site-header{--header-height:64px}.site-header .header-inner{width:calc(100% - 48px)}.main-nav{gap:var(--space-4)}}
+@media(max-width:1199px){.main-nav{display:none}.menu-toggle{display:inline-flex;align-items:center;justify-content:center}.mobile-menu.open{display:block}}
+@media(max-width:1099px){.header-actions .login-link{display:none}}
+@media(max-width:767px){.site-header .header-inner{width:calc(100% - 32px);gap:var(--space-3)}.site-header .brand{gap:8px;font-size:16px;line-height:24px}.site-header .brand svg{width:24px;height:24px}.header-actions{gap:var(--space-2)}.header-actions .button{display:none}}
+#consultView #formTitle{scroll-margin-top:100px}
+
+.site-header .header-actions .login-link{line-height:normal}
+</style>
+<style id="bdh-portal-login">
+/* ===== 0924 统一登录态：登录后给出「个人中心」内联入口 ===== */
+header.site-header .header-actions .bdh-user,
+header.site-header .mobile-menu .bdh-user{ display:inline-flex; align-items:center; gap:8px; font-size:14px;
+  color:var(--bdh-ink,#10213a); white-space:nowrap; }
+header.site-header .header-actions .bdh-avatar,
+header.site-header .mobile-menu .bdh-avatar{ display:inline-grid; place-items:center; width:30px; height:30px;
+  border-radius:50%; background:var(--bdh-brand,#005653); color:#fff; font-size:13px; font-weight:600; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me{ display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 14px; font-size:14px; font-weight:500; line-height:1; color:var(--bdh-brand,#005653);
+  background:#fff; border:1px solid var(--bdh-brand,#005653); border-radius:4px; text-decoration:none;
+  white-space:nowrap; transition:background .2s,color .2s; flex:0 0 auto; }
+header.site-header .header-actions .bdh-me:hover{ background:var(--bdh-brand,#005653); color:#fff; }
+header.site-header .header-actions .bdh-logout{ display:inline-flex; align-items:center; height:36px; padding:0 6px;
+  font-size:14px; color:var(--bdh-secondary,#526078); background:none; border:0; cursor:pointer;
+  white-space:nowrap; flex:0 0 auto; }
+header.site-header .header-actions .bdh-logout:hover{ color:var(--bdh-brand,#005653); }
+header.site-header .header-actions .bdh-authbox{ display:flex; align-items:center; gap:16px; }
+header.site-header .mobile-menu a.bdh-me{ display:block; width:100%; margin:0; padding:12px 0; text-align:left;
+  font-size:15px; font-weight:600; color:var(--bdh-brand,#005653); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); text-decoration:none; }
+header.site-header .mobile-menu button.bdh-logout{ display:block; width:100%; margin:0; padding:12px 0;
+  text-align:left; font-size:15px; color:var(--bdh-secondary,#526078); background:none; border:0;
+  border-bottom:1px solid var(--bdh-line,#dce5e9); cursor:pointer; }
+/* 科研空间详情等「已登录态」页：身份文本本身即入口，零增宽 */
+header.site-header .header-actions a.signed-user{ text-decoration:none; }
+header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#005653); }
+/* 登录态空间账（2026-09-29 实测）
+   四元素动作区 = 头像+姓名 94 + 个人中心 86 + 退出 40 + 合作咨询 98 + 3×16 gap ≈ 365px。
+   本页 .header-inner = min(--header-max 1360, 100% - 80)：
+   视口 ≥1440 时间距 45~64px 安全；1366~1399 会掉到 32~45px（视觉粘连）。
+   ⇒ ≤1400px 去掉「姓名 + 退出」，动作区降到 245px，间距回升到 100px。 */
+@media (max-width:1400px){
+  header.site-header .header-actions .bdh-name{ display:none; }
+  header.site-header .header-actions .bdh-logout{ display:none; }
+}
+/* 登录态 + ≤1240px：动作区只留「个人中心」一个按钮。
+   @1279px 断点后 .header-inner 收窄（内缩 48、导航 gap 16），
+   245px 动作区在 1240 以下只剩 ~28px，故此处再收一档到 86px。
+   这与数据中心/模型中心原有 doLogin()（登录后整块替换）行为一致。 */
+@media (max-width:1240px){
+  body.bdh-signed header.site-header .header-actions .bdh-user,
+  body.bdh-signed header.site-header .header-actions .button.button-primary{ display:none; }
+}
+/* ≤1099px 一级导航收起为汉堡 ⇒ 桌面动作区只留汉堡，登录/个人中心走移动菜单 */
+@media (max-width:1099px){
+  header.site-header .header-actions .bdh-me,
+  header.site-header .header-actions .bdh-user{ display:none; }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="leaf" viewBox="0 0 30 34"><path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064c43"/><path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#fafbf8" stroke-width="1.5" stroke-linecap="round" fill="none"/></symbol>
+<symbol id="research" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M8 14h8M10 17h.01M14 18h.01"/></symbol>
+<symbol id="business" viewBox="0 0 24 24"><path d="M4 21V6h10v15M14 10h6v11M2 21h20M8 10h2M8 14h2M8 18h2M17 14h.01M17 18h.01"/></symbol>
+<symbol id="field" viewBox="0 0 24 24"><path d="M3 21h18M4 17c4-5 12-5 16 0M5 21c3-5 11-5 14 0M12 12V3M12 8c-4 0-6-2-6-5 4 0 6 2 6 5ZM12 10c4 0 6-2 6-5-4 0-6 2-6 5Z"/></symbol>
+<symbol id="data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+<symbol id="workspace" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M9 21h6M12 17v4m-3-14-3 3 3 3m6-6 3 3-3 3"/></symbol>
+<symbol id="home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M10 21v-7h4v7"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M21 15a3 3 0 0 1-3 3H9l-6 4V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3ZM7 8h10M7 12h6"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-2 8-2 8h16s-2-1-2-8M10 21h4"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 15v2"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+</defs></svg>
+<div class="demo" id="demoToolbar" aria-label="原型演示工具" hidden>
+ <div class="demo-label"><i></i><span>交互原型 · 数据仅保存在当前浏览器</span></div>
+ <div class="tools"><button id="demoConsult" type="button" onclick="showView('consult')">前台咨询</button><button id="demoAdmin" type="button" onclick="showView('admin')">后台管理</button><span class="sep"></span><button type="button" id="fillExample" onclick="fillExample()">填入示例</button><button type="button" onclick="openReset()">重置演示</button></div>
+</div>
+<div id="storageWarning" class="storage-warning" hidden role="alert">浏览器存储暂不可用，请保留当前填写内容并重试。</div>
+<div id="consultView">
+<header class="site-header">
+  <div class="header-inner">
+    <!-- 叶片 logo 为临时视觉示意（规范 §一），开发时替换为公司正式标志 -->
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span>北大荒智慧农业协同创新平台</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="数据中心-数据集列表页.html">数据中心</a>
+      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+      <a href="课题中心-高保真原型.html">课题中心</a>
+      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="login-link" data-bdh-login>登录</button>
+      <button type="button" class="button button-primary" data-consult aria-current="page">合作咨询</button>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mobileMenu" aria-label="打开菜单">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">首页</a>
+    <a href="数据中心-数据集列表页.html">数据中心</a>
+    <a href="模型中心-模型列表页（调整）.html">模型中心</a>
+    <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
+    <a href="课题中心-高保真原型.html">课题中心</a>
+    <a href="需求中心-高保真原型%20(1).html">需求中心</a>
+    <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
+    <button type="button" data-bdh-login>登录</button>
+    <button type="button" class="button button-primary" data-consult aria-current="page">合作咨询</button>
+  </div>
+</header>
+ <div id="formView">
+  <section class="hero"><div class="wrap"><div class="hero-top"><div><div class="eyebrow">产学研用 · 协同创新</div><h1>合作咨询</h1></div><a class="btn home-return" href="index.html"><svg class="icon" aria-hidden="true"><path d="m12 5-7 7 7 7M5 12h15"/></svg>返回首页</a></div><p>连接科研力量与农业生产需求，共同探索智慧农业的应用与实践。</p></div></section>
+  <main class="wrap consult-page">
+   <form id="consultForm" novalidate>
+    <fieldset class="type-group" aria-describedby="kindError"><legend>选择合作方向<i class="required">*</i></legend>
+     <div class="type-options">
+      <label class="type-option"><input type="radio" name="kind" value="科研合作" aria-controls="researchSupport" required checked><span class="direction-tab"><svg class="icon" aria-hidden="true"><use href="#research"/></svg><span class="direction-tab-copy"><strong>科研合作</strong><small>课题研究与协同创新</small></span><svg class="icon choice-mark" aria-hidden="true"><use href="#check"/></svg></span></label>
+      <label class="type-option"><input type="radio" name="kind" value="企业合作" aria-controls="businessSupport" required><span class="direction-tab"><svg class="icon" aria-hidden="true"><use href="#business"/></svg><span class="direction-tab-copy"><strong>企业合作</strong><small>模型应用与需求对接</small></span><svg class="icon choice-mark" aria-hidden="true"><use href="#check"/></svg></span></label>
+      <label class="type-option"><input type="radio" name="kind" value="示范基地合作" aria-controls="baseSupport" required><span class="direction-tab"><svg class="icon" aria-hidden="true"><use href="#field"/></svg><span class="direction-tab-copy"><strong>示范基地合作</strong><small>场景验证与示范应用</small></span><svg class="icon choice-mark" aria-hidden="true"><use href="#check"/></svg></span></label>
+      <label class="type-option"><input type="radio" name="kind" value="其他合作" aria-controls="otherSupport" required><span class="direction-tab"><svg class="icon" aria-hidden="true"><use href="#chat"/></svg><span class="direction-tab-copy"><strong>其他合作</strong><small>更多合作意向</small></span><svg class="icon choice-mark" aria-hidden="true"><use href="#check"/></svg></span></label>
+     </div><p class="error" id="kindError" hidden></p>
+    </fieldset>
+    <div class="cooperation-details" id="cooperationDetails">
+     <section class="support-panel" id="researchSupport" data-kind="科研合作" aria-labelledby="researchTitle">
+      <div class="support-heading"><h2 id="researchTitle">科研合作可获得的支持</h2><p>围绕研究课题，连接农业数据、模型与在线科研环境，推动研究成果在实际场景中应用。</p></div>
+      <div class="support-items research-items">
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#research"/></svg>参与开放课题</h3><p>了解开放课题指南与研究方向，按指南要求参与申报与协作。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#data"/></svg>获取数据与模型支持</h3><p>检索、预览并申请使用农业数据与模型资源，在平台内开展研究。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#workspace"/></svg>使用科研开发空间</h3><p>申请所需算力与存储资源，在平台内完成开发、运行与验证。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#field"/></svg>推动成果应用</h3><p>提交模型或数据成果，按对应流程审核后回流资源中心，支撑应用。</p></article>
+      </div>
+     </section>
+     <section class="support-panel" id="businessSupport" data-kind="企业合作" aria-labelledby="businessTitle" hidden>
+      <div class="support-heading"><h2 id="businessTitle">企业合作可获得的支持</h2><p>围绕农业生产与业务需求，了解平台模型的应用方式，交流适合您的技术需求与合作方向。</p></div>
+      <div class="support-items business-items">
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#workspace"/></svg>模型试用与在线应用</h3><p>了解模型的适用场景、输入输出与使用方式，通过试用评估业务适配性，并按需申请在线使用。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#chat"/></svg>业务需求对接</h3><p>围绕生产和业务问题，说明应用场景、现有条件与预期目标，对接技术需求与应用合作。</p></article>
+      </div>
+     </section>
+     <section class="support-panel" id="baseSupport" data-kind="示范基地合作" aria-labelledby="baseTitle" hidden>
+      <div class="support-heading"><h2 id="baseTitle">示范基地合作内容</h2><p>连接研究成果与真实生产场景，交流田间验证、示范应用及持续改进的合作方式。</p></div>
+      <div class="support-items base-items">
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#field"/></svg>生产场景对接</h3><p>结合基地的作物类型、生产条件与应用需求，交流适合开展合作的实际场景。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#research"/></svg>田间验证</h3><p>结合已有观测条件与生产场景，交流农业模型与研究成果的验证需求。</p></article>
+       <article class="support-item"><h3><svg class="icon" aria-hidden="true"><use href="#chat"/></svg>成果示范与反馈</h3><p>围绕成果在生产中的使用情况，开展示范应用交流，反馈适用条件与实际问题。</p></article>
+      </div>
+     </section>
+     <section class="support-panel other-support" id="otherSupport" data-kind="其他合作" aria-labelledby="otherTitle" hidden>
+      <div class="other-icon"><svg class="icon" aria-hidden="true"><use href="#chat"/></svg></div><div class="support-heading"><h2 id="otherTitle">交流您的合作设想</h2><p>如果您的合作设想不属于以上方向，可以在下方说明合作背景、目标及希望平台提供的支持，便于工作人员与您进一步沟通。</p></div>
+     </section>
+    </div>
+    <section class="form-card" aria-labelledby="formTitle">
+     <div class="card-title"><div><h2 id="formTitle">填写合作意向</h2><p>请留下合作意向与联系方式，便于平台工作人员与您沟通。</p></div><span><i class="required">*</i> 为必填项</span></div>
+     <div class="grid2">
+      <label class="field"><span class="field-label">单位名称<i class="required">*</i></span><input class="control" id="org" name="org" maxlength="80" autocomplete="organization" placeholder="请输入单位全称" required aria-describedby="orgError"><span class="error" id="orgError" hidden></span></label>
+      <label class="field"><span class="field-label">联系人<i class="required">*</i></span><input class="control" id="contact" name="contact" maxlength="30" autocomplete="name" placeholder="请输入联系人姓名" required aria-describedby="contactError"><span class="error" id="contactError" hidden></span></label>
+      <label class="field"><span class="field-label">联系电话<i class="required">*</i></span><input class="control" id="phone" name="phone" maxlength="30" type="tel" autocomplete="tel" placeholder="请输入手机号码或固定电话" required aria-describedby="phoneError"><span class="error" id="phoneError" hidden></span></label>
+      <label class="field"><span class="field-label">电子邮箱<span class="optional">（选填）</span></span><input class="control" id="email" name="email" maxlength="100" type="email" autocomplete="email" placeholder="请输入电子邮箱" aria-describedby="emailError"><span class="error" id="emailError" hidden></span></label>
+      <label class="field full"><span class="field-label">咨询内容<i class="required">*</i></span><textarea class="control" id="description" name="description" maxlength="2000" required placeholder="请简要说明您的合作意向、应用场景或希望解决的问题。" aria-describedby="descriptionError descriptionCount"></textarea><span class="counter"><span>可补充已有研究基础或业务需求。</span><span id="descriptionCount" class="mono">0 / 2000</span></span><span class="error" id="descriptionError" hidden></span></label>
+     </div>
+     <label class="consent"><input type="checkbox" id="consent" name="consent" required><span>同意平台通过上述联系方式就本次咨询与我联系。</span></label><p id="consentError" class="error" hidden></p>
+     <div id="formError" class="form-error" hidden role="alert"></div>
+     <div class="submit-row"><span class="submit-hint">请确认联系方式准确，便于后续沟通。</span><button type="submit" id="submitBtn" class="btn primary">提交咨询 <span aria-hidden="true">→</span></button></div>
+    </section>
+   </form>
+  </main>
+ </div>
+ <main id="successView" class="success" hidden tabindex="-1"><div class="success-head"><div class="success-mark"><svg class="icon"><use href="#check"/></svg></div><h1>咨询已提交</h1><p>平台工作人员将通过您留下的联系方式与您沟通。</p></div><section class="receipt" id="receipt"></section><div class="success-actions"><a class="btn primary" href="index.html">返回首页</a><button type="button" class="btn" onclick="newConsult()">继续咨询</button></div></main>
+ <footer class="footer"><div class="wrap"><span>北大荒智慧农业协同创新平台</span><span>智慧农场技术与系统全国重点实验室 · 北大荒农垦集团</span></div></footer>
+</div>
+<div id="adminView" class="admin" hidden>
+ <header class="header"><div class="header-inner"><div class="brand"><svg><use href="#leaf"/></svg><span>北大荒智慧农业协同创新平台</span></div><span class="admin-label">管理后台</span><nav class="nav" aria-label="后台一级导航"><span class="active">工作台总览</span><span>课题管理</span><span>审批中心</span><span>运营管理</span><span>时空数据管理</span><span>地图引擎</span><span>能力共享</span><span>管理设置</span></nav><div class="admin-account"><span class="avatar">张</span><span>张明</span></div></div></header>
+ <div class="admin-area">
+  <aside class="sidebar" aria-label="工作台菜单"><div class="side-title">工作台总览</div><span class="side-item"><svg class="icon"><use href="#home"/></svg>工作台总览</span><button class="side-item active" onclick="resetFilters()"><svg class="icon"><use href="#chat"/></svg>合作咨询</button><span class="side-item"><svg class="icon"><use href="#bell"/></svg>消息中心</span><div class="side-rule"></div><span class="side-item"><svg class="icon"><use href="#user"/></svg>个人资料</span><span class="side-item"><svg class="icon"><use href="#lock"/></svg>账号安全</span></aside>
+  <main class="admin-content"><div class="pagehead"><div><h1>合作咨询</h1><p>查看咨询信息，记录沟通情况。</p></div><button class="btn" type="button" onclick="showView('consult')"><svg class="icon" style="width:16px;height:16px"><use href="#chat"/></svg>查看前台页面</button></div>
+   <section class="admin-card">
+    <div class="tabs" id="statusTabs" role="tablist" aria-label="处理状态"></div>
+    <form class="filters" id="filterForm"><label><span>关键词</span><input class="control" id="keyword" placeholder="单位、联系人或咨询内容"></label><label><span>合作方向</span><select class="control" id="filterKind"><option value="">全部方向</option><option>科研合作</option><option>企业合作</option><option>示范基地合作</option><option>其他合作</option></select></label><label><span>提交开始日期</span><input class="control" type="date" id="startDate" aria-label="提交开始日期"></label><label><span>提交结束日期</span><input class="control" type="date" id="endDate" aria-label="提交结束日期"></label><div class="filter-actions"><button type="submit" class="btn primary">查询</button><button type="button" class="btn" onclick="resetFilters()">重置</button></div></form>
+    <p class="filter-error" id="filterError" hidden role="alert"></p>
+    <div class="list-caption"><span>咨询列表 <span id="listTotal"></span></span><span class="filter-active-label" id="filterLabel"></span></div>
+    <div class="table-wrap"><table class="table"><colgroup><col style="width:23%"><col style="width:18%"><col style="width:11%"><col style="width:15%"><col style="width:12%"><col style="width:10%"><col style="width:11%"></colgroup><thead><tr><th>咨询内容</th><th>单位名称</th><th>合作方向</th><th>联系人 / 联系方式</th><th>提交时间</th><th>处理状态</th><th>操作</th></tr></thead><tbody id="consultRows"></tbody></table></div>
+    <div class="pagination"><span id="pageInfo"></span><div class="pager"><select id="pageSize" aria-label="每页条数"><option value="5">5 条 / 页</option><option value="10">10 条 / 页</option><option value="20">20 条 / 页</option></select><div id="pageButtons" style="display:flex;gap:7px"></div></div></div>
+   </section><div class="admin-footnote">示例记录仅用于原型演示</div>
+  </main>
+ </div>
+</div>
+<dialog class="drawer" id="detailDrawer" aria-labelledby="detailTitle"><div class="drawer-shell"><header class="drawer-head"><div><h2 id="detailTitle">咨询详情</h2><p id="detailMeta"></p></div><button type="button" class="icon-btn" aria-label="关闭咨询详情" onclick="closeDetail()">×</button></header><div class="drawer-content" id="detailContent"></div><footer class="drawer-foot"><button class="btn" type="button" onclick="closeDetail()">关闭</button><button class="btn primary" type="button" onclick="openHandle(selectedId)">记录处理</button></footer></div></dialog>
+<dialog class="modal" id="handleDialog" aria-labelledby="handleTitle"><form id="handleForm" novalidate><header class="modal-head"><h2 id="handleTitle">记录处理</h2><button type="button" class="icon-btn" aria-label="关闭处理弹窗" onclick="closeHandle()">×</button></header><div class="modal-body"><p id="handleOrg" class="muted" style="font-size:13px;margin-bottom:20px"></p><label class="field"><span class="field-label">处理状态<i class="required">*</i></span><select id="handleStatus" class="control"><option>待联系</option><option>联系中</option><option>已处理</option></select></label><label class="field"><span class="field-label">处理记录<i class="required">*</i></span><textarea id="handleNote" class="control" maxlength="2000" placeholder="请记录联系情况、沟通内容或本次处理结果。" aria-describedby="handleError"></textarea><p class="modal-note">仅供后台查看。</p></label><p class="form-error" id="handleError" role="alert" hidden></p></div><footer class="modal-footer"><button type="button" class="btn" onclick="closeHandle()">取消</button><button type="submit" class="btn primary" id="saveHandle">保存记录</button></footer></form></dialog>
+<dialog class="modal" id="resetDialog" aria-labelledby="resetTitle"><header class="modal-head"><h2 id="resetTitle">重置原型演示</h2><button class="icon-btn" aria-label="关闭重置弹窗" onclick="document.getElementById('resetDialog').close()">×</button></header><div class="modal-body"><p>将清除当前浏览器中本原型新增的咨询与处理记录，并恢复初始示例。</p></div><footer class="modal-footer"><button class="btn" onclick="document.getElementById('resetDialog').close()">取消</button><button class="btn primary" onclick="confirmReset()">重置演示</button></footer></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+'use strict';
+const KEY='bdh-cooperation-v2';
+const kinds=['科研合作','企业合作','示范基地合作','其他合作'];
+const statuses=['待联系','联系中','已处理'];
+const sourceLabels={nav:'门户合作咨询入口',research:'首页 · 科研团队',base:'首页 · 示范基地'};
+const qs=new URLSearchParams(location.search);
+let source=sourceLabels[qs.get('source')]||sourceLabels.nav;
+let selectedId=null,handleId=null,currentStatus='',page=1,size=5,filters={q:'',kind:'',start:'',end:''},submitting=false,toastTimer;
+const $=id=>document.getElementById(id);
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
+const id=()=> 'ZX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
+function seeds(){return [
+ {id:'ZX-20261020-008',kind:'科研合作',org:'寒地水稻研究团队（示例）',contact:'李老师',phone:'13800000001',email:'rice-team@example.com',description:'希望围绕寒地水稻长势监测开展联合研究，结合田间观测数据进行模型验证，咨询平台合作对接方式。',time:'2026-10-20 09:18:00',source:sourceLabels.research,status:'待联系',logs:[],sample:true},
+ {id:'ZX-20261020-007',kind:'企业合作',org:'北方农业科技公司（示例）',contact:'陈先生',phone:'13800000002',email:'agritech@example.com',description:'计划将作物识别与长势监测模型应用于农场生产管理，希望了解适用场景和合作方式。',time:'2026-10-20 08:42:00',source:sourceLabels.nav,status:'待联系',logs:[],sample:true},
+ {id:'ZX-20261019-006',kind:'示范基地合作',org:'绿色农业试验基地（示例）',contact:'赵老师',phone:'13800000003',email:'field-base@example.com',description:'基地具备水稻试验田和连续观测条件，希望交流模型田间验证及示范应用合作。',time:'2026-10-19 16:26:00',source:sourceLabels.base,status:'联系中',logs:[{time:'2026-10-20 09:05:00',actor:'张明（演示）',status:'联系中',note:'已通过邮件联系，了解试验田规模与已有观测条件，正在沟通具体研究方向。'}],sample:true},
+ {id:'ZX-20261019-005',kind:'科研合作',org:'作物遥感研究组（示例）',contact:'周老师',phone:'13800000004',email:'remote-sensing@example.com',description:'咨询农业遥感研究方向与开放课题的对接方式，研究组已有多时相作物识别研究基础。',time:'2026-10-19 14:10:00',source:sourceLabels.research,status:'联系中',logs:[{time:'2026-10-19 16:40:00',actor:'张明（演示）',status:'联系中',note:'已了解研究方向，正在沟通现有数据条件与研究目标。'}],sample:true},
+ {id:'ZX-20261018-004',kind:'其他合作',org:'农业技术交流中心（示例）',contact:'王女士',phone:'13800000005',email:'exchange@example.com',description:'希望了解平台的研究方向，交流农业技术成果展示与应用推广方面的合作意向。',time:'2026-10-18 11:36:00',source:sourceLabels.nav,status:'待联系',logs:[],sample:true},
+ {id:'ZX-20261017-003',kind:'企业合作',org:'农田智能服务公司（示例）',contact:'刘先生',phone:'13800000006',email:'farm-service@example.com',description:'咨询水稻倒伏识别模型的适用条件与平台在线使用方式，拟结合无人机巡田业务开展应用。',time:'2026-10-17 15:52:00',source:sourceLabels.nav,status:'已处理',logs:[{time:'2026-10-18 10:22:00',actor:'张明（演示）',status:'联系中',note:'已联系，了解无人机影像条件及巡田应用需求。'},{time:'2026-10-19 11:08:00',actor:'张明（演示）',status:'已处理',note:'已完成咨询答复，说明模型适用条件与平台内在线试用入口，本次咨询处理完成。'}],sample:true},
+ {id:'ZX-20261016-002',kind:'示范基地合作',org:'黑土农田示范点（示例）',contact:'孙老师',phone:'13800000007',email:'soil-demo@example.com',description:'希望交流黑土农田观测与科研成果验证的合作可能，已有土壤和作物生长观测记录。',time:'2026-10-16 09:35:00',source:sourceLabels.base,status:'已处理',logs:[{time:'2026-10-17 14:50:00',actor:'张明（演示）',status:'已处理',note:'已完成初步交流，说明可对接的研究方向与后续沟通方式。'}],sample:true},
+ {id:'ZX-20261015-001',kind:'科研合作',org:'农业智能计算小组（示例）',contact:'吴老师',phone:'13800000008',email:'agri-ai@example.com',description:'拟开展农作物估产研究，咨询科研协作与模型应用验证的参与方式。',time:'2026-10-15 10:08:00',source:sourceLabels.research,status:'已处理',logs:[{time:'2026-10-16 16:20:00',actor:'张明（演示）',status:'已处理',note:'已答复平台参与方式，并介绍课题指南与科研资源使用入口。'}],sample:true}
+];}
+function loadRows(){try{const raw=localStorage.getItem(KEY);if(!raw)return seeds();const data=JSON.parse(raw);if(!Array.isArray(data)||data.some(r=>!r.id||!statuses.includes(r.status)||!Array.isArray(r.logs)))throw Error('data');const phones=Object.fromEntries(seeds().map(r=>[r.id,r.phone]));return data.map(r=>r.sample&&!r.phone&&phones[r.id]?{...r,phone:phones[r.id]}:r);}catch(e){$('storageWarning').hidden=false;return seeds();}}
+let rows=loadRows();
+function persist(next){try{localStorage.setItem(KEY,JSON.stringify(next));rows=next;$('storageWarning').hidden=true;return true;}catch(e){$('storageWarning').hidden=false;return false;}}
+function toast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,3200);}
+function activateView(view){const admin=view==='admin';$('demoToolbar').hidden=!admin;$('adminView').hidden=!admin;$('consultView').hidden=admin;$('demoAdmin').classList.toggle('current',admin);$('demoConsult').classList.toggle('current',!admin);$('fillExample').hidden=admin;document.title=(admin?'后台 · 合作咨询':'合作咨询')+' · 北大荒智慧农业协同创新平台';if(admin){rows=loadRows();renderAdmin();}window.scrollTo({top:0});}
+function showView(view){if($('detailDrawer').open)closeDetail();if($('handleDialog').open)closeHandle();location.hash=view==='admin'?'admin':'consult';activateView(view);}
+window.addEventListener('hashchange',()=>activateView(location.hash==='#admin'?'admin':'consult'));
+function clearErrors(){document.querySelectorAll('#consultForm .error').forEach(el=>{el.hidden=true;el.textContent='';});document.querySelectorAll('#consultForm [aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));$('formError').hidden=true;}
+function fieldError(name,message){const el=$(name+'Error');el.textContent=message;el.hidden=false;if($(name))$(name).setAttribute('aria-invalid','true');}
+const initialKind=kinds.includes(qs.get('kind'))?qs.get('kind'):'科研合作';
+function updateCooperationInfo(){const kind=$('consultForm').elements.kind.value;document.querySelectorAll('.support-panel[data-kind]').forEach(panel=>{panel.hidden=panel.dataset.kind!==kind;});if(kinds.includes(kind)){$('kindError').hidden=true;$('kindError').textContent='';}}
+function applyInitialKind(){$('consultForm').elements.kind.value=initialKind;updateCooperationInfo();}
+$('consultForm').addEventListener('change',e=>{if(e.target.name==='kind')updateCooperationInfo();});
+function countDescription(){$('descriptionCount').textContent=$('description').value.length+' / 2000';}
+$('description').addEventListener('input',countDescription);
+function fillExample(){if(!$('successView').hidden)newConsult();const f=$('consultForm');f.elements.kind.value='科研合作';updateCooperationInfo();$('org').value='寒地作物研究团队（演示）';$('contact').value='林老师';$('phone').value='13800000009';$('email').value='research-demo@example.com';$('description').value='我们正在开展寒地水稻长势监测研究，已有多期田间观测与无人机影像，希望交流模型验证及协同研发的合作方式。';$('consent').checked=false;clearErrors();countDescription();toast('已填入示例，请确认联系方式并勾选联系授权。');}
+function goToForm(){if(!$('successView').hidden)newConsult();$('formTitle').scrollIntoView({behavior:'smooth',block:'center'});}
+function newConsult(){$('consultForm').reset();applyInitialKind();clearErrors();countDescription();$('formView').hidden=false;$('successView').hidden=true;submitting=false;$('submitBtn').disabled=false;window.scrollTo({top:0,behavior:'smooth'});}
+$('consultForm').addEventListener('submit',e=>{e.preventDefault();if(submitting)return;clearErrors();const f=$('consultForm'),d=Object.fromEntries(new FormData(f));for(const k of ['org','contact','phone','email','description'])d[k]=(d[k]||'').trim();let valid=true,first=null;function fail(k,msg){valid=false;first=first||k;fieldError(k,msg);}
+ if(!kinds.includes(d.kind))fail('kind','请选择合作方向。');if(!d.org)fail('org','请输入单位名称。');if(!d.contact)fail('contact','请输入联系人姓名。');if(!d.phone){fail('phone','请填写联系电话。');}if(d.phone&&(!/^\+?[\d\s()（）-]{7,30}$/.test(d.phone)||d.phone.replace(/\D/g,'').length<7||d.phone.replace(/\D/g,'').length>15))fail('phone','请输入有效的手机号码或固定电话。');if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))fail('email','请输入有效的电子邮箱。');if(!d.description)fail('description','请填写咨询内容。');if(!$('consent').checked)fail('consent','请确认同意平台就本次咨询与您联系。');if(!valid){$('formError').hidden=false;$('formError').textContent='请检查标红的填写项。';if(first==='kind')f.elements.kind[0].focus();else $(first)?.focus();return;}
+ submitting=true;$('submitBtn').disabled=true;const r={id:id(),kind:d.kind,org:d.org,contact:d.contact,phone:d.phone,email:d.email,description:d.description,source,time:now(),consent:true,status:'待联系',logs:[],sample:false};const latest=loadRows();if(!persist([r,...latest])){submitting=false;$('submitBtn').disabled=false;$('formError').hidden=false;$('formError').textContent='未能保存本次咨询，填写内容已保留，请稍后重试。';return;}
+ $('receipt').innerHTML='<div class="receipt-top"><span>咨询编号：'+esc(r.id)+'</span><span>'+esc(r.time)+'</span></div><dl class="kv"><dt>合作方向</dt><dd>'+esc(r.kind)+'</dd><dt>单位名称</dt><dd>'+esc(r.org)+'</dd><dt>联系人</dt><dd>'+esc(r.contact)+'</dd><dt>联系方式</dt><dd>'+esc([r.phone,r.email].filter(Boolean).join('\n'))+'</dd><dt>咨询内容</dt><dd>'+esc(r.description)+'</dd></dl>';$('formView').hidden=true;$('successView').hidden=false;$('successView').focus();window.scrollTo({top:0});
+});
+function statusTag(st){return '<span class="tag '+({待联系:'pending',联系中:'contact',已处理:'done'}[st]||'')+'">'+esc(st)+'</span>';}
+function matchingRows(){return rows.filter(r=>(!currentStatus||r.status===currentStatus)&&(!filters.kind||r.kind===filters.kind)&&(!filters.q||(r.org+' '+r.contact+' '+r.description+' '+r.phone+' '+r.email+' '+r.id).toLowerCase().includes(filters.q.toLowerCase()))&&(!filters.start||r.time.slice(0,10)>=filters.start)&&(!filters.end||r.time.slice(0,10)<=filters.end)).sort((a,b)=>b.time.localeCompare(a.time));}
+function renderAdmin(){const options=['',...statuses];$('statusTabs').innerHTML=options.map(st=>'<button type="button" role="tab" aria-selected="'+(currentStatus===st)+'" class="tab '+(currentStatus===st?'on':'')+'" data-status="'+esc(st)+'">'+(st||'全部咨询')+'<span class="count">'+rows.filter(r=>!st||r.status===st).length+'</span></button>').join('');const list=matchingRows(),pages=Math.max(1,Math.ceil(list.length/size));page=Math.max(1,Math.min(page,pages));const start=(page-1)*size,end=Math.min(start+size,list.length);$('listTotal').textContent='· '+list.length+' 条';$('filterLabel').textContent=(filters.q||filters.kind||filters.start||filters.end)?'已应用筛选条件':'';
+ $('consultRows').innerHTML=list.length?list.slice(start,end).map(r=>'<tr><td><button type="button" class="link summary" data-detail="'+esc(r.id)+'" title="'+esc(r.description)+'">'+esc(r.description)+'</button><span class="desc-sub">'+esc(r.id)+'</span></td><td><span class="org">'+esc(r.org)+'</span></td><td>'+esc(r.kind)+'</td><td><div class="contact-name">'+esc(r.contact)+'</div><div class="contact-info">'+esc(r.phone||r.email)+'</div></td><td class="time">'+esc(r.time.slice(0,10))+'<br>'+esc(r.time.slice(11,16))+'</td><td>'+statusTag(r.status)+'</td><td><div class="actions"><button type="button" class="link" data-detail="'+esc(r.id)+'">查看</button><button type="button" class="link" data-handle="'+esc(r.id)+'">处理</button></div></td></tr>').join(''):'<tr><td class="empty" colspan="7"><strong>暂无符合条件的咨询</strong>请调整筛选条件，或重置后查看全部咨询。</td></tr>';
+ $('pageInfo').textContent=list.length?'共 '+list.length+' 条，当前第 '+(start+1)+'–'+end+' 条':'共 0 条';let nums=[];for(let n=1;n<=pages;n++)if(n===1||n===pages||Math.abs(n-page)<=1)nums.push(n);let last=0,btns='';for(const n of nums){if(last&&n-last>1)btns+='<span style="align-self:center">…</span>';btns+='<button type="button" class="pagebutton '+(n===page?'active':'')+'" data-page="'+n+'" '+(n===page?'aria-current="page"':'')+'>'+n+'</button>';last=n;}$('pageButtons').innerHTML='<button type="button" class="pagebutton" data-page="'+(page-1)+'" '+(page===1?'disabled':'')+'>上一页</button>'+btns+'<button type="button" class="pagebutton" data-page="'+(page+1)+'" '+(page===pages?'disabled':'')+'>下一页</button>';
+}
+$('statusTabs').addEventListener('click',e=>{const b=e.target.closest('[data-status]');if(b){currentStatus=b.dataset.status;page=1;renderAdmin();}});
+$('consultRows').addEventListener('click',e=>{const d=e.target.closest('[data-detail]'),h=e.target.closest('[data-handle]');if(d)openDetail(d.dataset.detail);if(h){openDetail(h.dataset.handle);openHandle(h.dataset.handle);}});
+$('pageButtons').addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b&&!b.disabled){page=Number(b.dataset.page);renderAdmin();}});
+$('pageSize').addEventListener('change',()=>{size=Number($('pageSize').value);page=1;renderAdmin();});
+$('filterForm').addEventListener('submit',e=>{e.preventDefault();const start=$('startDate').value,end=$('endDate').value;if(start&&end&&start>end){$('filterError').textContent='提交结束日期不能早于开始日期。';$('filterError').hidden=false;$('endDate').focus();return;}$('filterError').hidden=true;filters={q:$('keyword').value.trim(),kind:$('filterKind').value,start,end};page=1;renderAdmin();});
+function resetFilters(){$('filterForm').reset();$('filterError').hidden=true;filters={q:'',kind:'',start:'',end:''};currentStatus='';page=1;renderAdmin();}
+function refreshDetail(){const r=rows.find(x=>x.id===selectedId);if(!r)return;$('detailMeta').textContent=r.id+(r.sample?' · 示例记录':'');const logs=[...r.logs].reverse();$('detailContent').innerHTML='<section class="drawer-section"><h3>咨询信息 '+statusTag(r.status)+'</h3><dl class="kv"><dt>合作方向</dt><dd>'+esc(r.kind)+'</dd><dt>单位名称</dt><dd>'+esc(r.org)+'</dd><dt>联系人</dt><dd>'+esc(r.contact)+'</dd><dt>联系电话</dt><dd>'+esc(r.phone||'未填写')+'</dd><dt>电子邮箱</dt><dd>'+esc(r.email||'未填写')+'</dd><dt>提交时间</dt><dd>'+esc(r.time)+'</dd><dt>提交入口</dt><dd>'+esc(r.source)+'</dd></dl><p class="section-label">咨询内容</p><div class="description-box">'+esc(r.description)+'</div></section><section class="drawer-section"><h3>处理记录 <span class="optional">仅后台可见</span></h3><div class="timeline">'+logs.map(l=>'<article class="event"><div class="event-head"><span class="event-name">'+esc(l.actor)+'</span>'+statusTag(l.status)+'</div><div class="event-meta">'+esc(l.time)+'</div><p>'+esc(l.note)+'</p></article>').join('')+'<article class="event"><div class="event-name">提交咨询</div><div class="event-meta">'+esc(r.time)+'</div><p>'+esc(r.contact)+'提交了'+esc(r.kind)+'咨询。</p></article></div></section>';}
+function openDetail(rid){selectedId=rid;refreshDetail();if(!$('detailDrawer').open)$('detailDrawer').showModal();}
+function closeDetail(){if($('handleDialog').open)closeHandle();$('detailDrawer').close();selectedId=null;}
+function openHandle(rid){const r=rows.find(x=>x.id===rid);if(!r)return;handleId=rid;$('handleOrg').textContent=r.org+' · '+r.contact;$('handleStatus').value=r.status;$('handleNote').value='';$('handleError').hidden=true;$('handleNote').removeAttribute('aria-invalid');$('handleDialog').showModal();}
+function closeHandle(){$('handleDialog').close();handleId=null;}
+$('handleForm').addEventListener('submit',e=>{e.preventDefault();const note=$('handleNote').value.trim(),st=$('handleStatus').value;if(!note){$('handleError').hidden=false;$('handleError').textContent='请填写处理记录。';$('handleNote').setAttribute('aria-invalid','true');$('handleNote').focus();return;}const latest=loadRows(),r=latest.find(x=>x.id===handleId);if(!r){$('handleError').hidden=false;$('handleError').textContent='该记录已变化，请关闭后重新打开。';return;}r.status=st;r.logs.push({time:now(),actor:'张明（演示）',status:st,note});if(!persist(latest)){$('handleError').hidden=false;$('handleError').textContent='未能保存，处理记录已保留，请重试。';return;}closeHandle();renderAdmin();refreshDetail();toast('处理记录已保存。');});
+function openReset(){$('resetDialog').showModal();}
+function confirmReset(){if(!persist(seeds())){toast('重置失败，请重试。');return;}if($('detailDrawer').open)closeDetail();$('resetDialog').close();newConsult();resetFilters();toast('已恢复初始演示数据。');}
+window.addEventListener('storage',e=>{if(e.key===KEY){rows=loadRows();renderAdmin();if($('detailDrawer').open)refreshDetail();}});
+for(const dialog of [$('detailDrawer'),$('handleDialog')])dialog.addEventListener('cancel',()=>{if(dialog.id==='detailDrawer')selectedId=null;else handleId=null;});
+applyInitialKind();
+activateView(location.hash==='#admin'?'admin':location.hash==='#consult'?'consult':document.documentElement.dataset.defaultView);
+</script>
+<script>window.__BDH_NAV__={me:"个人中心-高保真原型.html",self:false};</script>
+<script id="bdh-portal-login-js">
+/* 统一一级导航 + 0924 统一登录态（登录后出现「个人中心」入口） */
+(function () {
+  var CFG = window.__BDH_NAV__ || {};
+  var ME = CFG.me || "";
+  var SELF = !!CFG.self;
+
+  /* ---- 占位提示兜底：优先复用页面自带的 toast ---- */
+  function bdhToast(msg) {
+    var f = window.showToast || window.toast;
+    if (typeof f === "function") { try { f(msg); return; } catch (e) {} }
+    var el = document.getElementById("bdhToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "bdhToast";
+      el.style.cssText = "position:fixed;left:50%;bottom:40px;transform:translateX(-50%);padding:10px 20px;"
+        + "background:rgba(16,33,58,.92);color:#fff;font-size:14px;border-radius:4px;z-index:600;"
+        + "transition:opacity .2s;pointer-events:none;";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = "1";
+    clearTimeout(window.__bdhToastTimer);
+    window.__bdhToastTimer = setTimeout(function () { el.style.opacity = "0"; }, 2600);
+  }
+  window.bdhToast = bdhToast;
+
+  /* ================= 统一登录态 ================= */
+  function authRoots() {
+    var out = [];
+    var a = document.querySelector(".header-actions");
+    if (a) { out.push(a); }
+    var m = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+    if (m) { out.push(m); }
+    return out;
+  }
+  function visibleLogin(el) { return el.querySelector("[data-bdh-login]:not([data-bdh-hidden])"); }
+
+  function mk(tag, cls, txt) {
+    var n = document.createElement(tag);
+    n.className = cls;
+    if (txt) { n.textContent = txt; }
+    return n;
+  }
+  function mkMe() {
+    var a = mk("a", "bdh-me", "个人中心");
+    a.setAttribute("data-bdh-me", "");
+    a.href = ME;
+    return a;
+  }
+  function mkOut() {
+    var b = mk("button", "bdh-logout", "退出");
+    b.type = "button";
+    b.setAttribute("data-bdh-logout", "");
+    return b;
+  }
+  function mkUser() {
+    var s = mk("span", "bdh-user");
+    s.setAttribute("data-bdh-user", "");
+    s.appendChild(mk("span", "bdh-avatar", "张"));
+    s.appendChild(mk("span", "bdh-name", "张研究员"));
+    return s;
+  }
+  function clearMine(el) {
+    var ns = el.querySelectorAll("[data-bdh-me],[data-bdh-logout],[data-bdh-user]");
+    for (var i = 0; i < ns.length; i++) {
+      if (ns[i].parentNode) { ns[i].parentNode.removeChild(ns[i]); }
+    }
+  }
+  function insertAfter(anchor, node) {
+    anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    return node;
+  }
+  function syncRoot(el) {
+    var mobile = el.classList.contains("mobile-menu");
+    if (SELF && !mobile) { return; }                  /* 个人中心页桌面不插自链 */
+    if (visibleLogin(el)) { clearMine(el); return; }  /* 未登录 */
+    if (el.querySelector("[data-bdh-me]")) { return; }/* 已有入口 */
+
+    /* —— 已登录：补「个人中心」入口 —— */
+    var hidden = el.querySelector("[data-bdh-login]");
+    var nodes = [mkMe()];
+    if (!SELF && hidden) { nodes.push(mkOut()); }     /* 本容器有可复原的登录按钮才给「退出」 */
+
+    if (mobile) {
+      var last = hidden;
+      if (last) { for (var i = 0; i < nodes.length; i++) { last = insertAfter(last, nodes[i]); } }
+      else { for (var k = 0; k < nodes.length; k++) { el.appendChild(nodes[k]); } }
+      return;
+    }
+    var ident = el.querySelector(".u-box, .signed-user, .pc-user, .bdh-user");
+    if (!ident) {
+      ident = mkUser();
+      if (hidden && hidden.parentNode === el) { el.insertBefore(ident, hidden); }
+      else { el.insertBefore(ident, el.firstChild); }
+    }
+    var after = ident;
+    for (var j = 0; j < nodes.length; j++) { after = insertAfter(after, nodes[j]); }
+  }
+  function syncAuth() {
+    var roots = authRoots();
+    for (var i = 0; i < roots.length; i++) { syncRoot(roots[i]); }
+  }
+  window.bdhSyncAuth = syncAuth;
+
+  function hideLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-hidden", "");
+      bs[i].style.display = "none";
+    }
+  }
+  function showLogins() {
+    var bs = document.querySelectorAll("[data-bdh-login]");
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].removeAttribute("data-bdh-hidden");
+      bs[i].style.display = "";
+    }
+  }
+  /* doLogout() 会写回旧式登录按钮（.btn-login / onclick=doLogin）⇒ 归一化 */
+  function normalizeLogins() {
+    var sel = ".header-actions .btn-login,.header-actions .header-btn-login,"
+      + ".header-actions a[onclick*='doLogin'],.header-actions button[onclick*='doLogin'],"
+      + ".header-actions #login,.header-actions [onclick*='showLoginEntry']";
+    var bs = document.querySelectorAll(sel);
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].setAttribute("data-bdh-login", "");
+      bs[i].removeAttribute("onclick");
+      bs[i].classList.add("login-link");
+    }
+  }
+  function signIn() {
+    if (typeof window.doLogin === "function") { try { window.doLogin(); } catch (e) {} }
+    normalizeLogins();
+    hideLogins();
+    document.body.classList.add("bdh-signed");
+    syncAuth();
+  }
+  function signOut() {
+    if (typeof window.doLogout === "function") { try { window.doLogout(); } catch (e) {} }
+    normalizeLogins();
+    showLogins();
+    document.body.classList.remove("bdh-signed");
+    syncAuth();
+  }
+  window.bdhSignIn = signIn;
+
+  /* 包装页面自带登录/登出/重渲染：任何入口登录完都补上「个人中心」 */
+  (function () {
+    var wrap = function (name, after) {
+      var orig = window[name];
+      if (typeof orig !== "function") { return; }
+      window[name] = function () {
+        var r = orig.apply(this, arguments);
+        try { after(); } catch (e) {}
+        return r;
+      };
+    };
+    wrap("doLogin", function () {
+      normalizeLogins(); hideLogins(); document.body.classList.add("bdh-signed"); syncAuth();
+    });
+    wrap("renderAuthArea", function () { normalizeLogins(); syncAuth(); });
+    wrap("doLogout", function () {
+      normalizeLogins(); showLogins(); document.body.classList.remove("bdh-signed"); syncAuth();
+    });
+  })();
+
+  function initAuth() {
+    if (SELF) { hideLogins(); }
+    normalizeLogins();
+    syncAuth();
+  }
+
+  /* ---- 委托：登录 / 退出 / 占位提示 / 移动菜单 ---- */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var lb = t.closest("[data-bdh-login]");
+    if (lb) {
+      e.preventDefault();
+      /* 门户页把「关闭菜单」挂在 #mobileMenu 上，冒泡时先于本监听执行 ⇒
+         不能靠 .open 类判断，改看「点击是否发生在移动菜单内」，
+         登录后同步把菜单重新展开，好让用户立刻看到新出现的「个人中心」入口 */
+      var menu = document.getElementById("bdhMobileMenu") || document.getElementById("mobileMenu");
+      var inMenu = !!(menu && (menu === lb || menu.contains(lb)));
+      signIn();
+      if (inMenu && menu) {
+        setTimeout(function () {
+          menu.classList.add("open");
+          var tg = document.getElementById("bdhMenuToggle") || document.getElementById("menuToggle");
+          if (tg) { tg.setAttribute("aria-expanded", "true"); }
+        }, 0);
+      }
+      return;
+    }
+    if (t.closest("[data-bdh-logout]")) { e.preventDefault(); signOut(); return; }
+    var tt = t.closest("[data-bdh-toast]");
+    if (tt) { e.preventDefault(); bdhToast(tt.getAttribute("data-bdh-toast")); return; }
+    var m = t.closest("#bdhMenuToggle");
+    if (m) {
+      var mu = document.getElementById("bdhMobileMenu");
+      if (mu) {
+        var open = mu.classList.toggle("open");
+        m.setAttribute("aria-expanded", open ? "true" : "false");
+        m.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      }
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    var menu = document.getElementById("bdhMobileMenu");
+    var m = document.getElementById("bdhMenuToggle");
+    if (menu && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      if (m) { m.setAttribute("aria-expanded", "false"); m.focus(); }
+    }
+  });
+
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAuth); }
+  else { initAuth(); }
+})();
+</script>
+<script id="consult-portal-navigation">
+(function(){
+ const header=document.querySelector('#consultView .site-header');
+ const toggle=document.getElementById('menuToggle'),menu=document.getElementById('mobileMenu');
+ function closeMenu(){menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','打开菜单');}
+ toggle.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'关闭菜单':'打开菜单');});
+ menu.addEventListener('click',e=>{if(e.target.closest('a,button')&&!e.target.closest('[data-bdh-login],[data-bdh-logout]'))closeMenu();});
+ header.querySelectorAll('[data-consult]').forEach(button=>button.addEventListener('click',()=>{closeMenu();goToForm();}));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){closeMenu();toggle.focus();}});
+})();
+</script>
+</body></html>

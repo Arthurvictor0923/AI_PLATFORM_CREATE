@@ -479,7 +479,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     <div class="header-actions">
       <div class="autharea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
-        <button type="button" class="button button-primary" onclick="showConsultEntry()">合作咨询</button>
+        <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
       </div>
       <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -495,7 +495,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
     <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
-    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+    <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
   </div>
 </header>
 <main><section id="pending" class="pending"></section><div class="toolbar"><div class="tabs" id="tabs" aria-label="空间角色筛选"></div><input class="search" id="search" type="search" placeholder="搜索空间名称" aria-label="搜索空间名称"><label class="archive"><input id="archive" type="checkbox">已归档</label><button class="primary" id="apply">申请科研空间</button></div><div class="grid" id="cards"></div><div class="list-end" id="list-end"></div></main>
@@ -525,15 +525,10 @@ function stop(id){const s=spaces.find(x=>x.id===id);if(effectiveRole(s)!=='负�
 $('#search').oninput=e=>{query=e.target.value;spacePage=1;renderCards()};$('#archive').onchange=e=>{archived=e.target.checked;spacePage=1;renderCards()};render();
 
 function showLoginEntry(){window.bdhSignIn&&window.bdhSignIn();}
-function showConsultEntry(){portalConsult();}
-</script><style>.grid{align-items:stretch}.card{display:flex;flex-direction:column}.card-bottom{margin-top:auto;padding-top:12px}.instance-tip{font-size:12px;line-height:1.8;color:#778d80;border-radius:4px;background:#f1f6f3;padding:8px 10px;margin:8px 0 0}.instance-tip.warn{color:#9b773c;background:#fff7e9}.instance-tip.error{color:#aa6251;background:#fff2ed}.card-bottom{gap:10px}.card .actions{flex-wrap:wrap}.instance-label{font-size:12px}.card .config{line-height:1.8}.card .runtime-line{color:#83938a;font-size:12px;margin-top:7px}.card .actions button:disabled{opacity:.55;cursor:default}.card h2{line-height:1.5}.states{flex-wrap:wrap;row-gap:8px}</style>
-<script>
-const instanceKey='agri-research-instance-v7';
-spaces.forEach(s=>{s.compute={allocation:'retained',ready:s.instance==='运行中',gpu:'未配置 GPU',runtime:'Python 3.10 · PyTorch 2.2',detail:'Ubuntu 22.04 · JupyterLab 4',error:'开发环境启动失败，请联系负责人重试。'}});
-spaces.find(s=>s.id===3).state='可用';spaces.find(s=>s.id===3).instance='等待算力';spaces.find(s=>s.id===3).progress='申请已通过，等待空闲计算资源';
-spaces.find(s=>s.id===6).compute.error='开发环境启动失败，请联系空间负责人处理。';
-function stateBadge(s){return `<span class="badge ${['开通中','申请中'].includes(s.state)?'amber':s.state==='已归档'?'gray':''}">${s.state==='可用'?'研究中':s.state==='已归档'?'已结束':s.state}</span>`}
-function syncInstanceStates(){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');for(const s of spaces){if(visits[s.id]){const d=new Date(visits[s.id]);s.visit=Date.now()-visits[s.id]<60000?'刚刚':d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}}}catch{}let all={};try{all=JSON.parse(localStorage.getItem(instanceKey)||'{}')}catch{}for(const s of spaces){const x=all[s.id];if(x){s.state=x.state||s.state;s.instance=x.instance||s.instance;s.compute={...s.compute,...x.compute}}if(!['未开通','准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(s.instance))s.instance='已停止';}}
+function showConsultEntry(){
+  /* 1020：原为「待接入」占位弹窗，现接入合作咨询页 */
+  location.href="合作咨询.html";
+}function syncInstanceStates(){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');for(const s of spaces){if(visits[s.id]){const d=new Date(visits[s.id]);s.visit=Date.now()-visits[s.id]<60000?'刚刚':d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}}}catch{}let all={};try{all=JSON.parse(localStorage.getItem(instanceKey)||'{}')}catch{}for(const s of spaces){const x=all[s.id];if(x){s.state=x.state||s.state;s.instance=x.instance||s.instance;s.compute={...s.compute,...x.compute}}if(!['未开通','准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(s.instance))s.instance='已停止';}}
 function detailUrl(s,action=''){const c=s.compute||{};const params=new URLSearchParams({id:String(s.id),name:s.name,role:effectiveRole(s),state:s.state,instance:s.instance,cpu:String(s.cpu),ram:String(s.ram),storage:String(s.storage||200),runtime:c.runtime||'',environment:c.detail||'',ide:s.ide||'JupyterLab 4',model:s.model||'',image:c.image||'',systemDisk:String(c.systemDisk||0),team:s.team,allocation:c.allocation||'retained',ready:String(c.ready===true),gpu:c.gpu||'未配置 GPU',error:c.error||'',action});return '科研开发空间-详情页(9).html#'+params.toString()}
 function recordSpaceVisit(id){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');visits[id]=Date.now();localStorage.setItem('agri-space-visits',JSON.stringify(visits))}catch{}}
 function detail(id){const s=spaces.find(x=>x.id===id);recordSpaceVisit(id);location.href=detailUrl(s)}

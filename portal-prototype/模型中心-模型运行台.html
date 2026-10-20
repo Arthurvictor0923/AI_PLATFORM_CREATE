@@ -1208,7 +1208,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <div class="header-actions">
       <div class="autharea" id="authArea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
-        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+        <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
       </div>
       <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1224,7 +1224,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <a href="需求中心-高保真原型%20(1).html">需求中心</a>
     <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
-    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+    <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
   </div>
 </header>
 
@@ -1325,7 +1325,7 @@ function toast(msg){
   var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
   clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2200);
 }
-function toReg(){portalConsult();}
+function toReg(){location.href="合作咨询.html";}
 function doLogin(){
   LOGGED=true;
   document.getElementById('authArea').innerHTML='<div class="u-box">'+
@@ -1336,13 +1336,14 @@ function doLogin(){
       '<div class="u-mi" onclick="goMyCalls()">我的调用记录与密钥</div>'+
       '<div class="u-mi" onclick="goMyApply()">我的申请</div>'+
       '<div class="u-mi out" onclick="doLogout()">退出登录</div>'+
-    '</div></div>';
+    '</div></div>'+
+    '<a class="btn-brand" href="合作咨询.html" data-consult-1020>合作咨询</a>';
   renderAll();toast('已登录：'+USER_NAME+'（演示）');
 }
 function doLogout(){
   LOGGED=false;DEMO_AUTH=false;
   document.getElementById('authArea').innerHTML='<a class="header-btn-login" href="javascript:void(0)" onclick="doLogin()">登录</a>'+
-    '<a class="header-btn-register" href="javascript:void(0)" onclick="toReg()">入驻申请</a>';
+    '<a class="btn-brand" href="合作咨询.html" data-consult-1020>合作咨询</a>';
   renderAll();toast('已退出登录');
 }
 function toggleUserMenu(){var m=document.getElementById('userMenu');if(m)m.classList.toggle('open');}

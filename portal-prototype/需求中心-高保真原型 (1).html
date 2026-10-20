@@ -458,7 +458,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <div class="header-actions">
       <div class="account autharea" id="authArea">
         <button type="button" class="login-link" id="login" data-bdh-login>登录</button>
-        <button type="button" class="button button-primary" data-consult>合作咨询</button>
+        <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
       </div>
       <button type="button" class="menu-toggle" id="bdhMenuToggle" aria-expanded="false" aria-controls="bdhMobileMenu" aria-label="打开菜单">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="#263B38" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -474,7 +474,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     <a class="active" href="需求中心-高保真原型%20(1).html" aria-current="page">需求中心</a>
     <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
     <a href="javascript:void(0)" data-bdh-login>登录</a>
-    <button type="button" class="button button-primary" data-consult>合作咨询</button>
+    <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
   </div>
 </header>
 <main class="layout" id="listView"><aside class="filters"><h2 class="filter-heading">筛选</h2><div id="filterPanel"><p class="multi">支持多选</p><section class="filter-section"><button class="section-toggle" aria-expanded="true" data-collapse="directions"><span>需求方向</span><span>⌃</span></button><div class="checks" id="directions"></div></section><section class="filter-section"><button class="section-toggle" aria-expanded="true" data-collapse="services"><span>所需服务</span><span>⌃</span></button><div class="checks" id="services"></div></section></div></aside><section class="results" aria-label="需求列表"><div class="toolbar"><form class="search" id="searchForm"><div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></svg><input id="query" aria-label="搜索需求" placeholder="搜索需求名称、业务问题或服务内容" autocomplete="off"></div><button class="primary" type="submit">搜索</button></form><label class="sort"><select id="sort" aria-label="排序"><option value="new">最近更新</option><option value="old">最早更新</option></select></label><button class="primary" id="publishBtn" type="button">＋ 发布需求</button></div><div class="selected-bar" id="selectedBar" aria-label="已选筛选条件"></div><p class="count" id="count" aria-live="polite"></p><div class="cards" id="cards"></div><div class="pagination"><label>每页&nbsp; <select id="pageSize" aria-label="每页条数"><option>4</option><option selected>6</option><option>8</option></select>&nbsp; 条</label><div class="pager-right" id="pager"></div></div></section></main>
