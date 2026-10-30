@@ -7,17 +7,17 @@
 <!--
 数据中心 · 数据集详情页（魔搭式 · 2026-09-08 用户拍板"按照这个做"）
 结构对齐魔搭数据集详情页：
-  ① 面包屑 + 页头信息条：图标/名称 + 标签（专区/专题/形态）+ 提供方@ + 【更新·申请次数·规模】统计条；
-  ① 面包屑（两级：数据中心／数据名称）+ 页头信息条：图标/名称 + 标签（专区/专题/形态）+ 提供方@ + 【@提供方 | 申请 | 更新 | 规模】无框文本行 + 右侧「申请使用（科研开发空间）」；
+  ① 面包屑 + 页头信息条：图标/名称 + 标签（文件类型/标注情况）+ 提供方@ + 【更新·申请次数·规模】统计条；
+  ① 面包屑（两级：数据中心／数据名称）+ 页头信息条：图标/名称 + 标签（文件类型/标注情况）+ 提供方@ + 【@提供方 | 申请 | 更新 | 规模】无框文本行 + 右侧「申请使用（科研开发空间）」；
   ② Tab 区：数据介绍 / 数据预览（数据文件功能应收敛——数据不出域，文件结构信息并入元数据卡的数据格式/规模，不再单独提供下载/文件Tab）；
   ③ 左主列 README 式：文档标题 + Abstract + 形态角色；预览（表格/影像）；
   ④ 右信息栏：数据卡元数据（仅核心：名称/所属专题/数据形态/作物类型/数据年份；提供方顶部已展示、不设数据格式）+ 红线；
-  ⑤ 底部无独立区块（"收录本数据集的合集"已去掉；所属专题已在页头标签与元数据卡展示）。
+  ⑤ 底部无独立区块（"收录本数据集的合集"已去掉；所属专题已在元数据卡展示）。
 数据驱动：列表任一张单类卡 ?n=名称 进入渲染。单类卡=申请/授权最小单元。皮肤 V7。
 数据形态轴（字典共 8 值，⭐0910 重新界定）：A 单类=地面实测/无人机影像/卫星影像/遥感反演产品/遥感解译产品/业务申报数据；B 聚合=栅格影像合集/结构化表。合集=同质数据的可申请单类数据卡(如 1000 景栅格合集，form=栅格影像合集)；关联=两个合集之间的外键连接说明(如 地块编码+年份)，仅做只读说明提醒，由用户在科研开发空间(科研开发空间)自行按连接键组合，数据中心不做目录 join、不提供联合分析入口。消费视图：geo→富文本+「进入影像查询」；非geo→结构化表部分展示(富文本，无"查看数据样例"按钮)。
 
 === ⭐2026-09-15 变更（按《看板取数溯源与业务闭环检查》断点清单，只改断点涉及条目，未动皮肤）===
-  ① 【断点 B8 · 区域】详情页新增「区域（行政区划）」：页头标签 + 元数据卡行。
+  ① 【断点 B8 · 区域】详情页新增「区域（行政区划）」：元数据卡行。
      此前详情页无该字段，而列表页已有「区域」筛选维度 → 详情页与筛选维度不一致。
      取值规则：ZONE_REGION（按专题分区）→ CATALOG_REGION（公共数据按条目）→ '全域'。
      口径依据：0910 拍板"后台上架数据时必须界定数据的区域（行政区划）"，字典由后台「参数与字典」维护。
@@ -716,7 +716,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 })();
 </script>
 <style id="dataset-detail-alignment">
-.head-right .btn-query,.head-right .btn-apply{width:132px;min-height:40px;justify-content:center}.btn-query{display:inline-flex;align-items:center;border:1px solid var(--brand);border-radius:4px;padding:0 16px;background:white;color:var(--brand);font-size:14px}.btn-query:disabled{border-color:#dbe4df;color:#94a49b;background:#f6f8f6;cursor:not-allowed}.outcome-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;line-height:22px;padding:0 8px;margin-top:7px;border:1px solid #dce8cd;border-radius:4px;background:#edf4e5;color:#426321}.tag.technical{background:#f2f5f3;color:#65796d}.meta-card .kv .v{overflow-wrap:anywhere}.head-tags .tag{height:auto;min-height:24px;white-space:normal}.head-top h1{flex:1;min-width:0}.head-right{max-width:220px}.form-readonly{overflow-wrap:anywhere}@media(max-width:700px){.head-right{max-width:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}.head-right .btn-query,.head-right .btn-apply{flex:1;width:auto}.head-right .authorize-note{width:100%;text-align:left;white-space:normal}.summary .head-top h1{font-size:22px}}
+.head-right .btn-query,.head-right .btn-apply{width:132px;min-height:40px;justify-content:center}.btn-query{display:inline-flex;align-items:center;border:1px solid var(--brand);border-radius:4px;padding:0 16px;background:white;color:var(--brand);font-size:14px}.btn-query:disabled{border-color:#dbe4df;color:#94a49b;background:#f6f8f6;cursor:not-allowed}.tag.technical{background:#f2f5f3;color:#65796d}.meta-card .kv .v{overflow-wrap:anywhere}.head-tags .tag{height:auto;min-height:24px;white-space:normal}.head-top h1{flex:1;min-width:0}.head-right{max-width:220px}.form-readonly{overflow-wrap:anywhere}@media(max-width:700px){.head-right{max-width:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}.head-right .btn-query,.head-right .btn-apply{flex:1;width:auto}.head-right .authorize-note{width:100%;text-align:left;white-space:normal}.summary .head-top h1{font-size:22px}}
 </style><script src="assets/portal-org.js"></script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
 <style>/* 1030-fix:autharea-narrow */
@@ -1349,10 +1349,9 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       /* ⭐0917 摘要卡左侧＝缩略图（形态随数据形态变化），对齐示意图；降级态退回浅绿底线框图 */
       headThumbHtml(d)+
       '<div class="head-left">'+
-        '<div class="head-top"><h1>'+d.name+'</h1>'+(d.dataKind==='成果数据'?'<span class="outcome-badge">成果数据</span>':'')+'</div>'+
+        '<div class="head-top"><h1>'+d.name+'</h1></div>'+
         (d.desc?'<p class="head-desc">'+d.desc+'</p>':'')+
         '<div class="head-tags">'+
-          d.researchDirections.map(function(v){return '<span class="tag">'+v+'</span>';}).join('')+
           d.format.map(function(v){return '<span class="tag technical">'+v+'</span>';}).join('')+
           '<span class="tag technical">'+d.annotation+'</span>'+
         '</div>'+
