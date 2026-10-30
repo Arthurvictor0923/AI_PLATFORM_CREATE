@@ -809,6 +809,10 @@ SOFTWARE.
 -->
 <style id="research-directions-style">[data-group="direction"] .rf-options{max-height:none;overflow:visible}.ds-card{height:344px;grid-template-rows:44px 104px 92px 34px}.ds-card .ds-fields{height:92px}.ds-fields .research-field{margin-top:auto}.research-field .k{flex-shrink:0}.research-field .vv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.ds-card .region-field{min-height:36px!important}@media(max-width:700px){.ds-card{height:388px;grid-template-rows:44px 104px 104px 66px}.ds-card .ds-fields{height:104px}}</style><script src="assets/portal-org.js"></script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<style>/* 1030-fix:autharea-narrow */
+/* 统一登录态把「登录/合作咨询」包进 .autharea(flex)，窄屏下它与汉堡按钮并存会把页头撑出横向滚动条；移动端这两项在汉堡菜单内已有，故此处整体收起。 */
+@media (max-width:767px){header.site-header .header-actions .autharea{ display:none !important; }}
+</style>
 </head>
 <body data-page-node-id="d7Y2HJhz2sd86AKBNF7Ix2">
 

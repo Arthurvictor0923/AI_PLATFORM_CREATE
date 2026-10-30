@@ -719,6 +719,10 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 .head-right .btn-query,.head-right .btn-apply{width:132px;min-height:40px;justify-content:center}.btn-query{display:inline-flex;align-items:center;border:1px solid var(--brand);border-radius:4px;padding:0 16px;background:white;color:var(--brand);font-size:14px}.btn-query:disabled{border-color:#dbe4df;color:#94a49b;background:#f6f8f6;cursor:not-allowed}.outcome-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:12px;line-height:22px;padding:0 8px;margin-top:7px;border:1px solid #dce8cd;border-radius:4px;background:#edf4e5;color:#426321}.tag.technical{background:#f2f5f3;color:#65796d}.meta-card .kv .v{overflow-wrap:anywhere}.head-tags .tag{height:auto;min-height:24px;white-space:normal}.head-top h1{flex:1;min-width:0}.head-right{max-width:220px}.form-readonly{overflow-wrap:anywhere}@media(max-width:700px){.head-right{max-width:none;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}.head-right .btn-query,.head-right .btn-apply{flex:1;width:auto}.head-right .authorize-note{width:100%;text-align:left;white-space:normal}.summary .head-top h1{font-size:22px}}
 </style><script src="assets/portal-org.js"></script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<style>/* 1030-fix:autharea-narrow */
+/* 统一登录态把「登录/合作咨询」包进 .autharea(flex)，窄屏下它与汉堡按钮并存会把页头撑出横向滚动条；移动端这两项在汉堡菜单内已有，故此处整体收起。 */
+@media (max-width:767px){header.site-header .header-actions .autharea{ display:none !important; }}
+</style>
 </head>
 <body>
 <header class="site-header">

@@ -100,7 +100,7 @@
       window.render();
     }
     if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
-      const id=new URLSearchParams(location.search).get('id')||'1';
+      const id=(new URLSearchParams(location.search).get('id')||new URLSearchParams(location.hash.replace(/^#/,'')).get('id')||'1');
       if(!O.canViewSpace(id)){
         const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
         ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});

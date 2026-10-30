@@ -458,7 +458,95 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 footer .links a{color:inherit;text-decoration:none}
 footer .links a:hover{color:#fff;text-decoration:underline}
 </style>
-<style>.environment-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:16px}.environment-select-grid label{min-width:0}[hidden]{display:none!important}@media(max-width:600px){.environment-select-grid{grid-template-columns:1fr}}</style><script src="assets/portal-org.js"></script>
+<style>.environment-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:16px}.environment-select-grid label{min-width:0}[hidden]{display:none!important}@media(max-width:600px){.environment-select-grid{grid-template-columns:1fr}}</style><script data-inline-source="portal-org.js">
+/* 2026-10-14: local prototype data. Production identity and authorization require server checks. */
+(function () {
+  'use strict';
+  const KEY = 'bdh-owner-teams-20261014', SESSION = 'bdh-portal-account-20261014';
+  const org = '黑龙江省农业科学院';
+  const adminDemo = {id:'u-admin',name:'平台管理员',login:'admin.demo',kind:'admin',orgId:'org-platform',org:'平台管理',ownerId:null,permissions:['dashboard:view']};
+  const seed = {
+    schema: 1,
+    accounts: [
+      adminDemo,
+      {id:'u-zhang',name:'张研究员',login:'zhang.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-li',name:'李晓',login:'li.xiao',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-wang',name:'王宁',login:'wang.ning',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-zhao',name:'赵晨',login:'zhao.chen',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-chen',name:'陈老师',login:'chen.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-sun',name:'孙悦',login:'sun.yue',kind:'member',orgId:'org-hla',org,ownerId:'u-chen'},
+      {id:'u-liu',name:'刘老师',login:'liu.research',kind:'leader',orgId:'org-hla',org,ownerId:null}
+    ],
+    teams: [
+      {id:'t-rice',name:'寒地水稻研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'多源遥感与作物监测方法研究',memberIds:['u-zhang','u-li','u-wang'],spaceIds:['1','2','5','7']},
+      {id:'t-disaster',name:'农业灾害研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'农田旱情与土壤墒情研究',memberIds:['u-zhang','u-li'],spaceIds:['3','4']},
+      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun','u-zhang'],spaceIds:['6']}
+    ],
+    invitations: []
+  };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  function read() {try {const s=JSON.parse(localStorage.getItem(KEY));if(s?.schema===1&&Array.isArray(s.accounts)&&Array.isArray(s.teams))return s;}catch{}return clone(seed);}
+  function save(s) {try {localStorage.setItem(KEY,JSON.stringify(s));}catch {throw Error('保存失败，请检查浏览器存储后重试。');}window.dispatchEvent(new CustomEvent('portal-org-change'));}
+  if(!localStorage.getItem(KEY))save(clone(seed));
+  const existing=read();if(!existing.accounts.some(a=>a.id===adminDemo.id)){existing.accounts.push(clone(adminDemo));save(existing);}
+  function current() {const s=read();return s.accounts.find(a=>a.id===localStorage.getItem(SESSION))||s.accounts.find(a=>a.id==='u-zhang')||s.accounts[0];}
+  const newId = p => p+'-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  function leader() {const a=current();if(a.kind!=='leader')throw Error('仅负责人可以管理成员账号和创建团队。');return a;}
+  function managedTeam(s,id) {const t=s.teams.find(t=>t.id===id);if(!t||t.ownerId!==current().id)throw Error('仅当前团队负责人可以管理该团队。');return t;}
+  function memberEligible(t,a) {return !!a&&a.orgId===t.orgId&&a.kind==='member'&&a.ownerId===t.ownerId;}
+  const O = window.PortalOrg = {
+    KEY, SESSION, read, current,
+    isLogged:()=>!!localStorage.getItem(SESSION),
+    signOut:()=>{localStorage.removeItem(SESSION);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    account:id=>read().accounts.find(a=>a.id===id),
+    team:id=>read().teams.find(t=>t.id===id),
+    isLeader:()=>current().kind==='leader',
+    canViewDashboard:()=>!!localStorage.getItem(SESSION)&&current().kind==='admin'&&current().permissions?.includes('dashboard:view'),
+    roleLabel:a=>a.kind==='admin'?'管理员':a.kind==='leader'?'负责人':'成员',
+    myTeams:()=>read().teams.filter(t=>t.memberIds.includes(current().id)),
+    managedAccounts:()=>read().accounts.filter(a=>a.kind==='member'&&a.ownerId===current().id),
+    canViewTeam:id=>!!read().teams.find(t=>t.id===id&&t.memberIds.includes(current().id)),
+    canManageTeam:id=>!!read().teams.find(t=>t.id===id&&t.ownerId===current().id),
+    spaceTeam:id=>read().teams.find(t=>(t.spaceIds||[]).includes(String(id))),
+    spaceMembers(id) {const s=read(),t=this.spaceTeam(id);return t?t.memberIds.filter(a=>(s.spaceMembers?.[String(id)]||t.memberIds).includes(a)):[];},
+    canViewSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canViewTeam(t.id)&&this.spaceMembers(id).includes(current().id);},
+    setSpaceMembers(id,ids) {const s=read(),t=this.spaceTeam(id);if(!t||!this.canManageSpace(id))throw Error('仅本团队负责人可以管理空间成员。');if(ids.some(a=>!t.memberIds.includes(a)))throw Error('只能选择当前团队成员。');s.spaceMembers??={};s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];save(s);},
+    canManageSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canManageTeam(t.id);},
+    select(id) {if(!read().accounts.some(a=>a.id===id))throw Error('账号不存在。');localStorage.setItem(SESSION,id);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    createMember(fields) {
+      const a=leader(),s=read(),name=String(fields.name||'').trim(),login=String(fields.login||'').trim();
+      if(!name||!login)throw Error('请填写姓名和登录账号。');
+      if(/\s/.test(login))throw Error('登录账号不能包含空格。');
+      if(s.accounts.some(x=>x.login.toLowerCase()===login.toLowerCase()))throw Error('登录账号已存在，请使用其他账号；已有成员无需重复创建。');
+      if(!String(fields.password||'').trim())throw Error('请填写初始密码。');
+      const member={id:newId('u'),name,login,kind:'member',orgId:a.orgId,org:a.org,ownerId:a.id};
+      s.accounts.push(member);save(s);return member; // Password is deliberately not stored by this prototype.
+    },
+    updateProfile(name) {const s=read(),a=s.accounts.find(x=>x.id===current().id);if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    editMember(id,name) {leader();const s=read(),a=s.accounts.find(a=>a.id===id&&a.ownerId===current().id&&a.kind==='member');if(!a)throw Error('只能维护自己关联的成员账号。');if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    createTeam(fields) {const a=leader(),s=read(),name=String(fields.name||'').trim();if(!name)throw Error('请填写团队名称。');const t={id:newId('t'),name,description:String(fields.description||'').trim(),orgId:a.orgId,org:a.org,ownerId:a.id,memberIds:[a.id],spaceIds:[]};s.teams.push(t);save(s);return t;},
+    addMembers(id,ids) {const s=read(),t=managedTeam(s,id);if(!ids.length)throw Error('请选择要添加的成员。');if(ids.some(id=>!memberEligible(t,s.accounts.find(a=>a.id===id))))throw Error('只能添加本机构且归属当前负责人的普通成员。');t.memberIds=[...new Set([...t.memberIds,...ids])];save(s);},
+    removeMember(id,accountId) {const s=read(),t=managedTeam(s,id);if(accountId===t.ownerId)throw Error('不能移除团队负责人。');t.memberIds=t.memberIds.filter(x=>x!==accountId);save(s);},
+    invite(id,accountId) {
+      const s=read(),t=managedTeam(s,id),a=s.accounts.find(a=>a.id===accountId);
+      if(!a||a.kind!=='leader'||a.orgId!==t.orgId||a.id===current().id)throw Error('只能邀请本机构已有的独立负责人。');
+      if(t.memberIds.includes(a.id))throw Error('该负责人已加入当前团队。');
+      if(s.invitations.some(i=>i.teamId===id&&i.to===accountId&&i.status==='pending'))throw Error('邀请已发出，请等待对方回应。');
+      const i={id:newId('inv'),teamId:id,from:current().id,to:accountId,status:'pending',time:new Date().toLocaleString('zh-CN')};s.invitations.push(i);save(s);return i;
+    },
+    answer(id,decision) {
+      const s=read(),i=s.invitations.find(x=>x.id===id),a=current();if(!i||i.to!==a.id||i.status!=='pending')throw Error('该邀请已处理或不属于当前账号。');
+      if(!['accepted','declined'].includes(decision))throw Error('无效操作。');
+      const t=s.teams.find(t=>t.id===i.teamId);if(!t||a.kind!=='leader'||a.orgId!==t.orgId)throw Error('当前账号不符合团队邀请条件。');
+      if(decision==='accepted')t.memberIds=[...new Set([...t.memberIds,a.id])];i.status=decision;i.processedAt=new Date().toISOString();save(s);
+    },
+    cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
+    escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+  };
+  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+})();
+
+</script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
 </head><body>
 <header class="site-header">
@@ -498,7 +586,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
   </div>
 </header>
-<main><section id="pending" class="pending"></section><div class="toolbar"><div class="tabs" id="tabs" aria-label="空间角色筛选"></div><input class="search" id="search" type="search" placeholder="搜索空间名称" aria-label="搜索空间名称"><label class="archive"><input id="archive" type="checkbox">已归档</label><button class="primary" id="apply">申请科研空间</button></div><div class="grid" id="cards"></div><div class="list-end" id="list-end"></div></main>
+<main><div class="workspace-heading"><h1>科研开发空间</h1><p>进入团队科研空间，开展开发调试与成果提交。</p></div><div class="toolbar"><div class="tabs" id="tabs" aria-label="空间角色筛选"></div><input class="search" id="search" type="search" placeholder="搜索空间名称" aria-label="搜索空间名称"><label class="archive"><input id="archive" type="checkbox">已归档</label><button class="primary" id="apply">申请科研空间</button></div><div class="grid" id="cards"></div><div class="list-end" id="list-end"></div></main>
 <footer><div class="footer-inner"><div><div class="footer-brand"><i class="leaf"></i>北大荒智慧农业协同创新平台</div><p>汇聚农业数据，支撑科研创新</p></div><div><h3>平台资源</h3><div class="links"><a href="数据中心-数据集列表页.html">数据中心</a><a href="模型中心-模型列表页（调整）.html">模型中心</a><a href="科研开发空间-交互原型(10).html">科研开发空间</a></div></div><div><h3>关于平台</h3><div class="links"><a href="关于平台-平台介绍.html">平台介绍</a><a href="关于平台-联系支持.html">联系我们</a></div></div><div class="slogan">耕耘数据沃土<br>共建智慧农业</div></div><div class="copyright">智慧农业平台 · 科研开发空间</div></footer>
 <dialog id="modal"><div class="modal-head"><h2 id="modal-title"></h2><button class="close" aria-label="关闭">×</button></div><div id="modal-content"></div></dialog><div id="toast" class="toast hidden" role="status"></div>
 <script>
@@ -511,14 +599,12 @@ const initialSpaces=[
 {id:5,name:'作物分类精度验证',role:'负责人',desc:'开展多源遥感作物分类精度评价',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'成果文件已提交',visit:'09-15 17:50',team:'作物遥感研究团队'},
 {id:6,name:'冬小麦估产验证研究',role:'成员',desc:'开展冬小麦区域估产模型验证',state:'可用',instance:'异常',cpu:4,ram:16,progress:'实例启动失败，待负责人处理',visit:'09-14 10:00',team:'粮食产量研究团队'},
 {id:7,name:'2025年水稻物候研究',role:'成员',desc:'开展水稻物候识别与时序分析',state:'已归档',instance:'已停止',cpu:4,ram:16,progress:'研究已完成，成果已发布',visit:'08-20 10:30',team:'作物遥感研究团队'}];
-const initialTodos=[['小麦单产估测','空间申请待修改','请补充研究范围','09-18 09:20'],['玉米产量预测','空间申请待修改','请完善研究用途','09-16 11:30']].map((r,i)=>({id:i+1,name:r[0],type:r[1],feedback:r[2],time:r[3]}));
-let spaces=structuredClone(initialSpaces),todos=structuredClone(initialTodos),expanded=false,page=1,todoSize=5,spacePage=1,pageSize=6,role='全部',query='',archived=false,permission='owner';
-function renderPending(){const visible=permission==='member'?[]:todos;$('#pending').classList.toggle('hidden',!visible.length);if(!visible.length)return;page=Math.min(page,Math.ceil(visible.length/todoSize));const applications=visible.filter(t=>t.type==='空间申请待修改').length;$('#pending').innerHTML=`<button class="pending-head" id="toggle" aria-expanded="${expanded}" aria-controls="todo-list"><span>◷</span><strong>待我处理</strong><span class="count">${visible.length}</span><span class="summary">空间申请待修改 ${applications}</span><span class="right">${expanded?'收起 ⌃':'展开 ⌄'}</span></button>${expanded?`<div id="todo-list"><div class="table-wrap"><table><thead><tr><th>所属空间</th><th>待办事项</th><th>反馈摘要</th><th>收到时间</th><th>操作</th></tr></thead><tbody>${visible.slice((page-1)*todoSize,page*todoSize).map(t=>`<tr><td>${esc(t.name)}</td><td>${t.type}</td><td title="${esc(t.feedback)}">${esc(t.feedback)}</td><td>${t.time}</td><td><button class="link" data-task="${t.id}">修改申请</button></td></tr>`).join('')}</tbody></table></div>${visible.length?`<div class="pagination"><span>共 ${visible.length} 条</span><label class="page-size">每页 <select id="todo-size" aria-label="待办每页条数">${[5,10,20].map(n=>`<option value="${n}" ${n===todoSize?'selected':''}>${n} 条</option>`).join('')}</select></label><div class="pages"><button id="prev" ${page===1?'disabled':''}>上一页</button><span>${page} / ${Math.ceil(visible.length/todoSize)}</span><button id="next" ${page===Math.ceil(visible.length/todoSize)?'disabled':''}>下一页</button></div></div>`:''}</div>`:''}`;$('#todo-size')?.addEventListener('change',e=>{todoSize=+e.target.value;page=1;renderPending()});$('#toggle').onclick=()=>{expanded=!expanded;renderPending()};$('#prev')?.addEventListener('click',()=>{page--;renderPending()});$('#next')?.addEventListener('click',()=>{page++;renderPending()});document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>task(+b.dataset.task))}
-function effectiveRole(s){return permission==='member'?'成员':s.role}function stateBadge(s){return `<span class="badge ${['开通中','申请中'].includes(s.state)?'amber':s.state==='已归档'?'gray':''}">${s.state}</span>`}function renderCards(){const base=spaces.filter(s=>(s.state==='已归档')===archived);$('#tabs').innerHTML=['全部','我负责的','我参与的'].map(r=>`<button data-role="${r}" class="${role===r?'selected':''}" aria-pressed="${role===r}">${r}<small>${base.filter(s=>r==='全部'||effectiveRole(s)===(r==='我负责的'?'负责人':'成员')).length}</small></button>`).join('');const filtered=base.filter(s=>(role==='全部'||effectiveRole(s)===(role==='我负责的'?'负责人':'成员'))&&s.name.toLowerCase().includes(query.toLowerCase()));spacePage=Math.max(1,Math.min(spacePage,Math.ceil(filtered.length/pageSize)));$('#cards').innerHTML=filtered.length?filtered.slice((spacePage-1)*pageSize,spacePage*pageSize).map(s=>`<article class="card"><div class="card-title"><h2>${esc(s.name)}</h2><span class="role ${effectiveRole(s)==='成员'?'member':''}">${effectiveRole(s)}</span></div><p class="description">${esc(s.desc)}</p><div class="states"><span><span class="label">空间状态</span>${stateBadge(s)}</span><span><span class="label">实例状态</span><i class="dot ${s.instance==='运行中'?'running':''}"></i>${s.instance}</span></div><div class="line config"><span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 <small>（成员共享）</small></div><div class="card-bottom"><span class="visit">最近访问：${s.visit}</span><div class="actions">${['开通中','申请中'].includes(s.state)?`<button class="outline" data-progress="${s.id}">查看申请进度</button>`:`<button class="primary" data-space="${s.id}">进入空间</button>${s.instance==='运行中'&&s.state==='可用'?`<button class="outline" data-env="${s.id}">进入开发环境</button>`:''}`}</div></div></article>`).join(''):'<div class="empty"><strong>暂无符合条件的科研空间</strong>试试其他角色、名称或归档条件。</div>';$('#list-end').innerHTML=filtered.length?`<span>共 ${filtered.length} 个空间</span><label class="page-size">每页 <select id="space-size" aria-label="空间每页条数">${[3,6,9,12].map(n=>`<option value="${n}" ${n===pageSize?'selected':''}>${n} 条</option>`).join('')}</select></label><button id=space-prev ${spacePage===1?'disabled':''}>上一页</button><span>${spacePage} / ${Math.ceil(filtered.length/pageSize)}</span><button id=space-next ${spacePage===Math.ceil(filtered.length/pageSize)?'disabled':''}>下一页</button>`:'';$('#space-size')?.addEventListener('change',e=>{pageSize=+e.target.value;spacePage=1;renderCards()});$('#space-prev')?.addEventListener('click',()=>{spacePage--;renderCards()});$('#space-next')?.addEventListener('click',()=>{spacePage++;renderCards()});document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;spacePage=1;renderCards()});document.querySelectorAll('[data-space]').forEach(b=>b.onclick=()=>detail(+b.dataset.space));document.querySelectorAll('[data-env]').forEach(b=>b.onclick=()=>environment(+b.dataset.env));document.querySelectorAll('[data-progress]').forEach(b=>b.onclick=()=>progress(+b.dataset.progress));$('#apply').hidden=permission==='member'}
-function render(){renderPending();renderCards()}const modal=$('#modal');function open(title,body){$('#modal-title').textContent=title;$('#modal-content').innerHTML=body;if(!modal.open)modal.showModal()}function closeModal(){modal.close()}$('.close').onclick=closeModal;modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});let timer;function toast(text){$('#toast').textContent=text;$('#toast').classList.remove('hidden');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.add('hidden'),3200)}function footer(action='确认'){return `<div class="modal-footer"><button type="button" onclick="closeModal()">取消</button><button class="primary" type="submit">${action}</button></div>`}
-function task(id){const t=todos.find(x=>x.id===id);open('修改科研空间申请',`<form id="task-form"><div class="modal-body"><div class="feedback"><strong>空间申请审批意见 · ${t.time}</strong><br>${esc(t.feedback)}</div><label>所属空间<input value="${esc(t.name)}" readonly></label><label>研究用途<textarea name="purpose" required>开展${esc(t.name)}与精度验证，为农业监测提供研究支撑。</textarea></label><label>研究范围<textarea name="scope" required placeholder="请补充区域、作物及研究时段"></textarea></label><p class="hint">重新提交后由同一级审批人处理；关闭或仅查看不会清除待办。</p></div>${footer('重新提交')}</form>`);$('#task-form').onsubmit=e=>{e.preventDefault();todos=todos.filter(x=>x.id!==id);closeModal();renderPending();toast('空间申请已重新提交；待办数量已更新（演示）')}}
-function apply(){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('科研空间和算力由负责人申请。');return;}open('申请科研空间',`<form id="apply-form"><div class="modal-body"><label>空间名称<input name="name" required maxlength="32" placeholder="请输入科研空间名称"></label><label>所属团队<select name="team"><option>作物遥感研究团队</option><option>农业灾害研究团队</option></select></label><label>研究用途<textarea name="purpose" required placeholder="简要说明研究目标与范围"></textarea></label><label>初始模型<select name="model"><option>水稻倒伏识别模型</option><option>作物长势监测模型</option><option>农业干旱识别模型</option></select></label><label>实例配置<select name="spec"><option value="4">4 核 CPU / 16 GB 内存</option><option value="8">8 核 CPU / 32 GB 内存</option></select></label><p class="hint">一个空间对应一个实例，成员共享算力与存储。申请人默认成为空间负责人。</p></div>${footer('提交申请')}</form>`);$('#apply-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);spaces.unshift({id:Date.now(),name:f.get('name').trim()||'新科研空间',role:'负责人',desc:f.get('purpose'),state:'申请中',instance:'未开通',cpu:+f.get('spec'),ram:+f.get('spec')*4,progress:'申请已提交，待审核',visit:'刚刚',team:f.get('team')});archived=false;$('#archive').checked=false;query='';$('#search').value='';role='全部';closeModal();render();toast('申请已提交，等待审核（演示）')}}$('#apply').onclick=apply;
-function progress(id){const s=spaces.find(x=>x.id===id);open('申请进度',`<div class="modal-body"><h3>${esc(s.name)}</h3><div class="detail-section"><p>✓ 申请已提交</p><p>${s.progress.includes('待审核')?'◷ 业务审核中':'✓ 审核已通过'}</p><p class="hint">◷ 实例开通${s.progress.includes('待审核')?'（审核通过后进行）':'中'}</p></div><p class="hint">开通完成后可进入空间。实例未开通时不提供开发环境入口。</p></div><div class="modal-footer"><button onclick="closeModal()">关闭</button></div>`)}
+let spaces=structuredClone(initialSpaces),spacePage=1,pageSize=6,role='全部',query='',archived=false,permission='owner';
+const instanceKey='agri-research-instance-v7';
+function effectiveRole(s){return permission==='member'?'成员':s.role}function stateBadge(s){return `<span class="badge ${['开通中','申请中'].includes(s.state)?'amber':s.state==='已归档'?'gray':''}">${s.state}</span>`}function renderCards(){const base=spaces.filter(s=>['可用','开通中','已归档'].includes(s.state)&&(s.state==='已归档')===archived);$('#tabs').innerHTML=['全部','我负责的','我参与的'].map(r=>`<button data-role="${r}" class="${role===r?'selected':''}" aria-pressed="${role===r}">${r}<small>${base.filter(s=>r==='全部'||effectiveRole(s)===(r==='我负责的'?'负责人':'成员')).length}</small></button>`).join('');const filtered=base.filter(s=>(role==='全部'||effectiveRole(s)===(role==='我负责的'?'负责人':'成员'))&&s.name.toLowerCase().includes(query.toLowerCase()));spacePage=Math.max(1,Math.min(spacePage,Math.ceil(filtered.length/pageSize)));$('#cards').innerHTML=filtered.length?filtered.slice((spacePage-1)*pageSize,spacePage*pageSize).map(s=>`<article class="card"><div class="card-title"><h2>${esc(s.name)}</h2><span class="role ${effectiveRole(s)==='成员'?'member':''}">${effectiveRole(s)}</span></div><p class="description">${esc(s.desc)}</p><div class="states"><span><span class="label">空间状态</span>${stateBadge(s)}</span><span><span class="label">实例状态</span><i class="dot ${s.instance==='运行中'?'running':''}"></i>${s.instance}</span></div><div class="line config"><span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 / ${s.storage||200} GB 存储 <small>（成员共享）</small></div><div class="card-bottom"><span class="visit">最近访问：${s.visit}</span><div class="actions">${s.state==='开通中'?`<button class="outline" data-provision="${s.id}" disabled>开通中</button>`:`<button class="primary" data-space="${s.id}">进入空间</button>${s.instance==='运行中'&&s.state==='可用'?`<button class="outline" data-env="${s.id}">进入开发环境</button>`:''}`}</div></div></article>`).join(''):'<div class="empty"><strong>暂无符合条件的科研空间</strong>试试其他角色、名称或归档条件。</div>';$('#list-end').innerHTML=filtered.length?`<span>共 ${filtered.length} 个空间</span><label class="page-size">每页 <select id="space-size" aria-label="空间每页条数">${[3,6,9,12].map(n=>`<option value="${n}" ${n===pageSize?'selected':''}>${n} 条</option>`).join('')}</select></label><button id=space-prev ${spacePage===1?'disabled':''}>上一页</button><span>${spacePage} / ${Math.ceil(filtered.length/pageSize)}</span><button id=space-next ${spacePage===Math.ceil(filtered.length/pageSize)?'disabled':''}>下一页</button>`:'';$('#space-size')?.addEventListener('change',e=>{pageSize=+e.target.value;spacePage=1;renderCards()});$('#space-prev')?.addEventListener('click',()=>{spacePage--;renderCards()});$('#space-next')?.addEventListener('click',()=>{spacePage++;renderCards()});document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;spacePage=1;renderCards()});document.querySelectorAll('[data-space]').forEach(b=>b.onclick=()=>detail(+b.dataset.space));document.querySelectorAll('[data-env]').forEach(b=>b.onclick=()=>environment(+b.dataset.env));$('#apply').hidden=permission==='member'}
+function render(){renderCards()}const modal=$('#modal');function open(title,body){$('#modal-title').textContent=title;$('#modal-content').innerHTML=body;if(!modal.open)modal.showModal()}function closeModal(){modal.close()}$('.close').onclick=closeModal;modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});let timer;function toast(text){$('#toast').textContent=text;$('#toast').classList.remove('hidden');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.add('hidden'),3200)}function footer(action='确认'){return `<div class="modal-footer"><button type="button" onclick="closeModal()">取消</button><button class="primary" type="submit">${action}</button></div>`}
+function apply(){window.SpaceRequests?.showForm()}
+$('#apply').onclick=apply;
 function detail(id){const s=spaces.find(x=>x.id===id),owner=effectiveRole(s)==='负责人',usable=s.state==='可用';s.visit='刚刚';renderCards();open(s.name,`<div class="modal-body"><p class="hint">${esc(s.team)} · 我的角色：${effectiveRole(s)} · 空间状态：${s.state}</p><div class="detail-section"><h3>开发实例</h3><div class="detail-grid"><span><span class="label">实例状态</span>${s.instance}</span><span><span class="label">实例配置</span>${s.cpu} 核 / ${s.ram} GB</span></div><p class="hint">成员共享此实例的算力；共享存储独立保留。</p>${usable?`<div class="actions">${s.instance==='运行中'?`<button class="primary" onclick="environment(${id})">进入开发环境</button>${owner?`<button onclick="stop(${id})">停止实例</button>`:''}`:owner?`<button class="primary" onclick="start(${id})">${s.instance==='异常'?'重试启动':'启动实例'}</button>`:`<span class="hint">${s.instance==='异常'?'实例异常':'实例未启动'}，请联系负责人。</span>`}</div>`:'<p class="hint">空间已归档，文件与提交记录只读，不可启动实例。</p>'}</div><div class="detail-section"><h3>研究文件 <span class="role">团队共享</span></h3><p class="hint">共享存储：36 GB / 200 GB</p><div class="file"><span>▱ research /</span><span class="hint">成员实验目录</span></div><div class="file"><span>▱ results /</span><span class="hint">共享成果目录</span></div><div class="file"><span>▤ README.md</span><span class="hint">研究说明</span></div></div><div class="detail-section"><h3>成果与提交记录</h3><div class="file"><span>阶段成果 V1.0</span><span class="badge">${s.state==='已归档'?'已发布':'已提交'}</span></div><p class="hint">提交内容：模型文件与研究说明 · 版本：V1.0</p></div><p class="hint">此处为列表入口的交互落点示例，开发环境不连接真实 Notebook。</p></div><div class="modal-footer"><button onclick="closeModal()">返回列表</button></div>`)}
 function environment(id){const s=spaces.find(x=>x.id===id);if(s.instance!=='运行中'||s.state!=='可用')return;open('进入开发环境',`<div class="modal-body"><div class="detail-section"><h3>${esc(s.name)}</h3><p><span class="dot running"></span>实例运行中 · ${s.cpu} 核 CPU / ${s.ram} GB 内存</p><p>成员共享实例，在各自目录打开 Notebook 开展研究。</p></div><p class="hint">当前为原型演示。正式系统将携带当前用户身份打开已授权的 Notebook 工作界面。</p></div><div class="modal-footer"><button onclick="detail(${id})">查看空间</button><button class="primary" onclick="closeModal()">知道了</button></div>`)}
 function stop(id){const s=spaces.find(x=>x.id===id);if(effectiveRole(s)!=='负责人')return;open('停止实例',`<div class="modal-body"><div class="feedback">停止后将中断团队正在运行的任务，请确认成员已保存工作。</div><p>停止实例后，共享文件和成果记录继续保留。</p></div><div class="modal-footer"><button onclick="detail(${id})">取消</button><button class="primary" id="confirm-stop">确认停止</button></div>`);$('#confirm-stop').onclick=()=>{s.instance='已停止';detail(id);toast('实例已停止（演示）')}}function start(id){const s=spaces.find(x=>x.id===id);if(effectiveRole(s)!=='负责人'||s.state!=='可用')return;s.instance='运行中';detail(id);toast('实例已启动（演示）')}
@@ -529,11 +615,11 @@ function showConsultEntry(){
   /* 1020：原为「待接入」占位弹窗，现接入合作咨询页 */
   location.href="合作咨询.html";
 }function syncInstanceStates(){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');for(const s of spaces){if(visits[s.id]){const d=new Date(visits[s.id]);s.visit=Date.now()-visits[s.id]<60000?'刚刚':d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}}}catch{}let all={};try{all=JSON.parse(localStorage.getItem(instanceKey)||'{}')}catch{}for(const s of spaces){const x=all[s.id];if(x){s.state=x.state||s.state;s.instance=x.instance||s.instance;s.compute={...s.compute,...x.compute}}if(!['未开通','准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(s.instance))s.instance='已停止';}}
-function detailUrl(s,action=''){const c=s.compute||{};const params=new URLSearchParams({id:String(s.id),name:s.name,role:effectiveRole(s),state:s.state,instance:s.instance,cpu:String(s.cpu),ram:String(s.ram),storage:String(s.storage||200),runtime:c.runtime||'',environment:c.detail||'',ide:s.ide||'JupyterLab 4',model:s.model||'',image:c.image||'',systemDisk:String(c.systemDisk||0),team:s.team,allocation:c.allocation||'retained',ready:String(c.ready===true),gpu:c.gpu||'未配置 GPU',error:c.error||'',action});return '科研开发空间-详情页(9).html#'+params.toString()}
+function detailUrl(s,action=''){const c=s.compute||{};const params=new URLSearchParams({id:String(s.id),name:s.name,role:effectiveRole(s),state:s.state,instance:s.instance,cpu:String(s.cpu),ram:String(s.ram),storage:String(s.storage||200),runtime:c.runtime||'',environment:c.detail||'',ide:s.ide||'JupyterLab 4',model:s.model||'',image:c.image||'',systemDisk:String(c.systemDisk||0),team:s.team,allocation:c.allocation||'retained',ready:String(c.ready===true),gpu:c.gpu||'未配置 GPU',error:c.error||'',action,scope:new URLSearchParams(location.search).get('team')||''});return '科研开发空间-详情页(9).html#'+params.toString()}
 function recordSpaceVisit(id){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');visits[id]=Date.now();localStorage.setItem('agri-space-visits',JSON.stringify(visits))}catch{}}
 function detail(id){const s=spaces.find(x=>x.id===id);recordSpaceVisit(id);location.href=detailUrl(s)}
 function environment(id){const s=spaces.find(x=>x.id===id);if(s.state!=='可用')return;recordSpaceVisit(id);window.open(detailUrl(s,'enter'),'_blank','noopener')}
-const basicRenderCards=renderCards;renderCards=function(){syncInstanceStates();basicRenderCards();document.querySelectorAll('#cards article.card').forEach(card=>{const btn=card.querySelector('[data-space],[data-progress]');if(!btn)return;const id=Number(btn.dataset.space||btn.dataset.progress),s=spaces.find(x=>x.id===id),c=s.compute||{},own=effectiveRole(s)==='负责人',arch=s.state==='已归档';const holder=card.querySelector('.actions');let actions=`<button class="primary" onclick="detail(${id})">${arch?'查看空间':'进入空间'}</button>`,msg='',tone='';if(s.state==='申请中'){actions=`<button class="outline" onclick="progress(${id})">查看申请进度</button>`;msg='申请审核通过后准备开发环境。';}
+const basicRenderCards=renderCards;renderCards=function(){syncInstanceStates();basicRenderCards();document.querySelectorAll('#cards article.card').forEach(card=>{const btn=card.querySelector('[data-space],[data-provision]');if(!btn)return;const id=Number(btn.dataset.space||btn.dataset.provision),s=spaces.find(x=>x.id===id),c=s.compute||{},own=effectiveRole(s)==='负责人',arch=s.state==='已归档';const holder=card.querySelector('.actions');let actions=`<button class="primary" onclick="detail(${id})">${arch?'查看空间':'进入空间'}</button>`,msg='',tone='';if(s.state==='开通中'){actions='<button class="outline" disabled>开通中</button>';msg='正在准备开发环境，开通完成后可进入空间。';}
 else if(!arch){if(s.instance==='运行中'&&c.ready){actions+=`<button class="outline" onclick="environment(${id})">进入开发环境</button>`;}
 else if(s.instance==='已停止'){if(own)actions+=`<button class="outline" onclick="environment(${id})">启动并进入</button>`;else msg='实例已停止，可联系负责人启动。';}
 else if(s.instance==='异常'){msg=c.error;tone='error';if(own)actions+=`<button class="outline" onclick="environment(${id})">重试并进入</button>`;}
@@ -545,128 +631,7 @@ render();
 </script>
 <style>dialog.resource-apply{width:min(700px,94vw);max-width:700px;max-height:92vh;padding:0}.resource-apply .modal-head{padding:19px 24px}.resource-apply .modal-body{padding:20px 24px;max-height:calc(92vh - 150px);overflow:auto}.resource-apply .modal-footer{padding:14px 24px}.apply-basic{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.apply-basic .full{grid-column:1/-1}.apply-resources-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px;font-size:14px;color:#294c3c}.apply-resources-title button{border:0;background:none;color:#23714e;font-size:12px;padding:0}.resource-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.resource-input-box{border:1px solid #e0e8e3;border-radius:5px;padding:13px 14px;background:#fafcfb}.resource-input-box label{font-size:12px;color:#4a6656;margin:0!important}.resource-number{display:flex;align-items:center;gap:8px;margin-top:8px;background:#fff;border:1px solid #d7e3da;border-radius:4px;padding-right:12px}.resource-number input{border:0!important;background:transparent;width:100%;margin:0!important;padding:9px 10px;font-size:15px;color:#2a4c39;min-width:0}.resource-number span{font-size:12px;color:#82948a;white-space:nowrap}.resource-default{font-size:11px;color:#8b9b90;margin-top:7px;line-height:1.7}.model-runtime{font-size:12px;color:#779084;margin:8px 0 0}.model-resource-note{font-size:12px;color:#768b7e;line-height:1.8;margin:12px 0 0}.form-error{font-size:12px;color:#a95948;background:#fff3ef;border-radius:4px;padding:9px 12px}.form-error:empty{display:none}.required-star{color:#b76650}@media(max-width:600px){.apply-basic{grid-template-columns:1fr}.resource-input-grid{gap:9px}.resource-input-box{padding:10px}}
 </style>
-<script>
-// Example model metadata. Production obtains these defaults from the selected model's configuration.
-// Example validated environment profiles; production reads these by model version and immutable image ID.
-const environmentProfiles={
-'rice-dev-1.2':{image:'rice-lodging-dev:1.2',runtime:'Python 3.10 · PyTorch 2.2',environment:'Ubuntu 22.04 · CUDA 12.1 · JupyterLab 4',minimum:{cpu:4,gpu:1,ram:16,storage:1},recommended:{cpu:8,gpu:1,ram:32,storage:200},gpuMemory:16,systemDisk:30,gpuRequired:true},
-'growth-dev-2.0':{image:'crop-growth-cpu:2.0',runtime:'Python 3.10 · scikit-learn 1.4',environment:'Ubuntu 22.04 · JupyterLab 4',minimum:{cpu:2,gpu:0,ram:8,storage:1},recommended:{cpu:4,gpu:0,ram:16,storage:100},gpuMemory:0,systemDisk:20,gpuRequired:false},
-'drought-dev-1.0':{image:'drought-dev:1.0',runtime:'Python 3.10 · PyTorch 2.2',environment:'Ubuntu 22.04 · CUDA 12.1 · JupyterLab 4',minimum:{cpu:8,gpu:1,ram:32,storage:1},recommended:{cpu:16,gpu:1,ram:64,storage:300},gpuMemory:24,systemDisk:40,gpuRequired:true}
-};
-const initialModelCatalog=[{id:'rice',name:'水稻倒伏识别模型',version:'V1.2',imageId:'rice-dev-1.2'},{id:'growth',name:'作物长势监测模型',version:'V2.0',imageId:'growth-dev-2.0'},{id:'drought',name:'农业干旱识别模型',version:'V1.0',imageId:'drought-dev-1.0'}].map(m=>({...m,...environmentProfiles[m.imageId],...environmentProfiles[m.imageId].recommended}));
 
-// Demonstration catalog only. Production must resolve team grants, immutable versions,
-// image compatibility and schedulable resources server-side at submission/provisioning.
-const initialDatasetCatalog=[
-{id:'rice-samples',name:'寒地水稻倒伏标注样本',version:'V1.1',type:'图像 / 标注',team:'作物遥感研究团队',path:'/mnt/data/rice-samples'},
-{id:'crop-series',name:'作物长势遥感时序数据',version:'V2.0',type:'遥感 / 时序',team:'作物遥感研究团队',path:'/mnt/data/crop-series'},
-{id:'soil-observations',name:'农田土壤墒情观测数据',version:'V1.0',type:'表格 / 时序',team:'农业灾害研究团队',path:'/mnt/data/soil-observations'},
-{id:'weather-daily',name:'农业气象逐日观测数据',version:'V1.2',type:'表格 / 时序',team:'all',path:'/mnt/data/weather-daily'}
-];
-let applicationDataIds=[];
-function selectedDevelopmentTool(){return $('#development-tool')?.value||'JupyterLab 4'}
-function selectedInitialModel(){
- const selected=initialModelCatalog.find(m=>m.id===$('#initial-model').value);
- const config={system:$('#environment-system').value,python:$('#environment-python').value,framework:$('#environment-framework').value,cuda:$('#environment-cuda').value,tool:selectedDevelopmentTool()};
- return {id:selected?.id||'',name:selected?.name||'',version:selected?.version||'',imageId:'',image:'',config,
- runtime:'Python '+config.python+(config.framework==='不预装框架'?'':' · '+config.framework),environment:config.system+(config.cuda==='不使用'?'':' · CUDA '+config.cuda),
- minimum:{cpu:1,gpu:0,ram:1,storage:1},recommended:{cpu:4,gpu:0,ram:16,storage:100},gpuMemory:1,systemDisk:20};
-}
-function updateDevelopmentTool(){updateEnvironmentSummary()}
-function updateEnvironmentSummary(){const m=selectedInitialModel();$('#model-runtime').innerHTML=`<div class="env-heading"><strong>${esc(selectedDevelopmentTool())}</strong></div><div class="env-row"><span>环境组合</span><span>${esc(m.environment)} · ${esc(m.runtime)}</span></div>`;}
-function useModelDefaults(preserveStorage=false){
- const m=selectedInitialModel();for(const k of ['cpu','gpu','ram','storage']){const input=$('#resource-'+k);if(!(k==='storage'&&preserveStorage))input.value=m.recommended[k];input.min=m.minimum[k];$('#default-'+k).textContent='默认 '+m.recommended[k]+({cpu:' 核',gpu:' 张',ram:' GB',storage:' GB'}[k]);}
- $('#resource-gpu').readOnly=false;$('#gpu-memory').value=16;$('#gpu-memory').min=1;$('#gpu-note').textContent='GPU 张数为 0 时不申请 GPU。';updateEnvironmentSummary();checkResourceHints();
-}
-function checkResourceHints(){
- const m=selectedInitialModel(),errors=[],labels={cpu:'CPU',gpu:'GPU',ram:'内存',storage:'研究存储'};
- for(const k of ['cpu','gpu','ram','storage']){const el=$('#resource-'+k),v=Number(el.value);if(el.value===''||!Number.isSafeInteger(v)||v<m.minimum[k])errors.push(labels[k]+'需为不小于 '+m.minimum[k]+' 的整数');}
- const gpu=Number($('#resource-gpu').value),mem=$('#gpu-memory');$('#gpu-memory-row').hidden=!(gpu>0);mem.required=gpu>0;mem.disabled=!(gpu>0);
- if(gpu>0&&(!mem.value||!Number.isSafeInteger(Number(mem.value))||Number(mem.value)<1))errors.push('请填写单卡显存要求（正整数）');
- $('#resource-form-error').textContent=errors.join('；');$('#resource-advice').textContent='';$('#apply-config-summary').textContent=`${$('#resource-cpu').value||'—'} 核 CPU · ${$('#resource-ram').value||'—'} GB 内存 · ${gpu||0} 张 GPU`;return !errors.length;
-}
-function renderApplicationData(){
- const team=$('#application-team').value;
- const available=initialDatasetCatalog.filter(d=>(d.team==='all'||d.team===team)&&!applicationDataIds.includes(d.id));
- $('#application-dataset').innerHTML='<option value="">选择团队可用数据集</option>'+available.map(d=>`<option value="${d.id}">${esc(d.name)} · ${d.version}</option>`).join('');
- $('#add-application-data').disabled=!available.length;
- $('#application-data-list').innerHTML=applicationDataIds.length?applicationDataIds.map(id=>{
- const d=initialDatasetCatalog.find(x=>x.id===id);return `<div class="mount-row"><div><strong>${esc(d.name)}</strong><span class="dataset-version">${d.version} · ${d.type}</span><code>${d.path}</code></div><span class="readonly-tag">只读</span><button type="button" class="link" data-remove-dataset="${d.id}" aria-label="移除${esc(d.name)}">移除</button></div>`;
- }).join(''):'<div class="mount-empty">暂未选择，可在空间开通后继续挂载。</div>';
- document.querySelectorAll('[data-remove-dataset]').forEach(b=>b.onclick=()=>{applicationDataIds=applicationDataIds.filter(id=>id!==b.dataset.removeDataset);renderApplicationData()});
- $('#data-count').textContent=applicationDataIds.length?'已选 '+applicationDataIds.length+' 项':'选填';
-}
-function apply(){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('科研空间和算力由负责人申请。');return;}
- applicationDataIds=[];
- open('申请科研空间',`<form id="apply-form"><div class="modal-body application-body">
- <section class="application-section"><h3><span>01</span>基础信息</h3><div class="apply-basic">
- <label>空间名称 <span class="required-star">*</span><input name="name" required maxlength="32" placeholder="请输入空间名称，最多 32 字" autocomplete="off"></label>
- <label>所属团队 <span class="required-star">*</span><select id="application-team" name="team" required><option>作物遥感研究团队</option><option>农业灾害研究团队</option></select></label>
- <label class="full">研究用途 <span class="required-star">*</span><textarea name="purpose" required maxlength="500" placeholder="说明研究目标、研究范围及拟开展的工作" rows="2"></textarea><span class="field-counter" id="purpose-count">0 / 500</span></label>
- <label class="full duration-label">预计使用时长 <span class="optional-text">选填</span><div class="duration-input"><input name="durationDays" type="number" min="1" step="1" placeholder="例如 90" aria-label="预计使用天数"><span>天</span><small>用于资源安排，不作为自动结束研究的时间。</small></div></label>
- </div></section>
- <section class="application-section"><h3><span>02</span>开发环境</h3>
- <label>关联模型 <span class="optional-text">选填</span><select id="initial-model" name="model"><option value="">不关联模型</option>${initialModelCatalog.map(m=>`<option value="${m.id}">${m.name} · ${m.version}</option>`).join('')}</select></label>
- <div class="environment-select-grid">
- <label>操作系统 <span class="required-star">*</span><select id="environment-system" required><option>Ubuntu 22.04</option><option>Ubuntu 20.04</option></select></label>
- <label>Python 版本 <span class="required-star">*</span><select id="environment-python" required><option>3.10</option><option>3.11</option></select></label>
- <label>开发框架 <span class="required-star">*</span><select id="environment-framework" required><option>PyTorch 2.2</option><option>scikit-learn 1.4</option><option>不预装框架</option></select></label>
- <label>CUDA <span class="optional-text">选填</span><select id="environment-cuda"><option>不使用</option><option>12.1</option></select></label>
- <label>开发工具 <span class="required-star">*</span><select id="development-tool" name="ide" required><option value="JupyterLab 4">JupyterLab</option><option value="VSCode">VS Code</option></select></label>
- </div><div id="model-runtime" class="application-environment"></div>
- </section>
- <section class="application-section"><h3><span>03</span>计算与存储<button type="button" class="link" id="restore-application-defaults">恢复推荐配置</button></h3>
- <div class="resource-input-grid">${[['cpu','CPU','核',1],['ram','内存','GB',1],['gpu','GPU','张',0],['storage','研究存储','GB',1]].map(([key,label,unit,min])=>`<div class="resource-input-box"><label for="resource-${key}">${label} <span class="required-star">*</span><small id="default-${key}"></small></label><div class="resource-number"><input id="resource-${key}" name="${key}" type="number" min="${min}" step="1" required aria-label="${label}"><span>${unit}</span></div></div>`).join('')}</div>
- <div id="gpu-memory-row" class="gpu-memory-row"><label for="gpu-memory">单卡显存要求 <span class="required-star">*</span></label><div class="unit-input"><input id="gpu-memory" name="gpuMemory" type="number" min="0" step="1" required aria-label="单卡显存要求"><span>GB 及以上</span></div></div>
- <p id="gpu-note" class="field-help"></p>
- <details class="storage-explanation"><summary>存储目录与用途</summary><div><p><code>/mnt/workspace</code> 团队共享研究文件，可读写；停止实例后保留。</p><p><code>/mnt/data/…</code> 挂载数据集，只读；实验输出写入研究存储。</p><p>研究存储与系统盘分开，系统盘由开发环境预留。</p></div></details>
- <div id="resource-advice" class="resource-advice" role="status"></div>
- </section>
- <section class="application-section"><h3><span>04</span>初始数据<span id="data-count" class="optional-text"></span></h3>
- <div class="dataset-picker"><select id="application-dataset" aria-label="选择初始数据集"></select><button type="button" id="add-application-data">添加</button></div>
- <div id="application-data-list"></div>
- <p class="field-help">仅展示当前团队可用的数据，按所选版本只读挂载，目录自动分配。</p>
- </section><div id="resource-form-error" class="form-error" role="alert"></div>
- </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="closeModal()">取消</button><button class="primary" type="submit">提交申请</button></div></form>`);
- modal.classList.add('resource-apply');
- modal.setAttribute('aria-labelledby','modal-title');
- useModelDefaults();renderApplicationData();
- document.querySelectorAll('.environment-select-grid select').forEach(input=>input.onchange=updateEnvironmentSummary);
- $('#restore-application-defaults').onclick=()=>useModelDefaults(false);
- for(const k of ['cpu','gpu','ram','storage'])$('#resource-'+k).oninput=checkResourceHints;
- $('#gpu-memory').oninput=checkResourceHints;
- $('#apply-form textarea').oninput=e=>{$('#purpose-count').textContent=e.target.value.length+' / 500'};
- $('#application-team').onchange=()=>{
- const team=$('#application-team').value;
- const previous=applicationDataIds.length;
- applicationDataIds=applicationDataIds.filter(id=>{const d=initialDatasetCatalog.find(x=>x.id===id);return d.team==='all'||d.team===team});
- renderApplicationData();if(applicationDataIds.length<previous)toast('已移除新团队无权使用的数据，请重新选择');
- };
- $('#add-application-data').onclick=()=>{const id=$('#application-dataset').value;if(id&&!applicationDataIds.includes(id)){applicationDataIds.push(id);renderApplicationData()}};
- $('#apply-form').onsubmit=e=>{
- e.preventDefault();if(!checkResourceHints()){$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
- const f=new FormData(e.target),m=selectedInitialModel();
- const values=Object.fromEntries(['cpu','gpu','ram','storage'].map(k=>[k,Number(f.get(k))]));
- const name=String(f.get('name')).trim(),purpose=String(f.get('purpose')).trim(),days=String(f.get('durationDays'));
- if(!name||!purpose){$('#resource-form-error').textContent='请填写空间名称和研究用途，不能只包含空格。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
- if(days&&(!Number.isSafeInteger(Number(days))||Number(days)<1)){$('#resource-form-error').textContent='预计使用时长需为正整数。';return;}
- const data=applicationDataIds.map(id=>initialDatasetCatalog.find(d=>d.id===id)).filter(d=>d&&(d.team==='all'||d.team===f.get('team'))).map(d=>({id:d.id,name:d.name,version:d.version,path:d.path,access:'只读'}));
- const gpuMemory=values.gpu?Number(f.get('gpuMemory')):0;
- const s={id:Date.now(),name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
- try{const requests=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');if(!Array.isArray(requests))throw new Error('Invalid local applications');requests.unshift(s);localStorage.setItem('agri-space-applications-v8',JSON.stringify(requests));}catch{$('#resource-form-error').textContent='本地申请记录保存失败，请检查浏览器存储后重试。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
- spaces.unshift(s);archived=false;$('#archive').checked=false;query='';$('#search').value='';role='全部';spacePage=1;closeModal();render();toast('空间申请已提交');
- };
-}
-const formOpenBase=open;open=function(title,body){modal.classList.remove('resource-apply');formOpenBase(title,body)};
-$('#apply').onclick=apply;
-try{const applications=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');for(const a of applications.reverse())if(!spaces.some(s=>s.id===a.id))spaces.unshift(a);}catch{}
-const resourceCardBase=renderCards;renderCards=function(){resourceCardBase();document.querySelectorAll('#cards .card').forEach(card=>{const button=card.querySelector('[data-progress],[data-space],.actions button');const match=button?.getAttribute('onclick')?.match(/\((\d+)\)/);const id=Number(button?.dataset.progress||button?.dataset.space||match?.[1]);const s=spaces.find(x=>x.id===id);if(!s)return;card.querySelector('.config').innerHTML=`<span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 / ${s.storage||200} GB 存储`;})};
-const modelProgressBase=progress;progress=function(id){
- modelProgressBase(id);const s=spaces.find(x=>x.id===id);if(!s)return;
- $('#modal-content .modal-body').insertAdjacentHTML('beforeend',`<div class="detail-section"><h3>申请配置</h3><p class="hint">所属团队：${esc(s.team)}<br>研究用途：${esc(s.desc)}<br>初始模型：${esc(s.model||'未关联')} ${esc(s.modelVersion||'')}<br>开发工具：${esc(s.ide||'JupyterLab 4')}<br>开发镜像：${esc(s.image||'—')}<br>运行环境：${esc(s.compute?.runtime||'—')}<br>预计使用时长：${s.durationDays?esc(s.durationDays)+' 天':'未填写'}</p><div class="detail-grid"><span>CPU：${s.cpu} 核</span><span>GPU：${s.gpu} 张${s.gpu?' · 单卡 ≥'+s.gpuMemory+' GB':''}</span><span>内存：${s.ram} GB</span><span>研究存储：${s.storage} GB</span><span>系统盘：${s.systemDisk} GB</span></div><p class="hint">研究目录：${esc(s.workspacePath||'/mnt/workspace')} · 可读写</p></div><div class="detail-section"><h3>初始数据</h3>${s.datasets?.length?s.datasets.map(d=>`<div class="application-progress-data"><strong>${esc(d.name)} · ${esc(d.version)}</strong><p class="hint">${esc(d.path)} · ${esc(d.access)}</p></div>`).join(''):'<p class="hint">未选择，可在空间开通后挂载。</p>'}</div>`);
-};
-render();
-</script>
 <style>.environment-info{font-size:12px;color:#6b8575;margin:-8px 0 4px;line-height:1.8}.environment-info summary{cursor:pointer}.environment-info p{background:#f3f7f4;padding:9px 12px;border-radius:4px;margin:8px 0}.resource-advice{font-size:12px;background:#fff8e9;color:#98752f;line-height:1.8;padding:9px 12px;border-radius:4px;margin-top:10px}.resource-advice:empty{display:none}.resource-apply .modal-body label{margin-bottom:12px}.resource-apply textarea{min-height:65px}.resource-input-box{padding:10px 12px}.apply-resources-title{margin-top:12px}</style>
 <style>
 dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;overflow:hidden;border-radius:9px}
@@ -733,5 +698,504 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
 </script>
 
 <!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
-<script src="assets/portal-access.js"></script>
-</body></html>
+<script data-inline-source="portal-access.js">
+(function () {
+  'use strict';
+  function init(){
+    const O=window.PortalOrg, file=decodeURIComponent(location.pathname.split('/').pop()), q=s=>document.querySelector(s);
+    const notice=t=>window.toast?window.toast(t):window.Meeting?.toast(t);
+    const wrap=(name,fn)=>{const old=window[name];if(typeof old==='function')window[name]=function(...args){return fn(old,args,this);};};
+    const prune=()=>{document.querySelectorAll('[onclick*="switchRole"],[onclick*="toggleDemoAuth"]').forEach(n=>n.remove());if(!O.isLeader())document.querySelectorAll('[onclick*="Meeting.submit"],[onclick*="Meeting.pickOutcome"]').forEach(n=>n.remove());};
+    if(window.Meeting){['submit','pickOutcome','commitOutcome'].forEach(k=>{const old=Meeting[k];if(typeof old==='function')Meeting[k]=function(...args){if(!O.isLeader()||(file.startsWith('科研开发空间')&&!O.canManageSpace(new URLSearchParams(location.search).get('id')||'1'))){notice('当前账号不能正式提交成果。');return;}return old.apply(this,args);};});}
+    if(typeof LOGGED!=='undefined')LOGGED=O.isLogged();
+    if(typeof ROLE!=='undefined')ROLE='low';
+    if(typeof window.roleName==='function')window.roleName=()=>O.current().name;
+    if(typeof window.roleAvatar==='function')window.roleAvatar=()=>O.current().name[0];
+    if(typeof window.isHighRole==='function')window.isHighRole=()=>false;
+    wrap('renderAuthArea',(old,args,ctx)=>{const r=old.apply(ctx,args);prune();return r;});
+    wrap('doLogin',(old,args,ctx)=>{O.select(O.current().id);const r=old.apply(ctx,args);if(typeof LOGGED!=='undefined')LOGGED=true;window.renderAuthArea?.();return r;});
+    wrap('doLogout',(old,args,ctx)=>{O.signOut();return old.apply(ctx,args);});
+    document.addEventListener('click',ev=>{if(ev.target.closest('[data-bdh-login]')){O.select(O.current().id);if(typeof LOGGED!=='undefined')LOGGED=true;}else if(ev.target.closest('[data-bdh-logout]')){O.signOut();if(typeof LOGGED!=='undefined')LOGGED=false;}},true);
+    window.renderAuthArea?.();prune();
+
+    const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
+    const previewStyle=document.createElement('style');previewStyle.textContent=`
+      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
+      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
+      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
+      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
+      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
+    `;document.head.append(previewStyle);
+    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
+    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    window.PortalPreview={refresh:refreshPreview};
+    function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
+      if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      refreshPreview();
+    }
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
+
+
+    if(window.portalSaveApplication){const old=window.portalSaveApplication;window.portalSaveApplication=rec=>{
+      if(!O.isLogged()){notice('请先登录。');return null;}
+      if(!O.isLeader()&&(/科研|开发/.test(rec.purpose||'')||rec.space)){notice('成员仅可申请模型在线使用，不能申请开发或科研空间。');return null;}
+      const team=q('#otResearchTeam');if(/科研|开发/.test(rec.purpose||'')){if(!team||!O.canManageTeam(team.value)){notice('请选择本人负责的团队。');return null;}rec={...rec,teamId:team.value};}
+      return old({...rec,applicantId:O.current().id,applicant:O.current().name,usageType:/科研|开发/.test(rec.purpose||'')?'research':'online'});
+    };}
+    function restrictModelForm(){if(O.isLeader()){configureResearch();return;}const form=q('#modelApplyForm')||q('.application-form');if(!form)return;
+      form.querySelector('input[name="purpose"][value="research"]')?.closest('label').remove();
+      const biz=form.querySelector('input[name="purpose"][value="biz"]');if(biz)biz.checked=true;
+      form.querySelector('#researchFields')?.remove();
+      form.querySelector('.purpose-hint')?.remove();
+      const note=form.querySelector('#applyScopeNote');if(note)note.textContent='获批后在线使用当前模型。';
+      form.querySelectorAll('p').forEach(p=>{if(p.textContent.includes('勾选科研研究'))p.textContent='提交后可在个人中心查看模型使用申请。';});
+      const title=q('#dialogTitle');if(title)title.textContent='申请使用模型';
+    }
+    function configureResearch(){const host=q('#researchFields');if(!host||q('#otResearchTeam'))return;const own=O.myTeams().filter(t=>t.ownerId===O.current().id);host.insertAdjacentHTML('afterbegin',`<label>所属团队<select id="otResearchTeam" name="teamId"><option value="">请选择本人负责的团队</option>${own.map(t=>`<option value="${O.escape(t.id)}">${O.escape(t.name)}</option>`).join('')}</select></label>`);if(!own.length){const cb=q('input[name="purpose"][value="research"]');if(cb){cb.disabled=true;cb.closest('label').title='请先创建本人负责的团队';}}}
+    if(file.includes('模型中心-模型')&&!file.includes('运行台')){
+      ['openApply','openModelAction'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.isLogged()){notice('请先登录后申请使用。');return;}const r=old.apply(ctx,args);restrictModelForm();return r;}));
+      wrap('submitDemo',(old,args,ctx)=>{if(!O.isLeader()&&q('input[name="purpose"][value="research"]:checked')){notice('成员不能申请模型开发。');return;}return old.apply(ctx,args);});
+      const baseTrial=window.startTrial;if(baseTrial)window.startTrial=function(m){
+        if(!O.isLogged()){notice('请先登录后试用。');return;}
+        const model=typeof m==='object'?m:(typeof CUR!=='undefined'?CUR:null);if(!model)return;
+        if(typeof svcUnpublished==='function'&&svcUnpublished(model)){notice(typeof SVC_MSG!=='undefined'?SVC_MSG:'当前模型暂不可用');return;}
+        location.href='模型中心-模型运行台.html?mode=trial#n='+encodeURIComponent(model.name);
+      };
+    }
+    if(!O.isLeader()&&file==='模型中心-模型详情（调整）.html'){const n=document.querySelector('.auth-note');if(n)n.textContent='试用免审批 · 可申请模型在线使用';}
+    if(file==='模型中心-模型运行台.html'){
+      const trial=new URLSearchParams(location.search).get('mode')==='trial';
+      wrap('lockReason',(old,args,ctx)=>{
+        if(!O.isLogged())return '请先登录';
+        if(typeof isCurVer==='function'&&!isCurVer(CUR))return '历史版本不支持运行';
+        if(trial)return '';
+        let rows=[];try{rows=JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]');}catch{}
+        const authorized=rows.some(r=>(r.applicantId||'u-zhang')===O.current().id&&r.name===CUR.name&&['已通过','approved'].includes(r.status));
+        return authorized?'':'当前模型尚未取得在线使用授权';
+      });
+      if(typeof DEMO_AUTH!=='undefined')DEMO_AUTH=trial;
+      window.renderAll?.();window.syncLock?.();prune();
+    }
+    if(file.startsWith('数据中心')){
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      if(!O.isLeader()){
+        document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
+        wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
+      }
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+    }
+    if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
+      const id=(new URLSearchParams(location.search).get('id')||new URLSearchParams(location.hash.replace(/^#/,'')).get('id')||'1');
+      if(!O.canViewSpace(id)){
+        const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
+        ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});
+      }else if(file==='科研开发空间-详情页(9).html'){
+        space.role=O.canManageSpace(id)?'负责人':'成员';space.team=O.spaceTeam(id).name;
+        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:a.kind==='leader'&&a.id!==t.ownerId?'受邀负责人':'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
+        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${t.memberIds.map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${a.id}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
+        window.renderAll();const old=window.renderHeading;window.renderHeading=function(){old();document.querySelectorAll('.heading-meta b').forEach(b=>{if(b.textContent==='张三')b.textContent=O.account(O.spaceTeam(id).ownerId).name;});};window.renderHeading();
+      }
+    }
+
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+</script>
+<style id="space-application-ui">#spaceRequestDialog .environment-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:16px}
+#spaceRequestDialog .environment-select-grid label{min-width:0}
+#spaceRequestDialog [hidden]{display:none!important}
+@media(max-width:600px){#spaceRequestDialog .environment-select-grid{grid-template-columns:1fr}}
+#spaceRequestDialog.resource-apply{width:min(700px,94vw);max-width:700px;max-height:92vh;padding:0}
+#spaceRequestDialog.resource-apply .modal-head{padding:19px 24px}
+#spaceRequestDialog.resource-apply .modal-body{padding:20px 24px;max-height:calc(92vh - 150px);overflow:auto}
+#spaceRequestDialog.resource-apply .modal-footer{padding:14px 24px}
+#spaceRequestDialog .apply-basic{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+#spaceRequestDialog .apply-basic .full{grid-column:1/-1}
+#spaceRequestDialog .apply-resources-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px;font-size:14px;color:#294c3c}
+#spaceRequestDialog .apply-resources-title button{border:0;background:none;color:#23714e;font-size:12px;padding:0}
+#spaceRequestDialog .resource-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#spaceRequestDialog .resource-input-box{border:1px solid #e0e8e3;border-radius:5px;padding:13px 14px;background:#fafcfb}
+#spaceRequestDialog .resource-input-box label{font-size:12px;color:#4a6656;margin:0!important}
+#spaceRequestDialog .resource-number{display:flex;align-items:center;gap:8px;margin-top:8px;background:#fff;border:1px solid #d7e3da;border-radius:4px;padding-right:12px}
+#spaceRequestDialog .resource-number input{border:0!important;background:transparent;width:100%;margin:0!important;padding:9px 10px;font-size:15px;color:#2a4c39;min-width:0}
+#spaceRequestDialog .resource-number span{font-size:12px;color:#82948a;white-space:nowrap}
+#spaceRequestDialog .resource-default{font-size:11px;color:#8b9b90;margin-top:7px;line-height:1.7}
+#spaceRequestDialog .model-runtime{font-size:12px;color:#779084;margin:8px 0 0}
+#spaceRequestDialog .model-resource-note{font-size:12px;color:#768b7e;line-height:1.8;margin:12px 0 0}
+#spaceRequestDialog .form-error{font-size:12px;color:#a95948;background:#fff3ef;border-radius:4px;padding:9px 12px}
+#spaceRequestDialog .form-error:empty{display:none}
+#spaceRequestDialog .required-star{color:#b76650}
+@media(max-width:600px){#spaceRequestDialog .apply-basic{grid-template-columns:1fr}
+#spaceRequestDialog .resource-input-grid{gap:9px}
+#spaceRequestDialog .resource-input-box{padding:10px}}
+#spaceRequestDialog .environment-info{font-size:12px;color:#6b8575;margin:-8px 0 4px;line-height:1.8}
+#spaceRequestDialog .environment-info summary{cursor:pointer}
+#spaceRequestDialog .environment-info p{background:#f3f7f4;padding:9px 12px;border-radius:4px;margin:8px 0}
+#spaceRequestDialog .resource-advice{font-size:12px;background:#fff8e9;color:#98752f;line-height:1.8;padding:9px 12px;border-radius:4px;margin-top:10px}
+#spaceRequestDialog .resource-advice:empty{display:none}
+#spaceRequestDialog.resource-apply .modal-body label{margin-bottom:12px}
+#spaceRequestDialog.resource-apply textarea{min-height:65px}
+#spaceRequestDialog .resource-input-box{padding:10px 12px}
+#spaceRequestDialog .apply-resources-title{margin-top:12px}
+#spaceRequestDialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;overflow:hidden;border-radius:9px}
+#spaceRequestDialog.resource-apply .modal-head{padding:18px 26px}
+#spaceRequestDialog.resource-apply .modal-head h2{font-size:18px}
+#spaceRequestDialog.resource-apply .application-body{max-height:calc(92vh - 150px);padding:4px 28px 20px;scrollbar-gutter:stable}
+#spaceRequestDialog .application-section{padding:20px 0 18px;border-bottom:1px solid #e7ede9}
+#spaceRequestDialog .application-section:last-of-type{border-bottom:0;padding-bottom:8px}
+#spaceRequestDialog .application-section h3{display:flex;align-items:center;gap:9px;font-size:14px;margin:0 0 17px;color:#274d3d}
+#spaceRequestDialog .application-section h3>span:first-child{font-size:11px;color:#4e8269;background:#eef5f0;border-radius:4px;padding:1px 6px;font-weight:600}
+#spaceRequestDialog .application-section h3 button{margin-left:auto;font-size:12px;padding:0}
+#spaceRequestDialog .application-section h3 .optional-text{margin-left:auto}
+#spaceRequestDialog.resource-apply .modal-body label{font-size:13px;margin-bottom:12px;position:relative;color:#485d50}
+#spaceRequestDialog.resource-apply .modal-body input,#spaceRequestDialog.resource-apply .modal-body select{padding:8px 11px;margin-top:6px;font-size:13px}
+#spaceRequestDialog.resource-apply .modal-body textarea{padding:9px 11px;margin-top:6px;min-height:64px;font-size:13px}
+#spaceRequestDialog.resource-apply .modal-body select:focus{border-color:var(--green)}
+#spaceRequestDialog.resource-apply .apply-basic{gap:0 20px}
+#spaceRequestDialog .application-section .apply-basic label:last-child{margin-bottom:0}
+#spaceRequestDialog .field-counter{display:block;text-align:right;font-size:11px;color:#94a097;margin-top:3px;line-height:1.3}
+#spaceRequestDialog .optional-text{font-size:11px;font-weight:400;color:#87978d;margin-left:7px}
+#spaceRequestDialog .duration-input{display:flex;align-items:center;gap:9px}
+#spaceRequestDialog.resource-apply .duration-input input{width:128px;flex:none}
+#spaceRequestDialog .duration-input>span{font-size:12px;color:#7b8c80}
+#spaceRequestDialog .duration-input small{font-size:11px;color:#86958c;margin:6px 0 0 9px}
+#spaceRequestDialog .development-tool-options{border:0;padding:0;margin:0 0 14px;min-width:0}
+#spaceRequestDialog .development-tool-options legend{font-size:13px;color:#485d50;margin-bottom:8px}
+#spaceRequestDialog .development-tool-choices{display:flex;gap:12px}
+#spaceRequestDialog.resource-apply .development-tool-choices label{display:flex;align-items:center;gap:8px;border:1px solid #dfe8e2;border-radius:4px;padding:9px 16px;margin:0;min-width:140px;cursor:pointer;background:white}
+#spaceRequestDialog.resource-apply .development-tool-choices input[type=radio]{display:inline-block;width:15px;height:15px;padding:0;margin:0;accent-color:var(--green);flex:none}
+#spaceRequestDialog .development-tool-choices label:has(input:checked){border-color:#398565;background:#f2f8f4;color:#156044}
+#spaceRequestDialog .development-tool-choices label:focus-within{outline:2px solid #a4d2bb;outline-offset:2px}
+#spaceRequestDialog .application-environment{background:#f7faf8;border:1px solid #e0e9e3;border-radius:5px;padding:12px 16px;font-size:12px;color:#526b5c}
+#spaceRequestDialog .env-heading{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#28563e}
+#spaceRequestDialog .env-heading strong{font-size:13px}
+#spaceRequestDialog .env-icon{font-size:18px}
+#spaceRequestDialog .env-tag{margin-left:auto;color:#7d9084;font-size:11px}
+#spaceRequestDialog .env-row{display:flex;gap:16px;line-height:1.9}
+#spaceRequestDialog .env-row>span:first-child{color:#8a998f;flex:0 0 64px}
+#spaceRequestDialog .env-row strong{font-weight:500;overflow-wrap:anywhere}
+#spaceRequestDialog .field-help{font-size:11px;line-height:1.8;color:#849489;margin:8px 0 0}
+#spaceRequestDialog.resource-apply .resource-input-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#spaceRequestDialog.resource-apply .resource-input-box{background:#fff;padding:10px;border-color:#dfe8e2}
+#spaceRequestDialog.resource-apply .resource-input-box label{display:flex;align-items:center;gap:3px;font-size:12px}
+#spaceRequestDialog .resource-input-box small{margin-left:auto;font-size:10px;color:#879c8e;font-weight:400;white-space:nowrap}
+#spaceRequestDialog.resource-apply .resource-number{margin-top:9px}
+#spaceRequestDialog.resource-apply .resource-number input{font-size:16px;padding:6px 8px}
+#spaceRequestDialog .resource-number span{font-size:11px}
+#spaceRequestDialog.resource-apply input[readonly]{color:#819488;background:#f4f7f5;cursor:default}
+#spaceRequestDialog .gpu-memory-row{display:flex;align-items:center;gap:14px;margin-top:14px}
+#spaceRequestDialog .gpu-memory-row[hidden]{display:none}
+#spaceRequestDialog.resource-apply .gpu-memory-row label{margin:0}
+#spaceRequestDialog .unit-input{display:flex;align-items:center;gap:9px}
+#spaceRequestDialog.resource-apply .unit-input input{width:82px;margin:0}
+#spaceRequestDialog .unit-input span{font-size:12px;color:#7a8c80}
+#spaceRequestDialog .storage-explanation{margin-top:12px;color:#688170;font-size:11px}
+#spaceRequestDialog .storage-explanation summary{cursor:pointer}
+#spaceRequestDialog .storage-explanation>div{background:#f7faf8;padding:8px 12px;margin-top:8px;border-radius:4px}
+#spaceRequestDialog .storage-explanation p{margin:4px 0}
+#spaceRequestDialog.resource-apply code{font:11px/1.6 ui-monospace,Consolas,monospace;color:#668571;overflow-wrap:anywhere}
+#spaceRequestDialog .dataset-picker{display:flex;gap:10px}
+#spaceRequestDialog.resource-apply .dataset-picker select{margin:0;flex:1;min-width:0}
+#spaceRequestDialog .dataset-picker button{font-size:12px;flex:none}
+#spaceRequestDialog .mount-empty{border:1px dashed #dce6df;border-radius:4px;text-align:center;color:#94a398;font-size:12px;padding:18px;margin-top:10px}
+#spaceRequestDialog .mount-row{display:flex;gap:12px;align-items:center;border-bottom:1px solid #ebf0ec;padding:12px 0;font-size:12px}
+#spaceRequestDialog .mount-row>div{flex:1;min-width:0}
+#spaceRequestDialog .mount-row strong{font-weight:500;display:block}
+#spaceRequestDialog .mount-row code{display:block;color:#8a9a8f}
+#spaceRequestDialog .dataset-version{font-size:11px;color:#84978a}
+#spaceRequestDialog .readonly-tag{font-size:11px;color:#568167;background:#eff5f1;padding:1px 6px;border-radius:3px}
+#spaceRequestDialog .mount-row button{font-size:12px}
+#spaceRequestDialog.resource-apply .application-footer{padding:14px 26px;align-items:center;gap:10px;background:#fff}
+#spaceRequestDialog .application-footer>div{margin-right:auto;min-width:0}
+#spaceRequestDialog .application-footer strong{display:block;font-weight:500;font-size:12px;color:#426750}
+#spaceRequestDialog .application-footer>div>span{font-size:11px;color:#8d9b91}
+#spaceRequestDialog .application-footer>button{flex:none;font-size:13px;padding:8px 18px}
+#spaceRequestDialog .application-progress-data{border-bottom:1px solid #edf1ee;padding:8px 0;font-size:12px}
+#spaceRequestDialog .application-progress-data .hint{margin:5px 0}
+@media(max-width:650px){#spaceRequestDialog.resource-apply .application-body{padding:0 18px 18px}
+#spaceRequestDialog.resource-apply .resource-input-grid{grid-template-columns:1fr 1fr}
+#spaceRequestDialog.resource-apply .apply-basic{grid-template-columns:1fr}
+#spaceRequestDialog .duration-input{flex-wrap:wrap}
+#spaceRequestDialog .duration-input small{width:100%;margin:0}
+#spaceRequestDialog.resource-apply .application-footer{padding:12px 18px;flex-wrap:wrap}
+#spaceRequestDialog .application-footer>div{width:100%}
+#spaceRequestDialog .application-footer>button:first-of-type{margin-left:auto}
+#spaceRequestDialog.resource-apply .application-body{max-height:calc(92vh - 184px)}
+#spaceRequestDialog .env-row{gap:8px}}
+#spaceRequestDialog{width:840px;max-width:calc(100vw - 32px);max-height:92vh;padding:0;border:1px solid #d9e5dd;border-radius:8px;color:#274739;background:white;font-family:inherit;font-size:14px;line-height:1.6;overflow:hidden}
+#spaceRequestDialog::backdrop{background:rgba(19,46,33,.4)}
+#spaceRequestDialog .sr-head{display:flex;align-items:center;justify-content:space-between;padding:17px 24px;border-bottom:1px solid #e5ece7}
+#spaceRequestDialog .sr-head h2{margin:0;font-size:19px;font-weight:600}
+#spaceRequestDialog .sr-head button{border:0;background:none;font-size:24px;color:#7a8b81;padding:0 5px;line-height:1.3}
+#spaceRequestDialog .sr-body{padding:24px;max-height:calc(92vh - 145px);overflow:auto}
+#spaceRequestDialog .sr-foot{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:14px 24px;border-top:1px solid #e5ece7}
+#spaceRequestDialog button,#spaceRequestDialog input,#spaceRequestDialog select,#spaceRequestDialog textarea{font:inherit}
+#spaceRequestDialog button,#spaceRequestDialog .sr-foot a{cursor:pointer;border:1px solid #ccdcd2;border-radius:4px;background:white;padding:8px 16px;text-decoration:none;color:#355d46}
+#spaceRequestDialog .primary{background:#176e49;color:white;border-color:#176e49}
+#spaceRequestDialog .link{border:0;background:none;color:#176e49;padding:2px 0}
+#spaceRequestDialog .modal-body label{display:block;margin-bottom:12px}
+#spaceRequestDialog .modal-body input,#spaceRequestDialog .modal-body select,#spaceRequestDialog .modal-body textarea{width:100%;border:1px solid #ceddd3;border-radius:4px;background:white;color:#355440;box-sizing:border-box}
+#spaceRequestDialog .modal-footer{display:flex;justify-content:flex-end;border-top:1px solid #e5ece7}
+#spaceRequestDialog .sr-record-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#spaceRequestDialog h3{font-size:18px;margin:0}
+#spaceRequestDialog h4{font-size:14px;margin:22px 0 10px}
+#spaceRequestDialog .sr-record-title small{color:#8a998e;font-size:11px}
+.sr-status{font-size:12px;color:#27734c;background:#e8f5ec;border-radius:12px;padding:3px 9px}
+.sr-status.amber{background:#fff3da;color:#916d23}.sr-status.returned{background:#faf0e8;color:#95633c}
+#spaceRequestDialog .sr-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin:20px 0}
+#spaceRequestDialog .sr-fields dt{font-size:12px;color:#84988b;margin-bottom:4px}
+#spaceRequestDialog .sr-fields dd{margin:0;overflow-wrap:anywhere;font-size:13px}
+#spaceRequestDialog .sr-purpose{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}
+#spaceRequestDialog .sr-data{list-style:none;padding:0;margin:0}
+#spaceRequestDialog .sr-data li{padding:9px 0;border-bottom:1px solid #e9efea;font-size:12px}
+#spaceRequestDialog .sr-data span{display:block;color:#84988b}
+#spaceRequestDialog .sr-muted{font-size:12px;color:#85968b}
+#spaceRequestDialog .sr-history{padding:0 0 0 22px;margin:0;border-left:2px solid #e6eee8;list-style:none}
+#spaceRequestDialog .sr-history li{margin:0 0 20px;position:relative;font-size:13px}
+#spaceRequestDialog .sr-history li:before{content:'';position:absolute;left:-28px;top:7px;border:3px solid white;width:10px;height:10px;background:#5a9c77;border-radius:50%;box-sizing:content-box}
+#spaceRequestDialog .sr-history li>div:first-child{display:flex;justify-content:space-between;gap:12px}
+#spaceRequestDialog .sr-history span{color:#84988b;font-size:12px}
+#spaceRequestDialog .sr-opinion{background:#f6f8f6;border-radius:4px;padding:10px 14px;margin:10px 0}
+#spaceRequestDialog .sr-opinion b{font-size:12px;font-weight:500;color:#728679}
+#spaceRequestDialog .sr-opinion p{margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+#spaceRequestDialog .sr-return-note{margin:17px 0 0;padding:13px 16px;border:1px solid #ecd9bb;border-radius:4px;background:#fffaf0;font-size:13px;color:#96743f;white-space:pre-wrap;overflow-wrap:anywhere}
+#spaceRequestDialog .sr-return-note strong{display:block;margin-bottom:4px;font-size:12px}
+#spaceRequestDialog .sr-receipt{text-align:center;padding:36px 24px}
+#spaceRequestDialog .sr-receipt p{color:#809185;font-size:13px;margin:12px 0}
+#spaceRequestDialog .sr-check{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;margin:0 auto 14px;color:#278151;background:#eaf6ee;font-size:25px}
+.sr-request-table td{vertical-align:top}.sr-request-table td:first-child strong{font-size:13px;font-weight:500;color:#30593f;display:block;margin-bottom:6px}.sr-request-table td:first-child small{display:block;font-size:11px}.sr-request-table .sr-opinion-cell{min-width:120px;max-width:220px;white-space:normal;overflow-wrap:anywhere;line-height:1.75}.sr-request-table .pc-link{display:block;margin:0 0 6px}.sr-space-row .primary{display:inline-block;border:0;border-radius:4px;text-decoration:none;background:#005653;color:white;padding:8px 15px;font-size:13px}.sr-space-row button:disabled{color:#8f9b94;background:#f4f6f4;border-color:#dfe7e0;cursor:default}
+.workspace-heading{margin:0 0 23px}.workspace-heading h1{margin:0 0 8px;font-size:24px;color:#204e37}.workspace-heading p{margin:0;font-size:13px;color:#7a9283}
+@media(max-width:650px){#spaceRequestDialog{max-width:calc(100vw - 20px)}#spaceRequestDialog .sr-head{padding:15px 18px}#spaceRequestDialog .sr-body{padding:18px}#spaceRequestDialog .sr-fields{grid-template-columns:1fr;gap:14px}#spaceRequestDialog .sr-foot{padding:12px 18px;gap:8px}.sr-request-table{min-width:700px}}
+</style><script id="space-request-core">/* Application records are personal; approved spaces are collaborative work areas.
+   This prototype stores records locally. Authorization must be checked by the service. */
+(() => {
+  'use strict';
+  const O=window.PortalOrg, key='agri-space-applications-v8';
+  const personalURL='个人中心-高保真原型.html', spaceURL='科研开发空间-交互原型(10).html';
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const read=()=>{try{const a=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(a)?a:[];}catch{return [];}};
+  const account=()=>O.current(), mine=r=>(r.applicantId||'u-zhang')===account().id;
+  const approved=r=>['可用','开通中','已归档','已通过'].includes(r.state);
+  const rejected=r=>['已驳回','未通过'].includes(r.state);
+  const status=r=>approved(r)?'已通过':['申请中','审核中','待审核'].includes(r.state)?'审核中':r.state||'审核中';
+  const stamp=v=>v?(Number.isNaN(new Date(v).getTime())?v:new Date(v).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})):'未记录';
+  const date=r=>stamp(r.submittedAt||r.date||(Number(r.id)>1000000000000?Number(r.id):''));
+  const teamFor=r=>O.team(r.teamId)||O.spaceTeam(r.id)||O.read().teams.find(t=>t.name===r.team||(r.team==='作物遥感研究团队'&&t.id==='t-rice'));
+  function registerApproved(){
+    const db=O.read();let changed=false;
+    for(const r of read().filter(approved)){
+      const found=teamFor(r),t=db.teams.find(t=>t.id===found?.id);
+      if(t&&t.ownerId===(r.applicantId||'u-zhang')&&!(t.spaceIds||[]).includes(String(r.id))){t.spaceIds=[...(t.spaceIds||[]),String(r.id)];changed=true;}
+    }
+    if(changed)try{localStorage.setItem(O.KEY,JSON.stringify(db));}catch{}
+  }
+  const initialSpaces=[
+{id:1,name:'寒地水稻倒伏识别研究',role:'负责人',desc:'开展水稻倒伏识别与精度验证',state:'可用',instance:'运行中',cpu:8,ram:32,progress:'阶段成果已提交',visit:'今天 09:30',team:'作物遥感研究团队'},
+{id:2,name:'玉米长势监测研究',role:'成员',desc:'开展玉米长势分析与模型验证',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'样本数据已更新',visit:'昨天 16:20',team:'作物遥感研究团队'},
+{id:3,name:'旱情监测研究',role:'负责人',desc:'开展区域旱情识别与验证',state:'开通中',instance:'未开通',cpu:4,ram:16,progress:'申请已通过，等待开通',visit:'09-16 14:30',team:'农业灾害研究团队'},
+{id:4,name:'土壤墒情分析研究',role:'成员',desc:'开展农田土壤墒情时空变化分析',state:'可用',instance:'运行中',cpu:4,ram:16,progress:'研究数据已就绪',visit:'09-16 11:10',team:'农业灾害研究团队'},
+{id:5,name:'作物分类精度验证',role:'负责人',desc:'开展多源遥感作物分类精度评价',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'成果文件已提交',visit:'09-15 17:50',team:'作物遥感研究团队'},
+{id:6,name:'冬小麦估产验证研究',role:'成员',desc:'开展冬小麦区域估产模型验证',state:'可用',instance:'异常',cpu:4,ram:16,progress:'实例启动失败，待负责人处理',visit:'09-14 10:00',team:'粮食产量研究团队'},
+{id:7,name:'2025年水稻物候研究',role:'成员',desc:'开展水稻物候识别与时序分析',state:'已归档',instance:'已停止',cpu:4,ram:16,progress:'研究已完成，成果已发布',visit:'08-20 10:30',team:'作物遥感研究团队'}];
+
+  function available(includeArchived=false){
+    registerApproved();
+    const saved=read(),all=[...initialSpaces];
+    for(const r of saved.filter(approved).reverse()){const i=all.findIndex(s=>String(s.id)===String(r.id));if(i>=0)all[i]=r;else all.unshift(r);}
+    let instances={};try{instances=JSON.parse(localStorage.getItem('agri-research-instance-v7')||'{}');}catch{}
+    return all.map(s=>({...s,...instances[s.id],compute:{ready:s.instance==='运行中',...s.compute,...instances[s.id]?.compute},team:teamFor(s)?.name||s.team,role:O.canManageSpace(s.id)?'负责人':'成员'})).filter(s=>O.canViewSpace(s.id)&&approved(s)&&(includeArchived||s.state!=='已归档'));
+  }
+  function seed(){
+    const marker='agri-space-personal-demo-v1';if(localStorage.getItem(marker))return;
+    const all=read();
+    const seeds=[['demo-space-return-1','小麦单产估测','请补充研究范围','2026-09-18T09:20:00'],['demo-space-return-2','玉米产量预测','请完善研究用途','2026-09-16T11:30:00']];
+    for(const [id,name,note,time] of seeds)if(!all.some(r=>String(r.id)===id||r.name===name))all.push({id,name,desc:'开展'+name+'与精度验证，为农业监测提供研究支撑。',team:'作物遥感研究团队',teamId:'t-rice',applicantId:'u-zhang',applicant:'张研究员',state:'已驳回',reviewNote:note,reviewedAt:time,submittedAt:time,instance:'未开通',role:'负责人',cpu:4,ram:16,gpu:0,storage:100,gpuMemory:0,model:'',modelId:'',modelVersion:'',ide:'JupyterLab 4',durationDays:null,datasets:[],workspacePath:'/mnt/workspace',systemDisk:20,environmentConfig:{system:'Ubuntu 22.04',python:'3.10',framework:'PyTorch 2.2',cuda:'不使用',tool:'JupyterLab 4'},compute:{runtime:'Python 3.10 · PyTorch 2.2',detail:'Ubuntu 22.04 · JupyterLab 4',ready:false},demo:true,applicationSchema:12});
+    try{localStorage.setItem(key,JSON.stringify(all));localStorage.setItem(marker,'1');}catch{}
+  }
+  seed();
+  function canReapply(r){return !!r&&mine(r)&&O.isLeader()&&rejected(r)&&!read().some(x=>String(x.previousApplicationId)===String(r.id));}
+  const modal=document.createElement('dialog');modal.id='spaceRequestDialog';modal.className='sr-dialog';
+  modal.innerHTML='<div class="sr-head"><h2 id="sr-title"></h2><button type="button" data-sr-close aria-label="关闭">×</button></div><div id="sr-content"></div>';
+  document.body.append(modal);
+  const $=selector=>modal.querySelector(selector);
+  function closeModal(){modal.close();}
+  function open(title,body){modal.classList.remove('resource-apply');$('#sr-title').textContent=title;$('#sr-content').innerHTML=body;if(!modal.open)modal.showModal();}
+  function toast(message){if(typeof window.toast==='function')window.toast(message);}
+  modal.querySelector('[data-sr-close]').onclick=closeModal;
+  modal.addEventListener('click',e=>{if(e.target.closest('[data-sr-close]'))closeModal();});
+  function details(id){
+    const all=read(),r=all.find(x=>String(x.id)===String(id)&&mine(x));if(!r)return;
+    const env=r.environmentConfig||{},next=all.find(x=>String(x.previousApplicationId)===String(r.id)&&mine(x));
+    let chain=[r],parent=r,seen=new Set([String(r.id)]);
+    while(parent.previousApplicationId){const p=all.find(x=>String(x.id)===String(parent.previousApplicationId)&&mine(x));if(!p||seen.has(String(p.id)))break;chain.unshift(p);seen.add(String(p.id));parent=p;}
+    const field=(name,value)=>'<div><dt>'+esc(name)+'</dt><dd>'+esc(value||'—')+'</dd></div>';
+    open('科研空间申请详情',`<div class="sr-body"><div class="sr-record-title"><h3>${esc(r.name)}</h3><span class="sr-status ${status(r)==='审核中'?'amber':rejected(r)?'returned':''}">${esc(status(r))}</span>${r.demo?'<small>原型演示</small>':''}</div><dl class="sr-fields">${field('所属团队',teamFor(r)?.name||r.team)}${field('申请人',r.applicant||O.account(r.applicantId||'u-zhang')?.name)}${field('提交时间',date(r))}${field('预计使用时长',r.durationDays?r.durationDays+' 天':'未填写')}</dl><h4>研究用途</h4><p class="sr-purpose">${esc(r.desc)}</p><h4>开发环境与资源</h4><dl class="sr-fields">${field('关联模型',[r.model||'未关联',r.modelVersion].filter(Boolean).join(' · '))}${field('开发工具',r.ide)}${field('环境配置',[env.system,env.python?'Python '+env.python:'',env.framework,env.cuda&&env.cuda!=='不使用'?'CUDA '+env.cuda:''].filter(Boolean).join(' · ')||r.compute?.detail)}${field('计算配置',`${r.cpu} 核 CPU / ${r.ram} GB 内存 / ${r.gpu||0} 张 GPU${r.gpu?' / 单卡显存 ≥ '+r.gpuMemory+' GB':''}`)}${field('研究存储',r.storage+' GB')}${field('研究目录',r.workspacePath||'/mnt/workspace')}</dl><h4>初始数据</h4>${r.datasets?.length?`<ul class="sr-data">${r.datasets.map(d=>`<li><strong>${esc(d.name)} · ${esc(d.version)}</strong><span>${esc(d.path)} · ${esc(d.access||'只读')}</span></li>`).join('')}</ul>`:'<p class="sr-muted">未选择初始数据。</p>'}<h4>申请与审批记录</h4><ol class="sr-history">${chain.map((x,i)=>`<li><div><strong>${i?'再次申请':'提交申请'}</strong><span>${esc(date(x))}</span></div><p>${esc(x.name)} · ${esc(status(x))}</p>${x.reviewNote?`<div class="sr-opinion"><b>审批意见</b><p>${esc(x.reviewNote)}</p>${x.reviewedAt?`<small>${esc(stamp(x.reviewedAt))}</small>`:''}</div>`:'<p class="sr-muted">申请已提交，等待审批。</p>'}${String(x.id)!==String(r.id)?`<button class="link" data-sr-detail="${esc(x.id)}">查看本次申请</button>`:''}</li>`).join('')}</ol>${next?`<p class="sr-muted">已基于本次记录再次申请。<button class="link" data-sr-detail="${esc(next.id)}">查看后续申请</button></p>`:''}</div><div class="sr-foot"><button data-sr-close>关闭</button>${canReapply(r)?`<button class="primary" data-sr-reapply="${esc(r.id)}">修改并再次申请</button>`:''}${approved(r)?`<a class="primary" href="${spaceURL}">前往科研空间</a>`:''}</div>`);
+  }
+  function received(r){
+    window.dispatchEvent(new CustomEvent('space-application-change'));
+    if(document.getElementById('pcContent')){
+      closeModal();location.hash='spaces?tab=applications';window.render();toast('申请已提交，可在申请记录中查看审批结果。');
+    }else open('申请已提交',`<div class="sr-body sr-receipt"><span class="sr-check">✓</span><h3>${esc(r.name)}</h3><p>可在个人中心「我的科研空间 → 申请记录」查看审批结果。</p></div><div class="sr-foot"><button data-sr-close>返回科研空间</button><a class="primary" href="${personalURL}#spaces?tab=applications">查看申请记录</a></div>`);
+  }
+  const environmentProfiles={
+'rice-dev-1.2':{image:'rice-lodging-dev:1.2',runtime:'Python 3.10 · PyTorch 2.2',environment:'Ubuntu 22.04 · CUDA 12.1 · JupyterLab 4',minimum:{cpu:4,gpu:1,ram:16,storage:1},recommended:{cpu:8,gpu:1,ram:32,storage:200},gpuMemory:16,systemDisk:30,gpuRequired:true},
+'growth-dev-2.0':{image:'crop-growth-cpu:2.0',runtime:'Python 3.10 · scikit-learn 1.4',environment:'Ubuntu 22.04 · JupyterLab 4',minimum:{cpu:2,gpu:0,ram:8,storage:1},recommended:{cpu:4,gpu:0,ram:16,storage:100},gpuMemory:0,systemDisk:20,gpuRequired:false},
+'drought-dev-1.0':{image:'drought-dev:1.0',runtime:'Python 3.10 · PyTorch 2.2',environment:'Ubuntu 22.04 · CUDA 12.1 · JupyterLab 4',minimum:{cpu:8,gpu:1,ram:32,storage:1},recommended:{cpu:16,gpu:1,ram:64,storage:300},gpuMemory:24,systemDisk:40,gpuRequired:true}
+};
+const initialModelCatalog=[{id:'rice',name:'水稻倒伏识别模型',version:'V1.2',imageId:'rice-dev-1.2'},{id:'growth',name:'作物长势监测模型',version:'V2.0',imageId:'growth-dev-2.0'},{id:'drought',name:'农业干旱识别模型',version:'V1.0',imageId:'drought-dev-1.0'}].map(m=>({...m,...environmentProfiles[m.imageId],...environmentProfiles[m.imageId].recommended}));
+
+// Demonstration catalog only. Production must resolve team grants, immutable versions,
+// image compatibility and schedulable resources server-side at submission/provisioning.
+const initialDatasetCatalog=[
+{id:'rice-samples',name:'寒地水稻倒伏标注样本',version:'V1.1',type:'图像 / 标注',team:'作物遥感研究团队',path:'/mnt/data/rice-samples'},
+{id:'crop-series',name:'作物长势遥感时序数据',version:'V2.0',type:'遥感 / 时序',team:'作物遥感研究团队',path:'/mnt/data/crop-series'},
+{id:'soil-observations',name:'农田土壤墒情观测数据',version:'V1.0',type:'表格 / 时序',team:'农业灾害研究团队',path:'/mnt/data/soil-observations'},
+{id:'weather-daily',name:'农业气象逐日观测数据',version:'V1.2',type:'表格 / 时序',team:'all',path:'/mnt/data/weather-daily'}
+];
+let applicationDataIds=[];
+function selectedDevelopmentTool(){return $('#development-tool')?.value||'JupyterLab 4'}
+function selectedInitialModel(){
+ const selected=initialModelCatalog.find(m=>m.id===$('#initial-model').value);
+ const config={system:$('#environment-system').value,python:$('#environment-python').value,framework:$('#environment-framework').value,cuda:$('#environment-cuda').value,tool:selectedDevelopmentTool()};
+ return {id:selected?.id||'',name:selected?.name||'',version:selected?.version||'',imageId:'',image:'',config,
+ runtime:'Python '+config.python+(config.framework==='不预装框架'?'':' · '+config.framework),environment:config.system+(config.cuda==='不使用'?'':' · CUDA '+config.cuda),
+ minimum:{cpu:1,gpu:0,ram:1,storage:1},recommended:{cpu:4,gpu:0,ram:16,storage:100},gpuMemory:1,systemDisk:20};
+}
+function updateDevelopmentTool(){updateEnvironmentSummary()}
+function updateEnvironmentSummary(){const m=selectedInitialModel();$('#model-runtime').innerHTML=`<div class="env-heading"><strong>${esc(selectedDevelopmentTool())}</strong></div><div class="env-row"><span>环境组合</span><span>${esc(m.environment)} · ${esc(m.runtime)}</span></div>`;}
+function useModelDefaults(preserveStorage=false){
+ const m=selectedInitialModel();for(const k of ['cpu','gpu','ram','storage']){const input=$('#resource-'+k);if(!(k==='storage'&&preserveStorage))input.value=m.recommended[k];input.min=m.minimum[k];$('#default-'+k).textContent='默认 '+m.recommended[k]+({cpu:' 核',gpu:' 张',ram:' GB',storage:' GB'}[k]);}
+ $('#resource-gpu').readOnly=false;$('#gpu-memory').value=16;$('#gpu-memory').min=1;$('#gpu-note').textContent='GPU 张数为 0 时不申请 GPU。';updateEnvironmentSummary();checkResourceHints();
+}
+function checkResourceHints(){
+ const m=selectedInitialModel(),errors=[],labels={cpu:'CPU',gpu:'GPU',ram:'内存',storage:'研究存储'};
+ for(const k of ['cpu','gpu','ram','storage']){const el=$('#resource-'+k),v=Number(el.value);if(el.value===''||!Number.isSafeInteger(v)||v<m.minimum[k])errors.push(labels[k]+'需为不小于 '+m.minimum[k]+' 的整数');}
+ const gpu=Number($('#resource-gpu').value),mem=$('#gpu-memory');$('#gpu-memory-row').hidden=!(gpu>0);mem.required=gpu>0;mem.disabled=!(gpu>0);
+ if(gpu>0&&(!mem.value||!Number.isSafeInteger(Number(mem.value))||Number(mem.value)<1))errors.push('请填写单卡显存要求（正整数）');
+ $('#resource-form-error').textContent=errors.join('；');$('#resource-advice').textContent='';$('#apply-config-summary').textContent=`${$('#resource-cpu').value||'—'} 核 CPU · ${$('#resource-ram').value||'—'} GB 内存 · ${gpu||0} 张 GPU`;return !errors.length;
+}
+function renderApplicationData(){
+ const team=$('#application-team').value;
+ const available=initialDatasetCatalog.filter(d=>(d.team==='all'||d.team===team||(d.team==='作物遥感研究团队'&&team==='寒地水稻研究团队'))&&!applicationDataIds.includes(d.id));
+ $('#application-dataset').innerHTML='<option value="">选择团队可用数据集</option>'+available.map(d=>`<option value="${d.id}">${esc(d.name)} · ${d.version}</option>`).join('');
+ $('#add-application-data').disabled=!available.length;
+ $('#application-data-list').innerHTML=applicationDataIds.length?applicationDataIds.map(id=>{
+ const d=initialDatasetCatalog.find(x=>x.id===id);return `<div class="mount-row"><div><strong>${esc(d.name)}</strong><span class="dataset-version">${d.version} · ${d.type}</span><code>${d.path}</code></div><span class="readonly-tag">只读</span><button type="button" class="link" data-remove-dataset="${d.id}" aria-label="移除${esc(d.name)}">移除</button></div>`;
+ }).join(''):'<div class="mount-empty">暂未选择，可在空间开通后继续挂载。</div>';
+ document.querySelectorAll('[data-remove-dataset]').forEach(b=>b.onclick=()=>{applicationDataIds=applicationDataIds.filter(id=>id!==b.dataset.removeDataset);renderApplicationData()});
+ $('#data-count').textContent=applicationDataIds.length?'已选 '+applicationDataIds.length+' 项':'选填';
+}
+function showForm(originalId){
+ if(!O.isLeader()){toast('科研空间和算力由负责人申请。');return;}
+ const original=originalId?read().find(r=>String(r.id)===String(originalId)&&mine(r)):null;
+ if(originalId&&!canReapply(original)){toast('当前申请不能再次提交，请查看最新申请记录。');return;}
+ const own=O.myTeams().filter(t=>t.ownerId===account().id);
+ if(!own.length){toast('请先在个人中心创建本人负责的团队。');return;}
+ applicationDataIds=[];
+ open(original?'修改并再次申请':'申请科研空间',`<form id="apply-form"><div class="modal-body application-body">${original?`<div class="sr-return-note"><strong>上次审批意见</strong>${esc(original.reviewNote||'—')}</div>`:''}
+ <section class="application-section"><h3><span>01</span>基础信息</h3><div class="apply-basic">
+ <label>空间名称 <span class="required-star">*</span><input name="name" required maxlength="32" placeholder="请输入空间名称，最多 32 字" autocomplete="off"></label>
+ <label>所属团队 <span class="required-star">*</span><select id="application-team" name="team" required><option>作物遥感研究团队</option><option>农业灾害研究团队</option></select></label>
+ <label class="full">研究用途 <span class="required-star">*</span><textarea name="purpose" required maxlength="500" placeholder="说明研究目标、研究范围及拟开展的工作" rows="2"></textarea><span class="field-counter" id="purpose-count">0 / 500</span></label>
+ <label class="full duration-label">预计使用时长 <span class="optional-text">选填</span><div class="duration-input"><input name="durationDays" type="number" min="1" step="1" placeholder="例如 90" aria-label="预计使用天数"><span>天</span><small>用于资源安排，不作为自动结束研究的时间。</small></div></label>
+ </div></section>
+ <section class="application-section"><h3><span>02</span>开发环境</h3>
+ <label>关联模型 <span class="optional-text">选填</span><select id="initial-model" name="model"><option value="">不关联模型</option>${initialModelCatalog.map(m=>`<option value="${m.id}">${m.name} · ${m.version}</option>`).join('')}</select></label>
+ <div class="environment-select-grid">
+ <label>操作系统 <span class="required-star">*</span><select id="environment-system" required><option>Ubuntu 22.04</option><option>Ubuntu 20.04</option></select></label>
+ <label>Python 版本 <span class="required-star">*</span><select id="environment-python" required><option>3.10</option><option>3.11</option></select></label>
+ <label>开发框架 <span class="required-star">*</span><select id="environment-framework" required><option>PyTorch 2.2</option><option>scikit-learn 1.4</option><option>不预装框架</option></select></label>
+ <label>CUDA <span class="optional-text">选填</span><select id="environment-cuda"><option>不使用</option><option>12.1</option></select></label>
+ <label>开发工具 <span class="required-star">*</span><select id="development-tool" name="ide" required><option value="JupyterLab 4">JupyterLab</option><option value="VSCode">VS Code</option></select></label>
+ </div><div id="model-runtime" class="application-environment"></div>
+ </section>
+ <section class="application-section"><h3><span>03</span>计算与存储<button type="button" class="link" id="restore-application-defaults">恢复推荐配置</button></h3>
+ <div class="resource-input-grid">${[['cpu','CPU','核',1],['ram','内存','GB',1],['gpu','GPU','张',0],['storage','研究存储','GB',1]].map(([key,label,unit,min])=>`<div class="resource-input-box"><label for="resource-${key}">${label} <span class="required-star">*</span><small id="default-${key}"></small></label><div class="resource-number"><input id="resource-${key}" name="${key}" type="number" min="${min}" step="1" required aria-label="${label}"><span>${unit}</span></div></div>`).join('')}</div>
+ <div id="gpu-memory-row" class="gpu-memory-row"><label for="gpu-memory">单卡显存要求 <span class="required-star">*</span></label><div class="unit-input"><input id="gpu-memory" name="gpuMemory" type="number" min="0" step="1" required aria-label="单卡显存要求"><span>GB 及以上</span></div></div>
+ <p id="gpu-note" class="field-help"></p>
+ <details class="storage-explanation"><summary>存储目录与用途</summary><div><p><code>/mnt/workspace</code> 团队共享研究文件，可读写；停止实例后保留。</p><p><code>/mnt/data/…</code> 挂载数据集，只读；实验输出写入研究存储。</p><p>研究存储与系统盘分开，系统盘由开发环境预留。</p></div></details>
+ <div id="resource-advice" class="resource-advice" role="status"></div>
+ </section>
+ <section class="application-section"><h3><span>04</span>初始数据<span id="data-count" class="optional-text"></span></h3>
+ <div class="dataset-picker"><select id="application-dataset" aria-label="选择初始数据集"></select><button type="button" id="add-application-data">添加</button></div>
+ <div id="application-data-list"></div>
+ <p class="field-help">仅展示当前团队可用的数据，按所选版本只读挂载，目录自动分配。</p>
+ </section><div id="resource-form-error" class="form-error" role="alert"></div>
+ </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="SpaceRequests.closeForm()">取消</button><button class="primary" type="submit">提交申请</button></div></form>`);
+ modal.classList.add('resource-apply');
+ modal.setAttribute('aria-labelledby','sr-title');
+ $('#application-team').innerHTML=own.map(t=>`<option value="${esc(t.name)}" data-team-id="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+ useModelDefaults();
+ if(original){
+   const f=$('#apply-form');f.elements.name.value=original.name||'';f.elements.purpose.value=original.desc||'';
+   const t=own.find(t=>t.id===teamFor(original)?.id);if(t)$('#application-team').value=t.name;
+   f.elements.durationDays.value=original.durationDays||'';
+   const config=original.environmentConfig||{};
+   const set=(selector,value)=>{const el=$(selector);if(value===undefined||value===null||value==='')return;if(![...el.options].some(o=>o.value===String(value))){const option=document.createElement('option');option.value=value;option.textContent=value;el.append(option);}el.value=value;};
+   set('#initial-model',original.modelId);set('#environment-system',config.system);set('#environment-python',config.python);set('#environment-framework',config.framework);set('#environment-cuda',config.cuda);set('#development-tool',original.ide||config.tool);
+   for(const k of ['cpu','gpu','ram','storage'])$('#resource-'+k).value=original[k]??({cpu:4,gpu:0,ram:16,storage:100}[k]);
+   $('#gpu-memory').value=original.gpuMemory||16;
+   for(const d of original.datasets||[]){if(!initialDatasetCatalog.some(x=>x.id===d.id))initialDatasetCatalog.push({...d,type:'数据集',team:$('#application-team').value});}
+   applicationDataIds=(original.datasets||[]).map(d=>d.id);
+   $('#purpose-count').textContent=f.elements.purpose.value.length+' / 500';
+   f.querySelector('button[type=submit]').textContent='再次提交申请';
+   updateEnvironmentSummary();checkResourceHints();
+ }
+ renderApplicationData();
+ document.querySelectorAll('.environment-select-grid select').forEach(input=>input.onchange=updateEnvironmentSummary);
+ $('#restore-application-defaults').onclick=()=>useModelDefaults(false);
+ for(const k of ['cpu','gpu','ram','storage'])$('#resource-'+k).oninput=checkResourceHints;
+ $('#gpu-memory').oninput=checkResourceHints;
+ $('#apply-form textarea').oninput=e=>{$('#purpose-count').textContent=e.target.value.length+' / 500'};
+ $('#application-team').onchange=()=>{
+ const team=$('#application-team').value;
+ const previous=applicationDataIds.length;
+ applicationDataIds=applicationDataIds.filter(id=>{const d=initialDatasetCatalog.find(x=>x.id===id);return d.team==='all'||d.team===team||(d.team==='作物遥感研究团队'&&team==='寒地水稻研究团队')});
+ renderApplicationData();if(applicationDataIds.length<previous)toast('已移除新团队无权使用的数据，请重新选择');
+ };
+ $('#add-application-data').onclick=()=>{const id=$('#application-dataset').value;if(id&&!applicationDataIds.includes(id)){applicationDataIds.push(id);renderApplicationData()}};
+ $('#apply-form').onsubmit=e=>{
+ e.preventDefault();
+ const selectedTeam=own.find(t=>t.name===$('#application-team').value);
+ if(!O.isLeader()||!selectedTeam||!O.canManageTeam(selectedTeam.id)||(original&&!canReapply(original))){$('#resource-form-error').textContent='当前申请或团队权限已变化，请关闭后重新查看。';return;}
+ if(!checkResourceHints()){$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
+ const f=new FormData(e.target),m=selectedInitialModel();
+ const values=Object.fromEntries(['cpu','gpu','ram','storage'].map(k=>[k,Number(f.get(k))]));
+ const name=String(f.get('name')).trim(),purpose=String(f.get('purpose')).trim(),days=String(f.get('durationDays'));
+ if(!name||!purpose){$('#resource-form-error').textContent='请填写空间名称和研究用途，不能只包含空格。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
+ if(days&&(!Number.isSafeInteger(Number(days))||Number(days)<1)){$('#resource-form-error').textContent='预计使用时长需为正整数。';return;}
+ const data=applicationDataIds.map(id=>initialDatasetCatalog.find(d=>d.id===id)).filter(d=>d&&(d.team==='all'||d.team===f.get('team')||(d.team==='作物遥感研究团队'&&f.get('team')==='寒地水稻研究团队'))).map(d=>({id:d.id,name:d.name,version:d.version,path:d.path,access:'只读'}));
+ const gpuMemory=values.gpu?Number(f.get('gpuMemory')):0;
+ const s={id:Date.now(),applicantId:account().id,applicant:account().name,teamId:selectedTeam.id,submittedAt:new Date().toISOString(),previousApplicationId:original?.id||null,rootApplicationId:original?.rootApplicationId||original?.id||null,name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
+ try{const requests=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');if(!Array.isArray(requests))throw new Error('Invalid local applications');requests.unshift(s);localStorage.setItem('agri-space-applications-v8',JSON.stringify(requests));}catch{$('#resource-form-error').textContent='本地申请记录保存失败，请检查浏览器存储后重试。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
+ received(s);
+ };
+}
+
+  window.SpaceRequests={key,read,mine,approved,status,date,available,teamFor,canReapply,showForm,details,closeForm:closeModal,personalURL,spaceURL};
+  document.addEventListener('click',ev=>{const b=ev.target.closest('[data-sr-detail],[data-sr-reapply]');if(!b)return;ev.preventDefault();if(b.dataset.srDetail)details(b.dataset.srDetail);else showForm(b.dataset.srReapply);});
+})();
+</script><script id="space-personal-boundary">
+(() => {
+ const S=SpaceRequests,O=PortalOrg;
+ function refresh(){
+  const scope=new URLSearchParams(location.search).get('team');
+  spaces=S.available(true).filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope));
+  permission=O.isLeader()?'owner':'member';
+  render();
+ }
+ window.apply=()=>S.showForm();document.getElementById('apply').onclick=window.apply;
+ window.addEventListener('pageshow',refresh);
+ window.addEventListener('portal-account-change',refresh);
+ window.addEventListener('space-application-change',refresh);
+ window.addEventListener('storage',ev=>{if([S.key,instanceKey,O.KEY].includes(ev.key))refresh();});
+ const oldDetail=window.detail;window.detail=function(id){const s=spaces.find(s=>String(s.id)===String(id));if(!s||s.state==='开通中'||!O.canViewSpace(id))return;oldDetail(id);};
+ const oldEnv=window.environment;window.environment=function(id){if(!O.canViewSpace(id))return;oldEnv(id);};
+ refresh();
+ const id=new URLSearchParams(location.search).get('space');
+ if(id){const s=spaces.find(s=>String(s.id)===id);if(s&&s.state==='可用')window.detail(s.id);}
+})();
+</script></body></html>

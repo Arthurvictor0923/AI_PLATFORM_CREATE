@@ -786,6 +786,10 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 </style>
 <script src="assets/portal-org.js"></script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<style>/* 1030-fix:autharea-narrow */
+/* 统一登录态把「登录/合作咨询」包进 .autharea(flex)，窄屏下它与汉堡按钮并存会把页头撑出横向滚动条；移动端这两项在汉堡菜单内已有，故此处整体收起。 */
+@media (max-width:767px){header.site-header .header-actions .autharea{ display:none !important; }}
+</style>
 </head>
 <body>
 <header class="site-header">
