@@ -807,18 +807,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
           </div>
         </section>
 
-        <section class="card" id="contact"><h2>联系平台</h2><p class="sub">合作申请、使用问题和课题咨询均可在此填写，咨询记录可随时查看。</p><div class="card-foot" style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-primary" href="合作咨询.html" data-consult-1020>填写合作咨询</a><button class="btn btn-ghost" data-feedback>提交问题反馈</button><button class="btn btn-ghost" data-consult-records>查看咨询记录</button></div></section>
-
-        <section class="card" id="feedback">
-          <h2>反馈问题时请准备</h2>
-          <ol class="numlist">
-            <li>涉及的页面或资源名称；</li>
-            <li>问题发生时间与具体操作；</li>
-            <li>错误提示或截图；</li>
-            <li>用于回复的联系方式。</li>
-          </ol>
-          <div class="callout plain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.8"/><path d="M12 11.2v5.4"/><path d="M12 7.9h.01"/></svg><p>请勿提供密码、访问密钥等敏感信息。</p></div>
-        </section>
+        <section class="card" id="contact"><h2>联系平台</h2><p class="sub">合作申请和课题咨询可通过合作咨询入口填写，咨询记录可随时查看。</p><div class="card-foot" style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-primary" href="合作咨询.html" data-consult-1020>填写合作咨询</a><button class="btn btn-ghost" data-consult-records>查看咨询记录</button></div></section>
 
         <section class="card" id="faq">
           <h2>常见咨询</h2>
@@ -960,8 +949,7 @@ header.site-header .header-inner{display:flex;align-items:center;max-width:1280p
     ["使用问题","联系支持","数据申请、模型调用或科研开发空间使用问题，可先查阅使用帮助。","关于平台-联系支持.html#entries"],
     ["合作咨询","联系支持","加入平台、机构合作与专项部署需求，通过统一合作咨询入口沟通。","关于平台-联系支持.html#entries"],
     ["需求沟通","联系支持","针对某条需求发布的合作，请在需求详情点击我要联系。","关于平台-联系支持.html#entries"],
-    ["联系平台","联系支持","官方电话与服务邮箱发布后在此展示。","关于平台-联系支持.html#contact"],
-    ["反馈问题时请准备","联系支持","页面或资源名称、发生时间与操作、错误提示或截图、联系方式。","关于平台-联系支持.html#feedback"],
+    ["联系平台","联系支持","合作申请和课题咨询可通过合作咨询入口填写，咨询记录可随时查看。","关于平台-联系支持.html#contact"],
     ["课题申报联系谁？","联系支持","请查看相应课题指南中的联系信息并按要求线下提交。","关于平台-联系支持.html#faq"],
     ["需求合作联系谁？","联系支持","登录后从需求详情获取发布方联系方式。","关于平台-联系支持.html#faq"],
     ["资源申请状态在哪里看？","联系支持","登录个人中心查看我的申请及审核反馈。","关于平台-联系支持.html#faq"]
@@ -1066,14 +1054,14 @@ header.site-header .header-actions .bdh-logout{ display:none; }
  window.portalModal=function(title,body,footer=''){if(dialog.open)dialog.close();dialog.innerHTML='<div class="pcx-head"><h2 id="pcxTitle">'+escape(title)+'</h2><button type="button" data-pcx-close aria-label="关闭">×</button></div><div class="pcx-body">'+body+'</div><div class="pcx-foot">'+footer+'<button type="button" data-pcx-close>关闭</button></div>';dialog.showModal();};
  window.portalClose=()=>dialog.close();
  function records(){try{return JSON.parse(localStorage.getItem('bdh-consultations-v1')||'[]')}catch{return []}}
- window.portalConsultRecords=function(){const items=records();portalModal('咨询与反馈记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询或问题反馈后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
+ window.portalConsultRecords=function(){const items=records();portalModal('咨询记录','<p class="pcx-note">仅显示当前浏览器保存的原型记录，未发送至平台。</p>'+(items.length?items.map(x=>'<article class="pcx-record"><strong>'+escape(x.kind)+' · '+escape(x.id)+'</strong><p>'+escape(x.description)+'</p><span>'+escape(x.org)+' · '+escape(x.contact)+' · '+escape(x.time)+'</span><p class="pcx-note">已保存 · 待平台对接（演示状态）</p></article>').join(''):'<p>暂无记录。填写咨询后，可在这里查看。</p>'),'<button onclick="portalConsult()">新增咨询</button>');};
  window.portalConsult=function(kind='机构合作'){
- portalModal(kind==='使用问题'?'问题反馈':'合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询','使用问题'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向、业务需求或遇到的问题（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
+ portalModal('合作咨询',`<p class="pcx-note">原型演示：信息仅保存在当前浏览器，不发送真实消息。</p><form id="pcxForm"><div class="pcx-grid"><label>咨询类型 *<select name="kind">${['机构合作','加入平台','私有化部署','API 与订阅','课题咨询'].map(x=>`<option ${x===kind?'selected':''}>${x}</option>`).join('')}</select></label><label>单位名称 *<input name="org" required maxlength="80" placeholder="填写单位全称"></label><label>联系人 *<input name="contact" required maxlength="30" placeholder="填写姓名"></label><label>联系电话 / 邮箱 *<input name="reply" required maxlength="100" placeholder="填写可联系的电话或邮箱"></label><label class="full">咨询内容 *<textarea name="description" required minlength="10" maxlength="2000" placeholder="请说明合作方向或业务需求（至少10字）"></textarea></label></div><p id="pcxError" class="pcx-error" role="alert" hidden></p></form>`,`<button type="button" onclick="portalConsultRecords()">查看记录</button><button type="submit" class="primary" form="pcxForm">提交</button>`);
  const f=document.getElementById('pcxForm');f.onsubmit=function(e){e.preventDefault();const x=Object.fromEntries(new FormData(f));Object.keys(x).forEach(k=>x[k]=x[k].trim());const err=document.getElementById('pcxError');if(!x.org||!x.contact||x.description.length<10||!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.reply)||/^\+?[\d\s()\-]{7,25}$/.test(x.reply))){err.hidden=false;err.textContent='请补全单位、联系人、至少10字的内容，并填写有效电话或邮箱。';return;}x.id='ZX-'+Date.now().toString(36).toUpperCase();x.time=new Date().toLocaleString('zh-CN',{hour12:false});try{localStorage.setItem('bdh-consultations-v1',JSON.stringify([x,...records()]));}catch{err.hidden=false;err.textContent='浏览器无法保存，请保留当前表单后重试。';return;}portalModal('提交记录已保存','<div class="pcx-success"><strong>'+escape(x.id)+'</strong><p>'+escape(x.kind)+' · '+escape(x.org)+'</p><p>您的咨询内容与联系方式已记录。</p></div><p class="pcx-note">此为原型演示记录，未发送至平台。可在「联系支持 → 查看咨询记录」再次查看。</p>','<button class="primary" onclick="portalConsultRecords()">查看记录</button>');};};
  window.portalSaveApplication=function(record){const key='bdh-model-applications-v1';try{const list=JSON.parse(localStorage.getItem(key)||'[]');const item={...record,id:'AP-'+Date.now().toString(36).toUpperCase(),date:new Date().toLocaleDateString('sv-SE'),status:'审核中'};localStorage.setItem(key,JSON.stringify([item,...list]));return item;}catch{return null}};
  window.portalApplicationReceipt=function(item){portalModal('申请记录已保存','<div class="pcx-success"><strong>'+escape(item.id)+'</strong><p>'+escape(item.name)+'</p><p>状态：审核中</p></div><p class="pcx-note">原型演示记录保存在当前浏览器，不启动真实审批或分配资源。</p>','<a class="pcx-link" href="个人中心-高保真原型.html#models?tab=applications">查看申请记录</a>');};
  const routes={'首页':'index.html','模型中心':'模型中心-模型列表页（调整）.html','数据中心':'数据中心-数据集列表页.html','科研开发空间':'科研开发空间-交互原型(10).html','课题中心':'课题中心-高保真原型.html','需求中心':'需求中心-高保真原型 (1).html','个人中心':'个人中心-高保真原型.html','关于平台':'关于平台-平台介绍.html'};
- document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-feedback],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult')||b.hasAttribute('data-feedback'))portalConsult(b.hasAttribute('data-feedback')?'使用问题':'机构合作');else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
+ document.addEventListener('click',e=>{const close=e.target.closest('[data-pcx-close]');if(close){dialog.close();return;}const b=e.target.closest('[data-consult],[data-consult-records],[data-shell],[data-external]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();if(b.hasAttribute('data-consult-records'))portalConsultRecords();else if(b.hasAttribute('data-consult'))portalConsult();else{const key=b.dataset.shell||b.dataset.external;if(routes[key])location.href=routes[key];}},true);
  dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 })();
 </script>
