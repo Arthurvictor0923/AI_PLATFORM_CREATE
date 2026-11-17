@@ -480,7 +480,7 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     teams: [
       {id:'t-rice',name:'寒地水稻研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'多源遥感与作物监测方法研究',memberIds:['u-zhang','u-li','u-wang'],spaceIds:['1','2','5','7']},
       {id:'t-disaster',name:'农业灾害研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'农田旱情与土壤墒情研究',memberIds:['u-zhang','u-li'],spaceIds:['3','4']},
-      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun','u-zhang'],spaceIds:['6']}
+      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun'],spaceIds:['6']}
     ],
     invitations: []
   };
@@ -494,6 +494,20 @@ footer .links a:hover{color:#fff;text-decoration:underline}
   function leader() {const a=current();if(a.kind!=='leader')throw Error('仅负责人可以管理成员账号和创建团队。');return a;}
   function managedTeam(s,id) {const t=s.teams.find(t=>t.id===id);if(!t||t.ownerId!==current().id)throw Error('仅当前团队负责人可以管理该团队。');return t;}
   function memberEligible(t,a) {return !!a&&a.orgId===t.orgId&&a.kind==='member'&&a.ownerId===t.ownerId;}
+  function findSpaceTeam(s,id) {return s.teams.find(t=>(t.spaceIds||[]).includes(String(id)));}
+  function teamParticipantIds(s,t) {
+    return t.memberIds.filter(id=>memberEligible(t,s.accounts.find(a=>a.id===id)));
+  }
+  function spaceParticipantIds(s,t,id) {
+    const assigned=s.spaceMembers?.[String(id)], eligible=teamParticipantIds(s,t);
+    return Array.isArray(assigned)?eligible.filter(id=>assigned.includes(id)):eligible;
+  }
+  function spaceRole(id) {
+    const a=current(), s=read(), t=findSpaceTeam(s,id);
+    if(!t)return null;
+    if(a.kind==='leader')return t.ownerId===a.id?'负责人':null;
+    return a.kind==='member'&&spaceParticipantIds(s,t,id).includes(a.id)?'成员':null;
+  }
   const O = window.PortalOrg = {
     KEY, SESSION, read, current,
     isLogged:()=>!!localStorage.getItem(SESSION),
@@ -507,11 +521,25 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     managedAccounts:()=>read().accounts.filter(a=>a.kind==='member'&&a.ownerId===current().id),
     canViewTeam:id=>!!read().teams.find(t=>t.id===id&&t.memberIds.includes(current().id)),
     canManageTeam:id=>!!read().teams.find(t=>t.id===id&&t.ownerId===current().id),
-    spaceTeam:id=>read().teams.find(t=>(t.spaceIds||[]).includes(String(id))),
-    spaceMembers(id) {const s=read(),t=this.spaceTeam(id);return t?t.memberIds.filter(a=>(s.spaceMembers?.[String(id)]||t.memberIds).includes(a)):[];},
-    canViewSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canViewTeam(t.id)&&this.spaceMembers(id).includes(current().id);},
-    setSpaceMembers(id,ids) {const s=read(),t=this.spaceTeam(id);if(!t||!this.canManageSpace(id))throw Error('仅本团队负责人可以管理空间成员。');if(ids.some(a=>!t.memberIds.includes(a)))throw Error('只能选择当前团队成员。');s.spaceMembers??={};s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];save(s);},
-    canManageSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canManageTeam(t.id);},
+    spaceTeam:id=>findSpaceTeam(read(),id),
+    spaceRole,
+    spaceMembers(id,includeUnassigned=false) {
+      const s=read(), t=findSpaceTeam(s,id);
+      if(!t)return [];
+      const participants=includeUnassigned?teamParticipantIds(s,t):spaceParticipantIds(s,t,id);
+      return [t.ownerId,...participants];
+    },
+    canViewSpace:id=>!!spaceRole(id),
+    setSpaceMembers(id,ids) {
+      const s=read(), t=findSpaceTeam(s,id);
+      if(!t||spaceRole(id)!=='负责人')throw Error('仅本团队负责人可以管理空间成员。');
+      const eligible=teamParticipantIds(s,t);
+      if(ids.some(id=>id!==t.ownerId&&!eligible.includes(id)))throw Error('只能选择当前团队的普通成员。');
+      s.spaceMembers??={};
+      s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];
+      save(s);
+    },
+    canManageSpace:id=>spaceRole(id)==='负责人',
     select(id) {if(!read().accounts.some(a=>a.id===id))throw Error('账号不存在。');localStorage.setItem(SESSION,id);window.dispatchEvent(new CustomEvent('portal-account-change'));},
     createMember(fields) {
       const a=leader(),s=read(),name=String(fields.name||'').trim(),login=String(fields.login||'').trim();
@@ -580,48 +608,158 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
   </div>
 </header>
-<main><div class="workspace-heading"><h1>科研开发空间</h1><p>进入团队科研空间，开展开发调试与成果提交。</p></div><div class="toolbar"><div class="tabs" id="tabs" aria-label="空间角色筛选"></div><input class="search" id="search" type="search" placeholder="搜索空间名称" aria-label="搜索空间名称"><label class="archive"><input id="archive" type="checkbox">已归档</label><button class="primary" id="apply">申请科研空间</button></div><div class="grid" id="cards"></div><div class="list-end" id="list-end"></div></main>
+<main>
+  <div class="workspace-heading"><h1>科研开发空间</h1><p>进入团队科研空间，开展开发调试与成果提交。</p></div>
+  <div class="toolbar">
+    <h2 class="space-list-title" id="space-list-title" hidden></h2>
+    <input class="search" id="search" type="search" placeholder="搜索空间名称" aria-label="搜索空间名称">
+    <label class="archive"><input id="archive" type="checkbox">已结束的空间</label>
+    <button type="button" class="primary" id="apply" hidden>申请科研空间</button>
+  </div>
+  <div class="grid" id="cards"></div>
+  <div class="list-end" id="list-end"></div>
+</main>
 <footer><div class="footer-inner"><div><div class="footer-brand"><i class="leaf"></i>北大荒智慧农业协同创新平台</div><p>汇聚农业数据，支撑科研创新</p></div><div><h3>平台资源</h3><div class="links"><a href="数据中心-数据集列表页.html">数据中心</a><a href="模型中心-模型列表页（调整）.html">模型中心</a><a href="科研开发空间-交互原型(10).html">科研开发空间</a></div></div><div><h3>关于平台</h3><div class="links"><a href="关于平台-平台介绍.html">平台介绍</a><a href="关于平台-联系支持.html">联系我们</a></div></div><div class="slogan">耕耘数据沃土<br>共建智慧农业</div></div><div class="copyright">智慧农业平台 · 科研开发空间</div></footer>
-<dialog id="modal"><div class="modal-head"><h2 id="modal-title"></h2><button class="close" aria-label="关闭">×</button></div><div id="modal-content"></div></dialog><div id="toast" class="toast hidden" role="status"></div>
+<div id="toast" class="toast hidden" role="status"></div>
 <script>
-const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const initialSpaces=[
-{id:1,name:'寒地水稻倒伏识别研究',role:'负责人',desc:'开展水稻倒伏识别与精度验证',state:'可用',instance:'运行中',cpu:8,ram:32,progress:'阶段成果已提交',visit:'今天 09:30',team:'作物遥感研究团队'},
-{id:2,name:'玉米长势监测研究',role:'成员',desc:'开展玉米长势分析与模型验证',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'样本数据已更新',visit:'昨天 16:20',team:'作物遥感研究团队'},
-{id:3,name:'旱情监测研究',role:'负责人',desc:'开展区域旱情识别与验证',state:'开通中',instance:'未开通',cpu:4,ram:16,progress:'申请已通过，等待开通',visit:'09-16 14:30',team:'农业灾害研究团队'},
-{id:4,name:'土壤墒情分析研究',role:'成员',desc:'开展农田土壤墒情时空变化分析',state:'可用',instance:'运行中',cpu:4,ram:16,progress:'研究数据已就绪',visit:'09-16 11:10',team:'农业灾害研究团队'},
-{id:5,name:'作物分类精度验证',role:'负责人',desc:'开展多源遥感作物分类精度评价',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'成果文件已提交',visit:'09-15 17:50',team:'作物遥感研究团队'},
-{id:6,name:'冬小麦估产验证研究',role:'成员',desc:'开展冬小麦区域估产模型验证',state:'可用',instance:'异常',cpu:4,ram:16,progress:'实例启动失败，待负责人处理',visit:'09-14 10:00',team:'粮食产量研究团队'},
-{id:7,name:'2025年水稻物候研究',role:'成员',desc:'开展水稻物候识别与时序分析',state:'已归档',instance:'已停止',cpu:4,ram:16,progress:'研究已完成，成果已发布',visit:'08-20 10:30',team:'作物遥感研究团队'}];
-let spaces=structuredClone(initialSpaces),spacePage=1,pageSize=6,role='全部',query='',archived=false,permission='owner';
-const instanceKey='agri-research-instance-v7';
-function effectiveRole(s){return permission==='member'?'成员':s.role}function stateBadge(s){return `<span class="badge ${['开通中','申请中'].includes(s.state)?'amber':s.state==='已归档'?'gray':''}">${s.state}</span>`}function renderCards(){const base=spaces.filter(s=>['可用','开通中','已归档'].includes(s.state)&&(s.state==='已归档')===archived);$('#tabs').innerHTML=['全部','我负责的','我参与的'].map(r=>`<button data-role="${r}" class="${role===r?'selected':''}" aria-pressed="${role===r}">${r}<small>${base.filter(s=>r==='全部'||effectiveRole(s)===(r==='我负责的'?'负责人':'成员')).length}</small></button>`).join('');const filtered=base.filter(s=>(role==='全部'||effectiveRole(s)===(role==='我负责的'?'负责人':'成员'))&&s.name.toLowerCase().includes(query.toLowerCase()));spacePage=Math.max(1,Math.min(spacePage,Math.ceil(filtered.length/pageSize)));$('#cards').innerHTML=filtered.length?filtered.slice((spacePage-1)*pageSize,spacePage*pageSize).map(s=>`<article class="card"><div class="card-title"><h2>${esc(s.name)}</h2><span class="role ${effectiveRole(s)==='成员'?'member':''}">${effectiveRole(s)}</span></div><p class="description">${esc(s.desc)}</p><div class="states"><span><span class="label">空间状态</span>${stateBadge(s)}</span><span><span class="label">实例状态</span><i class="dot ${s.instance==='运行中'?'running':''}"></i>${s.instance}</span></div><div class="line config"><span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 / ${s.storage||200} GB 存储 <small>（成员共享）</small></div><div class="card-bottom"><span class="visit">最近访问：${s.visit}</span><div class="actions">${s.state==='开通中'?`<button class="outline" data-provision="${s.id}" disabled>开通中</button>`:`<button class="primary" data-space="${s.id}">进入空间</button>${s.instance==='运行中'&&s.state==='可用'?`<button class="outline" data-env="${s.id}">进入开发环境</button>`:''}`}</div></div></article>`).join(''):'<div class="empty"><strong>暂无符合条件的科研空间</strong>试试其他角色、名称或归档条件。</div>';$('#list-end').innerHTML=filtered.length?`<span>共 ${filtered.length} 个空间</span><label class="page-size">每页 <select id="space-size" aria-label="空间每页条数">${[3,6,9,12].map(n=>`<option value="${n}" ${n===pageSize?'selected':''}>${n} 条</option>`).join('')}</select></label><button id=space-prev ${spacePage===1?'disabled':''}>上一页</button><span>${spacePage} / ${Math.ceil(filtered.length/pageSize)}</span><button id=space-next ${spacePage===Math.ceil(filtered.length/pageSize)?'disabled':''}>下一页</button>`:'';$('#space-size')?.addEventListener('change',e=>{pageSize=+e.target.value;spacePage=1;renderCards()});$('#space-prev')?.addEventListener('click',()=>{spacePage--;renderCards()});$('#space-next')?.addEventListener('click',()=>{spacePage++;renderCards()});document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;spacePage=1;renderCards()});document.querySelectorAll('[data-space]').forEach(b=>b.onclick=()=>detail(+b.dataset.space));document.querySelectorAll('[data-env]').forEach(b=>b.onclick=()=>environment(+b.dataset.env));$('#apply').hidden=permission==='member'}
-function render(){renderCards()}const modal=$('#modal');function open(title,body){$('#modal-title').textContent=title;$('#modal-content').innerHTML=body;if(!modal.open)modal.showModal()}function closeModal(){modal.close()}$('.close').onclick=closeModal;modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeModal()}});let timer;function toast(text){$('#toast').textContent=text;$('#toast').classList.remove('hidden');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.add('hidden'),3200)}function footer(action='确认'){return `<div class="modal-footer"><button type="button" onclick="closeModal()">取消</button><button class="primary" type="submit">${action}</button></div>`}
-function apply(){window.SpaceRequests?.showForm()}
-$('#apply').onclick=apply;
-function detail(id){const s=spaces.find(x=>x.id===id),owner=effectiveRole(s)==='负责人',usable=s.state==='可用';s.visit='刚刚';renderCards();open(s.name,`<div class="modal-body"><p class="hint">${esc(s.team)} · 我的角色：${effectiveRole(s)} · 空间状态：${s.state}</p><div class="detail-section"><h3>开发实例</h3><div class="detail-grid"><span><span class="label">实例状态</span>${s.instance}</span><span><span class="label">实例配置</span>${s.cpu} 核 / ${s.ram} GB</span></div><p class="hint">成员共享此实例的算力；共享存储独立保留。</p>${usable?`<div class="actions">${s.instance==='运行中'?`<button class="primary" onclick="environment(${id})">进入开发环境</button>${owner?`<button onclick="stop(${id})">停止实例</button>`:''}`:owner?`<button class="primary" onclick="start(${id})">${s.instance==='异常'?'重试启动':'启动实例'}</button>`:`<span class="hint">${s.instance==='异常'?'实例异常':'实例未启动'}，请联系负责人。</span>`}</div>`:'<p class="hint">空间已归档，文件与提交记录只读，不可启动实例。</p>'}</div><div class="detail-section"><h3>研究文件 <span class="role">团队共享</span></h3><p class="hint">共享存储：36 GB / 200 GB</p><div class="file"><span>▱ research /</span><span class="hint">成员实验目录</span></div><div class="file"><span>▱ results /</span><span class="hint">共享成果目录</span></div><div class="file"><span>▤ README.md</span><span class="hint">研究说明</span></div></div><div class="detail-section"><h3>成果与提交记录</h3><div class="file"><span>阶段成果 V1.0</span><span class="badge">${s.state==='已归档'?'已发布':'已提交'}</span></div><p class="hint">提交内容：模型文件与研究说明 · 版本：V1.0</p></div><p class="hint">此处为列表入口的交互落点示例，开发环境不连接真实 Notebook。</p></div><div class="modal-footer"><button onclick="closeModal()">返回列表</button></div>`)}
-function environment(id){const s=spaces.find(x=>x.id===id);if(s.instance!=='运行中'||s.state!=='可用')return;open('进入开发环境',`<div class="modal-body"><div class="detail-section"><h3>${esc(s.name)}</h3><p><span class="dot running"></span>实例运行中 · ${s.cpu} 核 CPU / ${s.ram} GB 内存</p><p>成员共享实例，在各自目录打开 Notebook 开展研究。</p></div><p class="hint">当前为原型演示。正式系统将携带当前用户身份打开已授权的 Notebook 工作界面。</p></div><div class="modal-footer"><button onclick="detail(${id})">查看空间</button><button class="primary" onclick="closeModal()">知道了</button></div>`)}
-function stop(id){const s=spaces.find(x=>x.id===id);if(effectiveRole(s)!=='负责人')return;open('停止实例',`<div class="modal-body"><div class="feedback">停止后将中断团队正在运行的任务，请确认成员已保存工作。</div><p>停止实例后，共享文件和成果记录继续保留。</p></div><div class="modal-footer"><button onclick="detail(${id})">取消</button><button class="primary" id="confirm-stop">确认停止</button></div>`);$('#confirm-stop').onclick=()=>{s.instance='已停止';detail(id);toast('实例已停止（演示）')}}function start(id){const s=spaces.find(x=>x.id===id);if(effectiveRole(s)!=='负责人'||s.state!=='可用')return;s.instance='运行中';detail(id);toast('实例已启动（演示）')}
-$('#search').oninput=e=>{query=e.target.value;spacePage=1;renderCards()};$('#archive').onchange=e=>{archived=e.target.checked;spacePage=1;renderCards()};render();
+const $=selector=>document.querySelector(selector);
+const esc=PortalOrg.escape;
+const instanceKey='agri-research-instance-v7', visitKey='agri-space-visits';
+let spaces=[], spacePage=1, pageSize=6, query='', archived=false;
 
-function showLoginEntry(){window.bdhSignIn&&window.bdhSignIn();}
-function showConsultEntry(){
-  /* 1020：原为「待接入」占位弹窗，现接入合作咨询页 */
-  location.href="合作咨询.html";
-}function syncInstanceStates(){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');for(const s of spaces){if(visits[s.id]){const d=new Date(visits[s.id]);s.visit=Date.now()-visits[s.id]<60000?'刚刚':d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}}}catch{}let all={};try{all=JSON.parse(localStorage.getItem(instanceKey)||'{}')}catch{}for(const s of spaces){const x=all[s.id];if(x){s.state=x.state||s.state;s.instance=x.instance||s.instance;s.compute={...s.compute,...x.compute}}if(!['未开通','准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(s.instance))s.instance='已停止';}}
-function detailUrl(s,action=''){const c=s.compute||{};const params=new URLSearchParams({id:String(s.id),name:s.name,role:effectiveRole(s),state:s.state,instance:s.instance,cpu:String(s.cpu),ram:String(s.ram),storage:String(s.storage||200),runtime:c.runtime||'',environment:c.detail||'',ide:s.ide||'JupyterLab 4',model:s.model||'',image:c.image||'',systemDisk:String(c.systemDisk||0),team:s.team,allocation:c.allocation||'retained',ready:String(c.ready===true),gpu:c.gpu||'未配置 GPU',error:c.error||'',action,scope:new URLSearchParams(location.search).get('team')||''});return '科研开发空间-详情页(9).html#'+params.toString()}
-function recordSpaceVisit(id){try{const visits=JSON.parse(localStorage.getItem('agri-space-visits')||'{}');visits[id]=Date.now();localStorage.setItem('agri-space-visits',JSON.stringify(visits))}catch{}}
-function detail(id){const s=spaces.find(x=>x.id===id);recordSpaceVisit(id);location.href=detailUrl(s)}
-function environment(id){const s=spaces.find(x=>x.id===id);if(s.state!=='可用')return;recordSpaceVisit(id);window.open(detailUrl(s,'enter'),'_blank','noopener')}
-const basicRenderCards=renderCards;renderCards=function(){syncInstanceStates();basicRenderCards();document.querySelectorAll('#cards article.card').forEach(card=>{const btn=card.querySelector('[data-space],[data-provision]');if(!btn)return;const id=Number(btn.dataset.space||btn.dataset.provision),s=spaces.find(x=>x.id===id),c=s.compute||{},own=effectiveRole(s)==='负责人',arch=s.state==='已归档';const holder=card.querySelector('.actions');let actions=`<button class="primary" onclick="detail(${id})">${arch?'查看空间':'进入空间'}</button>`,msg='',tone='';if(s.state==='开通中'){actions='<button class="outline" disabled>开通中</button>';msg='正在准备开发环境，开通完成后可进入空间。';}
-else if(!arch){if(s.instance==='运行中'&&c.ready){actions+=`<button class="outline" onclick="environment(${id})">进入开发环境</button>`;}
-else if(s.instance==='已停止'){if(own)actions+=`<button class="outline" onclick="environment(${id})">启动并进入</button>`;else msg='实例已停止，可联系负责人启动。';}
-else if(s.instance==='异常'){msg=c.error;tone='error';if(own)actions+=`<button class="outline" onclick="environment(${id})">重试并进入</button>`;}
-else{msg=s.instance==='等待算力'?'当前算力繁忙，正在等待可用资源。':s.instance==='停止中'?'实例正在停止，请稍候。':'正在准备开发环境，文件仍可查看。';actions+='<button class="outline" disabled>'+ (s.instance==='运行中'?'环境准备中':s.instance)+'</button>';}}
-else msg=c.allocation==='released'?'研究已结束，计算资源已回收；文件与成果保留。':'研究已结束，文件与成果继续保留。';holder.innerHTML=actions;if(msg){const tip=document.createElement('div');tip.className='instance-tip '+tone;tip.textContent=msg;card.querySelector('.card-bottom').before(tip)}const runtime=document.createElement('div');runtime.className='runtime-line';runtime.textContent=(c.runtime||'Python 3.10 · PyTorch 2.2')+' · '+(c.gpu||'未配置 GPU');card.querySelector('.config').after(runtime);});};
-window.addEventListener('pageshow',()=>renderCards());window.addEventListener('storage',e=>{if(e.key===instanceKey)renderCards()});
-$('#archive').closest('label').lastChild.textContent=' 已结束的空间';
-render();
+function environmentAction(s,role) {
+  if(s.state!=='可用')return '';
+  if(s.instance==='运行中'&&s.compute?.ready)return '进入开发环境';
+  if(role!=='负责人')return '';
+  if(s.instance==='已停止')return '启动并进入';
+  return s.instance==='异常'?'重试并进入':'';
+}
+
+function renderSpaceCard(s) {
+  const id=esc(s.id), c=s.compute||{}, ended=s.state==='已归档';
+  const action=environmentAction(s,s.role);
+  const badgeTone=s.state==='开通中'?'amber':ended?'gray':'';
+  let actions=`<button type="button" class="primary" data-space="${id}">${ended?'查看空间':'进入空间'}</button>`;
+  let tip='', tone='';
+  if(s.state==='开通中'){
+    actions='<button type="button" class="outline" disabled>开通中</button>';
+    tip='正在准备开发环境，开通完成后可进入空间。';
+  }else if(ended){
+    tip=c.allocation==='released'?'研究已结束，计算资源已回收；文件与成果保留。':'研究已结束，文件与成果继续保留。';
+  }else{
+    if(action)actions+=`<button type="button" class="outline" data-env="${id}">${action}</button>`;
+    if(s.instance==='已停止'&&!action)tip='实例已停止，可联系负责人启动。';
+    else if(s.instance==='异常'){
+      tip=c.error;
+      tone='error';
+    }else if(!action&&s.instance!=='已停止'){
+      tip=s.instance==='等待算力'?'当前算力繁忙，正在等待可用资源。':s.instance==='停止中'?'实例正在停止，请稍候。':'正在准备开发环境，文件仍可查看。';
+      actions+=`<button type="button" class="outline" disabled>${s.instance==='运行中'?'环境准备中':esc(s.instance)}</button>`;
+    }
+  }
+  return `<article class="card">
+    <div class="card-title"><h2>${esc(s.name)}</h2><span class="role ${s.role==='成员'?'member':''}">${s.role}</span></div>
+    <p class="description">${esc(s.desc)}</p>
+    <div class="states"><span><span class="label">空间状态</span><span class="badge ${badgeTone}">${esc(s.state)}</span></span><span><span class="label">实例状态</span><i class="dot ${s.instance==='运行中'?'running':''}"></i>${esc(s.instance)}</span></div>
+    <div class="line config"><span class="label">实例配置</span>${s.cpu} 核 CPU / ${s.ram} GB 内存 / ${s.storage||200} GB 存储 <small>（成员共享）</small></div>
+    <div class="runtime-line">${esc(c.runtime||'Python 3.10 · PyTorch 2.2')} · ${esc(c.gpu||'未配置 GPU')}</div>
+    ${tip?`<div class="instance-tip ${tone}">${esc(tip)}</div>`:''}
+    <div class="card-bottom"><span class="visit">最近访问：${esc(s.visit)}</span><div class="actions">${actions}</div></div>
+  </article>`;
+}
+
+function renderCards() {
+  const kind=PortalOrg.current().kind;
+  const title=kind==='leader'?'我负责的':kind==='member'?'我参与的':'';
+  const heading=$('#space-list-title');
+  heading.textContent=title;
+  heading.hidden=!title;
+  $('#apply').hidden=kind!=='leader';
+
+  const needle=query.toLowerCase();
+  const filtered=spaces.filter(s=>['可用','开通中','已归档'].includes(s.state)&&
+    (s.state==='已归档')===archived&&s.name.toLowerCase().includes(needle));
+  const totalPages=Math.max(1,Math.ceil(filtered.length/pageSize));
+  spacePage=Math.max(1,Math.min(spacePage,totalPages));
+  const empty=!title?'当前账号没有可查看的科研空间':needle?'没有找到符合条件的科研空间':
+    archived?'暂无已结束的科研空间':kind==='leader'?'暂无负责的科研空间':'暂无参与的科研空间';
+  $('#cards').innerHTML=filtered.length?
+    filtered.slice((spacePage-1)*pageSize,spacePage*pageSize).map(renderSpaceCard).join(''):
+    `<div class="empty"><strong>${empty}</strong></div>`;
+  $('#list-end').innerHTML=filtered.length?`<span>共 ${filtered.length} 个空间</span>
+    <label class="page-size">每页 <select id="space-size" aria-label="空间每页条数">${[3,6,9,12].map(n=>`<option value="${n}" ${n===pageSize?'selected':''}>${n} 条</option>`).join('')}</select></label>
+    <button type="button" id="space-prev" ${spacePage===1?'disabled':''}>上一页</button>
+    <span>${spacePage} / ${totalPages}</span>
+    <button type="button" id="space-next" ${spacePage===totalPages?'disabled':''}>下一页</button>`:'';
+  $('#space-size')?.addEventListener('change',e=>{pageSize=Number(e.target.value);spacePage=1;renderCards();});
+  $('#space-prev')?.addEventListener('click',()=>{spacePage--;renderCards();});
+  $('#space-next')?.addEventListener('click',()=>{spacePage++;renderCards();});
+}
+
+function render(){renderCards();}
+$('#search').oninput=e=>{query=e.target.value;spacePage=1;renderCards();};
+$('#archive').onchange=e=>{archived=e.target.checked;spacePage=1;renderCards();};
+$('#cards').onclick=e=>{
+  const button=e.target.closest('button[data-space],button[data-env]');
+  if(!button)return;
+  if(button.dataset.space!==undefined)detail(button.dataset.space);
+  else environment(button.dataset.env);
+};
+
+let timer;
+function toast(text) {
+  $('#toast').textContent=text;
+  $('#toast').classList.remove('hidden');
+  clearTimeout(timer);
+  timer=setTimeout(()=>$('#toast').classList.add('hidden'),3200);
+}
+function apply(){window.SpaceRequests?.showForm();}
+$('#apply').onclick=apply;
+
+function showLoginEntry(){window.bdhSignIn?.();}
+function showConsultEntry(){location.href='合作咨询.html';}
+
+function syncSpaceVisits() {
+  try{
+    const visits=JSON.parse(localStorage.getItem(visitKey)||'{}');
+    for(const s of spaces){
+      if(!visits[s.id])continue;
+      const date=new Date(visits[s.id]);
+      s.visit=Date.now()-date.getTime()<60000?'刚刚':
+        date.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+    }
+  }catch{}
+}
+function recordSpaceVisit(id) {
+  try{
+    const visits=JSON.parse(localStorage.getItem(visitKey)||'{}');
+    visits[id]=Date.now();
+    localStorage.setItem(visitKey,JSON.stringify(visits));
+  }catch{}
+}
+function detailUrl(s,role,action='') {
+  const c=s.compute||{};
+  const params=new URLSearchParams({
+    id:String(s.id),name:s.name,role,state:s.state,instance:s.instance,cpu:String(s.cpu),ram:String(s.ram),
+    storage:String(s.storage||200),runtime:c.runtime||'',environment:c.detail||'',ide:s.ide||'JupyterLab 4',
+    model:s.model||'',image:c.image||'',systemDisk:String(c.systemDisk||0),team:s.team,
+    allocation:c.allocation||'retained',ready:String(c.ready===true),gpu:c.gpu||'未配置 GPU',
+    error:c.error||'',action,scope:new URLSearchParams(location.search).get('team')||''
+  });
+  return '科研开发空间-详情页(9).html#'+params.toString();
+}
+function detail(id) {
+  const s=spaces.find(s=>String(s.id)===String(id)), role=PortalOrg.spaceRole(id);
+  if(!s||!role||!['可用','已归档'].includes(s.state))return;
+  recordSpaceVisit(s.id);
+  location.href=detailUrl(s,role);
+}
+function environment(id) {
+  const s=spaces.find(s=>String(s.id)===String(id)), role=PortalOrg.spaceRole(id);
+  if(!s||!role||!environmentAction(s,role))return;
+  recordSpaceVisit(s.id);
+  window.open(detailUrl(s,role,'enter'),'_blank','noopener');
+}
 </script>
 <style>dialog.resource-apply{width:min(700px,94vw);max-width:700px;max-height:92vh;padding:0}.resource-apply .modal-head{padding:19px 24px}.resource-apply .modal-body{padding:20px 24px;max-height:calc(92vh - 150px);overflow:auto}.resource-apply .modal-footer{padding:14px 24px}.apply-basic{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.apply-basic .full{grid-column:1/-1}.apply-resources-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 12px;font-size:14px;color:#294c3c}.apply-resources-title button{border:0;background:none;color:#23714e;font-size:12px;padding:0}.resource-input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.resource-input-box{border:1px solid #e0e8e3;border-radius:5px;padding:13px 14px;background:#fafcfb}.resource-input-box label{font-size:12px;color:#4a6656;margin:0!important}.resource-number{display:flex;align-items:center;gap:8px;margin-top:8px;background:#fff;border:1px solid #d7e3da;border-radius:4px;padding-right:12px}.resource-number input{border:0!important;background:transparent;width:100%;margin:0!important;padding:9px 10px;font-size:15px;color:#2a4c39;min-width:0}.resource-number span{font-size:12px;color:#82948a;white-space:nowrap}.resource-default{font-size:11px;color:#8b9b90;margin-top:7px;line-height:1.7}.model-runtime{font-size:12px;color:#779084;margin:8px 0 0}.model-resource-note{font-size:12px;color:#768b7e;line-height:1.8;margin:12px 0 0}.form-error{font-size:12px;color:#a95948;background:#fff3ef;border-radius:4px;padding:9px 12px}.form-error:empty{display:none}.required-star{color:#b76650}@media(max-width:600px){.apply-basic{grid-template-columns:1fr}.resource-input-grid{gap:9px}.resource-input-box{padding:10px}}
 </style>
@@ -782,13 +920,14 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
     }
     if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
       const id=(new URLSearchParams(location.search).get('id')||new URLSearchParams(location.hash.replace(/^#/,'')).get('id')||'1');
-      if(!O.canViewSpace(id)){
+      const role=O.spaceRole(id);
+      if(!role){
         const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
         ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});
       }else if(file==='科研开发空间-详情页(9).html'){
-        space.role=O.canManageSpace(id)?'负责人':'成员';space.team=O.spaceTeam(id).name;
-        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:a.kind==='leader'&&a.id!==t.ownerId?'受邀负责人':'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
-        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${t.memberIds.map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${a.id}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
+        space.role=role;space.team=O.spaceTeam(id).name;
+        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
+        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${O.spaceMembers(id,true).map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${O.escape(a.id)}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
         window.renderAll();const old=window.renderHeading;window.renderHeading=function(){old();document.querySelectorAll('.heading-meta b').forEach(b=>{if(b.textContent==='张三')b.textContent=O.account(O.spaceTeam(id).ownerId).name;});};window.renderHeading();
       }
     }
@@ -962,6 +1101,8 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
 #spaceRequestDialog .sr-check{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;margin:0 auto 14px;color:#278151;background:#eaf6ee;font-size:25px}
 .sr-request-table td{vertical-align:top}.sr-request-table td:first-child strong{font-size:13px;font-weight:500;color:#30593f;display:block;margin-bottom:6px}.sr-request-table td:first-child small{display:block;font-size:11px}.sr-request-table .sr-opinion-cell{min-width:120px;max-width:220px;white-space:normal;overflow-wrap:anywhere;line-height:1.75}.sr-request-table .pc-link{display:block;margin:0 0 6px}.sr-space-row .primary{display:inline-block;border:0;border-radius:4px;text-decoration:none;background:#005653;color:white;padding:8px 15px;font-size:13px}.sr-space-row button:disabled{color:#8f9b94;background:#f4f6f4;border-color:#dfe7e0;cursor:default}
 .workspace-heading{margin:0 0 23px}.workspace-heading h1{margin:0 0 8px;font-size:24px;color:#204e37}.workspace-heading p{margin:0;font-size:13px;color:#7a9283}
+.space-list-title{margin:0;color:#204e37;font-size:16px;font-weight:650;white-space:nowrap}
+@media(max-width:720px){.space-list-title{width:100%}}
 @media(max-width:650px){#spaceRequestDialog{max-width:calc(100vw - 20px)}#spaceRequestDialog .sr-head{padding:15px 18px}#spaceRequestDialog .sr-body{padding:18px}#spaceRequestDialog .sr-fields{grid-template-columns:1fr;gap:14px}#spaceRequestDialog .sr-foot{padding:12px 18px;gap:8px}.sr-request-table{min-width:700px}}
 </style><script id="space-request-core">/* Application records are personal; approved spaces are collaborative work areas.
    This prototype stores records locally. Authorization must be checked by the service. */
@@ -987,20 +1128,32 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
     if(changed)try{localStorage.setItem(O.KEY,JSON.stringify(db));}catch{}
   }
   const initialSpaces=[
-{id:1,name:'寒地水稻倒伏识别研究',role:'负责人',desc:'开展水稻倒伏识别与精度验证',state:'可用',instance:'运行中',cpu:8,ram:32,progress:'阶段成果已提交',visit:'今天 09:30',team:'作物遥感研究团队'},
-{id:2,name:'玉米长势监测研究',role:'成员',desc:'开展玉米长势分析与模型验证',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'样本数据已更新',visit:'昨天 16:20',team:'作物遥感研究团队'},
-{id:3,name:'旱情监测研究',role:'负责人',desc:'开展区域旱情识别与验证',state:'开通中',instance:'未开通',cpu:4,ram:16,progress:'申请已通过，等待开通',visit:'09-16 14:30',team:'农业灾害研究团队'},
-{id:4,name:'土壤墒情分析研究',role:'成员',desc:'开展农田土壤墒情时空变化分析',state:'可用',instance:'运行中',cpu:4,ram:16,progress:'研究数据已就绪',visit:'09-16 11:10',team:'农业灾害研究团队'},
-{id:5,name:'作物分类精度验证',role:'负责人',desc:'开展多源遥感作物分类精度评价',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'成果文件已提交',visit:'09-15 17:50',team:'作物遥感研究团队'},
-{id:6,name:'冬小麦估产验证研究',role:'成员',desc:'开展冬小麦区域估产模型验证',state:'可用',instance:'异常',cpu:4,ram:16,progress:'实例启动失败，待负责人处理',visit:'09-14 10:00',team:'粮食产量研究团队'},
-{id:7,name:'2025年水稻物候研究',role:'成员',desc:'开展水稻物候识别与时序分析',state:'已归档',instance:'已停止',cpu:4,ram:16,progress:'研究已完成，成果已发布',visit:'08-20 10:30',team:'作物遥感研究团队'}];
+{id:1,name:'寒地水稻倒伏识别研究',desc:'开展水稻倒伏识别与精度验证',state:'可用',instance:'运行中',cpu:8,ram:32,progress:'阶段成果已提交',visit:'今天 09:30',team:'作物遥感研究团队'},
+{id:2,name:'玉米长势监测研究',desc:'开展玉米长势分析与模型验证',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'样本数据已更新',visit:'昨天 16:20',team:'作物遥感研究团队'},
+{id:3,name:'旱情监测研究',desc:'开展区域旱情识别与验证',state:'开通中',instance:'未开通',cpu:4,ram:16,progress:'申请已通过，等待开通',visit:'09-16 14:30',team:'农业灾害研究团队'},
+{id:4,name:'土壤墒情分析研究',desc:'开展农田土壤墒情时空变化分析',state:'可用',instance:'运行中',cpu:4,ram:16,progress:'研究数据已就绪',visit:'09-16 11:10',team:'农业灾害研究团队'},
+{id:5,name:'作物分类精度验证',desc:'开展多源遥感作物分类精度评价',state:'可用',instance:'已停止',cpu:8,ram:32,progress:'成果文件已提交',visit:'09-15 17:50',team:'作物遥感研究团队'},
+{id:6,name:'冬小麦估产验证研究',desc:'开展冬小麦区域估产模型验证',state:'可用',instance:'异常',cpu:4,ram:16,progress:'实例启动失败，待负责人处理',visit:'09-14 10:00',team:'粮食产量研究团队'},
+{id:7,name:'2025年水稻物候研究',desc:'开展水稻物候识别与时序分析',state:'已归档',instance:'已停止',cpu:4,ram:16,progress:'研究已完成，成果已发布',visit:'08-20 10:30',team:'作物遥感研究团队'}];
 
   function available(includeArchived=false){
     registerApproved();
     const saved=read(),all=[...initialSpaces];
     for(const r of saved.filter(approved).reverse()){const i=all.findIndex(s=>String(s.id)===String(r.id));if(i>=0)all[i]=r;else all.unshift(r);}
-    let instances={};try{instances=JSON.parse(localStorage.getItem('agri-research-instance-v7')||'{}');}catch{}
-    return all.map(s=>({...s,...instances[s.id],compute:{ready:s.instance==='运行中',...s.compute,...instances[s.id]?.compute},team:teamFor(s)?.name||s.team,role:O.canManageSpace(s.id)?'负责人':'成员'})).filter(s=>O.canViewSpace(s.id)&&approved(s)&&(includeArchived||s.state!=='已归档'));
+    let instances={};try{instances=JSON.parse(localStorage.getItem('agri-research-instance-v7')||'{}')||{};}catch{}
+    return all.flatMap(s=>{
+      const role=O.spaceRole(s.id);
+      if(!role)return [];
+      const saved=instances[s.id], state=saved?.state||s.state;
+      if(!approved({state})||(!includeArchived&&state==='已归档'))return [];
+      const instance=saved?.instance||s.instance;
+      return [{
+        ...s,...saved,state,role,
+        instance:['未开通','准备中','等待算力','启动中','运行中','停止中','已停止','异常'].includes(instance)?instance:'已停止',
+        compute:{ready:s.instance==='运行中',...s.compute,...saved?.compute},
+        team:teamFor(s)?.name||s.team
+      }];
+    });
   }
   function seed(){
     const marker='agri-space-personal-demo-v1';if(localStorage.getItem(marker))return;
@@ -1174,23 +1327,31 @@ function showForm(originalId){
 })();
 </script><script id="space-personal-boundary">
 (() => {
- const S=SpaceRequests,O=PortalOrg;
+ const S=SpaceRequests, O=PortalOrg, params=new URLSearchParams(location.search);
+ const scope=params.get('team');
  function refresh(){
-  const scope=new URLSearchParams(location.search).get('team');
-  spaces=S.available(true).filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope));
-  permission=O.isLeader()?'owner':'member';
+  spaces=S.available(true).filter(s=>!scope||O.spaceTeam(s.id)?.id===scope);
+  syncSpaceVisits();
   render();
  }
- window.apply=()=>S.showForm();document.getElementById('apply').onclick=window.apply;
+ function refreshAccount(){
+  S.closeForm();
+  spacePage=1;
+  refresh();
+ }
  window.addEventListener('pageshow',refresh);
- window.addEventListener('portal-account-change',refresh);
+ window.addEventListener('portal-account-change',refreshAccount);
+ window.addEventListener('portal-org-change',refresh);
  window.addEventListener('space-application-change',refresh);
- window.addEventListener('storage',ev=>{if([S.key,instanceKey,O.KEY].includes(ev.key))refresh();});
- const oldDetail=window.detail;window.detail=function(id){const s=spaces.find(s=>String(s.id)===String(id));if(!s||s.state==='开通中'||!O.canViewSpace(id))return;oldDetail(id);};
- const oldEnv=window.environment;window.environment=function(id){if(!O.canViewSpace(id))return;oldEnv(id);};
+ window.addEventListener('storage',ev=>{
+  if(ev.key===O.SESSION){
+   refreshAccount();
+   window.PortalPreview?.refresh();
+  }else if([S.key,instanceKey,visitKey,O.KEY].includes(ev.key))refresh();
+ });
  refresh();
- const id=new URLSearchParams(location.search).get('space');
- if(id){const s=spaces.find(s=>String(s.id)===id);if(s&&s.state==='可用')window.detail(s.id);}
+ const id=params.get('space');
+ if(id&&spaces.some(s=>String(s.id)===id&&s.state==='可用'))detail(id);
 })();
 </script><script src="assets/prototype-nav.js"></script>
 </body></html>
