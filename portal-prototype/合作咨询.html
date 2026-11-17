@@ -259,6 +259,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   header.site-header .header-actions .bdh-user{ display:none; }
 }
 </style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -281,25 +282,15 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 </div>
 <div id="storageWarning" class="storage-warning" hidden role="alert">浏览器存储暂不可用，请保留当前填写内容并重试。</div>
 <div id="consultView">
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="header-inner">
     <!-- 叶片 logo 为临时视觉示意（规范 §一），开发时替换为公司正式标志 -->
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
         <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
         <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-      </svg>
-      <span>北大荒智慧农业协同创新平台</span>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a href="数据中心-数据集列表页.html">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <button type="button" class="login-link" data-bdh-login>登录</button>
       <button type="button" class="button button-primary" data-consult aria-current="page">合作咨询</button>
@@ -375,7 +366,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
  <footer class="footer"><div class="wrap"><span>北大荒智慧农业协同创新平台</span><span>智慧农场技术与系统全国重点实验室 · 北大荒农垦集团</span></div></footer>
 </div>
 <div id="adminView" class="admin" hidden>
- <header class="header"><div class="header-inner"><div class="brand"><svg><use href="#leaf"/></svg><span>北大荒智慧农业协同创新平台</span></div><span class="admin-label">管理后台</span><nav class="nav" aria-label="后台一级导航"><span class="active">工作台总览</span><span>课题管理</span><span>审批中心</span><span>运营管理</span><span>时空数据管理</span><span>地图引擎</span><span>能力共享</span><span>管理设置</span></nav><div class="admin-account"><span class="avatar">张</span><span>张明</span></div></div></header>
+ <header class="header"><div class="header-inner"><div class="brand"><svg><use href="#leaf"/></svg><span>北大荒智慧农业协同创新平台</span></div><span class="admin-label">管理后台</span><nav class="nav" aria-label="后台一级导航"><a href="../后台管理端原型/后台-工作台总览.html">工作台总览</a><a href="../后台管理端原型/后台-课题工作台.html">课题管理</a><a href="../后台管理端原型/后台-审批中心.html">审批中心</a><a href="../后台管理端原型/后台-模型管理.html">运营管理</a><a href="../后台管理端原型/后台-时空数据管理.html">平台能力</a><a href="../后台管理端原型/后台-管理设置.html#cooperation" class="active">合作与组织</a></nav><div class="admin-account"><span class="avatar">张</span><span>张明</span></div></div></header>
  <div class="admin-area">
   <aside class="sidebar" aria-label="工作台菜单"><div class="side-title">工作台总览</div><span class="side-item"><svg class="icon"><use href="#home"/></svg>工作台总览</span><button class="side-item active" onclick="resetFilters()"><svg class="icon"><use href="#chat"/></svg>合作咨询</button><span class="side-item"><svg class="icon"><use href="#bell"/></svg>消息中心</span><div class="side-rule"></div><span class="side-item"><svg class="icon"><use href="#user"/></svg>个人资料</span><span class="side-item"><svg class="icon"><use href="#lock"/></svg>账号安全</span></aside>
   <main class="admin-content"><div class="pagehead"><div><h1>合作咨询</h1><p>查看咨询信息，记录沟通情况。</p></div><button class="btn" type="button" onclick="showView('consult')"><svg class="icon" style="width:16px;height:16px"><use href="#chat"/></svg>查看前台页面</button></div>
@@ -421,7 +412,7 @@ function loadRows(){try{const raw=localStorage.getItem(KEY);if(!raw)return seeds
 let rows=loadRows();
 function persist(next){try{localStorage.setItem(KEY,JSON.stringify(next));rows=next;$('storageWarning').hidden=true;return true;}catch(e){$('storageWarning').hidden=false;return false;}}
 function toast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,3200);}
-function activateView(view){const admin=view==='admin';$('demoToolbar').hidden=!admin;$('adminView').hidden=!admin;$('consultView').hidden=admin;$('demoAdmin').classList.toggle('current',admin);$('demoConsult').classList.toggle('current',!admin);$('fillExample').hidden=admin;document.title=(admin?'后台 · 合作咨询':'合作咨询')+' · 北大荒智慧农业协同创新平台';if(admin){rows=loadRows();renderAdmin();}window.scrollTo({top:0});}
+function activateView(view){const admin=view==='admin';if(admin){location.href='../后台管理端原型/后台-管理设置.html#cooperation';return;}$('demoToolbar').hidden=!admin;$('adminView').hidden=!admin;$('consultView').hidden=admin;$('demoAdmin').classList.toggle('current',admin);$('demoConsult').classList.toggle('current',!admin);$('fillExample').hidden=admin;document.title=(admin?'后台 · 合作咨询':'合作咨询')+' · 北大荒智慧农业协同创新平台';if(admin){rows=loadRows();renderAdmin();}window.scrollTo({top:0});}
 function showView(view){if($('detailDrawer').open)closeDetail();if($('handleDialog').open)closeHandle();location.hash=view==='admin'?'admin':'consult';activateView(view);}
 window.addEventListener('hashchange',()=>activateView(location.hash==='#admin'?'admin':'consult'));
 function clearErrors(){document.querySelectorAll('#consultForm .error').forEach(el=>{el.hidden=true;el.textContent='';});document.querySelectorAll('#consultForm [aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));$('formError').hidden=true;}
@@ -699,4 +690,6 @@ activateView(location.hash==='#admin'?'admin':location.hash==='#consult'?'consul
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){closeMenu();toggle.focus();}});
 })();
 </script>
-</body></html>
+<script src="assets/portal-org.js"></script>
+<script src="assets/prototype-nav.js"></script>
+<script src="assets/meeting/meeting-devdoc.js"></script></body></html>

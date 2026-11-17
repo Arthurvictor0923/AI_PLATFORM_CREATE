@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN" data-page-node-id="mjiaAyFyYk5SL1FaSe5VLU">
 <head data-page-node-id="WvmBK2kNh4SPyzDsqHrLiM">
+<script src="assets/resource-fields.js"></script><script src="assets/dataset-display.js"></script><link rel="stylesheet" href="assets/resource-display.css">
 <meta charset="UTF-8" data-page-node-id="aA3Tfi5fqydLkKN3asByth">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="VLvq1CrOtowKKsksJuJ6XK">
 <title>数据详情 — 北大荒智慧农业协同创新平台</title>
@@ -723,23 +724,17 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 /* 统一登录态把「登录/合作咨询」包进 .autharea(flex)，窄屏下它与汉堡按钮并存会把页头撑出横向滚动条；移动端这两项在汉堡菜单内已有，故此处整体收起。 */
 @media (max-width:767px){header.site-header .header-actions .autharea{ display:none !important; }}
 </style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head>
 <body>
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/><path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/><path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/><path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/></svg>
-      <span>北大荒智慧农业协同创新平台</span>
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html" class="active" aria-current="page">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
@@ -955,7 +950,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     return m?m[1]:(ICONS['结构化表']);
   }
   /* 摘要卡缩略图 HTML：table 优先，其次影像占位，最后退回纯图标 */
-  function headThumbHtml(d){
+  function headThumbHtml(d){if(d._managed&&d.cover)return '<div class="head-thumb"><img src="'+ResourceFields.esc(d.cover)+'" alt="数据封面" style="width:100%;height:100%;object-fit:cover"></div>';
     var form=d.form;
     var cls='head-thumb';
     if(TT_TABLE[form]) return '<div class="'+cls+' tt-tab">'+thumbTable(form)+'</div>';
@@ -1116,11 +1111,11 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 
 
   // Same explicit prototype metadata as the current dataset list.
-  var DETAIL_METADATA={"作物长势 · 地面实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["作物模型", "精准感控"]}, "作物长势 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["AI 数智基础", "精准感控"]}, "作物长势 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"]}, "作物长势 · 遥感反演长势分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"]}, "土壤 · 网格实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县 / 友谊镇", "researchDirections": ["资源环境", "作物模型"]}, "土壤 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境"]}, "土壤 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 双鸭山市", "researchDirections": ["资源环境"]}, "土壤 · 遥感反演养分分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境", "精准感控"]}, "补贴核查 · 多时相卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["规模化应用"]}, "补贴核查 · 遥感解译作物分布": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["AI 数智基础", "规模化应用"]}, "补贴核查 · 申报记录（脱敏）": {"dataKind": "原始数据", "format": ["Excel", "JSON / JSONL"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市", "researchDirections": ["规模化应用"]}, "作物产量 · 地面测产数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型"]}, "作物产量 · 无人机多期影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "精准感控"]}, "作物产量 · 卫星多时相影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 鹤岗市", "researchDirections": ["作物模型"]}, "作物产量 · 遥感反演产量分布": {"dataKind": "成果数据", "format": ["GeoTIFF", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "规模化应用"]}, "林草湿 · 基准/监测期卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市 / 鹤山农场", "researchDirections": ["资源环境"]}, "林草湿 · 变化图斑数据": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["资源环境", "规模化应用"]}, "遥感植被指数产品（NDVI/EVI）": {"dataKind": "成果数据", "format": ["GeoTIFF", "NetCDF"], "annotation": "有标注", "region": "黑龙江省 / 哈尔滨市；黑龙江省 / 佳木斯市", "researchDirections": ["作物模型", "精准感控"]}, "耕地地块遥感底图（县域）": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市", "researchDirections": ["资源环境", "规模化应用"]}, "农田气象观测记录（站网）": {"dataKind": "原始数据", "format": ["CSV", "NetCDF"], "annotation": "无标注", "region": "黑龙江省 / 绥化市", "researchDirections": ["资源环境", "作物模型"]}, "标准影像产品（Sentinel 系列）": {"dataKind": "原始数据", "format": ["GeoTIFF", "HDF5"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["AI 数智基础", "资源环境"]}, "作物长势 · 多时相栅格影像合集": {"dataKind": "原始数据", "format": ["GeoTIFF", "JSON / JSONL"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市 / 富锦市；黑龙江省 / 佳木斯市 / 同江市", "researchDirections": ["作物模型", "精准感控"]}, "地块产量属性表": {"dataKind": "成果数据", "format": ["Parquet", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["AI 数智基础", "作物模型"]}};
+  var DETAIL_METADATA={"作物长势 · 地面实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": false}, "作物长势 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市 / 七星农场", "researchDirections": ["AI 数智基础", "精准感控"], "containsGeographicData": true}, "作物长势 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": true}, "作物长势 · 遥感反演长势分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 佳木斯市 / 富锦市", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": true}, "土壤 · 网格实测数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县 / 友谊镇", "researchDirections": ["资源环境", "作物模型"], "containsGeographicData": false}, "土壤 · 无人机正射影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境"], "containsGeographicData": true}, "土壤 · 卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 双鸭山市", "researchDirections": ["资源环境"], "containsGeographicData": true}, "土壤 · 遥感反演养分分布": {"dataKind": "成果数据", "format": ["GeoTIFF"], "annotation": "有标注", "region": "黑龙江省 / 双鸭山市 / 友谊县", "researchDirections": ["资源环境", "精准感控"], "containsGeographicData": true}, "补贴核查 · 多时相卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["规模化应用"], "containsGeographicData": true}, "补贴核查 · 遥感解译作物分布": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 牡丹江市 / 穆棱市", "researchDirections": ["AI 数智基础", "规模化应用"], "containsGeographicData": true}, "补贴核查 · 申报记录（脱敏）": {"dataKind": "原始数据", "format": ["Excel", "JSON / JSONL"], "annotation": "无标注", "region": "黑龙江省 / 牡丹江市", "researchDirections": ["规模化应用"], "containsGeographicData": false}, "作物产量 · 地面测产数据": {"dataKind": "原始数据", "format": ["CSV", "Excel"], "annotation": "无标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型"], "containsGeographicData": false}, "作物产量 · 无人机多期影像": {"dataKind": "原始数据", "format": ["GeoTIFF", "JPEG / PNG"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": true}, "作物产量 · 卫星多时相影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "未说明", "region": "黑龙江省 / 鹤岗市", "researchDirections": ["作物模型"], "containsGeographicData": true}, "作物产量 · 遥感反演产量分布": {"dataKind": "成果数据", "format": ["GeoTIFF", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["作物模型", "规模化应用"], "containsGeographicData": true}, "林草湿 · 基准/监测期卫星影像": {"dataKind": "原始数据", "format": ["GeoTIFF"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市 / 鹤山农场", "researchDirections": ["资源环境"], "containsGeographicData": true}, "林草湿 · 变化图斑数据": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "有标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["资源环境", "规模化应用"], "containsGeographicData": true}, "遥感植被指数产品（NDVI/EVI）": {"dataKind": "成果数据", "format": ["GeoTIFF", "NetCDF"], "annotation": "有标注", "region": "黑龙江省 / 哈尔滨市；黑龙江省 / 佳木斯市", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": true}, "耕地地块遥感底图（县域）": {"dataKind": "成果数据", "format": ["GeoJSON", "Shapefile"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市", "researchDirections": ["资源环境", "规模化应用"], "containsGeographicData": true}, "农田气象观测记录（站网）": {"dataKind": "原始数据", "format": ["CSV", "NetCDF"], "annotation": "无标注", "region": "黑龙江省 / 绥化市", "researchDirections": ["资源环境", "作物模型"], "containsGeographicData": false}, "标准影像产品（Sentinel 系列）": {"dataKind": "原始数据", "format": ["GeoTIFF", "HDF5"], "annotation": "无标注", "region": "黑龙江省 / 黑河市 / 嫩江市", "researchDirections": ["AI 数智基础", "资源环境"], "containsGeographicData": true}, "作物长势 · 多时相栅格影像合集": {"dataKind": "原始数据", "format": ["GeoTIFF", "JSON / JSONL"], "annotation": "未说明", "region": "黑龙江省 / 佳木斯市 / 富锦市；黑龙江省 / 佳木斯市 / 同江市", "researchDirections": ["作物模型", "精准感控"], "containsGeographicData": true}, "地块产量属性表": {"dataKind": "成果数据", "format": ["Parquet", "CSV"], "annotation": "有标注", "region": "黑龙江省 / 鹤岗市 / 萝北县", "researchDirections": ["AI 数智基础", "作物模型"], "containsGeographicData": false}};
   DS.forEach(function(d){Object.assign(d,DETAIL_METADATA[d.name]||{});});
-  try{var savedMetadata=Object.values(JSON.parse(localStorage.getItem('bdh-asset-metadata-1010')||'{}'));DS.forEach(function(d){var saved=savedMetadata.find(function(x){return x.kind==='dataset'&&x.name===d.name;});if(saved){if(saved.format)d.format=Array.isArray(saved.format)?saved.format:String(saved.format).split(/[、,;]/).filter(Boolean);if(saved.annotation)d.annotation=saved.annotation;}});}catch(e){}
-  function imageQueryAvailable(d){return (d.format||[]).some(function(f){return /GeoTIFF|JPEG|PNG|HDF5/.test(f);});}
-  function imageQueryBtnHtml(d){return '<button type="button" class="btn-query" onclick="queryImage()"'+(imageQueryAvailable(d)?'':' disabled title="本数据集不包含可查询影像"')+'>影像查询</button>';}
+  try{var savedMetadata=Object.values(JSON.parse(localStorage.getItem('bdh-asset-metadata-1010')||'{}'));DS.forEach(function(d){var saved=savedMetadata.find(function(x){return x.kind==='dataset'&&x.name===d.name;});if(saved){if(typeof saved.containsGeographicData==='boolean')d.containsGeographicData=saved.containsGeographicData;if(saved.format)d.format=Array.isArray(saved.format)?saved.format:String(saved.format).split(/[、,;]/).filter(Boolean);if(saved.annotation)d.annotation=saved.annotation;}});}catch(e){}
+  function imageQueryAvailable(d){return d?.containsGeographicData===true;}
+  function imageQueryBtnHtml(d){return imageQueryAvailable(d)?'<button type="button" class="btn-query" onclick="queryImage()">影像查询</button>':'';}
   function queryImage(){if(CUR_D&&imageQueryAvailable(CUR_D))openMapEngine(CUR_D.name,CUR_D.form,regionOf(CUR_D));}
 
   function zoneNameOf(z){var t=ZONES.filter(function(x){return x.zone===z;})[0];return t?t.name:'';}
@@ -1236,7 +1231,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   function isStructPreview(d){
     return !!(d && d.preview && !isGeo(d));
   }
-  function renderPreview(d, zn){
+  function renderPreview(d, zn){if(d._managed)return DatasetUI.view(d.datasetContent)||'<p>暂无预览材料</p>';
     var geo = isGeo(d);
     var out;
     if(isStructPreview(d)){
@@ -1328,15 +1323,16 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
       '<h4>关键参数</h4>'+
       '<ul>'+li+'</ul>';
   }
-  function buildIntroEditor(d){
+  function buildIntroEditor(d){if(d._managed)return ResourceFields.safe(d.intro||'')||'<p>暂无数据介绍</p>';
     return ''+
       '<div class="intro-body rich-text" id="introBody">'+introHtml(d)+'</div>';
   }
 
   function render(){
+    DS=ResourceFields.portalDatasets(DS);
     var q=new URLSearchParams(location.search.slice(1)||location.hash.slice(1));
     var name=q.get('n')||'作物长势 · 地面实测数据';
-    var d=DS.filter(function(x){return x.name===name;})[0]||DS[0];
+    var d=DS.filter(function(x){return x.name===name;})[0];if(!d){document.getElementById('headBox').textContent='该数据集未上架或已下架，请返回数据中心。';document.querySelector('.detail')?.setAttribute('hidden','');return;}
     CUR_D=d;
     var zn=zoneNameOf(d.zone);
 
@@ -1378,7 +1374,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     kv('覆盖年份',String(d.year));
     kv('数据格式',d.format.join('、'));
     kv('标注情况',d.annotation);
-    kv('权属归属',holderOf(d));
+    kv('权属归属',(d._managed?d.rightsOwner:holderOf(d)));
     kv('授权范围','仅限平台「科研开发空间」内使用；不下载、不出域、不向第三方分发');
     document.getElementById('metaBox').innerHTML=meta;
     if(q.get('apply')==='1'){ applyUse(); }
@@ -1417,5 +1413,6 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 
 <!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
+<script src="assets/prototype-nav.js"></script>
 </body>
 </html>

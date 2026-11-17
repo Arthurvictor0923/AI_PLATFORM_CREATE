@@ -439,22 +439,16 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 <script src="assets/portal-org.js"></script>
 <script src="assets/portal-work.js"></script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head><body>
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg class="logo" viewBox="0 0 44 50" fill="none" aria-hidden="true"><path d="M12 46C23 36 23 20 35 5" stroke="#00635a" stroke-width="2.5"/><path d="M23 23C23 8 32 3 43 3C39 14 34 21 23 23" fill="#69a821"/><path d="M20 33C8 32 4 23 5 16C16 17 21 23 20 33" fill="#005653"/><path d="M21 35C26 26 33 24 41 25C35 35 29 38 21 35" fill="#08746d"/><path d="M16 39C7 36 4 40 3 47C11 47 16 45 16 39" fill="#63942d"/></svg>
-      <span>北大荒智慧农业协同创新平台</span>
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a href="数据中心-数据集列表页.html">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a class="active" id="demandNav" href="需求中心-高保真原型%20(1).html" aria-current="page">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html" class="active" aria-current="page" id="demandNav">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <div class="account autharea" id="authArea">
         <button type="button" class="login-link" id="login" data-bdh-login>登录</button>
@@ -606,4 +600,5 @@ for(const dialog of document.querySelectorAll('dialog'))dialog.addEventListener(
 
 <!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
+<script src="assets/prototype-nav.js"></script>
 </body></html>

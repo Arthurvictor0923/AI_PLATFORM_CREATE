@@ -1182,29 +1182,243 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
 })();
 </script>
 <script src="assets/portal-org.js"></script>
+<script id="model-account-fallback">
+if(!window.PortalOrg){try{
+/* 2026-10-14: local prototype data. Production identity and authorization require server checks. */
+(function () {
+  'use strict';
+  const KEY = 'bdh-owner-teams-20261014', SESSION = 'bdh-portal-account-20261014';
+  const org = '黑龙江省农业科学院';
+  const adminDemo = {id:'u-admin',name:'平台管理员',login:'admin.demo',kind:'admin',orgId:'org-platform',org:'平台管理',ownerId:null,permissions:['dashboard:view']};
+  const seed = {
+    schema: 1,
+    accounts: [
+      adminDemo,
+      {id:'u-zhang',name:'张研究员',login:'zhang.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-li',name:'李晓',login:'li.xiao',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-wang',name:'王宁',login:'wang.ning',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-zhao',name:'赵晨',login:'zhao.chen',kind:'member',orgId:'org-hla',org,ownerId:'u-zhang'},
+      {id:'u-chen',name:'陈老师',login:'chen.research',kind:'leader',orgId:'org-hla',org,ownerId:null},
+      {id:'u-sun',name:'孙悦',login:'sun.yue',kind:'member',orgId:'org-hla',org,ownerId:'u-chen'},
+      {id:'u-liu',name:'刘老师',login:'liu.research',kind:'leader',orgId:'org-hla',org,ownerId:null}
+    ],
+    teams: [
+      {id:'t-rice',name:'寒地水稻研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'多源遥感与作物监测方法研究',memberIds:['u-zhang','u-li','u-wang'],spaceIds:['1','2','5','7']},
+      {id:'t-disaster',name:'农业灾害研究团队',ownerId:'u-zhang',orgId:'org-hla',org,description:'农田旱情与土壤墒情研究',memberIds:['u-zhang','u-li'],spaceIds:['3','4']},
+      {id:'t-yield',name:'粮食产量研究团队',ownerId:'u-chen',orgId:'org-hla',org,description:'区域作物产量分析与验证',memberIds:['u-chen','u-sun','u-zhang'],spaceIds:['6']}
+    ],
+    invitations: []
+  };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  function read() {try {const s=JSON.parse(localStorage.getItem(KEY));if(s?.schema===1&&Array.isArray(s.accounts)&&Array.isArray(s.teams))return s;}catch{}return clone(seed);}
+  function save(s) {try {localStorage.setItem(KEY,JSON.stringify(s));}catch {throw Error('保存失败，请检查浏览器存储后重试。');}window.dispatchEvent(new CustomEvent('portal-org-change'));}
+  if(!localStorage.getItem(KEY))save(clone(seed));
+  const existing=read();if(!existing.accounts.some(a=>a.id===adminDemo.id)){existing.accounts.push(clone(adminDemo));save(existing);}
+  function current() {const s=read();return s.accounts.find(a=>a.id===localStorage.getItem(SESSION))||s.accounts.find(a=>a.id==='u-zhang')||s.accounts[0];}
+  const newId = p => p+'-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  function leader() {const a=current();if(a.kind!=='leader')throw Error('仅负责人可以管理成员账号和创建团队。');return a;}
+  function managedTeam(s,id) {const t=s.teams.find(t=>t.id===id);if(!t||t.ownerId!==current().id)throw Error('仅当前团队负责人可以管理该团队。');return t;}
+  function memberEligible(t,a) {return !!a&&a.orgId===t.orgId&&a.kind==='member'&&a.ownerId===t.ownerId;}
+  const O = window.PortalOrg = {
+    KEY, SESSION, read, current,
+    isLogged:()=>!!localStorage.getItem(SESSION),
+    signOut:()=>{localStorage.removeItem(SESSION);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    account:id=>read().accounts.find(a=>a.id===id),
+    team:id=>read().teams.find(t=>t.id===id),
+    isLeader:()=>current().kind==='leader',
+    canViewDashboard:()=>!!localStorage.getItem(SESSION)&&current().kind==='admin'&&current().permissions?.includes('dashboard:view'),
+    roleLabel:a=>a.kind==='admin'?'管理员':a.kind==='leader'?'负责人':'成员',
+    myTeams:()=>read().teams.filter(t=>t.memberIds.includes(current().id)),
+    managedAccounts:()=>read().accounts.filter(a=>a.kind==='member'&&a.ownerId===current().id),
+    canViewTeam:id=>!!read().teams.find(t=>t.id===id&&t.memberIds.includes(current().id)),
+    canManageTeam:id=>!!read().teams.find(t=>t.id===id&&t.ownerId===current().id),
+    spaceTeam:id=>read().teams.find(t=>(t.spaceIds||[]).includes(String(id))),
+    spaceMembers(id) {const s=read(),t=this.spaceTeam(id);return t?t.memberIds.filter(a=>(s.spaceMembers?.[String(id)]||t.memberIds).includes(a)):[];},
+    canViewSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canViewTeam(t.id)&&this.spaceMembers(id).includes(current().id);},
+    setSpaceMembers(id,ids) {const s=read(),t=this.spaceTeam(id);if(!t||!this.canManageSpace(id))throw Error('仅本团队负责人可以管理空间成员。');if(ids.some(a=>!t.memberIds.includes(a)))throw Error('只能选择当前团队成员。');s.spaceMembers??={};s.spaceMembers[String(id)]=[...new Set([t.ownerId,...ids])];save(s);},
+    canManageSpace(id) {const t=this.spaceTeam(id);return !!t&&this.canManageTeam(t.id);},
+    select(id) {if(!read().accounts.some(a=>a.id===id))throw Error('账号不存在。');localStorage.setItem(SESSION,id);window.dispatchEvent(new CustomEvent('portal-account-change'));},
+    createMember(fields) {
+      const a=leader(),s=read(),name=String(fields.name||'').trim(),login=String(fields.login||'').trim();
+      if(!name||!login)throw Error('请填写姓名和登录账号。');
+      if(/\s/.test(login))throw Error('登录账号不能包含空格。');
+      if(s.accounts.some(x=>x.login.toLowerCase()===login.toLowerCase()))throw Error('登录账号已存在，请使用其他账号；已有成员无需重复创建。');
+      if(!String(fields.password||'').trim())throw Error('请填写初始密码。');
+      const member={id:newId('u'),name,login,kind:'member',orgId:a.orgId,org:a.org,ownerId:a.id};
+      s.accounts.push(member);save(s);return member; // Password is deliberately not stored by this prototype.
+    },
+    updateProfile(name) {const s=read(),a=s.accounts.find(x=>x.id===current().id);if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    editMember(id,name) {leader();const s=read(),a=s.accounts.find(a=>a.id===id&&a.ownerId===current().id&&a.kind==='member');if(!a)throw Error('只能维护自己关联的成员账号。');if(!String(name).trim())throw Error('请填写姓名。');a.name=String(name).trim();save(s);},
+    createTeam(fields) {const a=leader(),s=read(),name=String(fields.name||'').trim();if(!name)throw Error('请填写团队名称。');const t={id:newId('t'),name,description:String(fields.description||'').trim(),orgId:a.orgId,org:a.org,ownerId:a.id,memberIds:[a.id],spaceIds:[]};s.teams.push(t);save(s);return t;},
+    addMembers(id,ids) {const s=read(),t=managedTeam(s,id);if(!ids.length)throw Error('请选择要添加的成员。');if(ids.some(id=>!memberEligible(t,s.accounts.find(a=>a.id===id))))throw Error('只能添加本机构且归属当前负责人的普通成员。');t.memberIds=[...new Set([...t.memberIds,...ids])];save(s);},
+    removeMember(id,accountId) {const s=read(),t=managedTeam(s,id);if(accountId===t.ownerId)throw Error('不能移除团队负责人。');t.memberIds=t.memberIds.filter(x=>x!==accountId);save(s);},
+    invite(id,accountId) {
+      const s=read(),t=managedTeam(s,id),a=s.accounts.find(a=>a.id===accountId);
+      if(!a||a.kind!=='leader'||a.orgId!==t.orgId||a.id===current().id)throw Error('只能邀请本机构已有的独立负责人。');
+      if(t.memberIds.includes(a.id))throw Error('该负责人已加入当前团队。');
+      if(s.invitations.some(i=>i.teamId===id&&i.to===accountId&&i.status==='pending'))throw Error('邀请已发出，请等待对方回应。');
+      const i={id:newId('inv'),teamId:id,from:current().id,to:accountId,status:'pending',time:new Date().toLocaleString('zh-CN')};s.invitations.push(i);save(s);return i;
+    },
+    answer(id,decision) {
+      const s=read(),i=s.invitations.find(x=>x.id===id),a=current();if(!i||i.to!==a.id||i.status!=='pending')throw Error('该邀请已处理或不属于当前账号。');
+      if(!['accepted','declined'].includes(decision))throw Error('无效操作。');
+      const t=s.teams.find(t=>t.id===i.teamId);if(!t||a.kind!=='leader'||a.orgId!==t.orgId)throw Error('当前账号不符合团队邀请条件。');
+      if(decision==='accepted')t.memberIds=[...new Set([...t.memberIds,a.id])];i.status=decision;i.processedAt=new Date().toISOString();save(s);
+    },
+    cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
+    escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+  };
+  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+})();
+
+}catch(error){}}
+</script>
+<script id="model-access-policy">
+/* Shared prototype policy. Model identity, grants and trial eligibility are
+   evaluated independently of URL mode and legacy role/demo switches. */
+(function(){
+  'use strict';
+  var registry=[{"id": "model-0", "name": "水稻估产模型（卫星+气象多源）", "version": "v2.3", "published": true, "trialEnabled": true}, {"id": "model-1", "name": "玉米产量预测模型（时序）", "version": "v1.8", "published": true, "trialEnabled": true}, {"id": "model-2", "name": "大豆估产与长势联动模型", "version": "v1.5", "published": true, "trialEnabled": true}, {"id": "model-3", "name": "水稻长势动态监测模型", "version": "v3.1", "published": true, "trialEnabled": true}, {"id": "model-4", "name": "玉米长势异常识别模型", "version": "v1.2", "published": false, "trialEnabled": true}, {"id": "model-5", "name": "稻瘟病识别模型", "version": "v2.0", "published": true, "trialEnabled": true}, {"id": "model-6", "name": "玉米大斑病检测模型", "version": "v1.4", "published": true, "trialEnabled": true}, {"id": "model-7", "name": "补贴核查 · 种植面积比对模型", "version": "v2.6", "published": true, "trialEnabled": true}, {"id": "model-8", "name": "土壤养分反演模型（五项）", "version": "v1.9", "published": true, "trialEnabled": true}, {"id": "model-9", "name": "作物种植结构识别模型", "version": "v2.1", "published": true, "trialEnabled": true}, {"id": "model-10", "name": "耕地地块分割模型", "version": "v1.7", "published": true, "trialEnabled": true}, {"id": "model-11", "name": "育秧棚识别模型", "version": "v1.1", "published": false, "trialEnabled": true}, {"id": "model-12", "name": "林草湿地变化检测模型", "version": "v2.4", "published": true, "trialEnabled": true}, {"id": "model-13", "name": "无人机巡田作业监测模型", "version": "v1.3", "published": true, "trialEnabled": true}];
+  var applicationKey='bdh-model-applications-v1';
+  function read(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')||fallback;}catch(e){return fallback;}}
+  function account(){
+    try{
+      var O=window.PortalOrg;if(!O||!O.isLogged())return null;
+      var id=localStorage.getItem(O.SESSION),a=O.account(id);
+      return a&&a.id===id?a:null;
+    }catch(e){return null;}
+  }
+  function model(value){
+    var name=typeof value==='string'?value:value&&value.name;
+    return registry.find(function(m){return m.name===name;})||null;
+  }
+  function params(url){
+    var u=url?new URL(url,location.href):new URL(location.href);
+    var merged=new URLSearchParams(u.hash.replace(/^#/,''));
+    new URLSearchParams(u.search).forEach(function(value,key){merged.set(key,value);});
+    return merged;
+  }
+  function version(value){var m=model(value);return value&&(value._v||value.version||value.ver)||m&&m.version||'';}
+  function mode(){return params().get('mode')==='trial'?'trial':'use';}
+  function approved(m,v,a){
+    var rows=read(applicationKey,[]);if(!Array.isArray(rows))return false;
+    return rows.some(function(r){
+      if(!r||r.applicantId!==a.id||r.name!==m.name||r.version!==v)return false;
+      if(!['已通过','approved'].includes(r.status)||r.applicationKind==='commercial')return false;
+      // A research-only or commercial approval does not authorize online use.
+      return /业务分析与应用|在线使用/.test(r.purpose||'')||r.capability==='model-online-use';
+    });
+  }
+  function state(value){
+    var m=model(value),a=account(),v=version(value),reason='';
+    var published=!!m&&m.published!==false&&(!value||value.published!==false);
+    var current=!!m&&v===m.version;
+    var trialEnabled=!!m&&m.trialEnabled===true&&(!value||(value.trialEnabled!==false&&value.allowTrial!==false));
+    if(!m)reason='未找到当前模型';
+    else if(!current)reason='历史或未知版本仅可查看，不能运行或申请使用';
+    else if(!published)reason='当前模型服务尚未发布';
+    else if(!a)reason='请先登录';
+    var granted=!!m&&!!a&&approved(m,v,a);
+    return {model:m,account:a,version:v,current:current,published:published,reason:reason,
+      granted:granted,canUse:!reason&&granted,canTrial:!reason&&trialEnabled,
+      trialEnabled:trialEnabled,canApply:!reason&&!granted};
+  }
+  function reason(value,action){
+    var s=state(value);if(s.reason)return s.reason;
+    if(action==='trial'&&!s.trialEnabled)return '当前模型未开启在线试用';
+    if(action==='use'&&!s.granted)return '当前模型尚未取得在线使用授权';
+    if(action==='apply'&&s.granted)return '当前模型已获授权，可直接使用';
+    return '';
+  }
+  function guard(value,action){var message=reason(value,action);if(message){window.toast&&window.toast(message);return false;}return true;}
+  function href(page,value,operation){
+    var m=model(value);if(!m)return '';
+    var q=new URLSearchParams({n:m.name,v:version(value)||m.version});
+    if(operation)q.set('mode',operation==='trial'?'trial':'use');
+    return page+'?'+q.toString();
+  }
+  function open(value,operation){
+    if(!guard(value,operation))return false;
+    location.href=href('模型中心-模型运行台.html',value,operation);return true;
+  }
+  function disabled(value,operation){
+    var s=state(value);
+    if(!s.model||!s.current||!s.published)return true;
+    return operation==='trial'&&!s.trialEnabled;
+  }
+  function escape(value){return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function buttonAttrs(value,operation){return disabled(value,operation)?' disabled title="'+escape(reason(value,operation))+'"':'';}
+  function missing(target){
+    var root=document.getElementById(target);if(root)root.innerHTML='<div style="padding:32px"><h2>未找到该模型</h2><p style="margin:12px 0">请返回模型中心重新选择。</p><a href="模型中心-模型列表页（调整）.html">返回模型中心</a></div>';
+  }
+  function install(page){
+    function init(){
+      var oldId=account()&&account().id,refreshing=false;
+      function refresh(){
+        if(refreshing)return;refreshing=true;
+        try{
+          var a=account(),id=a&&a.id,changed=id!==oldId;oldId=id;
+          window.LOGGED=!!a;
+          if(typeof window.USER_NAME!=='undefined')window.USER_NAME=a?a.name:'';
+          if(changed){
+            document.querySelectorAll('dialog[open]').forEach(function(d){if(d.querySelector('form'))d.close();});
+            if(page==='runtime'){
+              Object.values(window.TIMERS||{}).forEach(function(timer){clearInterval(timer);clearTimeout(timer);});
+              window.TIMERS={};window.FILES=[];window.PVALS={};window.SEL='';
+            }
+          }
+          if(typeof window.renderAuthArea==='function')window.renderAuthArea();
+          if(page==='list')window.renderAll();
+          if(page==='detail'&&window.CUR)window.renderHeadCta();
+          if(page==='runtime'&&window.CUR){
+            window.DEMO_AUTH=state(window.CUR).canUse;
+            window.renderAll();
+          }
+          window.bdhSyncAuth&&window.bdhSyncAuth();
+        }finally{refreshing=false;}
+      }
+      // Preserve the existing application form and team checks; stamp the
+      // current account and model only after rechecking at save time.
+      var save=window.portalSaveApplication;
+      if(typeof save==='function')window.portalSaveApplication=function(record){
+        var a=account(),m=model(record.name),form=document.querySelector('#modelApplyForm,.application-form');
+        if(!a||!m||record.version!==m.version||!guard({name:m.name,_v:record.version},record.applicationKind==='commercial'?'commercial':'apply'))return null;
+        if(form&&form.dataset.modelApplicantId&&form.dataset.modelApplicantId!==a.id){window.toast('账号已切换，请重新打开申请表');return null;}
+        return save(Object.assign({},record,{applicantId:a.id,applicant:a.name,modelId:m.id,
+          applicationKind:record.applicationKind||'model',
+          capability:/业务分析与应用|在线使用/.test(record.purpose||'')?'model-online-use':'',
+          version:m.version}));
+      };
+      window.addEventListener('portal-account-change',refresh);
+      window.addEventListener('portal-org-change',refresh);
+      window.addEventListener('storage',function(e){
+        var O=window.PortalOrg;if(!e.key||e.key===applicationKey||O&&(e.key===O.SESSION||e.key===O.KEY))refresh();
+      });
+      window.addEventListener('pageshow',refresh);
+      window.addEventListener('focus',refresh);
+      window.addEventListener('model-authorization-change',refresh);
+      refresh();
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  }
+  window.PortalModelAccess={account:account,model:model,params:params,version:version,mode:mode,state:state,
+    reason:reason,guard:guard,href:href,open:open,disabled:disabled,buttonAttrs:buttonAttrs,missing:missing,install:install,applicationKey:applicationKey};
+})();
+
+</script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
+<style id="model-access-button-state">.md-actions button:disabled,.head-right button:disabled{opacity:.45;cursor:not-allowed}</style>
 </head>
 <body>
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-        <path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/>
-        <path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/>
-        <path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/>
-      </svg>
-      <span>北大荒智慧农业协同创新平台</span>
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a href="数据中心-数据集列表页.html">数据中心</a>
-      <a class="active" href="模型中心-模型列表页（调整）.html" aria-current="page">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html" class="active" aria-current="page">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
@@ -1318,9 +1532,9 @@ function recTitleText(){return isChatModel(CUR)?'对话':'运行记录';}
 function newRunText(){return isChatModel(CUR)?'+ 新建对话':'+ 新建运行';}
 
 /* ---------- 登录态与权限（演示开关，与模型详情页同源） ---------- */
-var LOGGED=false;
+var LOGGED=!!PortalModelAccess.account();
 var DEMO_AUTH=false; /* 原型演示开关：模拟"使用审批通过"后的已授权态 */
-var USER_NAME='张研究员';
+var USER_NAME=(PortalModelAccess.account()||{name:'未登录'}).name;
 function toast(msg){
   var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
   clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2200);
@@ -1355,18 +1569,8 @@ function goMyPersonal(){location.href='个人中心-高保真原型.html';}
 function goMyCalls(){location.href='关于平台-开发者接入.html#docs';}
 function goMyApply(){location.href='个人中心-高保真原型.html#models?tab=applications';}
 function goModelList(){location.href='模型中心-模型列表页（调整）.html';}
-function toggleDemoAuth(){
-  if(!LOGGED){toast('请先登录/入驻平台（受邀制）');return;}
-  DEMO_AUTH=!DEMO_AUTH;
-  toast(DEMO_AUTH?'演示：模拟审批通过，已授权可提交运行':'演示：回到未授权态');
-  renderAuth();
-}
-function lockReason(){
-  if(!isCurVer(CUR))return '历史版本仅供复现，不支持运行';
-  if(!LOGGED)return '请先登录/入驻平台（受邀制）';
-  if(!DEMO_AUTH)return '该模型尚未授权，无法运行';
-  return '';
-}
+
+function lockReason(){return PortalModelAccess.reason(CUR,PortalModelAccess.mode());}
 function canRun(){
   var lr=lockReason();
   if(lr){toast(lr);return false;}
@@ -1627,7 +1831,7 @@ function versOf(m){
   return [{v:m.ver,d:m.upd,cur:true,n:'首个上线版本；暂无历史版本'}];
 }
 function curVerOf(m){var l=versOf(m);for(var i=0;i<l.length;i++){if(l[i].cur)return l[i];}return l[0];}
-function selVerOf(m){var l=versOf(m);for(var i=0;i<l.length;i++){if(l[i].v===m._v)return l[i];}return curVerOf(m);}
+function selVerOf(m){var l=versOf(m);for(var i=0;i<l.length;i++){if(l[i].v===m._v)return l[i];}return m._v?{v:m._v,cur:false,n:'未找到该版本'}:curVerOf(m);}
 function isCurVer(m){return selVerOf(m).cur===true;}
 /* ===================================================================
    服务与接入信息（SPEC）——⭐0910：这些不是"成果提交人填的说明字段"，而是
@@ -1826,7 +2030,7 @@ function resultFilesOf(m){
 }
 /* ---- 运行记录存储：与个人中心「我的运行记录」共用同一个 localStorage 键 ---- */
 function trialKey(){return 'dsh_trial_tasks_v1';}
-function trialStoreLoad(){try{return JSON.parse(localStorage.getItem(trialKey())||'[]');}catch(e){return [];}}
+function trialStoreLoad(){try{var rows=JSON.parse(localStorage.getItem(trialKey())||'[]');return Array.isArray(rows)?rows:[];}catch(e){return [];}}
 function fmtOf(n){var e=String(n).split('.').pop().toLowerCase();
   return {tif:'GeoTIFF',tiff:'GeoTIFF',png:'PNG',jpg:'JPEG',jpeg:'JPEG',shp:'SHP',geojson:'GeoJSON',csv:'CSV',xlsx:'XLSX',zip:'ZIP 打包'}[e]||'文件';}
 /* ---- 参数收集 / 校验 ---- */
@@ -1860,8 +2064,16 @@ var TIMERS={};              /* 运行中的模拟推进定时器 */
 var STATUS={queued:{t:'排队中',cls:'t-wait'},running:{t:'处理中',cls:'t-run'},done:{t:'已完成',cls:'t-done'},fail:{t:'失败',cls:'t-fail'},cancel:{t:'已取消',cls:'t-cancel'}};
 var OUT_CN={value:'数值结果',series:'时序与曲线',classify:'分类结果',boxes:'目标检测框',mask:'分割掩码',multi:'多指标表'};
 
-function loadAll(){return trialStoreLoad();}
-function saveAll(a){try{localStorage.setItem(trialKey(),JSON.stringify(a.slice(0,60)));}catch(e){}}
+function loadAll(){
+  var a=PortalModelAccess.account();if(!a)return [];
+  return trialStoreLoad().filter(function(r){return r&&(r.ownerId||r.applicantId||'u-zhang')===a.id;}).map(function(r){return Object.assign({},r,{ownerId:a.id});});
+}
+function saveAll(rows){
+  var a=PortalModelAccess.account();if(!a)return;
+  var all=trialStoreLoad(),other=all.filter(function(r){return r&&(r.ownerId||r.applicantId||'u-zhang')!==a.id;});
+  var own=rows.filter(function(r){return r&&(!r.ownerId||r.ownerId===a.id);}).slice(0,60).map(function(r){return Object.assign({},r,{ownerId:a.id});});
+  try{localStorage.setItem(trialKey(),JSON.stringify(other.concat(own)));}catch(e){toast('运行记录保存失败，请检查浏览器存储');}
+}
 function myRuns(){
   var a=loadAll().filter(function(r){return r&&r.model===CUR.name;});
   a.sort(function(x,y){
@@ -1872,6 +2084,7 @@ function myRuns(){
   return a;
 }
 function upsert(rec){
+  var owner=PortalModelAccess.account();if(!owner||rec.ownerId&&rec.ownerId!==owner.id)return;rec.ownerId=owner.id;
   var a=loadAll(),i=-1;
   for(var k=0;k<a.length;k++){if(a[k]&&a[k].id===rec.id){i=k;break;}}
   if(i>=0)a[i]=rec;else a.unshift(rec);
@@ -1920,6 +2133,7 @@ function bigUnitOf(m){
   return {big:'—',unit:''};
 }
 function ensureSeed(){
+  if(!PortalModelAccess.account()||PortalModelAccess.reason(CUR,PortalModelAccess.mode()))return;
   if(SEED_OFF)return;
   if(myRuns().length)return;              /* 已有该模型的记录就不再补 */
   var i=MD.indexOf(CUR);if(i<0)i=0;
@@ -2194,18 +2408,14 @@ function cancelHtml(r){
 function downloadFile(i){var r=selRec();if(!r||!r.results||!r.results[i]){toast('请先选中一条已完成的运行');return;}var f=r.results[i];var result=renderResult(CUR,r.vals||defVals(CUR),hash(JSON.stringify(r.vals||defVals(CUR))+(r.id||'')));portalModal(f.name,'<p class="pcx-note">运行结果预览 · 原型演示数据</p><p>运行编号：'+portalEscape(r.id)+'<br>模型：'+portalEscape(r.model)+'<br>版本：'+portalEscape(r.ver)+'<br>完成时间：'+portalEscape(r.finish)+'</p><p>'+portalEscape(result.sum)+'</p>'+result.html,'<button class="primary" onclick="portalExportReport()">导出结果说明（HTML）</button>');}
 function portalExportReport(){var r=selRec();if(!r)return;var result=renderResult(CUR,r.vals||defVals(CUR),hash(JSON.stringify(r.vals||defVals(CUR))+(r.id||'')));var css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n');var html='<!doctype html><html lang="zh-CN"><meta charset="UTF-8"><title>运行结果说明</title><style>'+css+'body{padding:30px;background:white}</style><body><h1>运行结果说明</h1><p>原型演示数据，不代表真实模型推理结果。</p><p>'+portalEscape(r.model)+' / '+portalEscape(r.ver)+' / '+portalEscape(r.id)+'</p>'+result.html+'<h2>输入与参数</h2><pre>'+portalEscape(JSON.stringify({files:r.src?.files,params:r.params},null,2))+'</pre></body></html>';var url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));var a=document.createElement('a');a.href=url;a.download=r.id+'-结果说明.html';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function onVerChip(){portalModal('选择模型版本','<p>'+portalEscape(CUR.name)+'</p>'+versOf(CUR).map(v=>'<div class="pcx-record"><strong>'+portalEscape(v.v)+(v.cur?' · 当前版本':' · 历史版本')+'</strong><p>'+portalEscape(v.d)+' · '+portalEscape(v.n)+'</p><button onclick="portalPickVersion(\''+v.v+'\')">'+(v.v===selVerOf(CUR).v?'已选择':'查看此版本')+'</button></div>').join(''));}
-function portalPickVersion(v){CUR._v=v;var q=new URLSearchParams({n:CUR.name,v:v});history.replaceState(null,'','#'+q.toString());portalClose();renderAll();}
-function pickCurVer(){CUR._v=curVerOf(CUR).v;renderAll();toast('已切回当前版本 '+CUR._v);}
+function portalPickVersion(v){if(!versOf(CUR).some(function(x){return x.v===v;}))return;CUR._v=v;history.replaceState(null,'',PortalModelAccess.href('模型中心-模型运行台.html',CUR,PortalModelAccess.mode()));portalClose();renderAll();}
+function pickCurVer(){CUR._v=curVerOf(CUR).v;history.replaceState(null,'',PortalModelAccess.href('模型中心-模型运行台.html',CUR,PortalModelAccess.mode()));renderAll();toast('已切回当前版本 '+CUR._v);}
 
 /* ===================================================================
    底部输入区（控件由该模型入参 schema 决定）
    =================================================================== */
 function runLabel(){return CUR.exec==='async'?'提交并运行':'▶ 运行';}
-function lockBtnText(){
-  if(!isCurVer(CUR))return '历史版本不可运行';
-  if(!LOGGED)return '请先登录后提交';
-  return '授权后可提交';
-}
+function lockBtnText(){var s=PortalModelAccess.state(CUR);return !s.account?'请先登录后提交':!s.current?'当前版本不可运行':!s.published?'服务尚未发布':PortalModelAccess.mode()==='trial'?'暂不可试用':'授权后可提交';}
 function captureParams(){
   (CUR.trial.params||[]).forEach(function(p){
     var el=document.getElementById('pm_'+p.id);
@@ -2288,6 +2498,7 @@ function pickFiles(){
   var el=document.getElementById('fileInput');if(el)el.click();
 }
 function onFiles(inp){
+  if(!canRun()){inp.value='';return;}
   var arr=Array.prototype.slice.call(inp.files||[]);
   FILES=FILES.concat(arr.map(function(f){return {name:f.name,size:fmtSize(f.size),type:f.type||'—'};}));
   inp.value='';renderFiles();
@@ -2300,30 +2511,12 @@ function toggleAdv(){
   if(t)t.textContent=ADV_OPEN?'高级参数：收起 ▴':'高级参数：展开 ▾';
 }
 function renderAuth(){
-  var box=document.getElementById('authBand');if(!box)return;
-  var h='';
-  var detailHref='模型中心-模型详情（调整）.html#n='+encodeURIComponent(CUR.name);   /* 修正④：纯导航链接，不带 tab 参数 */
-  if(!isCurVer(CUR)){
-    h='<span class="ta-chip no">历史版本 '+selVerOf(CUR).v+' · 只读</span>'+
-      '<span class="ta-note">历史版本<b>仅供复现</b>：可查看输入输出说明与版本说明，<b>不支持运行</b>（避免跑旧版本浪费算力）。</span>'+
-      '<span class="ta-demo" onclick="pickCurVer()">回到当前版本 '+curVerOf(CUR).v+' →</span>';
-  }else if(!LOGGED){
-    /* 修正④：运行台内不造登录/申请控件，只提示登录（页头已有登录入口） */
-    h='<span class="ta-chip no">未登录</span>'+
-      '<span class="ta-note">请先登录/入驻平台（受邀制）；登录后还需获得该模型的使用授权，才能提交运行。</span>';
-  }else if(!DEMO_AUTH){
-    /* 修正④：未授权态只留一句提示文字 + 一个纯导航链接（申请这一动作只在模型详情页发生） */
-    h='<span class="ta-chip no">未授权</span>'+
-      '<span class="ta-note">该模型尚未授权，无法运行。授权由「申请调用」经审批通过后生效，<b>生效时系统自动签发个人密钥并下发该模型默认配额</b>（无需另行申请）。</span>'+
-      '<a href="'+detailHref+'" style="font-size:12px;color:var(--blue);white-space:nowrap;">前往模型详情页 →</a>'+
-      '<span class="ta-demo" onclick="toggleDemoAuth()">演示：模拟授权通过</span>';
-  }else{
-    h='<span class="ta-chip ok">已授权 · 生效中</span>'+
-      '<span class="ta-note">授权生效，可直接提交数据运行；每次运行都会写入运行记录（按账号隔离），结果文件可下载留存。'+
-      '<b>本页运行计入「被调用次数」（热度），不占用 API 配额</b>；每次运行同时写入<b>调用日志表</b>（与 API 调用同表、按来源字段区分，失败调用不计入）。API 调用的密钥与配额用量见个人中心「我的调用记录与密钥」。</span>'+
-      '<span class="ta-demo" onclick="toggleDemoAuth()">演示：回到未授权态</span>';
-  }
-  box.innerHTML=h;
+  var box=document.getElementById('authBand');if(!box||!CUR)return;
+  var s=PortalModelAccess.state(CUR),op=PortalModelAccess.mode(),message=PortalModelAccess.reason(CUR,op);
+  var label=message?(!s.account?'未登录':!s.current?'只读':!s.published?'暂不可用':'未授权'):(op==='trial'?'试用模式':'已授权');
+  var note=message||(op==='trial'?'当前以在线试用方式运行。':'当前模型已获授权，可提交数据运行。');
+  box.innerHTML='<span class="ta-chip '+(message?'no':'ok')+'">'+label+'</span><span class="ta-note">'+note+'</span>'+
+    (message?'<a href="'+PortalModelAccess.href('模型中心-模型详情（调整）.html',CUR)+'" style="font-size:12px;color:var(--blue);white-space:nowrap;">前往模型详情页 →</a>':'');
   syncLock();
 }
 function syncLock(){
@@ -2358,7 +2551,7 @@ function errHintOf(){
 }
 function baseRecord(c){
   return {
-    id:nextId(), model:CUR.name, type:CUR.type, trigger:'运行台 · 提交我的数据',
+    id:nextId(), ownerId:PortalModelAccess.account().id, mode:PortalModelAccess.mode(), model:CUR.name, type:CUR.type, trigger:'运行台 · 提交我的数据',
     ver:selVerOf(CUR).v, status:'running',
     submit:'2026-07-01 10:30:12', finish:'—', dur:'—',
     src:{kind:'files',
@@ -2399,6 +2592,7 @@ function submitRun(){
 function runSync(rec){
   if(TIMERS[rec.id])return;
   TIMERS[rec.id]=setInterval(function(){
+    if(!PortalModelAccess.account()||PortalModelAccess.account().id!==rec.ownerId)return;
     rec.progress=Math.min(92,(rec.progress||0)+8+Math.round(Math.random()*10));
     rec.progressText='运行中 · 已处理 '+rec.progress+'%';
     rec.brief=rec.progressText;
@@ -2406,6 +2600,7 @@ function runSync(rec){
     if(SEL===rec.id)renderRunPanels();else renderLeft();
   },120);
   setTimeout(function(){
+    if(!PortalModelAccess.account()||PortalModelAccess.account().id!==rec.ownerId)return;
     clearInterval(TIMERS[rec.id]);delete TIMERS[rec.id];
     finishRun(rec);
   },1500);
@@ -2464,10 +2659,10 @@ function resubmit(id){
 /* ===================================================================
    入口与渲染
    =================================================================== */
-function renderAll(){syncSel();renderLeft();renderMain();renderInput();}
+function renderAll(){if(!CUR)return;syncSel();renderLeft();renderMain();renderInput();}
 function renderRunPanels(){renderLeft();renderMain();}
 function render(){
-  var q=new URLSearchParams(location.search.slice(1)||location.hash.slice(1));
+  var q=PortalModelAccess.params();
   var name=q.get('n')||MD[0].name;
   var rid=q.get('run')||q.get('t')||'';    /* 与详情页/列表页/承接页约定：?n=<模型名>&run=<运行号> */
   if(!q.get('n')&&rid){                    /* 旧深链只给运行号时，按运行号反查所属模型 */
@@ -2475,11 +2670,13 @@ function render(){
     loadAll().forEach(function(r){if(r&&r.id===rid)hit=r;});
     if(hit)name=hit.model;
   }
-  CUR=MD.filter(function(x){return x.name===name;})[0]||MD[0];
+  CUR=MD.find(function(x){return x.name===name;})||null;
+  if(!CUR){document.querySelector('.bench-side').style.display='none';document.getElementById('inputArea').innerHTML='';document.getElementById('bmainHd').innerHTML='';PortalModelAccess.missing('bmainBody');return;}
+  document.querySelector('.bench-side').style.display='';
   CUR._v=q.get('v')||null;                 /* ?v=v2.2 直达历史版本（只读） */
   document.title='模型运行台 · '+CUR.name+' — 北大荒智慧农业协同创新平台';
   document.getElementById('crumbModel').textContent=CUR.name;
-  document.getElementById('crumbModel').href='模型中心-模型详情（调整）.html#n='+encodeURIComponent(CUR.name);
+  document.getElementById('crumbModel').href=PortalModelAccess.href('模型中心-模型详情（调整）.html',CUR);
   ensureSeed();
   if(rid)SEL=rid;                          /* ?run= 指定运行号：直接选中该条运行 */
   syncSel();
@@ -2516,6 +2713,130 @@ render();
 </script>
 
 <!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
-<script src="assets/portal-access.js"></script>
+<script id="portal-access-model-patched">
+(function () {
+  'use strict';
+  function init(){
+    const O=window.PortalOrg, file=decodeURIComponent(location.pathname.split('/').pop()), q=s=>document.querySelector(s);
+    if(!O)return;
+    const notice=t=>window.toast?window.toast(t):window.Meeting?.toast(t);
+    const wrap=(name,fn)=>{const old=window[name];if(typeof old==='function')window[name]=function(...args){return fn(old,args,this);};};
+    const prune=()=>{document.querySelectorAll('[onclick*="switchRole"],[onclick*="toggleDemoAuth"]').forEach(n=>n.remove());if(!O.isLeader())document.querySelectorAll('[onclick*="Meeting.submit"],[onclick*="Meeting.pickOutcome"]').forEach(n=>n.remove());};
+    if(window.Meeting){['submit','pickOutcome','commitOutcome'].forEach(k=>{const old=Meeting[k];if(typeof old==='function')Meeting[k]=function(...args){if(!O.isLeader()||(file.startsWith('科研开发空间')&&!O.canManageSpace(new URLSearchParams(location.search).get('id')||'1'))){notice('当前账号不能正式提交成果。');return;}return old.apply(this,args);};});}
+    if(typeof LOGGED!=='undefined')LOGGED=O.isLogged();
+    if(typeof ROLE!=='undefined')ROLE='low';
+    if(typeof window.roleName==='function')window.roleName=()=>O.current().name;
+    if(typeof window.roleAvatar==='function')window.roleAvatar=()=>O.current().name[0];
+    if(!window.PortalModelAccess&&typeof window.isHighRole==='function')window.isHighRole=()=>false;
+    wrap('renderAuthArea',(old,args,ctx)=>{const r=old.apply(ctx,args);prune();return r;});
+    wrap('doLogin',(old,args,ctx)=>{O.select(O.current().id);const r=old.apply(ctx,args);if(typeof LOGGED!=='undefined')LOGGED=true;window.renderAuthArea?.();return r;});
+    wrap('doLogout',(old,args,ctx)=>{O.signOut();return old.apply(ctx,args);});
+    document.addEventListener('click',ev=>{if(ev.target.closest('[data-bdh-login]')){O.select(O.current().id);if(typeof LOGGED!=='undefined')LOGGED=true;}else if(ev.target.closest('[data-bdh-logout]')){O.signOut();if(typeof LOGGED!=='undefined')LOGGED=false;}},true);
+    window.renderAuthArea?.();prune();
+
+    const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
+    const previewStyle=document.createElement('style');previewStyle.textContent=`
+      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
+      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
+      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
+      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
+      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
+    `;document.head.append(previewStyle);
+    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
+    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    window.PortalPreview={refresh:refreshPreview};
+    function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
+      if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      refreshPreview();
+    }
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
+
+
+    if(window.portalSaveApplication){const old=window.portalSaveApplication;window.portalSaveApplication=rec=>{
+      if(!O.isLogged()){notice('请先登录。');return null;}
+      if(!O.isLeader()&&(/科研|开发/.test(rec.purpose||'')||rec.space)){notice('成员仅可申请模型在线使用，不能申请开发或科研空间。');return null;}
+      const team=q('#otResearchTeam');if(/科研|开发/.test(rec.purpose||'')){if(!team||!O.canManageTeam(team.value)){notice('请选择本人负责的团队。');return null;}rec={...rec,teamId:team.value};}
+      return old({...rec,applicantId:O.current().id,applicant:O.current().name,usageType:/科研|开发/.test(rec.purpose||'')?'research':'online'});
+    };}
+    function restrictModelForm(){if(O.isLeader()){configureResearch();return;}const form=q('#modelApplyForm')||q('.application-form');if(!form)return;
+      form.querySelector('input[name="purpose"][value="research"]')?.closest('label').remove();
+      const biz=form.querySelector('input[name="purpose"][value="biz"]');if(biz)biz.checked=true;
+      form.querySelector('#researchFields')?.remove();
+      form.querySelector('.purpose-hint')?.remove();
+      const note=form.querySelector('#applyScopeNote');if(note)note.textContent='获批后在线使用当前模型。';
+      form.querySelectorAll('p').forEach(p=>{if(p.textContent.includes('勾选科研研究'))p.textContent='提交后可在个人中心查看模型使用申请。';});
+      const title=q('#dialogTitle');if(title)title.textContent='申请使用模型';
+    }
+    function configureResearch(){const host=q('#researchFields');if(!host||q('#otResearchTeam'))return;const own=O.myTeams().filter(t=>t.ownerId===O.current().id);host.insertAdjacentHTML('afterbegin',`<label>所属团队<select id="otResearchTeam" name="teamId"><option value="">请选择本人负责的团队</option>${own.map(t=>`<option value="${O.escape(t.id)}">${O.escape(t.name)}</option>`).join('')}</select></label>`);if(!own.length){const cb=q('input[name="purpose"][value="research"]');if(cb){cb.disabled=true;cb.closest('label').title='请先创建本人负责的团队';}}}
+    if(file.includes('模型中心-模型')&&!file.includes('运行台')){
+      ['openApply','openModelAction'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.isLogged()){notice('请先登录后申请使用。');return;}const r=old.apply(ctx,args);restrictModelForm();const form=q('#modelApplyForm')||q('.application-form');if(form)form.dataset.modelApplicantId=O.current().id;return r;}));
+      wrap('submitDemo',(old,args,ctx)=>{if(!O.isLeader()&&q('input[name="purpose"][value="research"]:checked')){notice('成员不能申请模型开发。');return;}return old.apply(ctx,args);});
+      if(!window.PortalModelAccess){
+      const baseTrial=window.startTrial;if(baseTrial)window.startTrial=function(m){
+        if(!O.isLogged()){notice('请先登录后试用。');return;}
+        const model=typeof m==='object'?m:(typeof CUR!=='undefined'?CUR:null);if(!model)return;
+        if(typeof svcUnpublished==='function'&&svcUnpublished(model)){notice(typeof SVC_MSG!=='undefined'?SVC_MSG:'当前模型暂不可用');return;}
+        location.href='模型中心-模型运行台.html?mode=trial#n='+encodeURIComponent(model.name);
+      };
+      }
+    }
+    if(!O.isLeader()&&file==='模型中心-模型详情（调整）.html'){const n=document.querySelector('.auth-note');if(n)n.textContent='试用免审批 · 可申请模型在线使用';}
+    if(file==='模型中心-模型运行台.html'&&!window.PortalModelAccess){
+      const trial=new URLSearchParams(location.search).get('mode')==='trial';
+      wrap('lockReason',(old,args,ctx)=>{
+        if(!O.isLogged())return '请先登录';
+        if(typeof isCurVer==='function'&&!isCurVer(CUR))return '历史版本不支持运行';
+        if(trial)return '';
+        let rows=[];try{rows=JSON.parse(localStorage.getItem('bdh-model-applications-v1')||'[]');}catch{}
+        const authorized=rows.some(r=>(r.applicantId||'u-zhang')===O.current().id&&r.name===CUR.name&&['已通过','approved'].includes(r.status));
+        return authorized?'':'当前模型尚未取得在线使用授权';
+      });
+      if(typeof DEMO_AUTH!=='undefined')DEMO_AUTH=trial;
+      window.renderAll?.();window.syncLock?.();prune();
+    }
+    if(file.startsWith('数据中心')){
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      if(!O.isLeader()){
+        document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
+        wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
+      }
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+    }
+    if(file==='科研开发空间-交互原型(10).html'){
+      const all=spaces.slice(),scope=new URLSearchParams(location.search).get('team');
+      spaces=all.filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope)).map(s=>({...s,team:O.spaceTeam(s.id).name,role:O.canManageSpace(s.id)?'负责人':'成员'}));
+      permission=O.isLeader()?'owner':'member';if(!O.isLeader()||!O.myTeams().some(t=>t.ownerId===O.current().id))todos=[];
+      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader();
+      const oldApply=window.apply;window.apply=function(){
+        if(!O.isLeader()){notice('科研空间和算力由负责人申请。');return;}
+        const own=O.myTeams().filter(t=>t.ownerId===O.current().id);if(!own.length){notice('请先在个人中心创建团队。');return;}
+        oldApply();const select=q('#application-team');if(select)select.innerHTML=own.map(t=>`<option value="${O.escape(t.name)}" data-id="${t.id}">${O.escape(t.name)}</option>`).join('');
+        const form=q('#apply-form'),submit=form?.onsubmit;
+        if(form&&submit)form.onsubmit=function(ev){if(!O.isLeader()||!O.canManageTeam(select.selectedOptions[0]?.dataset.id)){ev.preventDefault();notice('当前账号不能为该团队申请空间。');return;}const before=new Set(spaces.map(s=>String(s.id)));const r=submit.call(this,ev);const added=spaces.filter(s=>!before.has(String(s.id)));if(added.length){const db=O.read(),t=db.teams.find(t=>t.id===select.selectedOptions[0].dataset.id);t.spaceIds=[...new Set([...(t.spaceIds||[]),...added.map(s=>String(s.id))])];localStorage.setItem(O.KEY,JSON.stringify(db));}return r;};
+      };if(btn)btn.onclick=window.apply;
+      window.render();
+    }
+    if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
+      const id=(new URLSearchParams(location.search).get('id')||new URLSearchParams(location.hash.replace(/^#/,'')).get('id')||'1');
+      if(!O.canViewSpace(id)){
+        const main=document.querySelector('main')||document.querySelector('.app');if(main)main.innerHTML='<section style="padding:72px;text-align:center;background:white"><h2>当前账号无权访问该科研空间</h2><p style="margin:18px">请从已加入团队的科研空间进入。</p><a href="个人中心-高保真原型.html#teams">返回我的团队</a></section>';
+        ['renderAll','enterEnvironment','openFile','submitResult','mountResources','manageMembers','archiveSpace','startInstance','stopInstance','submitRun'].forEach(name=>{if(typeof window[name]==='function')window[name]=()=>notice('当前账号无权访问该科研空间。');});
+      }else if(file==='科研开发空间-详情页(9).html'){
+        space.role=O.canManageSpace(id)?'负责人':'成员';space.team=O.spaceTeam(id).name;
+        window.renderMembers=function(){const t=O.spaceTeam(id);members=O.spaceMembers(id).map(accountId=>{const a=O.account(accountId);return {id:a.id,name:a.name,role:a.id===t.ownerId?'负责人':'成员',note:a.kind==='leader'&&a.id!==t.ownerId?'受邀负责人':'团队协作'};});q('#member-count').textContent=members.length+' 人';q('#members').innerHTML=members.map(m=>`<div class="member-row"><span class="member-avatar">${O.escape(m.name[0])}</span><span class="member-name">${O.escape(m.name)}${m.id===O.current().id?'（我）':''}<small>${m.note}</small></span><span class="role ${m.role==='成员'?'member':''}">${m.role}</span></div>`).join('');};
+        window.manageMembers=function(){if(!O.canManageSpace(id)||!canManage())return;const t=O.spaceTeam(id),selected=O.spaceMembers(id);openDialog('管理协作成员',`<form id="otSpaceMembers"><div class="modal-body"><p class="hint">从本团队成员中选择科研空间协作人员。</p>${t.memberIds.map(accountId=>{const a=O.account(accountId);return `<label class="file-choice"><input type="checkbox" name="memberIds" value="${a.id}" ${selected.includes(a.id)?'checked':''} ${a.id===t.ownerId?'disabled':''}>${O.escape(a.name)}${a.id===t.ownerId?' · 团队负责人':''}</label>`;}).join('')}</div>${formFooter('保存成员')}</form>`);q('#otSpaceMembers').onsubmit=ev=>{ev.preventDefault();try{O.setSpaceMembers(id,new FormData(ev.target).getAll('memberIds'));closeModal();window.renderMembers();notice('空间成员已保存');}catch(e){notice(e.message);}};};
+        window.renderAll();const old=window.renderHeading;window.renderHeading=function(){old();document.querySelectorAll('.heading-meta b').forEach(b=>{if(b.textContent==='张三')b.textContent=O.account(O.spaceTeam(id).ownerId).name;});};window.renderHeading();
+      }
+    }
+
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+</script>
+<script src="assets/prototype-nav.js"></script>
+<script id="model-access-install">PortalModelAccess.install("runtime");</script>
 </body>
 </html>

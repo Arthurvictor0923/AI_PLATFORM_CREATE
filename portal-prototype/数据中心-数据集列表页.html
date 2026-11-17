@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN" data-page-node-id="lU8xBd4L4OfIQt9z4PJo4j">
 <head data-page-node-id="VCAaWE4pNADzCvOJZHkmdO">
+<script src="assets/resource-fields.js"></script>
 <meta charset="UTF-8" data-page-node-id="Gsy9zWUnqZ1G0bTsbmXKSn">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="UY9CHEWf0wrhcQRRIxWM1U">
 <title>数据中心 — 北大荒智慧农业协同创新平台</title>
@@ -813,30 +814,19 @@ SOFTWARE.
 /* 统一登录态把「登录/合作咨询」包进 .autharea(flex)，窄屏下它与汉堡按钮并存会把页头撑出横向滚动条；移动端这两项在汉堡菜单内已有，故此处整体收起。 */
 @media (max-width:767px){header.site-header .header-actions .autharea{ display:none !important; }}
 </style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head>
 <body data-page-node-id="d7Y2HJhz2sd86AKBNF7Ix2">
 
 <!-- ==================== 公共导航（规范 §顶部导航） ==================== -->
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-        <path d="M17 31V17" stroke="#0E5B4A" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M16.6 17.4C16.6 10.2 11.8 4.4 5.2 4.4c0 7.2 4.8 13 11.4 13Z" fill="#1B7A52"/>
-        <path d="M17.4 21c0-6.4 4.4-11.6 9.9-11.6C27.3 15.8 23 21 17.4 21Z" fill="#48A05E"/>
-        <path d="M15.9 25.6c0-4.9-3.2-8.8-7.4-8.8 0 4.9 3.2 8.8 7.4 8.8Z" fill="#8CBE3F"/>
-      </svg>
-      <span>北大荒智慧农业协同创新平台</span>
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a class="active" href="数据中心-数据集列表页.html" aria-current="page">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html" class="active" aria-current="page">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <div class="autharea" id="authArea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
@@ -1320,7 +1310,7 @@ function thumbTable(form){
   return h+'</tbody></table>';
 }
 /* 卡片缩略图 HTML：table 优先，其次影像占位，最后退回纯图标 */
-function thumbHtml(d){
+function thumbHtml(d){if(d._managed&&d.cover)return '<div class="ds-thumb"><img src="'+ResourceFields.esc(d.cover)+'" alt="数据封面" style="width:100%;height:100%;object-fit:cover"></div>';
   var form=d.form;
   if(TT_TABLE[form]) return '<div class="ds-thumb tt-tab">'+thumbTable(form)+'</div>';
   if(form==='遥感反演产品') return '<div class="ds-thumb">'+TT_LEGEND+'</div>';
@@ -1656,6 +1646,7 @@ window.datasetListHtml=d=>`<div class="ds-list-thumb">${thumbHtml(d)}</div><div 
 const count=document.querySelector('.count-line');if(count)count.insertAdjacentHTML('beforeend','<span class="catalogue-demo">示例数据</span>');
 })();
 </script>
+<script>DS=ResourceFields.portalDatasets(DS);</script>
 <script id="research-filter-script">(()=>{'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1767,5 +1758,6 @@ renderZoneList();renderAll();
 </script>
 <!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
+<script src="assets/prototype-nav.js"></script>
 </body>
 </html>

@@ -1193,29 +1193,20 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
   .section-header>.sh-more,.real-base-header>.text-link{margin-left:auto}
 }
 </style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head>
 <body>
 
 <!-- ================= 页头 ================= -->
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="header-inner">
     <!-- 叶片 logo 为临时视觉示意（规范 §一），开发时替换为公司正式标志 -->
-    <a class="brand" href="#top" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
         <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
         <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-      </svg>
-      <span>北大荒智慧农业协同创新平台</span>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a class="active" href="#top" aria-current="page">首页</a>
-      <a href="数据中心-数据集列表页.html">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a href="科研开发空间-交互原型(10).html">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html" class="active" aria-current="page">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <button type="button" class="login-link" data-bdh-login>登录</button>
       <a class="button button-primary" href="合作咨询.html" data-consult-1020>合作咨询</a>
@@ -1712,5 +1703,6 @@ new ResizeObserver(draw).observe(loop);draw();})();
 
 </script><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
+<script src="assets/prototype-nav.js"></script>
 </body>
 </html>

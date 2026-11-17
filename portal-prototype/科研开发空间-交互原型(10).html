@@ -548,22 +548,16 @@ footer .links a:hover{color:#fff;text-decoration:underline}
 
 </script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="assets/prototype-nav.css">
 </head><body>
-<header class="site-header">
+<header class="site-header prototype-header" data-system="portal">
   <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页">
-      <svg class="platform-logo" viewBox="0 0 30 36" aria-hidden="true"><path d="M15 34V15" fill="none" stroke="#4e963e" stroke-width="2"/><path d="M14 20C5 19 2 12 3 4c8 0 13 7 11 16" fill="#197951"/><path d="M16 24c0-9 4-14 12-15 1 8-4 15-12 15" fill="#58a753"/></svg>
-      <span>北大荒智慧农业协同创新平台</span>
+    <a class="brand" href="index.html" aria-label="北大荒智慧农业协同创新平台 首页"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <path d="M15 3C10 7 6.5 11.5 6.5 17a8.5 8.5 0 0 0 17 0c0-5.5-3.5-10-8.5-14Z" fill="#064C43"/>
+        <path d="M15 8v14M15 13c-2-1.5-3.8-1.8-5.5-1.5M15 17c2-1.5 3.8-1.8 5.5-1.5" stroke="#FAFBF8" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg><span>北大荒智慧农业协同创新平台</span>
     </a>
-    <nav class="main-nav" aria-label="主导航">
-      <a href="index.html">首页</a>
-      <a href="数据中心-数据集列表页.html">数据中心</a>
-      <a href="模型中心-模型列表页（调整）.html">模型中心</a>
-      <a class="active" href="科研开发空间-交互原型(10).html" aria-current="page">科研开发空间</a>
-      <a href="课题中心-高保真原型.html">课题中心</a>
-      <a href="需求中心-高保真原型%20(1).html">需求中心</a>
-      <a href="门户-领导数据看板.html">数据看板</a><a href="关于平台-平台介绍.html">关于平台</a>
-    </nav>
+    <nav class="main-nav" aria-label="主导航"><a data-px-own="1" href="index.html">首页</a><a data-px-own="1" href="数据中心-数据集列表页.html">数据中心</a><a data-px-own="1" href="模型中心-模型列表页（调整）.html">模型中心</a><a data-px-own="1" href="科研开发空间-交互原型(10).html" class="active" aria-current="page">科研开发空间</a><a data-px-own="1" href="课题中心-高保真原型.html">课题中心</a><a data-px-own="1" href="需求中心-高保真原型%20(1).html">需求中心</a><a data-px-own="1" href="门户-领导数据看板.html">数据看板</a><a data-px-own="1" href="关于平台-平台介绍.html">关于平台</a></nav>
     <div class="header-actions">
       <div class="autharea">
         <button type="button" class="login-link" data-bdh-login>登录</button>
@@ -1198,4 +1192,5 @@ function showForm(originalId){
  const id=new URLSearchParams(location.search).get('space');
  if(id){const s=spaces.find(s=>String(s.id)===id);if(s&&s.state==='可用')window.detail(s.id);}
 })();
-</script></body></html>
+</script><script src="assets/prototype-nav.js"></script>
+</body></html>
