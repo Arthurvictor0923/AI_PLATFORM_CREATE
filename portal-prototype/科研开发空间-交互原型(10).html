@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>科研开发空间 · 北大荒智慧农业协同创新平台</title><style>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<script src="assets/prototype-accounts.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>科研开发空间 · 北大荒智慧农业协同创新平台</title><style>
 :root{--green:#156044;--dark:#183f34;--line:#dfe6e3;--muted:#78837d;--bg:#f5f7f6}*{box-sizing:border-box}body{margin:0;color:#24342c;background:var(--bg);font:14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:4px;padding:7px 15px;background:white;color:inherit;transition:.15s}button:hover{border-color:var(--green);color:var(--green);background:#f2f8f5}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:2px solid #33a879;outline-offset:3px}.primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover{background:#0c4b32;color:white}.link{background:none;border:0;padding:3px;color:var(--green)}.outline{border-color:#7b9d8c;color:var(--green)}header{height:78px;background:white;border-bottom:1px solid var(--line)}.header-inner{max-width:1344px;margin:auto;height:100%;display:flex;align-items:center;gap:60px;padding:0 24px}.brand{font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px;white-space:nowrap}.leaf{display:inline-block;width:23px;height:29px;background:var(--green);border-radius:23px 0 23px 0;transform:rotate(12deg)}nav{height:100%;display:flex;align-items:stretch;gap:30px;flex:1}nav span{display:flex;align-items:center;white-space:nowrap;color:#727d76}nav .active{color:var(--green);font-weight:700;border-bottom:3px solid var(--green)}.user{display:flex;align-items:center;gap:10px;white-space:nowrap}.avatar{display:grid;place-items:center;width:30px;height:30px;background:#e5ede8;border-radius:50%;color:var(--green)}main{max-width:1344px;margin:auto;padding:30px 24px 48px;min-height:calc(100vh - 298px)}.pending{border:1px solid var(--line);border-radius:5px;background:white;margin-bottom:24px;overflow:hidden}.pending-head{display:flex;width:100%;align-items:center;text-align:left;border:0;border-radius:0;padding:15px 20px;gap:10px;background:#f0f5f2}.pending-head strong{font-size:15px}.count{background:#fff0e5;color:#bc6b2d;border-radius:4px;padding:0 7px;font-weight:700}.summary{color:#728078;margin-left:12px;font-size:13px}.right{margin-left:auto}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px}th,td{text-align:left;padding:12px 20px;border-bottom:1px solid #e9eeeb}th{font-weight:400;color:var(--muted);background:#fbfcfb}td:nth-child(3){max-width:240px;overflow:hidden;text-overflow:ellipsis}.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;color:var(--muted);font-size:12px}.pages{display:flex;align-items:center;gap:14px}.pages button{padding:3px 12px;font-size:12px}.toolbar{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}.tabs{display:flex;gap:5px}.tabs button{border:0;background:none;padding:8px 18px}.tabs button.selected{background:var(--green);color:white}.tabs small{margin-left:6px;opacity:.75}.search{margin-left:auto;width:235px;border:1px solid var(--line);border-radius:4px;background:white;padding:8px 12px;outline:none}.search:focus{border-color:var(--green)}.archive{display:flex;gap:6px;align-items:center;color:#657369;font-size:13px;white-space:nowrap}input[type=checkbox]{accent-color:var(--green)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card{background:white;border:1px solid var(--line);border-radius:6px;padding:22px 22px 18px;display:flex;flex-direction:column;min-height:264px;transition:.2s}.card:hover{border-color:#a7c1b3;box-shadow:0 5px 16px #163d2a08}.card-title{display:flex;gap:10px;align-items:flex-start}.card h2{font-size:16px;line-height:1.5;margin:0;font-weight:650;flex:1}.role{font-size:12px;white-space:nowrap;padding:0 7px;border-radius:3px;background:#e7f3ec;color:#276247}.role.member{background:#edf0f2;color:#66737c}.description{font-size:13px;color:#829087;margin:9px 0 20px}.states{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:13px}.label{color:#849087;margin-right:6px}.badge{background:#e9f5ed;color:#28724e;padding:1px 6px;border-radius:3px}.badge.amber{background:#fff1db;color:#ad792c}.badge.gray{background:#eff1f0;color:#7a837e}.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#a4acb1;margin-right:6px}.dot.running{background:#3ba965}.line{font-size:13px;margin-top:10px}.config small{color:#839088;font-size:12px}.progress{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:20px;gap:5px;flex-wrap:wrap}.visit{font-size:12px;color:#8b968f}.actions{display:flex;gap:8px;margin-left:auto}.actions button{font-size:12px;padding:5px 11px}.list-end{text-align:center;color:#96a198;font-size:12px;margin-top:26px}.empty{grid-column:1/-1;background:white;border:1px dashed var(--line);text-align:center;padding:65px;color:#859188}.empty strong{display:block;color:#4b6053;font-size:16px;margin-bottom:5px}footer{background:var(--dark);color:#d6e3da}.footer-inner{max-width:1344px;margin:auto;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;padding:36px 24px 30px;gap:35px}.footer-inner>div+div{border-left:1px solid #ffffff26;padding-left:35px}.footer-brand{color:white;font-size:18px;font-weight:650;display:flex;align-items:center;gap:10px}.footer-brand .leaf{background:white;width:17px;height:23px}footer p{font-size:12px;color:#b5c8bc;margin:9px 0}footer h3{font-size:14px;margin:0 0 12px;color:#f1f6f2}footer .links{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:12px}.slogan{font-family:serif;font-size:23px;letter-spacing:3px;line-height:1.8;padding-top:3px}.copyright{text-align:center;border-top:1px solid #ffffff12;font-size:11px;color:#91a99b;padding:10px 16px}.demo{position:fixed;right:16px;bottom:12px;z-index:10;font-size:12px}.demo summary{list-style:none;cursor:pointer;border-radius:20px;background:white;padding:7px 14px;border:1px solid #cddbd2;box-shadow:0 2px 8px #0001;color:var(--green)}.demo[open]{background:white;border:1px solid var(--line);padding:14px;border-radius:8px;box-shadow:0 5px 30px #0002;width:300px}.demo[open] summary{border:0;box-shadow:none;padding:0;margin-bottom:12px}.demo p{color:var(--muted);font-size:12px}.demo button{margin:3px;padding:5px 9px;font-size:12px}.demo label{display:block;margin:10px 0}.demo select{margin-left:8px}dialog{border:1px solid var(--line);border-radius:8px;width:600px;max-width:calc(100vw - 32px);padding:0;color:#24342c;box-shadow:0 20px 80px #102b2c33}dialog::backdrop{background:#142f2855;backdrop-filter:blur(2px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:18px;margin:0}.close{border:0;background:none;font-size:22px;padding:0 4px;color:#88938d}.modal-body{padding:24px;max-height:65vh;overflow:auto}.modal-body label{display:block;margin-bottom:18px;color:#526157}.modal-body input:not([type=file]),.modal-body textarea,.modal-body select{display:block;width:100%;margin-top:7px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:white;outline:none}.modal-body input:focus,.modal-body textarea:focus{border-color:var(--green)}.modal-body textarea{min-height:94px;resize:vertical}.modal-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}.feedback{padding:14px 16px;border-left:3px solid #c9984c;background:#fff8ec;color:#846337;margin-bottom:22px;font-size:13px}.hint{font-size:12px;color:var(--muted)}.detail-section{border:1px solid var(--line);padding:18px;margin-bottom:14px;border-radius:5px}.detail-section h3{font-size:15px;margin:0 0 12px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}.detail-section .actions{margin-top:16px}.file{display:flex;justify-content:space-between;padding:9px 0;font-size:13px;border-bottom:1px solid #eef2ef}.toast{position:fixed;left:50%;top:95px;transform:translateX(-50%);background:#163f31;color:white;border-radius:5px;padding:11px 23px;z-index:100;box-shadow:0 6px 25px #0002}.hidden{display:none!important}@media(min-width:1500px){main{padding-top:38px}.card{min-height:280px}}@media(max-width:1100px){.header-inner{gap:25px}nav{gap:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.summary{font-size:12px}.search{width:190px}.slogan{font-size:18px}.card-bottom{gap:10px}}@media(max-width:720px){header{height:auto}.header-inner{padding:15px 18px;flex-wrap:wrap;gap:16px}.brand{font-size:18px}.user{margin-left:auto}nav{order:3;width:100%;overflow:auto;gap:24px;padding-top:7px}nav span{padding-bottom:8px;font-size:13px}main{padding:20px 16px 32px}.grid{grid-template-columns:1fr}.toolbar{gap:10px}.tabs{width:100%}.tabs button{padding:7px 12px}.search{margin-left:0;flex:1;width:130px}.summary{display:none}.pending-head{padding:13px}.footer-inner{grid-template-columns:1fr 1fr;padding:26px 20px;gap:24px}.footer-inner>div+div{border:0;padding-left:0}.slogan{font-size:18px}.card{min-height:250px}.modal-body{padding:18px}.detail-grid{grid-template-columns:1fr}}
 
 /* Match the compact research-space reference, rather than a spacious dashboard. */
@@ -571,12 +573,50 @@ footer .links a:hover{color:#fff;text-decoration:underline}
     cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
     escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
   };
-  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+  window.PrototypeAccounts.connectPortal(O);
 })();
 
 </script>
 <style>[hidden][data-nav],a[hidden],button[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="assets/prototype-nav.css">
+<style data-prototype-source="assets/prototype-nav.css">
+/* Shared navigation only; business content retains each page's original styles. */
+header.site-header.prototype-header{--prototype-header-height:80px;position:sticky!important;top:0;z-index:100!important;height:auto!important;min-height:var(--prototype-header-height);background:#fff!important;border-bottom:1px solid #dce5e9!important;color:#10213a;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-shadow:none!important}
+header.site-header.prototype-header .header-inner{width:calc(100% - 64px)!important;max-width:1600px!important;min-height:var(--prototype-header-height)!important;height:var(--prototype-header-height)!important;margin:0 auto!important;padding:0!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:24px!important;box-sizing:border-box}
+header.site-header.prototype-header .brand{display:inline-flex!important;align-items:center!important;gap:10px!important;flex:none!important;margin:0!important;padding:0!important;color:#10213a!important;font-size:18px!important;font-weight:600!important;line-height:26px!important;white-space:nowrap!important;text-decoration:none!important}
+header.site-header.prototype-header .brand svg{width:30px!important;height:30px!important;flex:none!important}
+header.site-header.prototype-header .brand-tag{margin-left:-14px!important;white-space:nowrap;flex:none;color:#526078;font-size:12px;padding:3px 7px;background:#f1f5f4;border-radius:3px}
+header.site-header.prototype-header .main-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:22px!important;min-width:0;margin:0 0 0 auto!important;height:var(--prototype-header-height)!important;flex:none!important;padding:0!important;border:0!important;overflow:visible!important}
+header.site-header.prototype-header .main-nav a{position:relative!important;display:flex!important;align-items:center!important;height:var(--prototype-header-height)!important;padding:0!important;margin:0!important;font-size:14px!important;font-weight:400!important;line-height:22px!important;white-space:nowrap!important;color:#263b38!important;border:0!important;background:transparent!important;text-decoration:none!important;border-radius:0!important}
+header.site-header.prototype-header .main-nav a:hover,header.site-header.prototype-header .main-nav a.active{color:#005653!important}
+header.site-header.prototype-header .main-nav a.active{font-weight:600!important}
+header.site-header.prototype-header .main-nav a::after{content:none!important}
+header.site-header.prototype-header .main-nav a.active::after{content:""!important;position:absolute!important;bottom:0!important;left:0!important;right:0!important;height:2px!important;background:#005653!important;border-radius:0!important}
+header.site-header.prototype-header [hidden],header.site-header.prototype-header .main-nav a[hidden]{display:none!important}
+header.site-header.prototype-header .header-actions{display:flex!important;align-items:center!important;gap:14px!important;flex:none!important;margin:0!important;padding:0!important;font-size:14px!important;white-space:nowrap}
+header.site-header.prototype-header .header-actions .button-primary{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;background:#005653!important;color:white!important;border:0;border-radius:4px;font:14px/20px "Microsoft YaHei",sans-serif;text-decoration:none;white-space:nowrap}
+header.site-header.prototype-header .menu-toggle{display:none!important;align-items:center!important;justify-content:center!important;flex:none;width:36px!important;height:36px!important;padding:6px!important;border:1px solid #dce5e9!important;border-radius:4px!important;background:#fff!important;color:#263b38!important;cursor:pointer}
+header.site-header.prototype-header .prototype-mobile{display:none!important;position:static!important;width:auto!important;height:auto!important;max-height:calc(100vh - var(--prototype-header-height));overflow:auto;margin:0!important;padding:8px 24px 16px!important;border-top:1px solid #e4eae7;background:#fff!important;box-shadow:0 5px 12px #163c3610}
+header.site-header.prototype-header .prototype-mobile.open:not([hidden]){display:block!important}
+header.site-header.prototype-header .prototype-mobile a,header.site-header.prototype-header .prototype-mobile>button{display:block!important;box-sizing:border-box;width:100%!important;height:auto!important;margin:0!important;padding:11px 8px!important;border:0!important;border-bottom:1px solid #edf1ee!important;border-radius:0!important;background:transparent!important;color:#263b38!important;font:14px/22px "Microsoft YaHei",sans-serif;text-align:left;text-decoration:none}
+header.site-header.prototype-header .prototype-mobile .active{color:#005653!important;font-weight:600!important}
+header.site-header.prototype-header .u-menu{z-index:110}
+header.site-header.prototype-header .u-menu:not(.open){display:none!important}
+header.site-header.prototype-header .u-menu.open{display:block!important}
+header.site-header.prototype-header .u-avatar{border:0;cursor:pointer}
+header.site-header.prototype-header .u-name{border:0;background:none;font:inherit;cursor:pointer}
+.platform-detail-nav{margin:6px 0 12px 12px;padding-left:10px;border-left:1px solid #dce5e9}
+.prototype-about-side a{display:block;padding:12px 16px;border-radius:5px;color:#526078;text-decoration:none;font-size:14px}
+.prototype-about-side a.active{background:#e9f3ee;color:#005653;font-weight:600}
+@media(max-width:1500px){header.site-header.prototype-header .header-inner{gap:18px!important}header.site-header.prototype-header .main-nav{gap:16px!important}header.site-header.prototype-header .brand{font-size:17px!important}}
+@media(max-width:1390px){header.site-header.prototype-header[data-system=portal] .main-nav{display:none!important}header.site-header.prototype-header[data-system=portal] .menu-toggle{display:inline-flex!important}header.site-header.prototype-header[data-system=portal] .header-actions{margin-left:auto!important}}
+@media(max-width:1200px){header.site-header.prototype-header[data-system=admin] .main-nav{display:none!important}header.site-header.prototype-header[data-system=admin] .menu-toggle{display:inline-flex!important}header.site-header.prototype-header[data-system=admin] .header-actions{margin-left:auto!important}}
+@media(max-width:760px){header.site-header.prototype-header .header-inner{width:calc(100% - 32px)!important;gap:12px!important}header.site-header.prototype-header .brand{font-size:15px!important;gap:6px!important}header.site-header.prototype-header .brand svg{width:24px!important;height:24px!important}header.site-header.prototype-header .header-actions{gap:8px!important}header.site-header.prototype-header .header-actions .button-primary,header.site-header.prototype-header .brand-tag,header.site-header.prototype-header .bdh-user,header.site-header.prototype-header .u-name{display:none!important}}
+@media(max-width:480px){header.site-header.prototype-header .brand{font-size:13px!important}header.site-header.prototype-header .header-inner{width:calc(100% - 24px)!important}header.site-header.prototype-header .header-actions .bdh-me,header.site-header.prototype-header .header-actions .signed-user,header.site-header.prototype-header .header-actions .bdh-logout,header.site-header.prototype-header .header-actions .readonly{display:none!important}}
+
+header.site-header.prototype-header[data-system=admin]{--prototype-header-height:64px}
+@media(max-width:760px){header.site-header.prototype-header{--prototype-header-height:64px}}
+
+</style>
 </head><body>
 <header class="site-header prototype-header" data-system="portal">
   <div class="header-inner">
@@ -829,7 +869,579 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
 })();
 </script>
 
-<!-- meeting-1010:start --><link rel="stylesheet" href="assets/meeting/meeting.css"><script src="assets/meeting/meeting-seed.js"></script><script src="assets/meeting/meeting-core.js"></script><script src="assets/meeting/meeting-features.js"></script><script src="assets/meeting/meeting-filters.js"></script><script src="assets/meeting/meeting-space.js"></script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
+<!-- meeting-1010:start --><style data-prototype-source="assets/meeting/meeting.css">
+:root{--mt-brand:#005653;--mt-line:#dce7e3;--mt-muted:#70837e}
+.mt-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #c8dcd5;border-radius:5px;background:#fff;color:#005653;padding:9px 16px;cursor:pointer;font:inherit;text-decoration:none;white-space:nowrap}.mt-btn.primary{background:#005653;color:#fff;border-color:#005653}.mt-btn:disabled{opacity:.45;cursor:not-allowed}.mt-panel{background:#fff;border:1px solid var(--mt-line);border-radius:7px;padding:22px;margin:18px 0;color:#203c38}.mt-panel h2{font-size:19px;margin:0 0 18px}.mt-panel p{line-height:1.7}.mt-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 18px}.mt-toolbar input,.mt-toolbar select{height:38px;border:1px solid var(--mt-line);border-radius:4px;padding:0 10px;font:inherit;background:white;max-width:100%}.mt-note{font-size:13px;color:var(--mt-muted);line-height:1.7}.mt-badge{display:inline-block;border-radius:4px;background:#edf5f1;color:#005653;padding:3px 9px;font-size:12px;white-space:nowrap}.mt-badge.warn{color:#9a691c;background:#fff5df}.mt-badge.bad{color:#ad4943;background:#fff0ed}.mt-table-wrap{overflow-x:auto}.mt-table{width:100%;border-collapse:collapse;font-size:14px}.mt-table th{background:#eff6f3;text-align:left;color:#536e66;font-weight:500}.mt-table td,.mt-table th{padding:14px 12px;border-bottom:1px solid #e5ece8;line-height:1.6}.mt-table td small{display:block;color:#81928b}.mt-link{border:0;background:none;color:#005653;cursor:pointer;font:inherit;padding:3px 7px;text-decoration:none}.mt-actions{display:flex;gap:6px;flex-wrap:wrap}.mt-empty{text-align:center;padding:30px;color:#889890}.mt-pager{display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-top:18px;font-size:13px}.mt-dialog{padding:0;border:1px solid var(--mt-line);border-radius:9px;width:min(900px,94vw);max-height:92vh;color:#213e38;background:white;box-shadow:0 18px 65px #102f332b}.mt-dialog::backdrop{background:#172d4266}.mt-dialog>header{display:flex;align-items:center;justify-content:space-between;padding:19px 24px;border-bottom:1px solid var(--mt-line)}.mt-dialog h2{font-size:20px;margin:0}.mt-dialog .mt-body{padding:22px 26px;max-height:calc(92vh - 150px);overflow:auto}.mt-dialog footer{display:flex;justify-content:flex-end;gap:10px;padding:15px 24px;border-top:1px solid var(--mt-line)}.mt-dialog .mt-close{border:0;background:none;font-size:22px;color:#71817c;cursor:pointer}.mt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}.mt-grid .full{grid-column:1/-1}.mt-field{display:flex;flex-direction:column;gap:7px;font-size:14px;min-width:0}.mt-field input,.mt-field select,.mt-field textarea{width:100%;min-width:0;box-sizing:border-box;border:1px solid #ccdcd5;border-radius:4px;padding:10px;font:inherit;color:#244c41;background:white}.mt-field textarea{min-height:80px;resize:vertical}.mt-field .req{color:#ae625b}.mt-section{font-size:16px;font-weight:600;margin:24px 0 16px;padding-bottom:12px;border-bottom:1px solid var(--mt-line)}.mt-rich{min-height:220px;border:1px solid #ccdcd5;border-radius:4px;padding:16px;background:white;line-height:1.8;outline:none;max-height:440px;overflow:auto}.mt-rich:focus{border-color:#005653}.mt-rich h3{font-size:16px;margin:14px 0 8px}.mt-rich table{border-collapse:collapse;width:100%}.mt-rich th,.mt-rich td{border:1px solid #d9e3dc;padding:8px}.mt-error{color:#a24338;font-size:13px;margin:12px 0}.mt-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}.mt-kpi{background:white;border:1px solid var(--mt-line);border-radius:7px;padding:23px}.mt-kpi b{display:block;font-size:32px;color:#005653;margin:12px 0 3px}.mt-kpi span{color:#60766e;font-size:14px}.mt-subsystems{display:flex;gap:6px;border-bottom:1px solid var(--mt-line);margin-bottom:20px;flex-wrap:wrap}.mt-subsystems a{padding:12px 16px;color:#54736a;text-decoration:none;border-bottom:3px solid transparent}.mt-subsystems a.active{color:#005653;border-color:#005653;font-weight:600}.mt-filtergroup{padding:15px 0;border-bottom:1px solid var(--mt-line)}.mt-filtergroup h3{font-size:14px;margin:0 0 12px}.mt-filtergroup label{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0;color:#546f64}.mt-filtergroup label small{margin-left:auto;color:#8b9e95}.mt-filtergroup input{accent-color:#005653}.mt-debug{white-space:pre-wrap;background:#f3f7f5;border:1px solid var(--mt-line);padding:16px;line-height:1.8;max-height:320px;overflow:auto}.mt-timeline{padding:15px;border-left:2px solid #acc9be;margin:15px 0;line-height:1.8}.mt-chart-row{display:grid;grid-template-columns:140px 1fr 40px;gap:12px;margin:17px 0;align-items:center}.mt-chart-bar{height:12px;background:#edf4f0;border-radius:6px;overflow:hidden}.mt-chart-bar i{display:block;height:100%;background:#21776a;border-radius:6px}.mt-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}.mt-view-main{max-width:1320px;margin:auto;padding:28px 26px 48px;min-height:70vh}.mt-view-main h1{font-size:27px;margin:0 0 12px}.mt-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#173d34;color:white;border-radius:6px;padding:13px 24px;z-index:10000}.mt-template-actions{display:flex;gap:12px;align-items:center;margin-bottom:12px}.mt-admin .main-nav{gap:20px;flex:1;justify-content:center}.mt-admin .header-inner{gap:18px}.mt-admin .main-nav a{white-space:nowrap}.mt-admin .brand{flex-shrink:0}.mt-admin .header-actions{flex-shrink:0}@media(max-width:1300px){.mt-admin .brand span{font-size:17px}.mt-admin .main-nav{gap:13px}.mt-admin .brand-tag{display:none}.mt-admin .header-inner{gap:12px}}@media(max-width:1100px){.mt-admin .header-inner{flex-wrap:wrap;height:auto;min-height:64px;padding:12px 0}.mt-admin .main-nav{order:3;flex-basis:100%;justify-content:space-between;padding:8px 0 0}.mt-admin .header-actions{margin-left:auto}.mt-admin .site-header{height:auto}}@media(max-width:720px){.mt-grid,.mt-layout{grid-template-columns:1fr}.mt-kpis{grid-template-columns:1fr 1fr}.mt-view-main{padding:20px 14px}.mt-dialog .mt-body{padding:18px}.mt-admin .main-nav{overflow:auto;justify-content:flex-start}.mt-chart-row{grid-template-columns:110px 1fr 30px}}
+
+.mt-editor-toolbar{display:flex;gap:8px;padding:9px 12px;background:#f3f7f5;border:1px solid #ccdcd5;border-bottom:0;flex-wrap:wrap}.mt-editor-toolbar button{border:0;background:white;color:#005653;padding:6px 10px;cursor:pointer}.mt-subsystems{flex-direction:column}.mt-query-table table{width:100%}
+
+</style><script data-prototype-source="assets/meeting/meeting-seed.js">
+window.MeetingSeeds={datasets:[
+ {id:'DS20260923018',name:'建三江水稻生长观测数据集',pub:'on',src:'res',thumb:'无人机影像',
+  desc:'覆盖水稻关键生育期，包含株高、叶面积与长势观测数据。',form:'时序数据',count:'12.6 万条',
+  link:'后台-数据集详情编辑-已完善.html'},
+ {id:'DS20260923019',name:'黑龙江农田遥感影像数据集',pub:'on',src:'space',thumb:'卫星影像',
+  desc:'黑龙江主要农区多时相遥感影像，支持作物识别与长势监测。',form:'遥感栅格',count:'256 景',
+  link:'后台-数据集详情编辑-数据预览.html'},
+ {id:'DS20260923020',name:'rice_pest_labels.zip',pub:'off',src:'res',thumb:'',todo:1,
+  desc:'',form:'ZIP 文件',count:'',link:'后台-数据集详情编辑-待完善.html'},
+ {id:'DS20260923021',name:'北大荒耕地地块矢量数据集',pub:'on',src:'space',thumb:'矢量地块',
+  desc:'汇集农场耕地边界与地块属性，支持地块查询及空间分析。',form:'矢量数据',count:'3.2 万个地块',
+  link:'后台-数据集详情编辑-已完善.html'},
+ {id:'DS20260923022',name:'农田土壤墒情观测数据集',pub:'down',src:'manual',thumb:'地面观测',
+  desc:'农田监测点土壤水分与温度观测记录，支持墒情分析。',form:'时序数据',count:'8.6 万条',
+  link:'后台-数据集详情编辑-已完善.html'},
+ {id:'DS20260923023',name:'玉米田间调查成果',pub:'off',src:'res',thumb:'',todo:1,
+  desc:'',form:'ZIP 文件',count:'',link:'后台-数据集详情编辑-待完善.html'}
+],projects:[
+ {code:'BH2026-021',name:'黑土地碳汇监测与评估',guide:'2026年度黑土地保护专项指南',who:'张明',org:'作物科学研究所',type:'重点',from:'2026-09-18',to:'2026-09-25',st:'拟立项'},
+ {code:'BH2026-022',name:'农业遥感长势监测',guide:'2026年度智慧农业开放课题指南',who:'李娜',org:'农业信息研究中心',type:'面上',from:'2026-09-18',to:'2026-09-25',st:'拟立项'},
+ {code:'BH2026-013',name:'寒地水稻高产栽培研究',guide:'2026年度智慧农业开放课题指南',who:'王强',org:'黑龙江省农业科学院',type:'面上',from:'2026-03-15',to:'2026-03-22',st:'在研'},
+ {code:'BH2025-008',name:'大豆耐逆性研究',guide:'2025年度作物育种专项指南',who:'刘洋',org:'大豆研究所',type:'青年',from:'2025-07-10',to:'2025-07-17',st:'已结题'},
+ {code:'BH2026-019',name:'耕地保护与地力提升',guide:'2026年度黑土地保护专项指南',who:'陈雪',org:'耕地保护研究中心',type:'青年',from:'2026-09-18',to:'2026-09-25',st:'未立项'},
+ {code:'BH2025-011',name:'智慧农业多源数据建模',guide:'2025年度智慧农业开放课题指南',who:'赵磊',org:'农业数据中心',type:'重点',from:'2025-03-15',to:'2025-03-22',st:'已终止'}
+]};
+
+</script><script data-prototype-source="assets/meeting/meeting-core.js">
+(()=>{'use strict';
+const M=window.Meeting={},file=decodeURIComponent(location.pathname.split('/').pop()),admin=file.startsWith('后台-');M.file=file;M.admin=admin;
+M.e=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));M.read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};M.write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{M.toast('保存失败，请检查浏览器存储后重试');return false}};M.date=()=>new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}).slice(0,16);M.key='bdh-outcome-review-1010';M.metaKey='bdh-asset-metadata-1010';M.projectsKey='bdh-projects-1010';M.front=n=>(admin?'https://arthurvictor0923.github.io/AI_PLATFORM_CREATE/portal-prototype/':'')+n;M.back=n=>(admin?'':'https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/')+n;
+M.toast=t=>{document.querySelector('.mt-toast')?.remove();const n=document.createElement('div');n.className='mt-toast';n.textContent=t;document.body.append(n);setTimeout(()=>n.remove(),3000)};
+M.btn=(label,call,primary=false)=>`<button type="button" class="mt-btn ${primary?'primary':''}" onclick="${M.e(call)}">${label}</button>`;M.link=(label,call)=>`<button type="button" class="mt-link" onclick="${M.e(call)}">${label}</button>`;M.badge=s=>`<span class="mt-badge ${/待/.test(s)?'warn':/驳回|拒绝/.test(s)?'bad':''}">${M.e(s)}</span>`;
+M.dialog=(title,body,foot='')=>{let d=document.getElementById('mtDialog');if(!d){d=document.createElement('dialog');d.id='mtDialog';d.className='mt-dialog';document.body.append(d)}d.innerHTML=`<header><h2>${M.e(title)}</h2><button class="mt-close" aria-label="关闭" onclick="Meeting.close()">×</button></header><div class="mt-body">${body}</div><footer>${foot||M.btn('关闭','Meeting.close()')}</footer>`;if(!d.open)d.showModal();return d};M.close=()=>document.getElementById('mtDialog')?.close();
+M.field=(k,l,v='',kind='text',choices=[])=>`<label class="mt-field" for="mt-${k}"><span>${l} <span class="req">*</span></span>${kind==='select'?`<select id="mt-${k}" name="${k}" required>${['',...choices].map(x=>`<option value="${M.e(x)}" ${x===v?'selected':''}>${M.e(x||'请选择')}</option>`).join('')}</select>`:kind==='textarea'?`<textarea id="mt-${k}" name="${k}" required>${M.e(v)}</textarea>`:`<input id="mt-${k}" name="${k}" type="${kind}" ${kind==='number'?'min="0" step="1"':''} value="${M.e(v)}" required>`}</label>`;
+M.schemas={model:[['name','模型名称'],['abbr','模型简称'],['provider','提供方'],['business','业务分类'],['task','技术任务'],['crop','适用作物'],['version','版本号'],['owner','权属归属'],['license','授权范围'],['runtime','运行环境'],['gpuType','推荐算力卡型'],['gpuCount','GPU 卡数','number'],['gpuMemory','单卡显存要求（GB）','number'],['cpu','CPU 要求（核）','number'],['memory','内存要求（GB）','number'],['storage','存储要求（GB）','number'],['precision','推理精度']],dataset:[['name','数据名称'],['provider','提供方'],['summary','数据简介','textarea'],['tags','标签'],['version','版本号'],['modality','数据形态','select',['遥感影像','矢量','表格','时序','图像','文本']],['format','数据格式'],['annotation','标注情况','select',['有标注','无标注']],['scale','数据规模'],['crop','适用作物'],['region','区域'],['year','数据年份'],['owner','权属归属'],['license','授权范围']]};
+M.template=kind=>kind==='model'?'<h3>模型概述</h3><p>填写模型用途、适用范围与限制。</p><h3>输入输出规范</h3><p>填写输入数据、输出结果、格式与单位。</p><h3>业务能力</h3><p>填写模型能够完成的业务任务。</p><h3>输出示例</h3><p>填写结果示例及解释。</p>':'<h3>数据介绍</h3><p>填写数据内容、采集方式与覆盖范围。</p><h3>关键参数</h3><p>填写数据格式、规模、字段、时空范围及标注情况。</p><h3>适用方向</h3><p>填写适用研究任务及使用限制。</p>';
+M.showTemplate=(kind,target)=>{const old=document.getElementById('mtDialog');if(old?.open){document.getElementById(target)?.insertAdjacentHTML('afterend','<div id="mt-template-preview" class="mt-panel">'+M.template(kind)+M.btn('使用模板',`Meeting.applyTemplate('${kind}','${target}')`)+M.btn('收起',"document.getElementById('mt-template-preview').remove()")+'</div>');return}M.dialog('介绍内容模板',`<article>${M.template(kind)}</article>`,M.btn('关闭','Meeting.close()')+M.btn('填入编辑器',`Meeting.applyTemplate('${kind}','${target}');Meeting.close()`,true))};M.applyTemplate=(kind,id)=>{const n=document.getElementById(id);if(n.textContent.trim()&&!confirm('使用模板将替换当前介绍内容，是否继续？'))return;n.innerHTML=M.template(kind);n.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('mt-template-preview')?.remove()};
+M.formatIntro=cmd=>{document.getElementById('mt-intro')?.focus();document.execCommand(cmd,false,null)};
+M.safeHTML=s=>{const t=document.createElement('template');t.innerHTML=s||'';t.content.querySelectorAll('script,iframe,object,embed,link,style').forEach(n=>n.remove());t.content.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||(/^(href|src)$/i.test(a.name)&&/^javascript:/i.test(a.value)))n.removeAttribute(a.name)}));return t.innerHTML};
+M.records=()=>M.read(M.key,[]);M.assets=()=>M.read(M.metaKey,{});M.registerAsset=(id,kind,values)=>{const all=M.assets();all[id]={...all[id],id,kind,...values};M.write(M.metaKey,all)};
+M.formHTML=(kind,v={})=>`<div class="mt-grid">${M.schemas[kind].map(([k,l,t,choices])=>M.field(k,l,v[k]??'',t||'text',choices)).join('')}</div><h3 class="mt-section">${kind==='model'?'模型介绍':'数据介绍'} <span class="req">*</span></h3><div class="mt-template-actions">${M.btn('查看填写模板',`Meeting.showTemplate('${kind}','mt-intro')`)}</div><div class="mt-editor-toolbar" aria-label="介绍编辑工具"><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('bold')">加粗</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('italic')">斜体</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('insertUnorderedList')">项目符号</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('insertOrderedList')">编号列表</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('undo')">撤销</button><button type="button" onmousedown="event.preventDefault()" onclick="Meeting.formatIntro('redo')">重做</button></div><div class="mt-rich" id="mt-intro" contenteditable="true" role="textbox" aria-label="介绍内容" aria-required="true">${M.safeHTML(v.intro||'')}</div>`;
+M.submit=(kind='model',assetId='',recordId='')=>{if(M.spaceContext&&typeof canManage==='function'&&!canManage()){M.toast('当前空间不可提交成果');return}const prev=M.records().find(x=>x.id===recordId),asset=M.assets()[assetId],v=prev?.metadata||asset||{};M.submitting={kind,assetId,recordId,context:M.spaceContext||null};M.dialog(prev?'修改并重新提交成果':kind==='model'?'提交成果模型':'声明成果数据',`<form id="mt-outcome-form"><label class="mt-field" style="margin-bottom:20px">沿用已维护的资源资料（选填）<select id="mt-default-asset" onchange="Meeting.fillDefaults(this.value)"><option value="">手动填写</option>${Object.values(M.assets()).filter(a=>a.kind===kind).map(a=>`<option value="${M.e(a.id)}" ${a.id===assetId?'selected':''}>${M.e(a.name)} · ${M.e(a.version||'')}</option>`).join('')}</select></label>${M.formHTML(kind,v)}<h3 class="mt-section">成果材料 <span class="req">*</span></h3><label class="mt-field">${kind==='model'?'选择成果材料':'选择数据及说明文件'}${kind==='model'?'<select id="mt-delivery-type" onchange="Meeting.deliveryType(this.value)"><option value="image">镜像包</option><option value="files">模型文件与说明</option></select>':''}<input id="mt-files" type="file" ${kind==='model'?'accept=".tar,.tar.gz,.tgz"':'multiple'} ${prev||assetId?'':'required'}></label>${assetId?'<p class="mt-note">已关联当前资源；可补充或替换本次成果材料。</p>':''}${prev?'<p class="mt-note">已有材料：'+M.e(prev.files.map(x=>x.name).join('、'))+'；未重新选择则保留。</p>':''}<p class="mt-error" id="mt-error" role="alert"></p></form>`,M.btn('取消','Meeting.close()')+'<button form="mt-outcome-form" class="mt-btn primary" type="submit">提交审批验收</button>');document.getElementById('mt-outcome-form').onsubmit=M.commitOutcome;if(kind==='model'&&prev?.materialType==='files'){document.getElementById('mt-delivery-type').value='files';M.deliveryType('files')}};
+M.commitOutcome=async e=>{e.preventDefault();const f=e.target,values=Object.fromEntries(new FormData(f)),intro=document.getElementById('mt-intro'),err=document.getElementById('mt-error'),s=M.submitting;for(const [k,l] of M.schemas[s.kind])if(!String(values[k]??'').trim()){err.textContent='请填写'+l;return}if(!intro.textContent.trim()){err.textContent='请填写介绍内容';return}if(!/^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(values.version)){err.textContent='版本号请使用字母、数字、点或连字符';return}values.intro=M.safeHTML(intro.innerHTML);const selected=[...document.getElementById('mt-files').files];if(selected.some(x=>!x.size)){err.textContent='不能提交空文件';return}if(s.kind==='model'&&document.getElementById('mt-delivery-type')?.value!=='files'&&selected.some(x=>!/(\.tar|\.tar\.gz|\.tgz)$/i.test(x.name))){err.textContent='请选择 Docker / OCI 镜像包（.tar、.tar.gz、.tgz）';return}const list=M.records(),prev=list.find(x=>x.id===s.recordId);if(!selected.length&&!prev&&!s.assetId){err.textContent='请选择成果材料';return}const rec={...prev,id:prev?.id||'CG-'+Date.now().toString(36).toUpperCase(),kind:s.kind,materialType:document.getElementById('mt-delivery-type')?.value||prev?.materialType||'files',assetId:s.assetId,metadata:values,name:values.name,files:selected.length?selected.map(x=>({name:x.name,size:x.size})):prev?.files||[{name:'关联资源：'+values.name,size:null}],spaceId:s.context?.id||prev?.spaceId||'',spaceName:s.context?.name||prev?.spaceName||'',applicant:'张研究员',status:'待审批',time:M.date(),history:[...(prev?.history||[]),{action:prev?'重新提交':'提交成果',by:'张研究员',time:M.date(),note:''}]};if(M.saving)return;M.saving=true;const submit=document.querySelector('[form=mt-outcome-form][type=submit]');if(submit){submit.disabled=true;submit.textContent='正在保存成果…'}if(selected.length){try{await M.fileDB('readwrite',st=>selected.forEach((file,i)=>st.put({id:rec.id+':'+i,file})));rec.files.forEach((x,i)=>x.blobId=rec.id+':'+i)}catch{err.textContent='成果文件未能保存，请检查浏览器存储空间后重试';M.saving=false;if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}}if(prev)list[list.indexOf(prev)]=rec;else list.unshift(rec);M.saving=false;if(!M.write(M.key,list)){if(submit){submit.disabled=false;submit.textContent='提交审批验收'}return}M.close();M.refreshOutcomes?.();M.toast('成果已提交，进入审批验收');if(M.returnToEnd&&typeof renderSimpleEnd==='function'){M.returnToEnd=false;renderSimpleEnd();}};
+M.viewOutcome=id=>{const r=M.records().find(x=>x.id===id);if(!r)return;M.dialog(r.name,`<p>${M.badge(r.status)}　${M.e(r.id)}　${M.e(r.time)}</p><div class="mt-grid">${M.schemas[r.kind].map(([k,l])=>`<div><small class="mt-note">${l}</small><p>${M.e(r.metadata[k])}</p></div>`).join('')}</div><h3 class="mt-section">介绍内容</h3><article>${M.safeHTML(r.metadata.intro)}</article><h3 class="mt-section">成果材料</h3><div>${r.files.map((x,i)=>`<p>${M.e(x.name)} ${x.blobId?M.link('下载材料',`Meeting.downloadMaterial('${r.id}',${i})`):''}</p>`).join('')}</div><h3 class="mt-section">审批记录</h3>${r.history.map(x=>`<div class="mt-timeline"><strong>${M.e(x.action)}</strong> · ${M.e(x.by)} · ${M.e(x.time)}<p>${M.e(x.note)}</p></div>`).join('')}`,(M.admin&&r.status==='待审批'?M.btn('返回审批',`Meeting.review('${r.id}')`):M.btn('关闭','Meeting.close()'))+(!M.admin&&r.kind==='model'?M.btn('调试',`Meeting.debug('${r.id}')`):'')+(!M.admin&&r.status==='已驳回'?M.btn('修改后重新提交',`Meeting.submit('${r.kind}','${r.assetId||''}','${r.id}')`,true):''))};
+M.debug=id=>{if(M.spaceContext&&typeof editable==='function'&&!editable()){M.toast('研究已结束，成果仅可查看');return}const r=M.records().find(x=>x.id===id);M.dialog('成果调试',`<p>${M.e(r?.name||M.spaceContext?.name||'科研成果')}</p><p class="mt-note">原型调试演示，不执行真实镜像或远程接口。</p><form id="mt-debug-form">${M.field('debuginput','调试输入','{}','textarea')}<label class="mt-field" style="margin-top:16px">样例文件（选填）<input id="mt-debug-file" type="file" multiple></label><h3 class="mt-section">运行输出</h3><pre id="mt-debug-result" class="mt-debug">尚未执行</pre></form>`,M.btn('关闭','Meeting.close()')+'<button form="mt-debug-form" class="mt-btn primary" type="submit">运行调试（演示）</button>');document.getElementById('mt-debug-form').onsubmit=e=>{e.preventDefault();const text=document.getElementById('mt-debuginput').value.trim();document.getElementById('mt-debug-result').textContent='[演示] 已读取调试输入'+(document.getElementById('mt-debug-file').files.length?'及样例文件':'')+'\n[演示] 输入长度：'+text.length+' 字符\n[演示] 本轮流程完成；真实运行结果由开发环境执行后返回。';if(r){const list=M.records();list.find(x=>x.id===id).debugTime=M.date();M.write(M.key,list)}}};
+M.outcomeTable=(rows,review=false)=>`<div class="mt-table-wrap"><table class="mt-table"><thead><tr><th>成果名称</th><th>类型 / 版本</th><th>提交人 / 时间</th><th>审批状态</th><th>操作</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${M.e(r.name)}</strong><small>${M.e(r.spaceName||'')}</small></td><td>${r.kind==='model'?'成果模型':'成果数据'}<small>${M.e(r.metadata.version)}</small></td><td>${M.e(r.applicant)}<small>${M.e(r.time)}</small></td><td>${M.badge(r.status)}</td><td><div class="mt-actions">${M.link('查看',`Meeting.viewOutcome('${r.id}')`)}${review&&r.status==='待审批'?M.link('审批验收',`Meeting.review('${r.id}')`):''}${!review&&r.kind==='model'?M.link('调试',`Meeting.debug('${r.id}')`):''}${!review&&r.status==='已驳回'?M.link('修改提交',`Meeting.submit('${r.kind}','${r.assetId||''}','${r.id}')`):''}</div></td></tr>`).join('')||'<tr><td colspan="5" class="mt-empty">暂无成果提交记录</td></tr>'}</tbody></table></div>`;
+M.review=id=>{const r=M.records().find(x=>x.id===id);if(!r||r.status!=='待审批')return;M.dialog('成果审批验收',`<p><strong>${M.e(r.name)}</strong> · ${M.e(r.metadata.version)} · ${M.e(r.applicant)}</p>${M.link('查看完整成果材料',`Meeting.viewOutcome('${id}')`)}<form id="mt-review-form" style="margin-top:18px">${M.field('decision','审批结果','','select',['通过','驳回','拒绝'])}${M.field('opinion','审批意见','','textarea')}<p class="mt-error" id="mt-review-error"></p></form>`,M.btn('取消','Meeting.close()')+'<button class="mt-btn primary" type="submit" form="mt-review-form">确认审批</button>');document.getElementById('mt-review-form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),list=M.records(),r=list.find(x=>x.id===id);if(r.status!=='待审批'){M.toast('该成果已处理');return}const decision=f.get('decision'),opinion=f.get('opinion').trim();if(!opinion)return;r.status={通过:'已通过',驳回:'已驳回',拒绝:'已拒绝'}[decision];r.history.push({action:decision,by:'张明',time:M.date(),note:opinion});if(decision==='通过'){const id=r.acceptedAssetId||r.assetId||'new-outcome-'+r.id;r.acceptedAssetId=id;if(!r.assetId)M.registerAsset(id,r.kind,{...r.metadata,up:'none'});if(!r.assetId&&r.kind==='model'){const s=M.read('bdh-model-service-v3',{});s.newRows??=[];if(!s.newRows.some(x=>x.key===id))s.newRows.push({key:id,no:M.nextModelNo(),name:r.name,ver:r.metadata.version,files:r.files.map(x=>x.name),materialType:r.materialType||'image',access:'platform',src:'res',who:r.applicant,d:M.date().slice(0,10),t:M.date().slice(11),done:true,up:'none',detailPage:'后台-模型详情编辑-后台新建.html',outcomeId:r.id});M.write('bdh-model-service-v3',s)}else if(!r.assetId){const ds=M.read('agri-datasets',MeetingSeeds.datasets);if(!ds.some(x=>x.id===id))ds.unshift({id,name:r.name,desc:r.metadata.summary,pub:'off',todo:false,src:'res',thumb:'',type:r.metadata.modality,form:r.metadata.modality,count:r.metadata.scale,org:r.metadata.provider,version:r.metadata.version,link:'后台-数据集详情编辑-已完善.html',outcomeId:r.id});M.write('agri-datasets',ds)}}if(M.write(M.key,list)){M.close();M.refreshReview?.();M.toast('审批结果已保存')}}};
+M.nextModelNo=()=>{const n=M.read('bdh-model-counter-1010',0)+1;M.write('bdh-model-counter-1010',n);return 'MDL-'+new Date().getFullYear()+'-N'+String(n).padStart(5,'0')};
+M.deliveryType=type=>{const n=document.getElementById('mt-files');n.multiple=type==='files';n.accept=type==='image'?'.tar,.tar.gz,.tgz':'.pkl,.joblib,.onnx,.pt,.pth,.py,.json,.yaml,.yml,.txt,.md,.pdf,.zip';n.value=''};
+M.fillDefaults=id=>{const a=M.assets()[id];if(!a)return;M.schemas[M.submitting.kind].forEach(([k])=>{const n=document.getElementById('mt-'+k);if(n)n.value=a[k]??''});document.getElementById('mt-intro').innerHTML=M.safeHTML(a.intro||'')};
+M.fileDB=(mode,fn)=>new Promise((resolve,reject)=>{const op=indexedDB.open('bdh-outcome-materials-1010',1);op.onupgradeneeded=()=>op.result.createObjectStore('files',{keyPath:'id'});op.onerror=()=>reject(op.error);op.onsuccess=()=>{const db=op.result,tx=db.transaction('files',mode),ret=fn(tx.objectStore('files'));tx.oncomplete=()=>{resolve(ret?.result);db.close()};tx.onerror=()=>{reject(tx.error);db.close()}}});
+M.downloadMaterial=async(id,i)=>{try{const f=M.records().find(x=>x.id===id)?.files[i];const r=await M.fileDB('readonly',s=>s.get(f.blobId));if(!r){M.toast('该材料在当前浏览器中不可用');return}const url=URL.createObjectURL(r.file),a=document.createElement('a');a.href=url;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch{M.toast('材料读取失败，请重试')}};
+if(admin){document.body.classList.add('mt-admin');const nav=document.querySelector('.main-nav');if(nav){const isCapability=/后台-(时空数据管理|地图引擎|能力共享)/.test(file);const items=[['工作台总览','后台-工作台总览.html'],['课题管理','后台-课题管理.html'],['审批中心','后台-审批中心.html'],['运营管理','后台-模型管理.html'],['平台能力','后台-时空数据管理.html'],['合作与组织','后台-管理设置.html']];const active=/后台-课题/.test(file)?'课题管理':nav.querySelector('.active')?.textContent.trim();nav.innerHTML=items.map(([t,url])=>`<a href="${url}" class="${isCapability?t==='平台能力'?'active':'':active===t?'active':''}">${t}</a>`).join('');if(isCapability){const main=document.querySelector('main');(document.querySelector('.admin-side')||main)?.insertAdjacentHTML('afterbegin','<nav class="mt-subsystems" aria-label="平台能力子系统">'+[['时空数据管理','后台-时空数据管理.html'],['地图引擎','后台-地图引擎.html'],['能力共享','后台-能力共享.html']].map(([t,u])=>`<a href="${u}" class="${file===u?'active':''}">${t}</a>`).join('')+'</nav>')}}if(/课题|科研人员推荐/.test(file)){document.querySelector('.admin-side')?.insertAdjacentHTML('beforeend','<a class="snav" href="后台-课题工作台.html">科研项目经理工作台</a>')}}
+window.addEventListener('storage',e=>{if(e.key===M.key){M.refreshOutcomes?.();M.refreshReview?.();M.renderBoard?.()}});
+})();
+
+</script><script data-prototype-source="assets/meeting/meeting-features.js">
+(()=>{'use strict';const M=Meeting,F=M.file,Q=s=>document.querySelector(s),QA=s=>[...document.querySelectorAll(s)],param=new URLSearchParams(location.search);const main=()=>Q('main')||Q('.admin-content')||Q('.content')||Q('.workspace');
+M.pickOutcome=()=>M.dialog('提交成果','<p>选择本次提交的成果类型。</p>',M.btn('取消','Meeting.close()')+M.btn('成果数据',"Meeting.submit('dataset')")+M.btn('成果模型',"Meeting.submit('model')",true));
+M.recordsPanel=(kind='',space='')=>`<section class="mt-panel" id="mt-outcomes"><div class="mt-toolbar"><h2 style="margin:0;flex:1">成果提交记录</h2>${M.btn(kind?(kind==='dataset'?'提交成果数据':'提交成果模型'):'提交成果',kind?`Meeting.submit('${kind}')`:'submitResult()',true)}</div>${M.outcomeTable(M.records().filter(x=>(!kind||x.kind===kind)&&(!space||x.spaceId===space)))}</section>`;
+// Consolidate introductions, retain the existing tab structure and preview editor.
+if(/^后台-(模型|数据集)详情编辑/.test(F)){
+ const kind=F.includes('模型')?'model':'dataset';let rich=QA('.rte-bd');if(kind==='model'&&rich.length>=4){const merged=rich.slice(0,4).map(n=>'<h3>'+M.e(n.closest('.blk')?.querySelector('h4')?.textContent||'')+'</h3>'+n.innerHTML).join('');rich[0].innerHTML=merged;rich.slice(1,4).forEach(n=>n.closest('.blk')?.remove());const h=rich[0].closest('.blk')?.querySelector('h4');if(h)h.textContent='模型介绍'}
+ const intro=Q('.rte-bd');if(intro){intro.id='mt-backend-intro';intro.insertAdjacentHTML('beforebegin',`<div class="mt-template-actions">${M.btn('查看填写模板',`Meeting.showTemplate('${kind}','mt-backend-intro')`)}</div>`)}
+ const norm=s=>s.replace(/[\s*＊（()）]/g,'');const map={};QA('main .lb,main label,main .k').forEach(n=>{let wrap=n.matches('.lb,.k')?n.nextElementSibling:n.parentElement;if(!wrap)return;let c=wrap.matches('input,select,textarea')?wrap:wrap.querySelector('input,select,textarea');if(!c){const value=wrap.querySelector('.tagsel,.ro-val');if(value){if(value.matches('.tagsel')){Object.defineProperty(value,'value',{get(){return [...this.querySelectorAll('.chip')].map(x=>x.textContent.replace('✕','').trim()).join('、')},set(v){const caret=this.querySelector('.caret')?.outerHTML||'';this.innerHTML=String(v).split(/[、,，]/).filter(Boolean).map(x=>'<span class="chip">'+M.e(x)+' <i class="x" onclick="rmChip(event,this)">✕</i></span>').join('')+caret}});c=value}else{const input=document.createElement('input');input.className='inp';input.value=value.textContent.trim();if(n.textContent.includes('编号'))input.readOnly=true;value.replaceWith(input);c=input}}}if(c)map[norm(n.textContent)]=c});
+ const aliases={name:kind==='model'?['模型名称']:['数据名称'],version:['版本号','版本'],abbr:['模型简称'],provider:['提供方'],business:['业务分类'],task:['技术任务'],crop:['适用作物','作物类型'],owner:['权属归属'],license:['授权范围'],runtime:['运行环境'],gpuType:['推荐算力卡型'],gpuCount:['GPU卡数'],gpuMemory:['单卡显存要求GB','单卡显存要求'],cpu:['CPU要求核','CPU要求'],memory:['内存要求GB','内存要求'],storage:['存储要求GB','存储要求'],precision:['推理精度'],summary:['数据简介'],tags:['标签']};
+ const controls={};for(const [k,labels] of Object.entries(aliases))for(const label of labels){const key=Object.keys(map).find(x=>x===norm(label));if(key){controls[k]=map[key];break}}
+ const rkey=param.get('record')||param.get('asset')||(kind+':'+(controls.name?.value||F));M.editorAsset=rkey;
+ const saved=M.assets()[rkey];let missing=M.schemas[kind].filter(([k])=>!controls[k]);if(missing.length){const panel=document.createElement('section');panel.className='mt-panel';panel.innerHTML='<h2>'+(kind==='model'?'模型元数据':'数据集元数据')+'</h2><div class="mt-grid">'+missing.map(([k,l,t,opts])=>M.field('editor-'+k,l,saved?.[k]||'',t||'text',opts)).join('')+'</div>';(Q('.info-form')?.closest('.card')||main()).append(panel);missing.forEach(([k])=>controls[k]=Q('#mt-editor-'+k))}
+ const ds=M.read('agri-datasets',MeetingSeeds.datasets).find(x=>x.id===rkey);if(ds&&controls.name)controls.name.value=ds.name;
+ if(saved){for(const [k,c] of Object.entries(controls))if(saved[k]!=null){if(c.tagName==='SELECT'&&![...c.options].some(o=>o.value===String(saved[k])))c.add(new Option(saved[k],saved[k]));c.value=saved[k]}if(intro&&saved.intro)intro.innerHTML=M.safeHTML(saved.intro)}
+ const number=map[norm('模型编号')];if(number){number.readOnly=true;if(F.includes('后台新建')&&!param.get('record'))number.value=M.nextModelNo()}
+ QA('.src-hint').forEach(n=>n.textContent=n.textContent.replace('模型文件或镜像包','镜像包'));
+ const collect=()=>Object.fromEntries([...Object.entries(controls).map(([k,c])=>[k,c.value.trim()]),['intro',intro?.innerHTML||'']]);
+ M.saveMetadata=()=>{const v=collect();if(!v.name){M.toast('请填写资源名称');return false}M.registerAsset(rkey,kind,v);if(kind==='dataset'){const rows=M.read('agri-datasets',MeetingSeeds.datasets);const r=rows.find(x=>x.id===rkey);if(r){Object.assign(r,{name:v.name,desc:v.summary,form:v.modality||r.form,count:v.scale||r.count,todo:false});M.write('agri-datasets',rows)}}return true};
+ // Give form defaults a stable identity even on direct sample pages.
+ if(!saved)M.registerAsset(rkey,kind,collect());
+ if(window.saveSelectedModelDetail){const base=window.saveSelectedModelDetail;window.saveSelectedModelDetail=row=>M.saveMetadata()&&base(row)}
+ if(window.PX){const base=PX.save;PX.save=(...a)=>M.saveMetadata()&&base(...a)}
+}
+if(F==='后台-模型管理.html'){
+ const base=window.maOpen;if(base)window.maOpen=(key,...args)=>key?base(key,...args):window.openModal();
+ if(param.get('new')==='api'){Q('#maDialog')?.close();M.toast('后台新建模型仅支持平台部署，请上传交付镜像')}
+}
+if(F==='后台-数据集管理.html'){
+ const base=window.renderGrid;window.renderGrid=()=>{base();QA('#dsGrid .ds-card').forEach(n=>{const id=n.dataset.id;QA.call(null,'#dsGrid .ds-card a[href]').filter(a=>a.closest('.ds-card')===n&&a.getAttribute('href').includes('详情编辑')).forEach(a=>{a.href=a.getAttribute('href').split('?')[0]+'?asset='+encodeURIComponent(id)})})};window.renderGrid();
+}
+if(F==='个人中心-高保真原型.html'){
+ const base=window.resources;window.resources=kind=>base(kind)+M.recordsPanel(kind==='models'?'model':'dataset');M.refreshOutcomes=()=>window.render();window.render();
+}
+if(F==='科研开发空间-详情页(9).html'){
+ M.spaceContext={id:String(typeof spaceId!=='undefined'?spaceId:param.get('id')||'1'),name:typeof space!=='undefined'?space.name:Q('h1')?.textContent||'科研开发空间'};
+ M.originalSpaceUpload=window.submitResult;window.submitResult=()=>{if(typeof canManage==='function'&&!canManage())return;M.returnToEnd=!!document.getElementById('simple-end');window.closeModal?.();M.pickOutcome();document.querySelector('#mtDialog .mt-body').insertAdjacentHTML('beforeend','<p class="mt-note">研究文件与开发镜像可继续通过原上传流程保存。</p>'+M.btn('上传研究文件 / 打包开发镜像','Meeting.close();Meeting.originalSpaceUpload()'))};
+ const h=Q('.heading-actions')||Q('.page-actions')||Q('h1')?.parentElement;h?.insertAdjacentHTML('beforeend',M.btn('调试',"Meeting.debug('')"));
+ M.refreshOutcomes=()=>{Q('#mt-outcomes')?.remove();const target=Q('#records')?.closest('.card')||main()||Q('.container');target?.insertAdjacentHTML('beforeend',M.recordsPanel('',M.spaceContext.id))};M.refreshOutcomes();const oldAll=window.renderAll;window.renderAll=()=>{oldAll();M.refreshOutcomes();const h=Q('.heading-actions');if(h&&!h.querySelector('.mt-btn'))h.insertAdjacentHTML('beforeend',M.btn('调试',"Meeting.debug('')"))};
+}
+if(F==='科研开发空间-IDE编辑页.html'){(Q('.toolbar')||Q('h1')?.parentElement)?.insertAdjacentHTML('beforeend',M.btn('调试',"Meeting.debug('')"))}
+if(F==='后台-审批中心.html'){
+ const host=document.createElement('section');host.className='mt-panel';host.id='mt-review-panel';const target=Q('.container>.wrap')||Q('.admin-body')||Q('.app')||Q('.layout')||Q('.container')||document.body;const marker=Q('#tbody')?.closest('.card')||Q('#todoBody')?.closest('section');if(marker)marker.before(host);else target.append(host);
+ M.refreshReview=()=>{const status=Q('#mt-review-status')?.value||'待审批',query=Q('#mt-review-query')?.value||'',all=M.records();host.innerHTML='<div class="mt-toolbar"><h2 style="margin:0;flex:1">成果审批验收</h2><span class="mt-badge">待审批 '+all.filter(x=>x.status==='待审批').length+'</span></div><div class="mt-toolbar"><input id="mt-review-query" aria-label="搜索成果名称" placeholder="搜索成果名称" value="'+M.e(query)+'"><select id="mt-review-status" aria-label="审批状态">'+['全部','待审批','已通过','已驳回','已拒绝'].map(x=>'<option '+(x===status?'selected':'')+'>'+x+'</option>').join('')+'</select>'+M.btn('查询','Meeting.refreshReview()')+'</div>'+M.outcomeTable(all.filter(x=>(status==='全部'||x.status===status)&&x.name.includes(query)),true);Q('#mt-review-status').onchange=M.refreshReview;Q('#mt-review-query').onkeydown=e=>{if(e.key==='Enter')M.refreshReview()}};M.refreshReview();
+ if(location.hash==='#outcomes')host.scrollIntoView();
+}
+// Persisted project records are used by both project views and the workbench.
+M.projects=()=>M.read(M.projectsKey,MeetingSeeds.projects);
+if(F==='后台-课题管理.html'){
+ if(!M.read(M.projectsKey,null))M.write(M.projectsKey,window.ROWS);else window.ROWS=M.projects();
+ const old=window.renderRows;window.renderRows=()=>{old();QA('#tbody tr').forEach((tr,i)=>{const r=window.ROWS[i];if(!r)return;tr.cells[2].insertAdjacentHTML('beforeend','<span class="t-sub">'+M.e(r.team||'')+'</span>');tr.cells[3].insertAdjacentHTML('beforeend','<span class="t-sub">'+M.e(r.direction||'未设置方向')+'</span>');tr.querySelectorAll('.ops a').forEach((a,j)=>{a.removeAttribute('onclick');a.onclick=()=>M.projectEdit(r.code,j===0?'view':j===2?'status':'edit')})});window.PX?.paginate()};window.renderRows();
+ QA('button,a').filter(n=>n.textContent.includes('新增课题')).forEach(n=>{n.removeAttribute('onclick');n.onclick=()=>M.projectEdit('','edit')});
+ const toolbar=Q('#kw')?.closest('.filter-bar')||Q('#kw')?.parentElement?.parentElement;toolbar?.insertAdjacentHTML('beforeend','<select id="mt-project-direction" class="inp" aria-label="课题方向"><option value="">全部方向</option><option>软件 / 算法方向</option><option>硬件方向</option></select>');Q('#mt-project-direction')?.addEventListener('change',()=>{window.PX?.filter()});
+ M.projectEdit=(code,mode)=>{const r=M.projects().find(x=>x.code===code)||{};if(mode==='view'){M.dialog(r.name,'<div class="mt-grid">'+[['课题编号',r.code],['关联指南',r.guide],['团队负责人',r.who],['科研团队',r.team||'未关联'],['承担 / 依托单位',r.org],['课题类型',r.type],['课题方向',r.direction||'未设置'],['状态',r.st]].map(([k,v])=>'<div><small>'+k+'</small><p>'+M.e(v)+'</p></div>').join('')+'</div>');return}
+ const roster={'作物遥感研究组':['李强','周涛'],'农业智能计算组':['刘伟','王强'],'水稻研究组':['赵磊','徐静'],'作物植保研究组':['马超']};const people=[...new Set([r.who,...Object.values(roster).flat()].filter(Boolean))],teams=Object.keys(roster);M.dialog(code?(mode==='status'?'调整课题状态':'编辑课题'):'新增课题','<form id="mt-project-form"><div class="mt-grid">'+(mode==='status'?M.field('st','课题状态',r.st,'select',['拟立项','在研','已结题','未立项','已终止'])+M.field('reason','调整原因','','textarea'):M.field('code','课题编号',r.code||'')+M.field('name','课题名称',r.name)+M.field('guide','关联指南',r.guide)+M.field('team','科研团队',r.team||'','select',teams)+M.field('who','团队负责人',r.who||'','select',people)+M.field('org','承担 / 依托单位',r.org)+M.field('type','课题类型',r.type||'面上','select',['重点','面上','青年'])+M.field('direction','课题方向',r.direction||'','select',['软件 / 算法方向','硬件方向'])+M.field('from','公示开始',r.from||'','date')+M.field('to','公示结束',r.to||'','date'))+'</div><p id="mt-project-error" class="mt-error"></p></form>',M.btn('取消','Meeting.close()')+'<button form="mt-project-form" class="mt-btn primary">保存</button>');if(mode!=='status'){const sync=()=>{const team=Q('#mt-team').value,person=Q('#mt-who').value;Q('#mt-who').innerHTML='<option value="">请选择负责人</option>'+(roster[team]||[]).map(x=>'<option '+(person===x?'selected':'')+'>'+M.e(x)+'</option>').join('')};Q('#mt-team').onchange=sync;if(r.team)sync()}Q('#mt-project-form').onsubmit=e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target)),rows=M.projects();if(Object.values(v).some(x=>!x.trim())){Q('#mt-project-error').textContent='请完整填写字段';return}if(v.to&&v.to<v.from){Q('#mt-project-error').textContent='公示结束不能早于开始';return}if(v.code&&rows.some(x=>x.code===v.code&&x.code!==code)){Q('#mt-project-error').textContent='课题编号重复';return}const existing=rows.find(x=>x.code===code);if(existing)Object.assign(existing,v);else rows.unshift({...v,st:'拟立项'});M.write(M.projectsKey,rows);window.ROWS=rows;if(window.PX)PX.put(PX.key+':rows',rows);window.renderRows();M.close();M.toast('课题已保存')}};
+}
+// 1012：本页底部追加的「团队 / 方向」目录模块为发散设计，按用户指令整块移除（含该模块专属的渲染函数与筛选控件绑定）。
+// Declaration entry uses the same metadata form and review record, never changes shelf state.
+if(F==='数据中心-数据集详情.html'||F==='模型中心-模型详情（调整）.html'){
+ const kind=F.startsWith('模型')?'model':'dataset',heading=Q('#headBox h1')||Q('h1'),name=heading?.textContent.trim()||param.get('name')||'',asset=Object.values(M.assets()).find(x=>x.kind===kind&&x.name===name),id=asset?.id||kind+':'+name;
+ if(!asset)M.registerAsset(id,kind,{name,intro:Q('#introBody')?.innerHTML||'',version:QA('.tag,.badge,.pill').map(n=>n.textContent).find(t=>/^v\d/i.test(t))||''});
+ const host=Q('.action-row')||Q('#applyWrap')||heading?.parentElement;host?.insertAdjacentHTML('beforeend',M.btn(kind==='model'?'声明成果模型':'声明成果数据',`Meeting.submit('${kind}','${id.replaceAll("'",'')}')`));
+ if(kind==='dataset'){const b=document.createElement('button');b.className='mt-btn primary';b.textContent='数据二次查询';b.onclick=()=>{const t=QA('.tab,.tabs button,.tabs a').find(x=>x.textContent.includes('预览'));t?.click();const go=Q('.pv-go');if(go)go.click();else{const target=Q('#previewBody')||Q('#pane-preview')||Q('#preview');target?.scrollIntoView({behavior:'smooth'});const table=target?.querySelector('table');if(table){M.dialog('数据二次查询','<div class="mt-toolbar"><input id="mt-data-query" aria-label="查询当前数据" placeholder="输入字段值查询">'+M.btn('查询',"Meeting.queryPreview()")+M.btn('重置',"document.getElementById('mt-data-query').value='';Meeting.queryPreview()")+'</div><div class="mt-table-wrap" id="mt-query-table">'+table.outerHTML+'</div><p class="mt-note" id="mt-query-count">当前可查询数据预览中的样例记录。</p>');M.queryPreview=()=>{const q=Q('#mt-data-query').value.trim();let count=0;QA('#mt-query-table tbody tr').forEach(n=>{n.hidden=!!q&&!n.textContent.includes(q);if(!n.hidden)count++});Q('#mt-query-count').textContent='匹配 '+count+' 条样例记录'};Q('#mt-data-query').onkeydown=e=>{if(e.key==='Enter')M.queryPreview()}}else if(!target)M.toast('请在数据预览中选择数据并查询')}};host?.prepend(b)}
+}
+// New boards reuse the same records; no invented invocation or economic-value statistics.
+M.renderBoard=()=>{
+ const host=Q('#mt-board');if(!host)return;const outcomes=M.records(),projects=M.projects(),store=M.read('bdh-model-service-v3',{}),share=M.read('bdh-capability-sharing-v3',{});const pub=Object.values(share.publications||{});const approved=outcomes.filter(x=>x.status==='已通过'),pending=outcomes.filter(x=>x.status==='待审批');const isAdmin=M.admin;
+ const metrics=isAdmin?[['课题总数',projects.length,'课题管理台账'],['在研课题',projects.filter(x=>x.st==='在研').length,'当前状态为在研'],['待验收成果',pending.length,'待审批成果'],['验收通过成果',approved.length,'本次成果台账']]:[['已提交成果',outcomes.length,'成果台账'],['验收通过',approved.length,'审批验收通过'],['服务发布总数',pub.length,'服务发布记录'],['开放在线使用',pub.filter(x=>x.use).length,'已开启在线使用']];
+ host.innerHTML='<div class="mt-toolbar"><div style="flex:1"><h1>'+(isAdmin?'科研项目经理工作台':'成果转化效果看板')+'</h1><p class="mt-note">'+(isAdmin?'课题进度、团队责任人与成果待办':'从科研成果提交到可用服务的转化进展')+'</p></div>'+M.btn('刷新','Meeting.renderBoard()')+'</div><div class="mt-kpis">'+metrics.map(([t,n,s])=>'<div class="mt-kpi"><span>'+t+'</span><b>'+n+'</b><small class="mt-note">'+s+'</small></div>').join('')+'</div><div class="mt-layout"><section class="mt-panel"><h2>'+(isAdmin?'课题进度分布':'成果与服务概况')+'</h2>'+ (isAdmin?['拟立项','在研','已结题','未立项','已终止'].map(x=>[x,projects.filter(r=>r.st===x).length]):[['已提交',outcomes.length],['已通过',approved.length],['服务已发布',pub.length],['在线使用已开启',pub.filter(x=>x.use).length]]).map(([t,n])=>'<div class="mt-chart-row"><span>'+t+'</span><div class="mt-chart-bar"><i style="width:'+Math.min(100,n/Math.max(1,isAdmin?projects.length:Math.max(outcomes.length,pub.length))*100)+'%"></i></div><b>'+n+'</b></div>').join('')+'</section><section class="mt-panel"><h2>'+(isAdmin?'工作待办':'转化明细')+'</h2><p>'+ (isAdmin?'待审批验收 '+pending.length+' 项成果；未设置方向 '+projects.filter(x=>!x.direction).length+' 项课题。':'成果通过验收后进入资源管理，由运营继续完善部署与服务发布。')+'</p><div class="mt-toolbar">'+(isAdmin?'<a class="mt-btn primary" href="后台-审批中心.html#outcomes">处理成果验收</a><a class="mt-btn" href="后台-课题管理.html">管理课题</a>':'<a class="mt-btn primary" href="模型中心-模型列表页（调整）.html">查看模型中心</a><a class="mt-btn" href="个人中心-高保真原型.html#models">我的成果</a>')+'</div><p class="mt-note">统计来自当前原型已保存的数据；调用量、使用单位及经济价值尚无数据来源。</p></section></div><section class="mt-panel"><h2>'+(isAdmin?'课题台账':'成果验收记录')+'</h2>'+(isAdmin?'<div class="mt-table-wrap"><table class="mt-table"><thead><tr><th>课题名称</th><th>团队负责人 / 单位</th><th>方向</th><th>状态</th></tr></thead><tbody>'+projects.map(r=>'<tr><td>'+M.e(r.name)+'</td><td>'+M.e(r.who)+'<small>'+M.e(r.org)+'</small></td><td>'+M.e(r.direction||'未设置')+'</td><td>'+M.badge(r.st)+'</td></tr>').join('')+'</tbody></table></div>':M.outcomeTable(outcomes))+'</section>';
+};M.renderBoard();
+})();
+
+</script><script data-prototype-source="assets/meeting/meeting-filters.js">
+(()=>{const M=Meeting;if(M.file!=='数据中心-数据集列表页.html')return;const box=document.getElementById('filtersBox');if(!box)return;const ds=window.DS,more=document.createElement('details');more.innerHTML='<summary style="padding:18px 0;cursor:pointer;font-weight:600">更多筛选：作物、区域与时间</summary>';[...box.querySelectorAll('.fgroup')].forEach(n=>{if(!n.querySelector('[data-g=form]'))more.append(n)});box.append(more);
+const metadata=d=>{const saved=Object.values(M.assets()).find(x=>x.kind==='dataset'&&x.name===d.name)||{};return {...saved,modality:saved.modality||(/影像|遥感/.test(d.form)?'遥感影像':/矢量/.test(d.form)?'矢量':/时序/.test(d.form)?'时序':'表格'),format:saved.format||(/\.csv$/i.test(d.name)?'CSV':/\.zip$/i.test(d.name)?'ZIP':''),annotation:saved.annotation||(/标注/.test(d.name)?'有标注':'')}};
+const keys=[['modality','数据形态'],['format','数据格式'],['annotation','标注情况']];const selected=Object.fromEntries(keys.map(([k])=>[k,new Set(new URLSearchParams(location.search).getAll('m_'+k))]));box.querySelector('[data-g=form]')?.closest('.fgroup')?.remove();const filters=document.createElement('div');box.prepend(filters);const base=window.filtered;window.filtered=()=>base().filter(d=>keys.every(([k])=>!selected[k].size||selected[k].has(metadata(d)[k]||'未填写')));
+M.drawDatasetFilters=()=>{filters.innerHTML=keys.map(([k,label])=>{const values=[...new Set(ds.map(d=>metadata(d)[k]||'未填写'))];return '<section class="mt-filtergroup"><h3>'+label+'</h3>'+values.map(v=>'<label><input type="checkbox" data-mk="'+k+'" value="'+M.e(v)+'" '+(selected[k].has(v)?'checked':'')+'>'+M.e(v)+'<small>'+base().filter(d=>keys.every(([kk])=>kk===k||!selected[kk].size||selected[kk].has(metadata(d)[kk]||'未填写'))&&(metadata(d)[k]||'未填写')===v).length+'</small></label>').join('')+'</section>'}).join('')+'<p class="mt-note">未维护的元数据归入“未填写”。</p>';filters.querySelectorAll('input').forEach(n=>n.onchange=()=>{const s=selected[n.dataset.mk];n.checked?s.add(n.value):s.delete(n.value);window.page=1;const u=new URL(location.href);keys.forEach(([k])=>{u.searchParams.delete('m_'+k);selected[k].forEach(v=>u.searchParams.append('m_'+k,v))});history.replaceState(null,'',u);window.renderAll()})};const render=window.renderAll;window.renderAll=()=>{render();M.drawDatasetFilters()};const clear=window.clearAllCond;window.clearAllCond=()=>{keys.forEach(([k])=>selected[k].clear());const u=new URL(location.href);keys.forEach(([k])=>u.searchParams.delete('m_'+k));history.replaceState(null,'',u);clear()};window.renderAll();
+})();
+
+</script><script data-prototype-source="assets/meeting/meeting-space.js">
+(()=>{const M=Meeting,F=M.file,key='agri-space-applications-v8';if(!['后台-科研空间管理.html','后台-审批中心.html'].includes(F))return;const host=document.createElement('section');host.className='mt-panel';host.id='mt-space-requests';(document.querySelector('main')||document.querySelector('.container>.wrap')).append(host);const requests=()=>M.read(key,[]);
+M.refreshSpaces=()=>{const rows=requests();host.innerHTML='<h2>科研空间申请与开发环境</h2><div class="mt-table-wrap"><table class="mt-table"><thead><tr><th>科研空间 / 团队</th><th>关联模型</th><th>开发环境</th><th>计算配置</th><th>状态</th><th>操作</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+M.e(r.name)+'<small>'+M.e(r.team)+'</small></td><td>'+M.e(r.model||'未关联模型')+'</td><td>'+M.e(r.compute.runtime)+'<small>'+M.e(r.image)+' · '+M.e(r.ide)+'</small></td><td>'+r.cpu+' 核 / '+r.ram+' GB / '+r.gpu+' GPU<small>研究存储 '+r.storage+' GB</small></td><td>'+M.badge(r.state)+'</td><td>'+M.link('查看',`Meeting.viewSpace('${r.id}')`)+(F==='后台-审批中心.html'&&r.state==='申请中'?M.link('审批',`Meeting.reviewSpace('${r.id}')`):'')+'</td></tr>').join('')+' '+(!rows.length?'<tr><td colspan="6" class="mt-empty">暂无门户提交的科研空间申请</td></tr>':'')+'</tbody></table></div>'};
+M.viewSpace=id=>{const r=requests().find(r=>String(r.id)===id);if(!r)return;M.dialog('科研空间申请详情','<div class="mt-grid">'+[['空间名称',r.name],['所属团队',r.team],['研究用途',r.desc],['关联模型',r.model||'未关联模型'],['开发镜像',r.image],['运行环境',r.compute.runtime],['系统环境',r.compute.detail],['开发工具',r.ide],['CPU / 内存',r.cpu+' 核 / '+r.ram+' GB'],['GPU',r.gpu+' 张 · 单卡显存 '+r.gpuMemory+' GB'],['研究存储 / 系统盘',r.storage+' GB / '+r.systemDisk+' GB'],['审批意见',r.reviewNote||'尚未审批']].map(([t,v])=>'<div><small class="mt-note">'+t+'</small><p>'+M.e(v)+'</p></div>').join('')+'</div>',M.btn('关闭','Meeting.close()')+(F==='后台-审批中心.html'&&r.state==='申请中'?M.btn('审批',`Meeting.reviewSpace('${id}')`,true):''))};
+M.reviewSpace=id=>{const r=requests().find(x=>String(x.id)===id);if(!r||r.state!=='申请中')return;M.dialog('科研空间申请审批','<p>'+M.e(r.name)+' · '+M.e(r.compute.runtime)+'</p><form id="mt-space-review">'+M.field('space-decision','审批结果','','select',['通过','驳回','拒绝'])+M.field('space-opinion','审批意见','','textarea')+'</form>',M.btn('取消','Meeting.close()')+'<button class="mt-btn primary" type="submit" form="mt-space-review">确认</button>');document.getElementById('mt-space-review').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),rows=requests(),s=rows.find(x=>String(x.id)===id);if(!s||s.state!=='申请中')return;const d=f.get('space-decision');s.state=d==='通过'?'可用':d==='驳回'?'已驳回':'已拒绝';s.reviewNote=f.get('space-opinion').trim();if(!s.reviewNote)return;s.instance=d==='通过'?'已停止':'未开通';s.progress='审批'+d+'：'+s.reviewNote;M.write(key,rows);M.close();M.refreshSpaces();M.toast('审批结果已保存')}};M.refreshSpaces();window.addEventListener('storage',e=>{if(e.key===key)M.refreshSpaces()});
+})();
+
+</script><!-- meeting-1010:end --><!-- devdoc-1012:start --><script id="research-space-devdoc">
+/* 科研开发空间列表的字段说明与交互演示指引。 */
+(function(){
+  'use strict';
+  var BRAND = '#005653';
+
+  /* ========================== 渲染层（通用） ============================ */
+  var CSS = [
+    '.mtdev-group{position:fixed;right:24px;bottom:24px;z-index:960;display:flex;gap:8px;width:max-content;cursor:grab;user-select:none;transition:opacity .2s}',
+    'body:has(dialog[open]) .mtdev-group,.mtdev-group.mtdev-dim{opacity:0;pointer-events:none}',
+    '.mtdev-btn{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:19px;font-size:14px;font-weight:500;white-space:nowrap;border:1px solid transparent;font-family:inherit;cursor:pointer;transition:all .2s}',
+    '.mtdev-btn.guide{background:' + BRAND + ';color:#fff;box-shadow:0 4px 12px rgba(0,86,83,.28)}',
+    '.mtdev-btn.guide:hover{background:#0a6b66;transform:translateY(-1px)}',
+    '.mtdev-btn.field{background:#edf6f2;color:' + BRAND + ';border-color:#c6ddd4;box-shadow:0 4px 12px rgba(0,86,83,.12)}',
+    '.mtdev-btn.field:hover{background:#dceee6;transform:translateY(-1px)}',
+    '.mtdev-mask{display:none;position:fixed;inset:0;background:rgba(10,30,28,.45);z-index:12000;align-items:center;justify-content:center}',
+    '.mtdev-mask.on{display:flex}',
+    '.mtdev-drawer{background:#fff;border-radius:8px;width:780px;max-width:92vw;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(6,40,38,.28)}',
+    '.mtdev-hd{display:flex;align-items:center;gap:10px;padding:16px 22px;border-bottom:1px solid #dce5e9;background:#f4f8f5;flex-shrink:0}',
+    '.mtdev-hd b{font-size:16px;color:#10213a;flex:1;font-weight:600}',
+    '.mtdev-hd .p{font-size:12px;color:#526078;white-space:nowrap}',
+    '.mtdev-x{font-size:16px;color:#526078;background:none;border:0;cursor:pointer;padding:2px 8px;border-radius:4px;line-height:1.4}',
+    '.mtdev-x:hover{color:#10213a;background:#e6efeb}',
+    '.mtdev-bd{padding:20px 22px;overflow-y:auto;flex:1;color:#10213a;font-size:13.5px;line-height:1.7}',
+    '.mtdev-tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:1px solid #dce5e9;margin:-4px 0 16px}',
+    '.mtdev-tab{background:none;border:0;font-family:inherit;padding:8px 14px;font-size:13.5px;color:#526078;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}',
+    '.mtdev-tab:hover{color:' + BRAND + '}',
+    '.mtdev-tab.on{color:' + BRAND + ';border-bottom-color:' + BRAND + ';font-weight:600}',
+    '.mtdev-sec{margin-bottom:22px}', '.mtdev-sec:last-child{margin-bottom:2px}',
+    '.mtdev-sec h4{margin:0 0 10px;font-size:14px;color:#10213a;font-weight:600}',
+    '.mtdev-intro{background:#f4f8f5;border-left:3px solid ' + BRAND + ';padding:12px 14px;border-radius:0 6px 6px 0;margin-bottom:18px;color:#31445c}',
+    '.mtdev-tw{overflow-x:auto;border:1px solid #dce5e9;border-radius:6px}',
+    '.mtdev-tw table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto}',
+    '.mtdev-tw-fx table{table-layout:fixed}',
+    '.mtdev-tw-fx .mtdev-tag{white-space:normal}',
+    '.mtdev-tw th,.mtdev-tw td{padding:8px 11px;text-align:left;border-bottom:1px solid #eef3f1;vertical-align:top;white-space:normal;word-break:break-word;overflow-wrap:anywhere}',
+    '.mtdev-tw th{background:#f4f8f5;color:#526078;font-weight:600;white-space:nowrap;position:sticky;top:0}',
+    '.mtdev-tw tr:last-child td{border-bottom:0}',
+    '.mtdev-tw td:first-child{font-weight:600;color:#10213a}',
+    '.mtdev-tw td code,.mtdev-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f4f8f5;border:1px solid #e4ecea;border-radius:3px;padding:0 4px;font-size:12px;color:#0a4b48;word-break:break-all;overflow-wrap:anywhere}',
+    '.mtdev-note{margin-top:8px;font-size:12px;color:#526078;line-height:1.65}',
+    '.mtdev-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;white-space:nowrap}',
+    '.mtdev-tag.do{background:#e6f4ec;color:#1a7f5a}',
+    '.mtdev-tag.no{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.req{background:#fdecea;color:#c0392b}',
+    '.mtdev-tag.mid{background:#eaf0fb;color:#3b6fb6}',
+    '.mtdev-tag.info{background:#edf6f2;color:' + BRAND + '}',
+    '.mtdev-tag.opt{background:#f0f2f5;color:#526078}',
+    '.mtdev-tag.warn{background:#fdf4e3;color:#b7791f}',
+    '.mtdev-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 14px}',
+    '.mtdev-flow i{font-style:normal;background:#edf6f2;color:' + BRAND + ';border:1px solid #c6ddd4;border-radius:14px;padding:3px 10px;font-size:12px}',
+    '.mtdev-flow s{text-decoration:none;color:#7d8c9c;font-size:12px}'
+  ].join('');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* 单元格状态标记：以 {{tag}} 开头时渲染为彩色标签
+     tag ∈ do 可用·免申请（绿） / mid 需申请（蓝） / opt 不显示·不适用（灰） / warn 注意（黄） / no 禁用（红） / info 品牌色 */
+  function cellHTML(c) {
+    var s = (c == null ? '' : String(c));
+    var m = /^\{\{(\w+)\}\}([\s\S]*)$/.exec(s);
+    if (m) return '<span class="mtdev-tag ' + m[1] + '">' + m[2] + '</span>';
+    return s;
+  }
+
+  function tableHTML(sec) {
+    var h = '<div class="mtdev-tw' + (sec.w ? ' mtdev-tw-fx' : '') + '"><table>';
+    if (sec.w) {
+      h += '<colgroup>';
+      sec.w.forEach(function (w) { h += '<col style="width:' + w + '">'; });
+      h += '</colgroup>';
+    }
+    h += '<thead><tr>';
+    sec.head.forEach(function (c) { h += '<th>' + c + '</th>'; });
+    h += '</tr></thead><tbody>';
+    sec.rows.forEach(function (r) {
+      h += '<tr>';
+      r.forEach(function (c) { h += '<td>' + cellHTML(c) + '</td>'; });
+      h += '</tr>';
+    });
+    return h + '</tbody></table></div>' + (sec.note ? '<p class="mtdev-note">' + sec.note + '</p>' : '');
+  }
+
+  function tabBody(tab) {
+    var h = '';
+    (tab.sections || []).forEach(function (s) {
+      h += '<div class="mtdev-sec"><h4>' + s.title + '</h4>' + tableHTML(s) + '</div>';
+    });
+    return h;
+  }
+
+  function drawerHTML(overlayId, bodyId, titleId) {
+    return '<div class="mtdev-mask" id="' + overlayId + '">' +
+      '<div class="mtdev-drawer" role="dialog" aria-modal="true" aria-labelledby="' + titleId + '">' +
+      '<div class="mtdev-hd"><b id="' + titleId + '"></b><span class="p">2026-11-18 更新</span>' +
+      '<button class="mtdev-x" type="button" aria-label="关闭说明" title="关闭（Esc）">✕</button></div>' +
+      '<div class="mtdev-bd" id="' + bodyId + '"></div></div></div>';
+  }
+
+  function renderDrawer(mask, doc, title, tabs, prefix, foot) {
+    mask.querySelector('.mtdev-hd b').textContent = title + ' — ' + doc.name;
+    var body = mask.querySelector('.mtdev-bd');
+    var html = '<div class="mtdev-intro">' + doc.intro + '</div><div class="mtdev-tabs" role="tablist" aria-label="' + title + '">';
+    tabs.forEach(function (tab, i) {
+      html += '<button type="button" class="mtdev-tab" id="' + prefix + 'Tab' + i + '" role="tab" aria-controls="' + prefix + i + '">' + esc(tab.label) + '</button>';
+    });
+    html += '</div>';
+    tabs.forEach(function (tab, i) {
+      html += '<div class="mtdev-tabpane" id="' + prefix + i + '" role="tabpanel" aria-labelledby="' + prefix + 'Tab' + i + '">' + tabBody(tab) + '</div>';
+    });
+    body.innerHTML = html + (foot || '');
+    bindTabs(body);
+  }
+
+  function selectTab(body, index) {
+    body.querySelectorAll('.mtdev-tab').forEach(function (tab, i) {
+      tab.classList.toggle('on', i === index);
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+    });
+    body.querySelectorAll('.mtdev-tabpane').forEach(function (pane, i) {
+      pane.style.display = i === index ? '' : 'none';
+    });
+  }
+
+  function bindTabs(body) {
+    var tabs = Array.from(body.querySelectorAll('.mtdev-tab'));
+    tabs.forEach(function (tab, index) {
+      tab.onclick = function () { selectTab(body, index); };
+      tab.onkeydown = function (event) {
+        var next = index;
+        if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectTab(body, next);
+        tabs[next].focus();
+      };
+    });
+    selectTab(body, 0);
+    body.scrollTop = 0;
+  }
+
+
+  /* 悬浮按钮组与抽屉头部可拖拽（拖完抑制一次点击，避免误触） */
+  function draggable(el, handle, onMove) {
+    handle = handle || el;
+    var st = null;
+    handle.addEventListener('mousedown', function (e) {
+      if (e.button !== 0 || (e.target.closest && e.target.closest('.mtdev-x'))) return;
+      var r = el.getBoundingClientRect();
+      st = { sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, w: r.width, h: r.height, moved: false };
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!st) return;
+      var dx = e.clientX - st.sx, dy = e.clientY - st.sy;
+      if (!st.moved && Math.abs(dx) + Math.abs(dy) > 4) st.moved = true;
+      if (!st.moved) return;
+      if (el.style.position !== 'fixed') {
+        el.style.position = 'fixed'; el.style.margin = '0';
+        el.style.left = st.ox + 'px'; el.style.top = st.oy + 'px';
+        el.style.right = 'auto'; el.style.bottom = 'auto';
+      }
+      var mx = Math.max(0, window.innerWidth - st.w), my = Math.max(0, window.innerHeight - st.h);
+      el.style.left = Math.min(mx, Math.max(0, st.ox + dx)) + 'px';
+      el.style.top = Math.min(my, Math.max(0, st.oy + dy)) + 'px';
+      if (onMove) onMove();
+    });
+    document.addEventListener('mouseup', function () {
+      if (!st) return;
+      if (st.moved) {
+        var sup = function (ev) { ev.preventDefault(); ev.stopPropagation(); document.removeEventListener('click', sup, true); };
+        document.addEventListener('click', sup, true);
+      }
+      st = null;
+    });
+  }
+
+
+  var doc = {
+  "name": "科研开发空间 · 空间列表",
+  "intro": "空间列表根据当前登录账号的角色显示。",
+  "field": [
+    {
+      "label": "空间列表",
+      "sections": [
+        {
+          "title": "空间列表",
+          "head": [
+            "字段 / 内容",
+            "类型 / 取值",
+            "规则与用途"
+          ],
+          "rows": [
+            [
+              "列表标题",
+              "我负责的 / 我参与的",
+              "科研负责人显示「我负责的」，普通成员显示「我参与的」。每次显示与当前账号对应的列表。"
+            ],
+            [
+              "每页条数",
+              "3 / 6 / 9 / 12 条",
+              "在当前列表内分页。"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "label": "科研空间申请",
+      "sections": [
+        {
+          "title": "科研空间申请",
+          "head": [
+            "字段 / 内容",
+            "类型 / 取值",
+            "规则与用途"
+          ],
+          "rows": [
+            [
+              "空间名称",
+              "必填，最多 32 字",
+              "列表和空间详情共用。"
+            ],
+            [
+              "所属团队",
+              "必选",
+              "从当前账号可申请的本人负责团队选择。"
+            ],
+            [
+              "研究用途",
+              "必填，最多 500 字",
+              "说明拟开展的研究工作。"
+            ],
+            [
+              "预计使用时长",
+              "选填，正整数天数",
+              "作为申请中的资源安排信息。"
+            ],
+            [
+              "关联模型",
+              "选填，选择模型及版本",
+              "选择后带出开发镜像与推荐资源。选择“不关联模型”时按当前开发环境默认项配置。"
+            ],
+            [
+              "操作系统、Python 版本、开发框架、CUDA",
+              "分别下拉选择",
+              "使用当前可选组合；CUDA 可选择不使用。"
+            ],
+            [
+              "开发工具",
+              "JupyterLab / VS Code",
+              "在空间中进入对应开发环境，IDE 新开页面。"
+            ],
+            [
+              "CPU、内存、GPU、研究存储",
+              "数值，按核 / GB / 张 / GB",
+              "有默认建议值，允许调整；GPU 为 0 表示不使用。"
+            ],
+            [
+              "单卡显存要求",
+              "配置 GPU 时填写，GB",
+              "GPU 为 0 时隐藏，配置 GPU 时按选中模型最低要求校验。"
+            ],
+            [
+              "初始数据",
+              "数据选择后添加，可移除",
+              "只添加当前团队可用数据；显示挂载路径及访问方式。"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "guide": [
+    {
+      "label": "申请与进入空间",
+      "sections": [
+        {
+          "title": "申请与进入空间",
+          "head": [
+            "场景",
+            "操作入口",
+            "结果与限制"
+          ],
+          "rows": [
+            [
+              "查看不同角色的列表",
+              "左下角切换「预览账号」",
+              "选择科研负责人查看「我负责的」，选择普通成员查看「我参与的」。"
+            ],
+            [
+              "列表筛选",
+              "名称搜索、已结束的空间、每页条数",
+              "在本人负责或本人参与的空间范围内筛选和分页。"
+            ],
+            [
+              "申请",
+              "负责人点击“申请科研空间”",
+              "选择本人负责的团队，填写申请配置。"
+            ],
+            [
+              "模型 / 环境选择",
+              "选择关联模型和各环境下拉",
+              "更新推荐资源与环境说明，允许在现有可用范围内调整。"
+            ],
+            [
+              "申请提交",
+              "提交申请",
+              "在后台“资源申请审批 → 创建科研开发空间”办理。获批后可从空间列表进入。"
+            ],
+            [
+              "申请记录",
+              "个人中心 → 我的科研空间 → 申请记录",
+              "查看提交信息和审批意见。"
+            ],
+            [
+              "进入空间",
+              "空间卡片进入空间",
+              "打开对应空间详情。"
+            ],
+            [
+              "进入开发环境",
+              "进入开发环境 / 启动并进入",
+              "按实例状态启动后新开 IDE 页面。"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+  function inject() {
+    if (document.querySelector('.mtdev-group')) return;
+
+    var style = document.createElement('style');
+    style.textContent = CSS;
+    document.head.appendChild(style);
+
+    var wrap = document.createElement('div');
+    wrap.setAttribute('data-devdoc-version', '2026-11-18');
+    wrap.innerHTML =
+      drawerHTML('mtdevFieldMask', 'mtdevFieldBody', 'mtdevFieldTitle') +
+      drawerHTML('mtdevGuideMask', 'mtdevGuideBody', 'mtdevGuideTitle') +
+      '<div class="mtdev-group">' +
+      '<button class="mtdev-btn field" type="button" aria-haspopup="dialog" aria-controls="mtdevFieldMask">📋 字段说明</button>' +
+      '<button class="mtdev-btn guide" type="button" aria-haspopup="dialog" aria-controls="mtdevGuideMask">🧪 交互演示指引</button>' +
+      '</div>';
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', function (event) { event.stopPropagation(); });
+
+    var group = wrap.querySelector('.mtdev-group');
+    var fieldMask = wrap.querySelector('#mtdevFieldMask');
+    var guideMask = wrap.querySelector('#mtdevGuideMask');
+    var activeMask, opener;
+
+    renderDrawer(fieldMask, doc, '📋 字段说明', doc.field, 'mtdevF');
+    renderDrawer(guideMask, doc, '🧪 交互演示指引', doc.guide, 'mtdevG');
+
+    function close() {
+      if (!activeMask) return;
+      activeMask.classList.remove('on');
+      activeMask = null;
+      if (opener && opener.isConnected) opener.focus({ preventScroll: true });
+      opener = null;
+    }
+
+    function attach(mask, trigger) {
+      trigger.onclick = function () {
+        close();
+        opener = trigger;
+        activeMask = mask;
+        var body = mask.querySelector('.mtdev-bd');
+        selectTab(body, 0);
+        body.scrollTop = 0;
+        mask.classList.add('on');
+        mask.querySelector('.mtdev-x').focus({ preventScroll: true });
+      };
+      mask.querySelector('.mtdev-x').onclick = close;
+      mask.onclick = function (event) { if (event.target === mask) close(); };
+      mask.onkeydown = function (event) {
+        if (event.key !== 'Tab') return;
+        var first = mask.querySelector('.mtdev-x');
+        var last = mask.querySelector('.mtdev-tab.on');
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      };
+      draggable(mask.querySelector('.mtdev-drawer'), mask.querySelector('.mtdev-hd'));
+    }
+
+    attach(fieldMask, group.querySelector('.mtdev-btn.field'));
+    attach(guideMask, group.querySelector('.mtdev-btn.guide'));
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') close();
+    });
+    draggable(group);
+
+    /* Avoid covering the host application's full-screen dialog controls. */
+    setInterval(function () {
+      var overlays = document.querySelectorAll('[class*=mask],[class*=overlay],[class*=backdrop],[class*=modal]');
+      var covered = Array.from(overlays).some(function (element) {
+        if (/mtdev/.test(element.className || '')) return false;
+        var style = window.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) return false;
+        var box = element.getBoundingClientRect();
+        return box.width > window.innerWidth * 0.9 && box.height > window.innerHeight * 0.9;
+      });
+      group.classList.toggle('mtdev-dim', covered);
+    }, 250);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject);
+  else inject();
+})();
+</script><!-- devdoc-1012:end -->
 <script data-inline-source="portal-access.js">
 (function () {
   'use strict';
@@ -851,22 +1463,14 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
     window.renderAuthArea?.();prune();
 
     const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
-    const previewStyle=document.createElement('style');previewStyle.textContent=`
-      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
-      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
-      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
-      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
-      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
-    `;document.head.append(previewStyle);
-    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
-    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    const refreshPreview=()=>window.PrototypeAccounts.mountPortalPicker();
     window.PortalPreview={refresh:refreshPreview};
     function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
       if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
-      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板向已获授权的账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
       refreshPreview();
     }
-    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()||(['downloadCSV','exportDetail'].includes(name)&&PrototypeAccounts.portalCode()!=='R1')){notice('当前账号没有此看板操作权限。');return;}return old.apply(ctx,args);}));}
     window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
 
 
@@ -911,12 +1515,12 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
       window.renderAll?.();window.syncLock?.();prune();
     }
     if(file.startsWith('数据中心')){
-      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader()||PrototypeAccounts.grant('data')!=='review')document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
       if(!O.isLeader()){
         document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
         wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
       }
-      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()&&PrototypeAccounts.grant('data')!=='deny'?old.apply(ctx,args):'');window.renderHeadRight?.();prune();}
     }
     if(file==='科研开发空间-详情页(9).html'||file==='科研开发空间-IDE编辑页.html'){
       const id=(new URLSearchParams(location.search).get('id')||new URLSearchParams(location.hash.replace(/^#/,'')).get('id')||'1');
@@ -1163,7 +1767,7 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
     try{localStorage.setItem(key,JSON.stringify(all));localStorage.setItem(marker,'1');}catch{}
   }
   seed();
-  function canReapply(r){return !!r&&mine(r)&&O.isLeader()&&rejected(r)&&!read().some(x=>String(x.previousApplicationId)===String(r.id));}
+  function canReapply(r){return !!r&&mine(r)&&O.isLeader()&&PrototypeAccounts.grant('space')!=='deny'&&rejected(r)&&!read().some(x=>String(x.previousApplicationId)===String(r.id));}
   const modal=document.createElement('dialog');modal.id='spaceRequestDialog';modal.className='sr-dialog';
   modal.innerHTML='<div class="sr-head"><h2 id="sr-title"></h2><button type="button" data-sr-close aria-label="关闭">×</button></div><div id="sr-content"></div>';
   document.body.append(modal);
@@ -1183,6 +1787,9 @@ dialog.resource-apply{width:820px;max-width:calc(100vw - 32px);max-height:92vh;o
   }
   function received(r){
     window.dispatchEvent(new CustomEvent('space-application-change'));
+    if(r.authorizationMode==='direct'){
+      closeModal();window.render?.();toast('科研空间已创建，正在等待资源开通。');return;
+    }
     if(document.getElementById('pcContent')){
       closeModal();location.hash='spaces?tab=applications';window.render();toast('申请已提交，可在申请记录中查看审批结果。');
     }else open('申请已提交',`<div class="sr-body sr-receipt"><span class="sr-check">✓</span><h3>${esc(r.name)}</h3><p>可在个人中心「我的科研空间 → 申请记录」查看审批结果。</p></div><div class="sr-foot"><button data-sr-close>返回科研空间</button><a class="primary" href="${personalURL}#spaces?tab=applications">查看申请记录</a></div>`);
@@ -1236,13 +1843,14 @@ function renderApplicationData(){
  $('#data-count').textContent=applicationDataIds.length?'已选 '+applicationDataIds.length+' 项':'选填';
 }
 function showForm(originalId){
- if(!O.isLeader()){toast('科研空间和算力由负责人申请。');return;}
+ const mode=PrototypeAccounts.grant('space');
+ if(!O.isLeader()||mode==='deny'){toast('当前账号无创建科研空间权限。');return;}
  const original=originalId?read().find(r=>String(r.id)===String(originalId)&&mine(r)):null;
  if(originalId&&!canReapply(original)){toast('当前申请不能再次提交，请查看最新申请记录。');return;}
  const own=O.myTeams().filter(t=>t.ownerId===account().id);
  if(!own.length){toast('请先在个人中心创建本人负责的团队。');return;}
  applicationDataIds=[];
- open(original?'修改并再次申请':'申请科研空间',`<form id="apply-form"><div class="modal-body application-body">${original?`<div class="sr-return-note"><strong>上次审批意见</strong>${esc(original.reviewNote||'—')}</div>`:''}
+ open(mode==='direct'?'创建科研空间':original?'修改并再次申请':'申请科研空间',`<form id="apply-form"><div class="modal-body application-body">${original?`<div class="sr-return-note"><strong>上次审批意见</strong>${esc(original.reviewNote||'—')}</div>`:''}
  <section class="application-section"><h3><span>01</span>基础信息</h3><div class="apply-basic">
  <label>空间名称 <span class="required-star">*</span><input name="name" required maxlength="32" placeholder="请输入空间名称，最多 32 字" autocomplete="off"></label>
  <label>所属团队 <span class="required-star">*</span><select id="application-team" name="team" required><option>作物遥感研究团队</option><option>农业灾害研究团队</option></select></label>
@@ -1271,7 +1879,7 @@ function showForm(originalId){
  <div id="application-data-list"></div>
  <p class="field-help">仅展示当前团队可用的数据，按所选版本只读挂载，目录自动分配。</p>
  </section><div id="resource-form-error" class="form-error" role="alert"></div>
- </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="SpaceRequests.closeForm()">取消</button><button class="primary" type="submit">提交申请</button></div></form>`);
+ </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="SpaceRequests.closeForm()">取消</button><button class="primary" type="submit">${mode==='direct'?'确认创建':'提交申请'}</button></div></form>`);
  modal.classList.add('resource-apply');
  modal.setAttribute('aria-labelledby','sr-title');
  $('#application-team').innerHTML=own.map(t=>`<option value="${esc(t.name)}" data-team-id="${esc(t.id)}">${esc(t.name)}</option>`).join('');
@@ -1288,7 +1896,7 @@ function showForm(originalId){
    for(const d of original.datasets||[]){if(!initialDatasetCatalog.some(x=>x.id===d.id))initialDatasetCatalog.push({...d,type:'数据集',team:$('#application-team').value});}
    applicationDataIds=(original.datasets||[]).map(d=>d.id);
    $('#purpose-count').textContent=f.elements.purpose.value.length+' / 500';
-   f.querySelector('button[type=submit]').textContent='再次提交申请';
+   f.querySelector('button[type=submit]').textContent=mode==='direct'?'确认创建':'再次提交申请';
    updateEnvironmentSummary();checkResourceHints();
  }
  renderApplicationData();
@@ -1307,7 +1915,8 @@ function showForm(originalId){
  $('#apply-form').onsubmit=e=>{
  e.preventDefault();
  const selectedTeam=own.find(t=>t.name===$('#application-team').value);
- if(!O.isLeader()||!selectedTeam||!O.canManageTeam(selectedTeam.id)||(original&&!canReapply(original))){$('#resource-form-error').textContent='当前申请或团队权限已变化，请关闭后重新查看。';return;}
+ const currentMode=PrototypeAccounts.grant('space');
+ if(currentMode==='deny'||!O.isLeader()||!selectedTeam||!O.canManageTeam(selectedTeam.id)||(original&&!canReapply(original))){$('#resource-form-error').textContent='当前申请或团队权限已变化，请关闭后重新查看。';return;}
  if(!checkResourceHints()){$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
  const f=new FormData(e.target),m=selectedInitialModel();
  const values=Object.fromEntries(['cpu','gpu','ram','storage'].map(k=>[k,Number(f.get(k))]));
@@ -1316,7 +1925,7 @@ function showForm(originalId){
  if(days&&(!Number.isSafeInteger(Number(days))||Number(days)<1)){$('#resource-form-error').textContent='预计使用时长需为正整数。';return;}
  const data=applicationDataIds.map(id=>initialDatasetCatalog.find(d=>d.id===id)).filter(d=>d&&(d.team==='all'||d.team===f.get('team')||(d.team==='作物遥感研究团队'&&f.get('team')==='寒地水稻研究团队'))).map(d=>({id:d.id,name:d.name,version:d.version,path:d.path,access:'只读'}));
  const gpuMemory=values.gpu?Number(f.get('gpuMemory')):0;
- const s={id:Date.now(),applicantId:account().id,applicant:account().name,teamId:selectedTeam.id,submittedAt:new Date().toISOString(),previousApplicationId:original?.id||null,rootApplicationId:original?.rootApplicationId||original?.id||null,name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
+ const s={id:Date.now(),applicantId:account().id,applicant:account().name,teamId:selectedTeam.id,submittedAt:new Date().toISOString(),previousApplicationId:original?.id||null,rootApplicationId:original?.rootApplicationId||original?.id||null,name,role:'负责人',desc:purpose,team:f.get('team'),state:currentMode==='direct'?'开通中':'申请中',authorizationMode:currentMode,instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
  try{const requests=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');if(!Array.isArray(requests))throw new Error('Invalid local applications');requests.unshift(s);localStorage.setItem('agri-space-applications-v8',JSON.stringify(requests));}catch{$('#resource-form-error').textContent='本地申请记录保存失败，请检查浏览器存储后重试。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
  received(s);
  };
@@ -1353,5 +1962,46 @@ function showForm(originalId){
  const id=params.get('space');
  if(id&&spaces.some(s=>String(s.id)===id&&s.state==='可用'))detail(id);
 })();
-</script><script src="assets/prototype-nav.js"></script>
+</script><script data-prototype-source="assets/prototype-nav.js">
+(function(){
+'use strict';
+function init(){
+ const file=window.PROTOTYPE_PORTAL_PREVIEW?'index.html':decodeURIComponent(location.pathname.split('/').pop()),admin=file.startsWith('后台-');
+ const header=document.querySelector('header.site-header.prototype-header');if(!header)return;
+ header.dataset.system=admin?'admin':'portal';
+ const main=header.querySelector('.main-nav'),toggle=header.querySelector('.menu-toggle');
+ let menu=document.getElementById(toggle?.getAttribute('aria-controls'));
+ if(menu){menu.classList.add('prototype-mobile');const extras=admin?'':Array.from(menu.children).filter(n=>n.matches('[data-bdh-login],[data-bdh-me],[data-bdh-logout],[data-consult],[data-consult-1020]')).map(n=>n.outerHTML).join('');menu.innerHTML=main.innerHTML+extras;menu.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));menu.hidden=true;menu.classList.remove('open');}
+ if(!admin){
+  const actions=header.querySelector('.header-actions');
+  if(!actions.querySelector('[data-consult],[data-consult-1020]')){const a=document.createElement('a');a.href='合作咨询.html';a.className='button button-primary';a.textContent='合作咨询';a.dataset.consult1020='';actions.insertBefore(a,toggle);}
+  if(menu&&!menu.querySelector('[data-consult],[data-consult-1020]')){const a=document.createElement('a');a.href='合作咨询.html';a.textContent='合作咨询';a.dataset.consult1020='';menu.append(a);}
+  if(file==='门户-领导数据看板.html'&&menu){const a=document.createElement('a');a.href='个人中心-高保真原型.html';a.textContent='个人中心';menu.append(a);}
+  const sync=()=>{const O=window.PortalOrg;header.querySelectorAll('a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')||'').startsWith('门户-领导数据看板.html'))a.hidden=O?!O.canViewDashboard():false;});if(O?.isLogged()){header.querySelectorAll('.bdh-name,.username').forEach(n=>n.textContent=O.current().name);}};
+  sync();window.addEventListener('portal-account-change',sync);window.addEventListener('portal-org-change',sync);
+ }
+ function close(){if(menu){menu.hidden=true;menu.classList.remove('open');}toggle?.setAttribute('aria-expanded','false');toggle?.setAttribute('aria-label','打开菜单');}
+ // Capture once before historical menu handlers, preventing a second toggle.
+ window.addEventListener('click',ev=>{if(toggle?.contains(ev.target)){ev.preventDefault();ev.stopImmediatePropagation();const open=menu?.hidden;if(menu){menu.hidden=!open;menu.classList.toggle('open',open);}toggle.setAttribute('aria-expanded',String(!!open));toggle.setAttribute('aria-label',open?'关闭菜单':'打开菜单');return;}
+  if(ev.target.closest('[data-prototype-user]')){ev.preventDefault();ev.stopImmediatePropagation();const u=header.querySelector('#userMenu');u?.classList.toggle('open');header.querySelectorAll('[data-prototype-user]').forEach(b=>b.setAttribute('aria-expanded',String(u?.classList.contains('open'))));return;}
+  if(menu?.contains(ev.target)&&ev.target.closest('a'))close();if(!header.contains(ev.target)){close();header.querySelector('#userMenu')?.classList.remove('open');}
+ },true);
+ window.addEventListener('keydown',ev=>{if(ev.key==='Escape'){close();header.querySelector('#userMenu')?.classList.remove('open');}});
+ window.addEventListener('resize',close);
+ if(admin){
+  const nav=[['工作台总览','后台-工作台总览.html'],['课题管理','后台-课题工作台.html'],['审批中心','后台-审批中心.html'],['运营管理','后台-模型管理.html'],['平台能力','后台-时空数据管理.html'],['合作与组织','后台-管理设置.html']];
+  const labels=nav.map(x=>x[0]),links=main.querySelectorAll('a');links.forEach((a,i)=>{a.textContent=labels[i];a.href=nav[i][1];a.dataset.pxOwn='1';});if(menu)menu.innerHTML=main.innerHTML;
+  document.querySelectorAll('.admin-side a').forEach(a=>{const t=a.textContent.trim();const mapping={'工作台总览':'后台-工作台总览.html','消息中心':'后台-消息中心.html','个人资料':'后台-个人资料.html','账号安全':'后台-账号安全.html','课题管理工作台':'后台-课题工作台.html','课题指南管理':'后台-课题指南管理.html','科研人员推荐':'后台-科研人员推荐.html','课题管理':'后台-课题管理.html','成果验收审批':'后台-审批中心.html','资源申请审批':'后台-资源申请审批.html','门户管理':'后台-门户管理-首页内容.html','模型管理':'后台-模型管理.html','数据集管理':'后台-数据集管理.html','案例管理':'后台-案例管理.html','需求管理':'后台-需求管理.html','科研空间管理':'后台-科研空间管理.html'};if(mapping[t]){a.href=mapping[t];a.removeAttribute('onclick');a.dataset.pxOwn='1';}});
+  if(['后台-时空数据管理.html','后台-地图引擎.html','后台-能力共享.html'].includes(file)){
+   const side=document.querySelector('.admin-side');if(side){side.querySelectorAll('.mt-subsystems').forEach(n=>n.remove());const old=Array.from(side.children).filter(n=>!n.classList.contains('side-title'));side.innerHTML='<div class="side-title">平台能力</div>';for(const [label,target] of [['时空数据管理','后台-时空数据管理.html'],['地图引擎','后台-地图引擎.html'],['能力共享','后台-能力共享.html']]){const a=document.createElement('a');a.className='snav'+(file===target?' active':'');a.href=target;a.textContent=label;a.dataset.pxOwn='1';if(file===target)a.setAttribute('aria-current','page');side.append(a);if(file===target){const wrap=document.createElement('div');wrap.className='platform-detail-nav';old.forEach(n=>wrap.append(n));side.append(wrap);}}}
+  }
+ }else if(file.startsWith('关于平台-')){
+  const side=document.querySelector('aside.side');if(side){side.classList.add('prototype-about-side');side.innerHTML='<div class="side-title">关于平台</div>'+[['平台介绍','平台介绍'],['使用帮助','使用帮助'],['开发者接入','开发者接入'],['部署说明','部署说明'],['联系支持','联系支持']].map(([t,s])=>{const current=file==='关于平台-'+s+'.html'||(s==='使用帮助'&&file==='关于平台-数据使用指南.html');return '<a href="关于平台-'+s+'.html"'+(current?' class="active" aria-current="page"':'')+'>'+t+'</a>';}).join('');}
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+</script>
+<script src="assets/portal-role-ui.js"></script>
 </body></html>

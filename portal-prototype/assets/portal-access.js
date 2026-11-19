@@ -18,22 +18,14 @@
     window.renderAuthArea?.();prune();
 
     const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
-    const previewStyle=document.createElement('style');previewStyle.textContent=`
-      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
-      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
-      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
-      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
-      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
-    `;document.head.append(previewStyle);
-    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
-    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    const refreshPreview=()=>window.PrototypeAccounts.mountPortalPicker();
     window.PortalPreview={refresh:refreshPreview};
     function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
       if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
-      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板向已获授权的账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
       refreshPreview();
     }
-    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()||(['downloadCSV','exportDetail'].includes(name)&&PrototypeAccounts.portalCode()!=='R1')){notice('当前账号没有此看板操作权限。');return;}return old.apply(ctx,args);}));}
     window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
 
 
@@ -78,18 +70,18 @@
       window.renderAll?.();window.syncLock?.();prune();
     }
     if(file.startsWith('数据中心')){
-      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader()||PrototypeAccounts.grant('data')!=='review')document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
       if(!O.isLeader()){
         document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
         wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
       }
-      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()&&PrototypeAccounts.grant('data')!=='deny'?old.apply(ctx,args):'');window.renderHeadRight?.();prune();}
     }
     if(file==='科研开发空间-交互原型(10).html'){
       const all=spaces.slice(),scope=new URLSearchParams(location.search).get('team');
       spaces=all.filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope)).map(s=>({...s,team:O.spaceTeam(s.id).name,role:O.canManageSpace(s.id)?'负责人':'成员'}));
       permission=O.isLeader()?'owner':'member';if(!O.isLeader()||!O.myTeams().some(t=>t.ownerId===O.current().id))todos=[];
-      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader();
+      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader()||PrototypeAccounts.grant('space')==='deny';
       const oldApply=window.apply;window.apply=function(){
         if(!O.isLeader()){notice('科研空间和算力由负责人申请。');return;}
         const own=O.myTeams().filter(t=>t.ownerId===O.current().id);if(!own.length){notice('请先在个人中心创建团队。');return;}

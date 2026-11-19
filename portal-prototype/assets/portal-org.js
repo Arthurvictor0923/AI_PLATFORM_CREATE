@@ -82,5 +82,5 @@
     cancelInvite(id) {const s=read(),i=s.invitations.find(x=>x.id===id);if(!i||i.status!=='pending')throw Error('邀请已处理。');managedTeam(s,i.teamId);i.status='cancelled';save(s);},
     escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
   };
-  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+  window.PrototypeAccounts.connectPortal(O);
 })();

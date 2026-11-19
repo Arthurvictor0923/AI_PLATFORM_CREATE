@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="zh-CN" data-default-view="consult">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<head><meta charset="UTF-8">
+<script src="assets/prototype-accounts.js"></script>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>合作咨询 · 北大荒智慧农业协同创新平台</title>
 <style>
 :root{--brand:#064c43;--hover:#043d36;--heading:#123b35;--text:#263b38;--muted:#667770;--line:#dfe7e1;--soft:#f1f6f2;--canvas:#fafbf8;--gold:#927021;--danger:#b34040;--shadow:0 10px 35px #123b350a;--font:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
@@ -366,7 +368,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
  <footer class="footer"><div class="wrap"><span>北大荒智慧农业协同创新平台</span><span>智慧农场技术与系统全国重点实验室 · 北大荒农垦集团</span></div></footer>
 </div>
 <div id="adminView" class="admin" hidden>
- <header class="header"><div class="header-inner"><div class="brand"><svg><use href="#leaf"/></svg><span>北大荒智慧农业协同创新平台</span></div><span class="admin-label">管理后台</span><nav class="nav" aria-label="后台一级导航"><a href="../后台管理端原型/后台-工作台总览.html">工作台总览</a><a href="../后台管理端原型/后台-课题工作台.html">课题管理</a><a href="../后台管理端原型/后台-审批中心.html">审批中心</a><a href="../后台管理端原型/后台-模型管理.html">运营管理</a><a href="../后台管理端原型/后台-时空数据管理.html">平台能力</a><a href="../后台管理端原型/后台-管理设置.html#cooperation" class="active">合作与组织</a></nav><div class="admin-account"><span class="avatar">张</span><span>张明</span></div></div></header>
+ <header class="header"><div class="header-inner"><div class="brand"><svg><use href="#leaf"/></svg><span>北大荒智慧农业协同创新平台</span></div><span class="admin-label">管理后台</span><nav class="nav" aria-label="后台一级导航"><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/index.html">工作台总览</a><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-课题中心.html#workbench">课题管理</a><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-审批中心.html">审批中心</a><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-模型管理.html">运营管理</a><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-时空数据管理.html">平台能力</a><a href="https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-管理设置.html#cooperation" class="active">合作与组织</a></nav><div class="admin-account"><span class="avatar">张</span><span>张明</span></div></div></header>
  <div class="admin-area">
   <aside class="sidebar" aria-label="工作台菜单"><div class="side-title">工作台总览</div><span class="side-item"><svg class="icon"><use href="#home"/></svg>工作台总览</span><button class="side-item active" onclick="resetFilters()"><svg class="icon"><use href="#chat"/></svg>合作咨询</button><span class="side-item"><svg class="icon"><use href="#bell"/></svg>消息中心</span><div class="side-rule"></div><span class="side-item"><svg class="icon"><use href="#user"/></svg>个人资料</span><span class="side-item"><svg class="icon"><use href="#lock"/></svg>账号安全</span></aside>
   <main class="admin-content"><div class="pagehead"><div><h1>合作咨询</h1><p>查看咨询信息，记录沟通情况。</p></div><button class="btn" type="button" onclick="showView('consult')"><svg class="icon" style="width:16px;height:16px"><use href="#chat"/></svg>查看前台页面</button></div>
@@ -412,7 +414,7 @@ function loadRows(){try{const raw=localStorage.getItem(KEY);if(!raw)return seeds
 let rows=loadRows();
 function persist(next){try{localStorage.setItem(KEY,JSON.stringify(next));rows=next;$('storageWarning').hidden=true;return true;}catch(e){$('storageWarning').hidden=false;return false;}}
 function toast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,3200);}
-function activateView(view){const admin=view==='admin';if(admin){location.href='../后台管理端原型/后台-管理设置.html#cooperation';return;}$('demoToolbar').hidden=!admin;$('adminView').hidden=!admin;$('consultView').hidden=admin;$('demoAdmin').classList.toggle('current',admin);$('demoConsult').classList.toggle('current',!admin);$('fillExample').hidden=admin;document.title=(admin?'后台 · 合作咨询':'合作咨询')+' · 北大荒智慧农业协同创新平台';if(admin){rows=loadRows();renderAdmin();}window.scrollTo({top:0});}
+function activateView(view){const admin=view==='admin';if(admin){location.href='https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/后台-管理设置.html#cooperation';return;}$('demoToolbar').hidden=!admin;$('adminView').hidden=!admin;$('consultView').hidden=admin;$('demoAdmin').classList.toggle('current',admin);$('demoConsult').classList.toggle('current',!admin);$('fillExample').hidden=admin;document.title=(admin?'后台 · 合作咨询':'合作咨询')+' · 北大荒智慧农业协同创新平台';if(admin){rows=loadRows();renderAdmin();}window.scrollTo({top:0});}
 function showView(view){if($('detailDrawer').open)closeDetail();if($('handleDialog').open)closeHandle();location.hash=view==='admin'?'admin':'consult';activateView(view);}
 window.addEventListener('hashchange',()=>activateView(location.hash==='#admin'?'admin':'consult'));
 function clearErrors(){document.querySelectorAll('#consultForm .error').forEach(el=>{el.hidden=true;el.textContent='';});document.querySelectorAll('#consultForm [aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));$('formError').hidden=true;}
@@ -692,4 +694,5 @@ activateView(location.hash==='#admin'?'admin':location.hash==='#consult'?'consul
 </script>
 <script src="assets/portal-org.js"></script>
 <script src="assets/prototype-nav.js"></script>
-<script src="assets/meeting/meeting-devdoc.js"></script></body></html>
+<script src="assets/meeting/meeting-devdoc.js"></script><script src="assets/portal-role-ui.js"></script>
+</body></html>

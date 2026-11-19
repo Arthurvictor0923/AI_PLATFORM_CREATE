@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-CN" data-page-node-id="lU8xBd4L4OfIQt9z4PJo4j">
-<head data-page-node-id="VCAaWE4pNADzCvOJZHkmdO">
+<head data-page-node-id="VCAaWE4pNADzCvOJZHkmdO"><meta charset="UTF-8">
+<script src="assets/prototype-accounts.js"></script>
+
 <script src="assets/resource-fields.js"></script>
 <meta charset="UTF-8" data-page-node-id="Gsy9zWUnqZ1G0bTsbmXKSn">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="UY9CHEWf0wrhcQRRIxWM1U">
@@ -1034,14 +1036,14 @@ var AUTH_LS_KEY='LS_AUTH_APPS';
 function getApps(){
   try{var a=JSON.parse(localStorage.getItem(AUTH_LS_KEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}
 }
-function applyZoneAll(zone){if(window.PortalOrg&&!PortalOrg.isLeader()){toast('数据由负责人为科研空间申请，成员不能单独申请。');return;}
+function applyZoneAll(zone){if(!PortalOrg.isLeader()||PrototypeAccounts.grant('data')!=='review')return;
   if(isHighRole()){toast('当前角色已获授权，无需申请');return;}
   if(!requireAuth())return;
   var list=DS.filter(function(d){return d.zone===zone;});
   if(!list.length){toast('该专题暂无数据集');return;}
   var apps=getApps();var added=0;
   list.forEach(function(d){
-    var ex=apps.some(function(a){return a.name===d.name&&a.status==='pending';});
+    var ex=apps.some(function(a){return (a.applicantId||'u-zhang')===PortalOrg.current().id&&a.name===d.name&&['pending','approved','已通过'].includes(a.status);});
     if(!ex){apps.push({applicantId:PortalOrg.current().id,applicant:PortalOrg.current().name,appId:'A'+Date.now()+'_'+added,name:d.name,form:d.form,use:'专题批量申请',note:'专题「'+zoneNameOf(zone)+'」批量申请',submittedAt:new Date().toISOString().slice(0,10),status:'pending'});added++;}
   });
   try{localStorage.setItem(AUTH_LS_KEY,JSON.stringify(apps));}catch(e){toast('本地存储不可用，申请未保存');return;}
@@ -1400,7 +1402,7 @@ function renderCtx(){
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
     '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>清空</span>';
   if(activeZone){
-    if(!isHighRole()){html+='<span class="ctx-all" onclick="applyZoneAll(\''+activeZone+'\')">申请本专题全部 →</span>';}
+    if(PortalOrg.isLeader()&&PrototypeAccounts.grant('data')==='review'){html+='<span class="ctx-all" onclick="applyZoneAll(\''+activeZone+'\')">申请本专题全部 →</span>';}
   }
   bar.innerHTML=html;
   bar.querySelectorAll('.ctx-chip').forEach(function(ch){
@@ -1759,5 +1761,6 @@ renderZoneList();renderAll();
 <!-- devdoc-1012:start --><script src="assets/meeting/meeting-devdoc.js"></script><!-- devdoc-1012:end -->
 <script src="assets/portal-access.js"></script>
 <script src="assets/prototype-nav.js"></script>
+<script src="assets/portal-role-ui.js"></script>
 </body>
 </html>

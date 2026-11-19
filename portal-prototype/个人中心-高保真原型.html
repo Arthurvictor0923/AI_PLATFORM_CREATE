@@ -1,5 +1,7 @@
-<!doctype html><html lang="zh-CN"><head>
-<script src="assets/resource-fields.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>个人中心</title><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8">
+<script src="assets/prototype-accounts.js"></script>
+
+<script src="assets/resource-fields.js"></script><meta name="viewport" content="width=device-width,initial-scale=1"><title>个人中心</title><style>
 :root{--ink:#10213a;--muted:#526078;--light:#6b778c;--green:#005653;--pale:#edf6f2;--line:#dce5e9;--bg:#f4f8f5}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font:14px/1.65 "Microsoft YaHei","PingFang SC",Arial,sans-serif}button,input,select{font:inherit;color:inherit}button,select{cursor:pointer}button{background:white;border:1px solid var(--line);border-radius:4px;padding:7px 18px;line-height:1.5;transition:background .15s}button:hover{background:var(--pale)}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #318c80;outline-offset:3px}.primary{background:var(--green);border-color:var(--green);color:white}.primary:hover{background:#006e68}.text-btn{border:0;padding:0;color:var(--green);font-weight:600;background:transparent}.text-btn:hover{background:transparent;color:#138577}h1,h2,h3,p{margin:0}header{height:64px;background:white;border-bottom:1px solid var(--line)}.header-inner{max-width:1480px;padding:0 28px;margin:auto;display:flex;align-items:center;gap:28px;height:100%}.brand{display:flex;align-items:center;gap:10px;font-size:20px;white-space:nowrap;font-weight:700;letter-spacing:.4px}.logo{width:38px;height:42px;flex-shrink:0}nav{display:flex;align-items:center;gap:25px;flex:1;justify-content:center;white-space:nowrap}nav button{border:0;padding:19px 0 16px;color:var(--muted);border-radius:0;font-weight:500;background:none}nav button.active{color:var(--green);font-weight:700;border-bottom:3px solid var(--green)}.account{display:flex;gap:10px;white-space:nowrap}.layout{max-width:1480px;margin:12px auto;display:grid;grid-template-columns:244px minmax(0,1fr);gap:12px;padding:0 28px;min-height:calc(100vh - 214px)}aside,.results{background:#fff;border-radius:8px}.filters{padding:16px;align-self:stretch}.filter-tabs{display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px;border:1px solid var(--line);border-radius:4px;overflow:hidden}.filter-tabs button{border:0;border-radius:0;color:var(--muted);background:#f2f6f7}.filter-tabs button.active{background:var(--green);color:white;font-weight:600}.multi{font-size:12px;color:var(--light);padding-bottom:12px}.filter-section{padding:14px 0;border-top:1px solid var(--line)}.section-toggle{display:flex;justify-content:space-between;width:100%;border:0;padding:0;margin-bottom:12px;font-size:15px;font-weight:700;color:var(--green);background:none}.section-toggle span:first-child{border-left:3px solid var(--green);padding-left:9px}.check{display:flex;align-items:center;gap:10px;cursor:pointer;margin:8px 10px;color:var(--muted)}input[type=checkbox]{appearance:none;width:17px;height:17px;border:1px solid #a9b7c5;border-radius:3px;margin:0;display:grid;place-content:center;flex-shrink:0}input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}input[type=checkbox]:checked:after{content:"";width:8px;height:4px;border:solid white;border-width:0 0 2px 2px;transform:rotate(-45deg) translateY(-1px)}.results{padding:16px;display:flex;flex-direction:column}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:20px}.search{display:flex;gap:10px;flex:1;max-width:660px}.search-box{position:relative;flex:1}.search-box svg{position:absolute;left:12px;top:11px;width:18px;height:18px;stroke:#82909f}.search input{width:100%;height:40px;border:1px solid #bdcbd3;border-radius:4px;padding:0 12px 0 39px;outline-offset:2px}.search input::placeholder{color:#788598}.search button{min-width:92px}.sort{margin-left:auto}select{height:36px;border:1px solid var(--line);border-radius:4px;background:white;padding:0 10px}.sort select{height:40px;min-width:120px}.count{margin-bottom:12px;color:var(--muted)}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{padding:16px 18px 0;border:1px solid var(--line);border-radius:5px;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s}.card:hover{border-color:#96bdb4;box-shadow:0 3px 12px #163f3010}.card h2{font-size:18px;line-height:1.5;margin-bottom:7px;font-weight:700;letter-spacing:.1px}.title-button{padding:0;border:0;text-align:left;background:none;font-size:inherit;font-weight:inherit;line-height:inherit}.title-button:hover{background:none;color:var(--green)}.tag{display:inline-block;background:#eaf6f1;color:var(--green);border-radius:3px;padding:2px 10px;font-size:12px;white-space:nowrap}.card .direction{margin-bottom:7px}.summary{color:var(--muted);font-size:13px;line-height:1.8;min-height:47px;margin-bottom:11px}.service-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12px;margin-bottom:8px}.label{color:var(--light)}.publisher{font-size:12px;color:var(--muted);margin-bottom:13px}.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding:11px 0;margin-top:auto;font-size:12px}.date{color:var(--light);display:flex;gap:8px;align-items:center}.date svg{width:17px;height:17px;stroke:var(--green)}.card-bottom button{font-size:13px}.arrow{font-size:20px;margin-left:10px;vertical-align:-1px;font-weight:400}.pagination{display:flex;align-items:center;gap:8px;padding-top:28px;margin-top:auto;color:var(--muted);font-size:13px}.pager-right{margin-left:auto;display:flex;align-items:center;gap:8px}.pager-right .total{margin-right:10px}.pagination button{padding:6px 12px}.pagination .current{background:var(--green);color:white;border-color:var(--green)}.empty{grid-column:1/-1;padding:100px 24px;text-align:center;color:var(--muted)}.empty h3{color:var(--ink);font-size:18px;margin:12px}.empty p{font-size:13px}.topic-card{margin:12px 0;width:100%;padding:14px;text-align:left}.topic-card strong{display:block;color:var(--green);margin-bottom:4px}.topic-card span{font-size:12px;color:var(--muted)}footer{background:#00504e;color:white;margin-top:12px}.footer-inner{max-width:1480px;margin:auto;min-height:126px;padding:22px 42px;display:grid;grid-template-columns:1.7fr .65fr .8fr 1fr;align-items:center;gap:40px}.footer-brand{display:flex;gap:16px;align-items:center}.footer-brand h3{font-size:17px;font-weight:600}.footer-brand p{font-size:12px;opacity:.8;margin-top:4px}.footer-brand .logo{width:45px;height:50px;filter:grayscale(1) brightness(0) invert(1)}.footer-links{font-size:12px;display:flex;flex-direction:column;gap:2px}.footer-links button{border:0;color:#d9e9e5;padding:0;text-align:left;background:none;font-size:12px}.footer-links strong{margin-bottom:3px}.motto{border-left:1px solid #8cb0aa;text-align:center;letter-spacing:5px;font-size:16px;font-family:serif;line-height:1.9}.detail{max-width:1424px;min-height:calc(100vh - 214px);margin:16px auto;padding:0 28px}.back{margin-bottom:12px;font-weight:500}.detail-hero{background:white;border:1px solid var(--line);border-radius:8px;padding:26px 28px;display:flex;gap:28px;justify-content:space-between;align-items:center}.detail h1{font-size:25px;margin-bottom:8px}.detail-hero .tag{margin:0 0 12px}.detail-meta{font-size:13px;color:var(--muted);margin-top:14px}.hero-actions{text-align:center;flex-shrink:0}.hero-actions button{padding:10px 40px}.hero-actions p{font-size:12px;color:var(--light);margin-top:9px}.detail-columns{display:grid;grid-template-columns:2.1fr 1fr;gap:16px;margin-top:16px}.detail-body,.info{background:white;border:1px solid var(--line);border-radius:8px;padding:24px 28px}.detail-section{padding-bottom:24px;margin-bottom:22px;border-bottom:1px solid var(--line)}.detail-section:last-child{border:0;margin:0;padding:0}.detail-section h2,.info h2{font-size:16px;margin-bottom:12px;border-left:3px solid var(--green);padding-left:10px}.detail-section p{color:var(--muted);line-height:1.95}.detail-section ol{color:var(--muted);padding-left:21px;line-height:2.1;margin:0}.info{align-self:start}.info-row{padding:15px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;font-size:13px}.info-row:last-child{border:0}.info-row span:first-child{color:var(--light);flex-shrink:0}.info-row span:last-child{text-align:right}.notice{background:var(--pale);color:var(--muted);border-left:3px solid var(--green);border-radius:4px;padding:13px 18px;font-size:12px;line-height:1.9;margin-top:16px}dialog{position:fixed;inset:0;margin:auto;width:520px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:8px;color:var(--ink);box-shadow:0 18px 65px #0b242529}dialog::backdrop{background:#112a3b66;backdrop-filter:blur(2px)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line)}.modal-head h2{font-size:18px}.close-x{border:0;padding:0 4px;color:var(--light);font-size:24px;line-height:1}.modal-body{padding:12px 24px 20px}.contact-row{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line);font-size:14px}.contact-row span:first-child{color:var(--light)}.copy{background:var(--pale);color:var(--green);border:0;padding:5px 9px;font-size:12px}.modal-note{font-size:12px;color:var(--light);line-height:1.9;margin-top:20px}.modal-foot{padding:16px 24px;background:#fafcfb;border-top:1px solid var(--line);text-align:right}.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#123a36;color:white;padding:10px 22px;border-radius:5px;z-index:20;font-size:13px;box-shadow:0 4px 14px #0002}.demo-caption{font-size:11px;color:var(--light);margin-top:6px} [hidden]{display:none!important}
 @media(min-width:1550px){.card{padding-top:20px}.card-bottom{padding:14px 0}.summary{min-height:52px}.cards{gap:16px}.layout{margin-top:16px;margin-bottom:16px}}@media(max-width:1250px){.header-inner{gap:18px;padding:0 20px}.brand{font-size:16px}.logo{width:30px}nav{gap:16px;font-size:12px}.account button{padding:6px 12px}.layout{padding:0 20px;grid-template-columns:220px 1fr}.card{padding:14px 14px 0}.card h2{font-size:16px}.footer-inner{gap:24px}.summary{min-height:70px}}@media(max-width:960px){header{height:auto}.header-inner{flex-wrap:wrap;padding-top:10px;gap:8px}.brand{flex:1}.account{order:1}nav{order:2;flex-basis:100%;justify-content:flex-start;overflow:auto}nav button{padding:9px 0}.layout{grid-template-columns:195px 1fr;padding:0 14px}.cards{grid-template-columns:1fr}.summary{min-height:0}.footer-inner{grid-template-columns:1.6fr 1fr;padding:24px}.footer-links{display:none}.detail-columns{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}.search{flex-basis:100%}.sort{margin-left:0}.detail{padding:0 14px}.detail h1{font-size:22px}}@media(max-width:620px){.brand{font-size:14px;gap:5px}.account button{font-size:12px}.account button:last-child{display:none}.layout{grid-template-columns:1fr}.filters{padding:12px}.filter-tabs{max-width:220px}.multi{display:none}.filter-section{padding:10px 0}.checks{display:flex;flex-wrap:wrap}.check{font-size:12px;margin:5px 8px}.section-toggle{margin-bottom:6px}.results{padding:12px}.search input{font-size:12px}.search button{min-width:64px;padding:7px 12px}.pagination{flex-wrap:wrap;gap:10px}.pager-right{margin-left:0;width:100%;justify-content:flex-end}.footer-inner{grid-template-columns:1fr}.motto{display:none}.detail-hero{display:block;padding:20px}.hero-actions{text-align:left;margin-top:18px}.detail-body,.info{padding:20px}.contact-row{grid-template-columns:52px 1fr auto;gap:8px;font-size:13px}}
 
@@ -555,7 +557,7 @@ header.site-header .header-actions a.signed-user:hover{ color:var(--bdh-brand,#0
     removeMember(id,accountId) {const s=read(),t=managedTeam(s,id);if(accountId===t.ownerId)throw Error('不能移除团队负责人。');t.memberIds=t.memberIds.filter(x=>x!==accountId);save(s);},
     escape:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
   };
-  if(decodeURIComponent(location.pathname).includes('个人中心')&&!O.isLogged())O.select('u-zhang');
+  window.PrototypeAccounts.connectPortal(O);
 })();
 
 </script>
@@ -1565,18 +1567,29 @@ const seedDemands=[
 {id:'sd4',title:'2025年秋收进度遥感核查',direction:'监测预警',crops:'玉米、大豆',services:['图像解读','报告编制'],summary:'按周核查秋收进度，形成进度统计与核查简报。',problem:'希望按周掌握各地块秋收进度，为组织调度提供参考。',material:'已有秋收期间遥感影像与部分上报进度。',work:['按周解译收获进度并核对上报数据。','形成进度统计与核查简报。'],output:'周度进度统计与核查简报',deadline:'2025年11月',publisher:'黑龙江省农业科学院',contact:'张研究员',phone:'0451-88123456',email:'',status:'已对接',date:'2026-09-12',submittedAt:'2026-09-12',getCount:2,reject:'',mine:true}];
 /* 示例数据按 id 合并写入（幂等）：已存在的不重复写、被撤回/改状态的也不覆盖 */
 try{const cur=demandStore(),have=new Set(cur.map(x=>x.id)),add=seedDemands.filter(s=>!have.has(s.id));if(add.length)demandSave(cur.concat(add))}catch{}
-function demandGroup(s){return s==='待审核'?'待审核':(s==='发布中'||s==='已获取联系方式')?'发布中':s==='未通过'?'未通过':'已结束'}
-function demandCanEdit(x){return x.status==='待审核'||x.status==='未通过'}
+function demandGroup(status){
+  if(['未通过','已驳回','已拒绝'].includes(status))return '未通过';
+  if(['发布中','已发布','已获取联系方式'].includes(status))return '发布中';
+  return status==='待审核'?'待审核':'已结束';
+}
+function demandCanEdit(x){return x.reviewDecision!=='拒绝'&&PrototypeAccounts.grant('demand')!=='deny'&&['待审核','未通过'].includes(demandGroup(x.status));}
 function demandCanWithdraw(x){return ['待审核','发布中','已获取联系方式'].includes(x.status)}
-function demands(){const all=demandStore().slice().sort((a,b)=>String(b.submittedAt||b.date).localeCompare(String(a.submittedAt||a.date)));const list=demandTab==='全部'?all:all.filter(x=>demandGroup(x.status)===demandTab);return `<section class="pc-panel">${heading('我的需求',button('＋ 发布需求','data-new-demand','primary'))}<p class="pc-note">此处只显示本人提交的需求。提交后由平台运营审核，审核通过（发布中）才在「需求中心」对外展示；联系方式由对方点击后获取，对接与后续合作由双方线下完成，平台不参与。</p>${tabs(['全部','待审核','发布中','未通过','已结束'],demandTab,'data-demand-tab')}${list.map(x=>`<article class="pc-resource"><span class="pc-icon">▦</span><div class="pc-resource-title"><small>${E(x.direction)}${x.crops?' · '+E(x.crops):''}</small><h3>${E(x.title)} ${badge(x.status)}</h3><p>所需服务：${(x.services||[]).join('、')||'—'}</p><p>提交时间：${x.submittedAt||x.date} · 获取联系方式 <b>${x.getCount||0}</b> 次</p>${x.status==='未通过'&&x.reject?'<p class="pc-reason">未通过原因：'+E(x.reject)+'</p>':''}</div><div class="pc-actions">${button('查看详情',`data-demand-view="${x.id}"`)}${demandCanEdit(x)?button('编辑',`data-demand-edit="${x.id}"`):''}${demandCanWithdraw(x)?button('撤回',`data-demand-withdraw="${x.id}"`):''}</div></article>`).join('')||empty('该状态下暂无需求')}<p class="pc-count">共 ${list.length} 条（全部 ${all.length} 条）</p></section>`}
-function demandDetail(id){const x=demandStore().find(v=>v.id===id);if(!x)return;const rows=[['需求方向',E(x.direction)],['涉及作物',x.crops?E(x.crops):'—'],['所需服务',(x.services||[]).join('、')||'—'],['当前状态',badge(x.status)],['提交时间',x.submittedAt||x.date],['获取联系方式',(x.getCount||0)+' 次']];modal(x.title,`<div class="pc-details">${rows.map(r=>`<p>${r[0]}：${r[1]}</p>`).join('')}</div><h3>需求概述</h3><p>${E(x.summary)}</p><h3>希望解决的问题</h3><p>${E(x.problem)}</p>${x.material?'<h3>已有资料</h3><p>'+E(x.material)+'</p>':''}<h3>需要完成的工作</h3><ol>${(x.work||[]).map(w=>'<li>'+E(w)+'</li>').join('')||'<li>具体工作内容由双方沟通确认。</li>'}</ol><h3>预期交付成果</h3><p>${E(x.output)}</p><h3>期望交付时间</h3><p>${x.deadline?E(x.deadline):'由双方沟通确认'}</p>${x.reject?'<p class="pc-reason">未通过原因：'+E(x.reject)+'</p>':''}<p class="pc-note">联系方式（${E(x.contact)}${x.phone?' · '+E(x.phone):''}${x.email?' · '+E(x.email):''}）仅对登录用户展示；平台不参与双方合作，请自行核实对方资质。</p>`,(demandCanEdit(x)?button('编辑需求',`data-demand-edit="${x.id}"`):'')+(demandCanWithdraw(x)?button('撤回需求',`data-demand-withdraw="${x.id}"`):''))}
-function withdrawAsk(id){const x=demandStore().find(v=>v.id===id);if(!x)return;modal('撤回需求',`<h3>${E(x.title)}</h3><p>撤回后该需求不再对外展示，状态变为「已关闭」，可在「已结束」中查看。</p><p class="pc-note">原型演示：撤回后如需重新发布，可重新填写后再提交审核。</p>`,button('确认撤回',`data-demand-withdraw-ok="${id}"`,'primary'))}
-function withdrawDo(id){const all=demandStore();const i=all.findIndex(z=>z.id===id);if(i<0)return;all[i].status='已关闭';if(!demandSave(all)){toast('当前浏览器无法保存');return}$('pcModal').close();demandTab='全部';render();toast('已撤回，需求状态为「已关闭」')}
+function demands(){const all=demandStore().slice().sort((a,b)=>String(b.submittedAt||b.date).localeCompare(String(a.submittedAt||a.date)));const list=demandTab==='全部'?all:all.filter(x=>demandGroup(x.status)===demandTab);return `<section class="pc-panel">${heading('我的需求',button('＋ 发布需求','data-new-demand','primary'))}<p class="pc-note">此处只显示本人提交的需求。提交后由平台运营审核，审核通过（发布中）才在「需求中心」对外展示；联系方式由对方点击后获取，对接与后续合作由双方线下完成，平台不参与。</p>${tabs(['全部','待审核','发布中','未通过','已结束'],demandTab,'data-demand-tab')}${list.map(x=>`<article class="pc-resource"><span class="pc-icon">▦</span><div class="pc-resource-title"><small>${E(x.direction)}${x.crops?' · '+E(x.crops):''}</small><h3>${E(x.title)} ${badge(demandGroup(x.status))}</h3><p>所需服务：${(x.services||[]).join('、')||'—'}</p><p>提交时间：${x.submittedAt||x.date} · 获取联系方式 <b>${x.getCount||0}</b> 次</p>${demandGroup(x.status)==='未通过'&&x.reject?'<p class="pc-reason">未通过原因：'+E(x.reject)+'</p>':''}</div><div class="pc-actions">${button('查看详情',`data-demand-view="${x.id}"`)}${demandCanEdit(x)?button('编辑',`data-demand-edit="${x.id}"`):''}${demandCanWithdraw(x)?button('撤回',`data-demand-withdraw="${x.id}"`):''}</div></article>`).join('')||empty('该状态下暂无需求')}<p class="pc-count">共 ${list.length} 条（全部 ${all.length} 条）</p></section>`}
+function demandDetail(id){const x=demandStore().find(v=>v.id===id);if(!x)return;const rows=[['需求方向',E(x.direction)],['涉及作物',x.crops?E(x.crops):'—'],['所需服务',(x.services||[]).join('、')||'—'],['当前状态',badge(demandGroup(x.status))],['提交时间',x.submittedAt||x.date],['获取联系方式',(x.getCount||0)+' 次']];modal(x.title,`<div class="pc-details">${rows.map(r=>`<p>${r[0]}：${r[1]}</p>`).join('')}</div><h3>需求概述</h3><p>${E(x.summary)}</p><h3>希望解决的问题</h3><p>${E(x.problem)}</p>${x.material?'<h3>已有资料</h3><p>'+E(x.material)+'</p>':''}<h3>需要完成的工作</h3><ol>${(x.work||[]).map(w=>'<li>'+E(w)+'</li>').join('')||'<li>具体工作内容由双方沟通确认。</li>'}</ol><h3>预期交付成果</h3><p>${E(x.output)}</p><h3>期望交付时间</h3><p>${x.deadline?E(x.deadline):'由双方沟通确认'}</p>${x.reject?'<p class="pc-reason">未通过原因：'+E(x.reject)+'</p>':''}<p class="pc-note">联系方式（${E(x.contact)}${x.phone?' · '+E(x.phone):''}${x.email?' · '+E(x.email):''}）仅对登录用户展示；平台不参与双方合作，请自行核实对方资质。</p>`,(demandCanEdit(x)?button('编辑需求',`data-demand-edit="${x.id}"`):'')+(demandCanWithdraw(x)?button('撤回需求',`data-demand-withdraw="${x.id}"`):''))}
+function withdrawAsk(id){const x=demandStore().find(v=>v.id===id);if(!x)return;modal('撤回需求',`<h3>${E(x.title)}</h3><p>撤回后该需求不再对外展示，状态变为「已结束」，可在「已结束」中查看。</p><p class="pc-note">原型演示：撤回后如需重新发布，可重新填写后再提交审核。</p>`,button('确认撤回',`data-demand-withdraw-ok="${id}"`,'primary'))}
+function withdrawDo(id){const all=demandStore();const i=all.findIndex(z=>z.id===id);if(i<0||!demandCanWithdraw(all[i]))return;all[i].status='已结束';if(!demandSave(all)){toast('当前浏览器无法保存');return}$('pcModal').close();demandTab='全部';render();toast('已撤回，需求状态为「已结束」')}
 function clearDemandErrors(){$('pcPublishForm').querySelectorAll('.pub-field.invalid').forEach(e=>e.classList.remove('invalid'));$('pcPubPairErr').textContent='电话与邮箱请至少填写一项';pcPubAlert('')}
 function pcPubAlert(msg){const a=$('pcPubAlert');a.hidden=!msg;a.textContent=msg||''}
 function demandFail(id,msg){const box=$(id).closest('.pub-field');box.classList.add('invalid');if(msg)box.querySelector('.err').textContent=msg;return box}
-function openDemandForm(id){const x=id?demandStore().find(v=>v.id===id):null;demandEditId=x?x.id:null;clearDemandErrors();$('pcPublishForm').reset();$('pcDemandTitle').textContent=x?'编辑需求':'发布需求';$('pcPubSubmit').textContent=x?'保存并重新提交审核':'提交审核';const box=['pcPubTitle:title','pcPubCrops:crops','pcPubSummary:summary','pcPubProblem:problem','pcPubMaterial:material','pcPubOutput:output','pcPubDeadline:deadline','pcPubPublisher:publisher','pcPubContact:contact','pcPubPhone:phone','pcPubEmail:email'];box.forEach(p=>{const s=p.split(':');$(s[0]).value=x?(x[s[1]]||''):''});$('pcPubDirection').value=x?(x.direction||''):'';if(!x){$('pcPubPublisher').value=state.profile.org||'';$('pcPubContact').value=state.profile.name||''}$('pcPubServices').querySelectorAll('input').forEach(i=>{i.checked=!!(x&&(x.services||[]).includes(i.value));i.closest('label').classList.toggle('on',i.checked)});$('pcPubSummaryCount').textContent=$('pcPubSummary').value.length;$('pcPublish').showModal();setTimeout(()=>$('pcPubTitle').focus(),30)}
-function submitDemand(){const v=id=>$(id).value.trim();const bad=[];
+function openDemandForm(id){if(PrototypeAccounts.grant('demand')==='deny'){toast('当前账号无需求发布权限');return;}const x=id?demandStore().find(v=>v.id===id):null;if(x&&!demandCanEdit(x))return;demandEditId=x?x.id:null;clearDemandErrors();$('pcPublishForm').reset();$('pcDemandTitle').textContent=x?'编辑需求':'发布需求';$('pcPubSubmit').textContent=x?'保存并重新提交审核':'提交审核';const box=['pcPubTitle:title','pcPubCrops:crops','pcPubSummary:summary','pcPubProblem:problem','pcPubMaterial:material','pcPubOutput:output','pcPubDeadline:deadline','pcPubPublisher:publisher','pcPubContact:contact','pcPubPhone:phone','pcPubEmail:email'];box.forEach(p=>{const s=p.split(':');$(s[0]).value=x?(x[s[1]]||''):''});$('pcPubDirection').value=x?(x.direction||''):'';if(!x){$('pcPubPublisher').value=state.profile.org||'';$('pcPubContact').value=state.profile.name||''}$('pcPubServices').querySelectorAll('input').forEach(i=>{i.checked=!!(x&&(x.services||[]).includes(i.value));i.closest('label').classList.toggle('on',i.checked)});$('pcPubSummaryCount').textContent=$('pcPubSummary').value.length;const direct=PrototypeAccounts.grant('demand')==='direct';
+  const agreement=$('pcPubAgree').nextElementSibling;
+  const reviewCopy=agreement.dataset.reviewCopy ||= agreement.innerHTML;
+  agreement.innerHTML=direct?reviewCopy.replace(/提交后由.*?，审核通过后/,'提交后直接发布，'):reviewCopy;
+  const footer=document.querySelector('#pcPublish .foot-note');
+  if(footer)footer.textContent=direct?'发布后可在「我的需求」查看。':'提交后可在「我的需求」查看审核进度。';
+  $('pcPubSubmit').textContent=direct?'发布需求':'提交审核';
+  $('pcPublish').showModal();setTimeout(()=>$('pcPubTitle').focus(),30)}
+function submitDemand(){const mode=PrototypeAccounts.grant('demand');if(mode==='deny'){pcPubAlert('当前账号无需求发布权限');return;}const v=id=>$(id).value.trim();const bad=[];
   if(!v('pcPubTitle'))bad.push(demandFail('pcPubTitle'));
   if(!v('pcPubDirection'))bad.push(demandFail('pcPubDirection'));
   const svc=[...$('pcPubServices').querySelectorAll('input:checked')].map(i=>i.value);
@@ -1589,17 +1602,18 @@ function submitDemand(){const v=id=>$(id).value.trim();const bad=[];
   if(!v('pcPubContact'))bad.push(demandFail('pcPubContact'));
   const phone=v('pcPubPhone'),mail=v('pcPubEmail');
   if(phone&&!/^(1\d{10}|0\d{9,11})$/.test(phone.replace(/[\s\-()（）]/g,'')))bad.push(demandFail('pcPubPair','电话格式有误：手机为 11 位数字，座机请带区号'));
-  else if(!phone&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail))bad.push(demandFail('pcPubPair',mail?'邮箱格式有误，请检查':'电话与邮箱请至少填写一项'));
+  else if(!phone&&!mail)bad.push(demandFail('pcPubPair','电话与邮箱请至少填写一项'));
+  else if(mail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail))bad.push(demandFail('pcPubPair','邮箱格式有误，请检查'));
   if(!$('pcPubAgree').checked){pcPubAlert('请先阅读并勾选下方的「我已知悉并同意」事项');$('pcPubAgree').focus();return}
   if(bad.length){pcPubAlert(`还有 ${bad.length} 处必填项未填写完成，请检查标红处`);bad[0].scrollIntoView({block:'center'});return}
   const wasEdit=!!demandEditId,now=new Date(),ymd=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  const rec={title:v('pcPubTitle'),direction:v('pcPubDirection'),crops:v('pcPubCrops'),services:svc,summary:v('pcPubSummary'),problem:v('pcPubProblem'),material:v('pcPubMaterial'),work:v('pcPubWork').split(/\r?\n+/).map(s=>s.trim()).filter(Boolean),output:v('pcPubOutput'),deadline:v('pcPubDeadline'),publisher:v('pcPubPublisher'),contact:v('pcPubContact'),phone:phone,email:mail,status:'待审核',date:ymd,submittedAt:ymd,reject:'',mine:true};
+  const rec={title:v('pcPubTitle'),direction:v('pcPubDirection'),crops:v('pcPubCrops'),services:svc,summary:v('pcPubSummary'),problem:v('pcPubProblem'),material:v('pcPubMaterial'),work:v('pcPubWork').split(/\r?\n+/).map(s=>s.trim()).filter(Boolean),output:v('pcPubOutput'),deadline:v('pcPubDeadline'),publisher:v('pcPubPublisher'),contact:v('pcPubContact'),phone:phone,email:mail,status:mode==='direct'?'发布中':'待审核',date:ymd,submittedAt:ymd,reviewDecision:'',reviewNote:'',reject:'',mine:true};
   const all=demandStore();
   if(wasEdit){const i=all.findIndex(z=>z.id===demandEditId);if(i>=0)all[i]={...all[i],...rec};else all.unshift({...rec,id:'u'+Date.now(),getCount:0})}
   else all.unshift({...rec,id:'u'+Date.now(),getCount:0});
   if(!demandSave(all)){toast('当前浏览器无法保存，请保留页面内容后重试');return}
   $('pcPublish').close();demandEditId=null;demandTab='全部';render();
-  toast(wasEdit?'已重新提交，待运营审核':'已提交，待运营审核通过后展示在需求中心');
+  toast(mode==='direct'?'需求已发布':wasEdit?'已重新提交，待运营审核':'已提交，待运营审核通过后展示在需求中心');
 }
 function initDemandForm(){$('pcPubDirection').innerHTML='<option value="">请选择需求方向</option>'+DEMAND_DIRECTIONS.map(d=>`<option>${d}</option>`).join('');$('pcPubServices').innerHTML=DEMAND_SERVICES.map(s=>`<label><input type="checkbox" value="${s}"><span>${s}</span></label>`).join('');$('pcPubServices').addEventListener('change',e=>{const l=e.target.closest('label');if(l)l.classList.toggle('on',e.target.checked);if($('pcPubServices').querySelector('input:checked'))$('pcPubServices').closest('.pub-field').classList.remove('invalid')});$('pcPublishForm').addEventListener('submit',e=>{e.preventDefault();submitDemand()});$('pcPubSummary').addEventListener('input',()=>{$('pcPubSummaryCount').textContent=$('pcPubSummary').value.length;$('pcPubSummary').closest('.pub-field').classList.remove('invalid')});$('pcPubTitle').addEventListener('input',()=>$('pcPubTitle').closest('.pub-field').classList.remove('invalid'));$('pcPubDirection').addEventListener('change',()=>$('pcPubDirection').closest('.pub-field').classList.remove('invalid'));['pcPubProblem','pcPubWork','pcPubOutput','pcPubPublisher','pcPubContact'].forEach(id=>$(id).addEventListener('input',()=>$(id).closest('.pub-field').classList.remove('invalid')));['pcPubPhone','pcPubEmail'].forEach(id=>$(id).addEventListener('input',()=>$('pcPubPair').classList.remove('invalid')))}
 initDemandForm();
@@ -1682,7 +1696,7 @@ window.MeetingSeeds={datasets:[
 <script data-inline-source="meeting-core.js">
 (()=>{'use strict';
 const M=window.Meeting={},file='个人中心-高保真原型.html',admin=file.startsWith('后台-');M.file=file;M.admin=admin;
-M.e=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));M.read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};M.write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{M.toast('保存失败，请检查浏览器存储后重试');return false}};M.date=()=>new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}).slice(0,16);M.key='bdh-outcome-review-1010';M.metaKey='bdh-asset-metadata-1010';M.projectsKey='bdh-projects-1010';M.front=n=>(admin?'../前端门户端/':'')+n;M.back=n=>(admin?'':'../后台管理端原型/')+n;
+M.e=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));M.read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};M.write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{M.toast('保存失败，请检查浏览器存储后重试');return false}};M.date=()=>new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}).slice(0,16);M.key='bdh-outcome-review-1010';M.metaKey='bdh-asset-metadata-1010';M.projectsKey='bdh-projects-1010';M.front=n=>(admin?'https://arthurvictor0923.github.io/AI_PLATFORM_CREATE/portal-prototype/':'')+n;M.back=n=>(admin?'':'https://arthurvictor0923.github.io/AIPROJECTCREATE/admin-prototype/')+n;
 M.toast=t=>{document.querySelector('.mt-toast')?.remove();const n=document.createElement('div');n.className='mt-toast';n.textContent=t;document.body.append(n);setTimeout(()=>n.remove(),3000)};
 M.btn=(label,call,primary=false)=>`<button type="button" class="mt-btn ${primary?'primary':''}" onclick="${M.e(call)}">${label}</button>`;M.link=(label,call)=>`<button type="button" class="mt-link" onclick="${M.e(call)}">${label}</button>`;M.badge=s=>`<span class="mt-badge ${/待/.test(s)?'warn':/驳回|拒绝/.test(s)?'bad':''}">${M.e(s)}</span>`;
 M.dialog=(title,body,foot='')=>{let d=document.getElementById('mtDialog');if(!d){d=document.createElement('dialog');d.id='mtDialog';d.className='mt-dialog';document.body.append(d)}d.innerHTML=`<header><h2>${M.e(title)}</h2><button class="mt-close" aria-label="关闭" onclick="Meeting.close()">×</button></header><div class="mt-body">${body}</div><footer>${foot||M.btn('关闭','Meeting.close()')}</footer>`;if(!d.open)d.showModal();return d};M.close=()=>document.getElementById('mtDialog')?.close();
@@ -3043,13 +3057,13 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
   function memberResources(kind){
     const models=kind==='models',ap=modelApps(),joined=O.myTeams().filter(t=>t.spaceIds?.length);
     if(!models)return `<section class="pc-panel">${head('我的数据',action('浏览数据中心','data-center'))}${joined.length?joined.map(t=>`<article class="pc-resource"><div class="pc-resource-title"><h3>${e(t.name)}</h3><p>在已加入的科研空间查看和使用获准数据</p></div>${action('查看科研空间','team-spaces',t.id,true)}</article>`).join(''):blank('暂无可使用的科研数据','加入团队并获得科研空间访问权限后，可在空间内使用已挂载数据。')}</section>`;
-    const authorized=ap.filter(r=>['已通过','approved'].includes(r.status));return `<section class="pc-panel">${head('我的模型',action('浏览模型中心','model-center'))}<div class="pc-tabs">${['可使用','申请记录'].map(x=>`<button data-tab="${x}" class="${x===tab?'active':''}">${x}</button>`).join('')}</div>${(tab==='申请记录'?ap:authorized).map(r=>`<article class="pc-resource"><div class="pc-resource-title"><h3>${e(r.name)} ${badge(r.status)}</h3><p>${e(r.date)} · 模型在线使用</p></div>${action('查看申请','model-app',r.id)}</article>`).join('')||blank(tab==='申请记录'?'暂无模型使用申请':'暂无已授权模型','可浏览模型中心进行试用或申请在线使用。')}</section>`;
+    const authorized=ap.filter(r=>['已通过','approved'].includes(r.status));return `<section class="pc-panel">${head('我的模型',action('浏览模型中心','model-center'))}<div class="pc-tabs">${['可使用','申请记录'].map(x=>`<button data-tab="${x}" class="${x===tab?'active':''}">${x}</button>`).join('')}</div>${(tab==='申请记录'?ap:authorized).map(r=>`<article class="pc-resource"><div class="pc-resource-title"><h3>${e(r.name)} ${badge(r.status)}</h3><p>${e(r.date)} · 模型在线使用</p></div><div class="pc-actions">${window.ResourceApplications?.modelRunButton(r)||''}${action('查看申请','model-app',r.id)}</div></article>`).join('')||blank(tab==='申请记录'?'暂无模型使用申请':'暂无已授权模型','可浏览模型中心进行试用或申请在线使用。')}</section>`;
   }
   function memberOverview(){const a=O.current();return window.profile()+`<section class="pc-panel">${head('我的团队',action('查看全部 →','back-teams'))}${O.myTeams().length?`<p class="ot-muted">已加入 ${O.myTeams().length} 个团队 · 关联负责人：${e(O.account(a.ownerId)?.name||'—')}</p>`:blank('尚未加入团队','可以先试用模型、申请模型在线使用或发布需求。')}</section><section class="pc-panel">${head('平台资源')}<div class="ot-toolbar">${action('浏览模型','model-center','',true)}${action('发布需求','new-demand')}${action('我的申请','model-apps')}</div></section>`;}
   window.OwnerTeams={};
   window.teams=teamsView;window.team=teamView;
   window.resources=kind=>(O.isLeader()||kind==='data')?originalResources(kind):memberResources(kind);
-  window.overview=()=>O.current().kind==='admin'?window.profile()+`<section class="pc-panel">${head('数据看板')}<a class="primary" href="门户-领导数据看板.html">查看数据看板</a></section>`:O.current().kind==='member'?memberOverview():O.current().id==='u-zhang'?originalOverview():window.profile()+`<section class="pc-panel">${head('团队与成员')}<div class="ot-toolbar">${action('我的团队','back-teams','',true)}</div><p class="ot-muted">负责 ${O.myTeams().filter(t=>t.ownerId===O.current().id).length} 个团队 · 已关联成员 ${O.managedAccounts().length} 人</p></section><section class="pc-panel">${head('平台资源')}<div class="ot-toolbar">${action('浏览模型','model-center')}${action('发布需求','new-demand')}</div></section>`;
+  window.overview=()=>O.canViewDashboard()?window.profile()+`<section class="pc-panel">${head('数据看板')}<a class="primary" href="门户-领导数据看板.html">查看数据看板</a></section>`:O.current().kind==='member'?memberOverview():O.current().id==='u-zhang'?originalOverview():window.profile()+`<section class="pc-panel">${head('团队与成员')}<div class="ot-toolbar">${action('我的团队','back-teams','',true)}</div><p class="ot-muted">负责 ${O.myTeams().filter(t=>t.ownerId===O.current().id).length} 个团队 · 已关联成员 ${O.managedAccounts().length} 人</p></section><section class="pc-panel">${head('平台资源')}<div class="ot-toolbar">${action('浏览模型','model-center')}${action('发布需求','new-demand')}</div></section>`;
   window.messages=()=>originalMessages();
   window.settings=()=>{const a=O.current();return `<section class="pc-panel">${head('账号设置')}<form id="otProfileForm" class="pc-form"><label>姓名<input name="name" required maxlength="30" value="${e(a.name)}"></label><label>登录账号<input value="${e(a.login)}" readonly></label><label>所属机构<input value="${e(a.org)}" readonly></label>${a.ownerId?`<label>关联负责人<input value="${e(O.account(a.ownerId)?.name)}" readonly></label>`:''}<button class="primary" type="submit">保存资料</button></form></section>`;};
   const oldStore=window.demandStore,oldSave=window.demandSave;
@@ -3137,22 +3151,14 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
     window.renderAuthArea?.();prune();
 
     const boardFile='门户-领导数据看板.html',isBoard=file===boardFile;
-    const previewStyle=document.createElement('style');previewStyle.textContent=`
-      #portalPreview{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid #c9ddd3;border-radius:8px;background:#fff;color:#24584b;box-shadow:0 3px 18px #123c2720;font:12px/1.5 "Microsoft YaHei",sans-serif}
-      #portalPreview small{font-size:11px;color:#748a81}#portalPreview label{display:flex;align-items:center;gap:7px;margin:0}#portalPreview select{max-width:195px;height:30px;padding:0 6px;border:1px solid #c9ddd3;border-radius:4px;background:#fff;color:#24584b;font:inherit}
-      .pc-demo,[data-portal-board][hidden],[data-portal-board-area][hidden],#portalBoardDenied[hidden]{display:none!important}
-      #portalBoardDenied{max-width:780px;margin:70px auto;padding:48px 24px;text-align:center;background:#fff;border:1px solid #dce7df;border-radius:8px}#portalBoardDenied h1{font-size:23px;color:#174c40}#portalBoardDenied p{margin:16px 0;color:#6d8177}#portalBoardDenied button{padding:10px 18px;border:0;border-radius:5px;background:#005653;color:#fff;cursor:pointer;font:inherit}
-      body.fullscreen #portalPreview{display:none} @media(max-width:650px){#portalPreview{left:10px;bottom:10px}#portalPreview small{display:none}}@media print{#portalPreview{display:none}}
-    `;document.head.append(previewStyle);
-    const preview=document.createElement('aside');preview.id='portalPreview';preview.setAttribute('aria-label','原型预览账号');document.body.append(preview);
-    function refreshPreview(){const selected=O.isLogged()?O.current().id:'';preview.innerHTML=`<small>原型演示</small><label>预览账号<select id="otPreviewAccount" aria-label="预览账号">${selected?'':'<option value="" selected disabled>请选择账号</option>'}${O.read().accounts.map(a=>`<option value="${O.escape(a.id)}" ${a.id===selected?'selected':''}>${O.escape(a.name)}${a.kind==='admin'?'':' · '+O.roleLabel(a)}</option>`).join('')}</select></label>`;q('#otPreviewAccount').onchange=ev=>{O.select(ev.target.value);location.reload();};}
+    const refreshPreview=()=>window.PrototypeAccounts.mountPortalPicker();
     window.PortalPreview={refresh:refreshPreview};
     function syncDashboardAccess(){const allowed=!!O.canViewDashboard();document.querySelectorAll('a[href]').forEach(a=>{if(decodeURIComponent(a.getAttribute('href').split(/[?#]/)[0])===boardFile){a.dataset.portalBoard='';a.hidden=!allowed;}});
       if(O.isLogged()){document.querySelectorAll('[data-bdh-login]').forEach(n=>{n.setAttribute('data-bdh-hidden','');n.style.display='none';});window.bdhSyncAuth?.();document.querySelectorAll('.header-actions .bdh-name,.header-actions .username').forEach(n=>n.textContent=O.current().name);document.querySelectorAll('.header-actions .bdh-avatar,.header-actions .avatar').forEach(n=>n.textContent=O.current().name[0]);}
-      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板仅向已授权的管理员账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
+      if(isBoard){const main=q('#dashboard');if(main){main.dataset.portalBoardArea='';main.hidden=!allowed;}let denied=q('#portalBoardDenied');if(!denied){denied=document.createElement('section');denied.id='portalBoardDenied';denied.innerHTML='<h1>当前账号无数据看板访问权限</h1><p>数据看板向已获授权的账号开放。</p><button type="button" id="previewDashboardAdmin">以管理员身份预览</button>';main.before(denied);q('#previewDashboardAdmin').onclick=()=>{O.select('u-admin');location.reload();};}denied.hidden=allowed;if(!allowed)q('#detailDrawer')?.close();}
       refreshPreview();
     }
-    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()){notice('当前账号无数据看板访问权限。');return;}return old.apply(ctx,args);}));}
+    if(isBoard){['openDrawer','showEntity','openRule','downloadCSV','exportDetail'].forEach(name=>wrap(name,(old,args,ctx)=>{if(!O.canViewDashboard()||(['downloadCSV','exportDetail'].includes(name)&&PrototypeAccounts.portalCode()!=='R1')){notice('当前账号没有此看板操作权限。');return;}return old.apply(ctx,args);}));}
     window.addEventListener('portal-account-change',syncDashboardAccess);window.addEventListener('portal-org-change',refreshPreview);syncDashboardAccess();
 
 
@@ -3196,18 +3202,18 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
       window.renderAll?.();window.syncLock?.();prune();
     }
     if(file.startsWith('数据中心')){
-      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader())document.querySelectorAll('.ctx-all').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
+      wrap('renderCtx',(old,args,ctx)=>{const r=old.apply(ctx,args);if(!O.isLeader()||PrototypeAccounts.grant('data')!=='review')document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(n=>n.remove());return r;});window.renderCtx?.();window.renderAll?.();prune();
       if(!O.isLeader()){
         document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});
         wrap('renderZoneList',(old,args,ctx)=>{const r=old.apply(ctx,args);document.querySelectorAll('[onclick*="applyZoneAll"]').forEach(b=>{b.disabled=true;b.title='数据由负责人为科研空间申请';});return r;});
       }
-      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()?old.apply(ctx,args):'<button class="btn-apply" disabled title="数据在科研空间内使用，由负责人申请">由负责人申请</button>');window.renderHeadRight?.();prune();}
+      if(typeof applyBtnHtml==='function'){wrap('applyBtnHtml',(old,args,ctx)=>O.isLeader()&&PrototypeAccounts.grant('data')!=='deny'?old.apply(ctx,args):'');window.renderHeadRight?.();prune();}
     }
     if(file==='科研开发空间-交互原型(10).html'){
       const all=spaces.slice(),scope=new URLSearchParams(location.search).get('team');
       spaces=all.filter(s=>O.canViewSpace(s.id)&&(!scope||O.spaceTeam(s.id)?.id===scope)).map(s=>({...s,team:O.spaceTeam(s.id).name,role:O.canManageSpace(s.id)?'负责人':'成员'}));
       permission=O.isLeader()?'owner':'member';if(!O.isLeader()||!O.myTeams().some(t=>t.ownerId===O.current().id))todos=[];
-      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader();
+      const btn=q('#apply');if(btn)btn.hidden=!O.isLeader()||PrototypeAccounts.grant('space')==='deny';
       const oldApply=window.apply;window.apply=function(){
         if(!O.isLeader()){notice('科研空间和算力由负责人申请。');return;}
         const own=O.myTeams().filter(t=>t.ownerId===O.current().id);if(!own.length){notice('请先在个人中心创建团队。');return;}
@@ -3593,7 +3599,7 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
     try{localStorage.setItem(key,JSON.stringify(all));localStorage.setItem(marker,'1');}catch{}
   }
   seed();
-  function canReapply(r){return !!r&&mine(r)&&O.isLeader()&&rejected(r)&&!read().some(x=>String(x.previousApplicationId)===String(r.id));}
+  function canReapply(r){return !!r&&mine(r)&&O.isLeader()&&PrototypeAccounts.grant('space')!=='deny'&&rejected(r)&&!read().some(x=>String(x.previousApplicationId)===String(r.id));}
   const modal=document.createElement('dialog');modal.id='spaceRequestDialog';modal.className='sr-dialog';
   modal.innerHTML='<div class="sr-head"><h2 id="sr-title"></h2><button type="button" data-sr-close aria-label="关闭">×</button></div><div id="sr-content"></div>';
   document.body.append(modal);
@@ -3613,6 +3619,9 @@ resumePersonalModelJobs();M.refreshOutcomes?.();
   }
   function received(r){
     window.dispatchEvent(new CustomEvent('space-application-change'));
+    if(r.authorizationMode==='direct'){
+      closeModal();window.render?.();toast('科研空间已创建，正在等待资源开通。');return;
+    }
     if(document.getElementById('pcContent')){
       closeModal();location.hash='spaces?tab=applications';window.render();toast('申请已提交，可在申请记录中查看审批结果。');
     }else open('申请已提交',`<div class="sr-body sr-receipt"><span class="sr-check">✓</span><h3>${esc(r.name)}</h3><p>可在个人中心「我的科研空间 → 申请记录」查看审批结果。</p></div><div class="sr-foot"><button data-sr-close>返回科研空间</button><a class="primary" href="${personalURL}#spaces?tab=applications">查看申请记录</a></div>`);
@@ -3666,13 +3675,14 @@ function renderApplicationData(){
  $('#data-count').textContent=applicationDataIds.length?'已选 '+applicationDataIds.length+' 项':'选填';
 }
 function showForm(originalId){
- if(!O.isLeader()){toast('科研空间和算力由负责人申请。');return;}
+ const mode=PrototypeAccounts.grant('space');
+ if(!O.isLeader()||mode==='deny'){toast('当前账号无创建科研空间权限。');return;}
  const original=originalId?read().find(r=>String(r.id)===String(originalId)&&mine(r)):null;
  if(originalId&&!canReapply(original)){toast('当前申请不能再次提交，请查看最新申请记录。');return;}
  const own=O.myTeams().filter(t=>t.ownerId===account().id);
  if(!own.length){toast('请先在个人中心创建本人负责的团队。');return;}
  applicationDataIds=[];
- open(original?'修改并再次申请':'申请科研空间',`<form id="apply-form"><div class="modal-body application-body">${original?`<div class="sr-return-note"><strong>上次审批意见</strong>${esc(original.reviewNote||'—')}</div>`:''}
+ open(mode==='direct'?'创建科研空间':original?'修改并再次申请':'申请科研空间',`<form id="apply-form"><div class="modal-body application-body">${original?`<div class="sr-return-note"><strong>上次审批意见</strong>${esc(original.reviewNote||'—')}</div>`:''}
  <section class="application-section"><h3><span>01</span>基础信息</h3><div class="apply-basic">
  <label>空间名称 <span class="required-star">*</span><input name="name" required maxlength="32" placeholder="请输入空间名称，最多 32 字" autocomplete="off"></label>
  <label>所属团队 <span class="required-star">*</span><select id="application-team" name="team" required><option>作物遥感研究团队</option><option>农业灾害研究团队</option></select></label>
@@ -3701,7 +3711,7 @@ function showForm(originalId){
  <div id="application-data-list"></div>
  <p class="field-help">仅展示当前团队可用的数据，按所选版本只读挂载，目录自动分配。</p>
  </section><div id="resource-form-error" class="form-error" role="alert"></div>
- </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="SpaceRequests.closeForm()">取消</button><button class="primary" type="submit">提交申请</button></div></form>`);
+ </div><div class="modal-footer application-footer"><div><strong id="apply-config-summary"></strong><span>一个空间对应一个实例，团队成员共享</span></div><button type="button" onclick="SpaceRequests.closeForm()">取消</button><button class="primary" type="submit">${mode==='direct'?'确认创建':'提交申请'}</button></div></form>`);
  modal.classList.add('resource-apply');
  modal.setAttribute('aria-labelledby','sr-title');
  $('#application-team').innerHTML=own.map(t=>`<option value="${esc(t.name)}" data-team-id="${esc(t.id)}">${esc(t.name)}</option>`).join('');
@@ -3718,7 +3728,7 @@ function showForm(originalId){
    for(const d of original.datasets||[]){if(!initialDatasetCatalog.some(x=>x.id===d.id))initialDatasetCatalog.push({...d,type:'数据集',team:$('#application-team').value});}
    applicationDataIds=(original.datasets||[]).map(d=>d.id);
    $('#purpose-count').textContent=f.elements.purpose.value.length+' / 500';
-   f.querySelector('button[type=submit]').textContent='再次提交申请';
+   f.querySelector('button[type=submit]').textContent=mode==='direct'?'确认创建':'再次提交申请';
    updateEnvironmentSummary();checkResourceHints();
  }
  renderApplicationData();
@@ -3737,7 +3747,8 @@ function showForm(originalId){
  $('#apply-form').onsubmit=e=>{
  e.preventDefault();
  const selectedTeam=own.find(t=>t.name===$('#application-team').value);
- if(!O.isLeader()||!selectedTeam||!O.canManageTeam(selectedTeam.id)||(original&&!canReapply(original))){$('#resource-form-error').textContent='当前申请或团队权限已变化，请关闭后重新查看。';return;}
+ const currentMode=PrototypeAccounts.grant('space');
+ if(currentMode==='deny'||!O.isLeader()||!selectedTeam||!O.canManageTeam(selectedTeam.id)||(original&&!canReapply(original))){$('#resource-form-error').textContent='当前申请或团队权限已变化，请关闭后重新查看。';return;}
  if(!checkResourceHints()){$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
  const f=new FormData(e.target),m=selectedInitialModel();
  const values=Object.fromEntries(['cpu','gpu','ram','storage'].map(k=>[k,Number(f.get(k))]));
@@ -3746,7 +3757,7 @@ function showForm(originalId){
  if(days&&(!Number.isSafeInteger(Number(days))||Number(days)<1)){$('#resource-form-error').textContent='预计使用时长需为正整数。';return;}
  const data=applicationDataIds.map(id=>initialDatasetCatalog.find(d=>d.id===id)).filter(d=>d&&(d.team==='all'||d.team===f.get('team')||(d.team==='作物遥感研究团队'&&f.get('team')==='寒地水稻研究团队'))).map(d=>({id:d.id,name:d.name,version:d.version,path:d.path,access:'只读'}));
  const gpuMemory=values.gpu?Number(f.get('gpuMemory')):0;
- const s={id:Date.now(),applicantId:account().id,applicant:account().name,teamId:selectedTeam.id,submittedAt:new Date().toISOString(),previousApplicationId:original?.id||null,rootApplicationId:original?.rootApplicationId||original?.id||null,name,role:'负责人',desc:purpose,team:f.get('team'),state:'申请中',instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
+ const s={id:Date.now(),applicantId:account().id,applicant:account().name,teamId:selectedTeam.id,submittedAt:new Date().toISOString(),previousApplicationId:original?.id||null,rootApplicationId:original?.rootApplicationId||original?.id||null,name,role:'负责人',desc:purpose,team:f.get('team'),state:currentMode==='direct'?'开通中':'申请中',authorizationMode:currentMode,instance:'未开通',...values,model:m.name,modelId:m.id,modelVersion:m.version,imageId:m.imageId,image:m.image,systemDisk:m.systemDisk,gpuMemory,durationDays:days?Number(days):null,ide:selectedDevelopmentTool(),datasets:data,workspacePath:'/mnt/workspace',environmentConfig:m.config,applicationSchema:12,progress:'申请已提交，待审核',visit:'刚刚',compute:{allocation:'retained',ready:false,gpu:values.gpu?values.gpu+' 张兼容 GPU · 单卡显存 ≥'+gpuMemory+' GB':'未配置 GPU',image:m.image,systemDisk:m.systemDisk,runtime:m.runtime,detail:m.environment+' · '+selectedDevelopmentTool(),error:''}};
  try{const requests=JSON.parse(localStorage.getItem('agri-space-applications-v8')||'[]');if(!Array.isArray(requests))throw new Error('Invalid local applications');requests.unshift(s);localStorage.setItem('agri-space-applications-v8',JSON.stringify(requests));}catch{$('#resource-form-error').textContent='本地申请记录保存失败，请检查浏览器存储后重试。';$('#resource-form-error').scrollIntoView({block:'nearest'});return;}
  received(s);
  };
@@ -3823,19 +3834,30 @@ function showForm(originalId){
   }
   const get=(kind,id)=>records(kind).find(r=>r.id===String(id));
   function nextRecord(r,kind){return records(kind).find(x=>String(x.previousApplicationId||'')===r.id);}
-  function canRetry(r,kind){return !!r&&owner(r)===current()&&r.status==='未通过'&&!nextRecord(r,kind);}
+  function canRetry(r,kind){return !!r&&owner(r)===current()&&r.status==='未通过'&&r.reviewDecision!=='拒绝'&&PrototypeAccounts.grant(kind==='models'?'model':'data')==='review'&&!nextRecord(r,kind);}
   function refresh(){applications.models=records('models');applications.data=records('data');}
+  function modelRunButton(r){
+    if(O.current().kind!=='enterprise'||r.status!=='已通过'||!r.version||
+        owner(r)!==current()||PrototypeAccounts.grant('model')==='deny'||
+        !PrototypeAccounts.isOnlineModelApplication(r))return '';
+    const managed=ResourceFields.registry([]).filter(model=>model.name===r.name);
+    if(managed.length&&!managed.some(model=>model.published&&model.version===r.version))return '';
+    const query=new URLSearchParams({n:r.name,v:r.version,mode:'use'});
+    return '<a class="primary" href="模型中心-模型运行台.html?'+esc(query.toString())+'">使用</a>';
+  }
   function field(name,value){return `<div><dt>${esc(name)}</dt><dd>${esc(value||'未填写')}</dd></div>`;}
   function show(kind,id){
     const r=get(kind,id);if(!r)return;
+    const use=kind==='models'?modelRunButton(r):'';
     const following=nextRecord(r,kind),history=[];let p=r,seen=new Set([r.id]);
     while(p.previousApplicationId){p=get(kind,p.previousApplicationId);if(!p||seen.has(p.id))break;seen.add(p.id);history.unshift(p);}
-    modal(label(kind)+'使用申请',`<div class="ra-detail"><div class="ra-title"><h3>${esc(r.name)}</h3>${badge(r.status)}</div><dl class="ra-fields">${r.version?field('版本',r.version):''}${field('申请日期',r.date)}${field('授权用途',r.purpose)}</dl><h4>使用说明</h4><p class="ra-note">${esc(r.note||'未填写')}</p><div class="ra-opinion"><h4>审批意见</h4><p>${esc(r.reviewNote||(r.status==='审核中'?'申请已提交，等待审批。':'未记录审批意见。'))}</p></div>${history.length?`<details class="ra-history"><summary>查看此前申请记录（${history.length}）</summary>${history.map(x=>`<article><div><strong>${esc(x.date)}</strong>${badge(x.status)}</div><p>${esc(x.reviewNote||'未记录审批意见')}</p><button class="pc-link" data-ra-action="view" data-ra-kind="${kind}" data-ra-id="${esc(x.id)}">查看本次申请</button></article>`).join('')}</details>`:''}${following?`<p class="ra-following">已再次提交。<button class="pc-link" data-ra-action="view" data-ra-kind="${kind}" data-ra-id="${esc(following.id)}">查看最新申请</button></p>`:''}</div>`,canRetry(r,kind)?button('再次提交',`data-ra-action="edit" data-ra-kind="${kind}" data-ra-id="${esc(r.id)}"`,'primary'):'');
+    modal(label(kind)+'使用申请',`<div class="ra-detail"><div class="ra-title"><h3>${esc(r.name)}</h3>${badge(r.status)}</div><dl class="ra-fields">${r.version?field('版本',r.version):''}${field('申请日期',r.date)}${field('授权用途',r.purpose)}</dl><h4>使用说明</h4><p class="ra-note">${esc(r.note||'未填写')}</p><div class="ra-opinion"><h4>审批意见</h4><p>${esc(r.reviewNote||(r.status==='审核中'?'申请已提交，等待审批。':'未记录审批意见。'))}</p></div>${history.length?`<details class="ra-history"><summary>查看此前申请记录（${history.length}）</summary>${history.map(x=>`<article><div><strong>${esc(x.date)}</strong>${badge(x.status)}</div><p>${esc(x.reviewNote||'未记录审批意见')}</p><button class="pc-link" data-ra-action="view" data-ra-kind="${kind}" data-ra-id="${esc(x.id)}">查看本次申请</button></article>`).join('')}</details>`:''}${following?`<p class="ra-following">已再次提交。<button class="pc-link" data-ra-action="view" data-ra-kind="${kind}" data-ra-id="${esc(following.id)}">查看最新申请</button></p>`:''}</div>`,use||(canRetry(r,kind)?button('再次提交',`data-ra-action="edit" data-ra-kind="${kind}" data-ra-id="${esc(r.id)}"`,'primary'):''));
   }
   function edit(kind,id){
     const r=get(kind,id);if(!canRetry(r,kind)){toast('请查看最新申请记录。');return;}
-    const purposes=['业务分析与应用','科研研究与验证'];
-    const selected=Array.isArray(r.purposes)?r.purposes:purposes.filter(x=>r.purpose.includes(x));
+    const enterpriseModel=kind==='models'&&O.current().kind==='enterprise';
+    const purposes=enterpriseModel?['业务分析与应用']:['业务分析与应用','科研研究与验证'];
+    const selected=enterpriseModel?purposes:Array.isArray(r.purposes)?r.purposes:purposes.filter(x=>r.purpose.includes(x));
     if(!selected.length&&r.purpose)selected.push(r.purpose);
     const modelOptions=[...new Set([...purposes,...selected])];
     const dataOptions=[...new Set(['模型训练 · 真值输入','施肥分区研究','核查比对','产量反演验证','生态监测','科研分析（其他）',...(r.purpose?[r.purpose]:[])])];
@@ -3846,6 +3868,9 @@ function showForm(originalId){
       if(!canRetry(latest,kind)){error.textContent='当前申请已变化，请关闭后查看最新申请记录。';return;}
       const f=new FormData(form),purposes=f.getAll('purpose').map(String),note=String(f.get('note')||'').trim();
       if(!purposes.length){error.textContent='请选择授权用途。';return;}
+      if(enterpriseModel&&(purposes.length!==1||purposes[0]!=='业务分析与应用')){
+        error.textContent='请选择业务分析与应用。';return;
+      }
       if(kind==='models'&&!note){error.textContent='请填写使用说明，不能只包含空格。';return;}
       const date=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'}),idNew=(kind==='models'?'AP-':'A')+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36));
       try{
@@ -3854,15 +3879,16 @@ function showForm(originalId){
         if(all.some(x=>String(x.previousApplicationId||'')===r.id))throw Error('该申请已再次提交，请查看最新申请记录。');
         // Retain the rejected attempt; never carry its approval or workspace binding into the new request.
         if(!old)all.push({...r,applicantId:current()});
-        const fresh={...r,id:idNew,appId:kind==='data'?idNew:undefined,applicantId:current(),applicant:O.current().name,date,submittedAt:date,purpose:purposes.join('、'),purposes,note,description:note,previousApplicationId:r.id,rootApplicationId:r.rootApplicationId||r.id,status:kind==='data'?'pending':'审核中',reviewNote:'',reason:'',agree:kind==='data'?true:undefined};
+        const fresh={...r,id:idNew,appId:kind==='data'?idNew:undefined,applicantId:current(),applicant:O.current().name,date,submittedAt:date,purpose:purposes.join('、'),purposes,note,description:note,previousApplicationId:r.id,rootApplicationId:r.rootApplicationId||r.id,status:kind==='data'?'pending':'审核中',reviewDecision:'',reviewNote:'',reviewedAt:'',reviewer:'',approvalHistory:[],reason:'',agree:kind==='data'?true:undefined};
         if(kind==='data')fresh.use=purposes[0];
+        if(enterpriseModel)Object.assign(fresh,{applicationKind:'model',capability:'model-online-use',usageType:'online'});
         for(const key of ['space','spaceId','spaceName','spaceIds','space_id','researchSpace','researchSpaceId','workspaceId','workspaceName','reviewedAt','reviewer','rejectReason','rejectionReason','_kind'])delete fresh[key];
         all.unshift(fresh);localStorage.setItem(keys[kind],JSON.stringify(all));
         refresh();document.getElementById('pcModal').close();tab='申请记录';render();toast('已再次提交，等待审批。');
       }catch(err){error.textContent=err.message||'申请保存失败，请重试。';}
     };
   }
-  window.ResourceApplications={records,show,edit,refresh};
+  window.ResourceApplications={records,show,edit,refresh,modelRunButton};
   document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ra-action]');if(!b)return;ev.preventDefault();const d=b.dataset;if(d.raAction==='view')show(d.raKind,d.raId);if(d.raAction==='edit')edit(d.raKind,d.raId);});
   const oldRender=window.render;window.render=function(){refresh();return oldRender();};
   window.addEventListener('storage',ev=>{if(Object.values(keys).includes(ev.key)&&['models','data'].includes(route))render();});
@@ -3911,6 +3937,7 @@ function showForm(originalId){
 </script>
 
 <script src="assets/prototype-nav.js"></script>
+<script src="assets/portal-role-ui.js"></script>
 </body></html>
 <script>
 (()=>{const base=Meeting.submit;Meeting.submit=function(kind='model',assetId='',recordId=''){const ret=base(kind,assetId,recordId);if(kind!=='dataset')return ret;const prev=Meeting.outcomeRecord(recordId),root=document.querySelector('#mt-outcome-form .ds-editor');DatasetUI.mount(root,prev?.metadata||{}, {files:()=>{const fs=[...document.getElementById('mt-files').files];return fs.length?fs.map(file=>({name:file.name,size:file.size,file})):(prev?.files||[]);},read:async f=>(await Meeting.datasetMaterial(f))?.file||null});document.getElementById('mt-files').addEventListener('change',()=>root._dataset.refresh());return ret;};})();
